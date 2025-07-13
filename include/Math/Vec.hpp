@@ -10,6 +10,11 @@ namespace mth
 	class Vec
 	{
 	public:
+		float& x = values[0];
+		float& y = values[1];
+		float& z = values[2];
+		float& w = values[3];
+
 		Vec();
 		Vec(const Vec& another);
 		Vec(std::initializer_list<float> init_list);
@@ -22,6 +27,10 @@ namespace mth
 	protected:
 		float values[SIZE];
 	};
+
+	typedef Vec<2> Vec2;
+	typedef Vec<3> Vec3;
+	typedef Vec<4> Vec4;
 }
 
 
