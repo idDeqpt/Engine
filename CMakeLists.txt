@@ -1,15 +1,23 @@
 cmake_minimum_required(VERSION 4.0.3)
 
 set(PROJECT_NAME Math)
+set(BUILD_SHARED_LIBS TRUE)
 
 project(${PROJECT_NAME} CXX)
 include_directories("./include")
 
-set(SOURCE_LIB
-	)
 
-# Создание динамической библиотеки с именем ${PROJECT_NAME}
-add_library(${PROJECT_NAME} SHARED ${SOURCE_LIB})
+set(SOURCE_FILES
+	src/Vec4.cpp
+	src/Mat4.cpp)
+
+
+if (BUILD_SHARED_LIBS)
+	set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+	add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+else()
+	add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+endif()
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
