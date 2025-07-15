@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.0.3)
 
 set(PROJECT_NAME math_lib_test)
 set(PATH_TO_MATH "../include")
@@ -8,7 +8,7 @@ project(${PROJECT_NAME} CXX)
 add_executable(${PROJECT_NAME} main.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH})
-#target_link_libraries(${PROJECT_NAME} PRIVATE "../bin/lib/Debug/math.lib")
+target_link_libraries(${PROJECT_NAME} PRIVATE "C:/Projects/C++/libraries/Engine/Math/bin/lib/Debug/Math.lib")
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
