@@ -47,6 +47,16 @@ int main()
 
 	mth::Mat4 m1;
 	print(m1);
+
+	mth::Mat4 m2(9);
+	print(m2);
+
+	mth::Mat4 m3 = m2;
+	print(m3);
+
+	m3[2][1] = 16;
+	print(m2);
+	print(m3);
 	
 	system("pause");
 	return 0;

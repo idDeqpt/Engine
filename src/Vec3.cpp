@@ -1,6 +1,7 @@
 #include <Math/Vec3.hpp>
 
 #include <stdexcept>
+#include <cmath>
 
 
 mth::Vec3::Vec3():
@@ -16,6 +17,18 @@ mth::Vec3::Vec3(const Vec3& vec):
 	values{vec.x, vec.y, vec.z} {}
 
 
+float mth::Vec3::len() const
+{
+	return sqrt(x*x + y*y + z*z);
+}
+
+mth::Vec3 mth::Vec3::norm(float new_len) const
+{
+	float coef = new_len/len();
+	return Vec3(x*coef, y*coef, z*coef);
+}
+
+
 float mth::Vec3::operator[](unsigned int index) const
 {
 	if (index >= 3)
@@ -28,4 +41,16 @@ float& mth::Vec3::operator[](unsigned int index)
 	if (index >= 3)
 		throw std::out_of_range("Vector3 size");
 	return values[index];
+}
+
+
+
+mth::Vec3 mth::operator*(const Vec3& vec, float coef)
+{
+	return Vec3(vec.x*coef, vec.y*coef, vec.z*coef);
+}
+
+mth::Vec3 mth::operator*(float coef, const Vec3& vec)
+{
+	return Vec3(vec.x*coef, vec.y*coef, vec.z*coef);
 }
