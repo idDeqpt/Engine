@@ -4,6 +4,7 @@ set(PROJECT_NAME graphics)
 set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
 set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
 set(PATH_TO_STB "C:/Projects/C++/libraries/stb")
+set(PATH_TO_MATH "C:/Projects/C++/libraries/Engine/Math")
 
 project(${PROJECT_NAME} CXX)
 include_directories("./include")
@@ -12,6 +13,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/Color.cpp
 	src/Shader.cpp
 	src/Texture.cpp
+	src/Drawable3.cpp
 	src/Window.cpp)
 
 
@@ -22,6 +24,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/bin/lib/Debug/Math.lib)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 

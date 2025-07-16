@@ -6,7 +6,9 @@
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
+#include <Graphics/Drawable3.hpp>
 #include <Math/Transform3.hpp>
+#include <Math/Transformable3.hpp>
 #include <cmath>
 
 void print(const mth::Mat4& mat)
@@ -19,6 +21,16 @@ void print(const mth::Mat4& mat)
 	}
 	std::cout << std::endl;
 }
+
+class Dr : public gfx::Drawable3
+{
+public:
+	Dr() : gfx::Drawable3() {}
+	void draw(gfx::Window* window) const
+	{
+
+	}
+};
 
 int main()
 {
@@ -106,13 +118,21 @@ int main()
 
 	glBindVertexArray(0);
 
+	Dr tr;
+	tr.setPosition(mth::Vec3(0.5, 0.5, 1));
+	tr.setScale(mth::Vec3(0.5));
+	tr.setRotation(mth::Vec3(1, 0, 1), 45);
+
+	print(tr.getGlobalTransform().getMatrix());
+
 	while(window.isOpen())
 	{
 	    glfwPollEvents();
 
 	    float time = (GLfloat)glfwGetTime();
 	    mth::Transform3 trans;
-		trans.translate(mth::Vec3(cos(time)*0.4, sin(time)*0.4, 0));
+	    mth::Vec3 v = mth::Vec3(cos(time)*0.4, sin(time)*0.4, 0);
+		trans.translate(v);
 		trans.rotate(mth::Vec3(0, 0, 1), time);
 	    trans.scale(mth::Vec3(0.7 + cos(time*4)*0.2, 0.7 - cos(time*4)*0.2, 1));
 
@@ -126,7 +146,7 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, tex2.getId());
 		shader.setUniform1i("ourTexture2", 1);
-		shader.setUniformMatrix4fv("transform", trans.getMatrix().getValuesPtr());
+		shader.setUniformMatrix4fv("transform", tr.getGlobalTransform().getMatrix().getValuesPtr());
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
