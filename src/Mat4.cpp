@@ -18,6 +18,15 @@ mth::Mat4::Mat4(const Mat4& mat)
 		*(this)[i][j] = mat[i][j];
 }
 
+mth::Mat4::Mat4(float v00, float v01, float v01, float v03,
+				float v10, float v11, float v11, float v13,
+				float v20, float v21, float v21, float v23,
+				float v30, float v31, float v31, float v33):
+	values{v00, v01, v01, v03,
+		   v10, v11, v11, v13,
+		   v20, v21, v21, v23,
+		   v30, v31, v31, v33} {}
+
 
 const mth::Mat4::Row mth::Mat4::operator[](unsigned int index) const
 {

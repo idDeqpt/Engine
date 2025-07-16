@@ -21,6 +21,10 @@ namespace mth
 		Mat4();
 		Mat4(float v);
 		Mat4(const Mat4& mat);
+		Mat4(float v00, float v01, float v01, float v03,
+			 float v10, float v11, float v11, float v13,
+			 float v20, float v21, float v21, float v23,
+			 float v30, float v31, float v31, float v33);
 
 		const Row operator[](unsigned int index) const;
 		Row operator[](unsigned int index);
