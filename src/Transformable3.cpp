@@ -55,6 +55,11 @@ void mth::Transformable3::setRotation(const Vec3& new_rot_vec, float new_rot_ang
 	m_transform_need_update = true;
 }
 
+void mth::Transformable3::setParent(Transformable3& parent)
+{
+	m_parent = &parent;
+}
+
 mth::Transform3 mth::Transformable3::getLocalTransform()
 {
 	if (m_transform_need_update)

@@ -18,6 +18,7 @@ namespace mth
 		void setPosition(const Vec3& new_position);
 		void setScale(const Vec3& new_scale);
 		void setRotation(const Vec3& new_rot_vec, float new_rot_angle);
+		void setParent(Transformable3& parent);
 
 		Transform3 getLocalTransform();
 		Transform3 getGlobalTransform();
