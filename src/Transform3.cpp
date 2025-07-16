@@ -8,7 +8,12 @@
 
 mth::Transform3::Transform3()
 {
-	matrix = Transform3::getIdentity();
+	m_matrix = Transform3::getIdentity();
+}
+
+mth::Transform3::Transform3(const Mat4 mat)
+{
+	m_matrix = mat;
 }
 
 
@@ -20,7 +25,7 @@ void mth::Transform3::translate(const Vec3& vec)
 		0, 0, 1, vec.z,
 		0, 0, 0, 1
 	);
-	matrix = matrix*translate_m;
+	m_matrix = m_matrix*translate_m;
 }
 
 void mth::Transform3::scale(const Vec3& vec)
@@ -31,7 +36,7 @@ void mth::Transform3::scale(const Vec3& vec)
 		0, 0, vec.z, 0,
 		0, 0, 0, 1
 	);
-	matrix = matrix*scale_m;
+	m_matrix = m_matrix*scale_m;
 }
 
 void mth::Transform3::rotate(const Vec3& vec, float angle)
@@ -58,13 +63,13 @@ void mth::Transform3::rotate(const Vec3& vec, float angle)
 
 	rotate_m[3][3] = 1;
 
-	matrix = matrix*rotate_m;
+	m_matrix = m_matrix*rotate_m;
 }
 
 
 mth::Mat4 mth::Transform3::getMatrix()
 {
-	return matrix;
+	return m_matrix;
 }
 
 

@@ -30,7 +30,7 @@ namespace mth
 
 		const Row operator[](unsigned int index) const;
 		Row operator[](unsigned int index);
-		Mat4& operator=(Mat4& mat);
+		Mat4& operator=(const Mat4& mat);
 
 	protected:
 		float values[16];

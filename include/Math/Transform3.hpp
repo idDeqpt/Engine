@@ -10,6 +10,7 @@ namespace mth
 	{
 	public:
 		Transform3();
+		Transform3(const Mat4 mat);
 
 		void translate(const Vec3& vec);
 		void scale(const Vec3& vec);
@@ -20,7 +21,7 @@ namespace mth
 		static Mat4 getIdentity();
 
 	protected:
-		Mat4 matrix;
+		Mat4 m_matrix;
 	};
 }
 

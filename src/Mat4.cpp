@@ -48,10 +48,11 @@ mth::Mat4::Row mth::Mat4::operator[](unsigned int index)
 	return Mat4::Row(const_cast<float*>(&values[index*4]));
 }
 
-mth::Mat4& mth::Mat4::operator=(Mat4& mat)
+mth::Mat4& mth::Mat4::operator=(const Mat4& mat)
 {
-	for (unsigned int i = 0; i < 16; i++)
-		values[i] = mat.getValuesPtr()[i];
+	for (unsigned int i = 0; i < 4; i++)
+		for (unsigned int j = 0; j < 4; j++)
+			this->operator[](i)[j] = mat[i][j];
 	return *this;
 }
 

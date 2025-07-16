@@ -6,9 +6,9 @@ namespace mth
 	class Vec3
 	{
 	public:
-		float& x = values[0];
-		float& y = values[1];
-		float& z = values[2];
+		float& x = m_values[0];
+		float& y = m_values[1];
+		float& z = m_values[2];
 
 		Vec3();
 		Vec3(float v);
@@ -20,9 +20,11 @@ namespace mth
 
 		float operator[](unsigned int index) const;
 		float& operator[](unsigned int index);
+		Vec3& operator=(const Vec3& vec);
+		Vec3& operator+=(const Vec3& vec);
 
 	protected:
-		float values[3];
+		float m_values[3];
 	};
 
 	Vec3 operator*(const Vec3& vec, float coef);

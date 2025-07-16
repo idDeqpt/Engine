@@ -11,7 +11,8 @@ set(SOURCE_FILES
 	src/Vec3.cpp
 	src/Vec4.cpp
 	src/Mat4.cpp
-	src/Transform3.cpp)
+	src/Transform3.cpp
+	src/Transformable3.cpp)
 
 
 if (BUILD_SHARED_LIBS)
