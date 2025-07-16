@@ -60,6 +60,12 @@ void mth::Transformable3::setParent(Transformable3& parent)
 	m_parent = &parent;
 }
 
+
+mth::Transformable3* mth::Transformable3::getParent()
+{
+	return m_parent;
+}
+
 mth::Transform3 mth::Transformable3::getLocalTransform()
 {
 	if (m_transform_need_update)
