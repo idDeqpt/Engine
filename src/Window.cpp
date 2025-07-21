@@ -4,6 +4,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#include <Math/Transform3.hpp>
+#include <Graphics/VertexBuffer.hpp>
+#include <Graphics/Shader.hpp>
+
 
 gfx::Window::Window() : Window(800, 600, "Window"){}
 
@@ -63,4 +67,23 @@ void gfx::Window::display()
 void gfx::Window::destroy()
 {
 	glfwTerminate();
+}
+
+
+void gfx::Window::draw(VertexBuffer& vertex_buffer, Shader& shader)
+{
+	shader.use();
+	shader.setUniformMatrix4fv("transform", mth::Transform3::getIdentity().getValuesPtr());
+
+	VertexBuffer::bind(&vertex_buffer);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+
+	VertexBuffer::bind(nullptr);
 }

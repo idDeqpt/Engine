@@ -4,6 +4,8 @@
 #include <string>
 
 #include "Color.hpp"
+#include "VertexBuffer.hpp"
+#include "Shader.hpp"
 
 
 struct GLFWwindow;
@@ -25,6 +27,8 @@ namespace gfx
 		void clear(const Color& color);
 		void display();
 		void destroy();
+
+		void draw(VertexBuffer& vertex_buffer, Shader& shader);
 
 	protected:
 		GLFWwindow* window_ptr;
