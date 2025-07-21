@@ -5,16 +5,16 @@
 
 
 mth::Vec3::Vec3():
-	m_values{0, 0, 0} {}
+	x(0), y(0), z(0) {}
 
 mth::Vec3::Vec3(float v):
-	m_values{v, v, v} {}
+	x(v), y(v), z(v) {}
 
 mth::Vec3::Vec3(float v1, float v2, float v3) :
-	m_values{v1, v2, v3} {}
+	x(v1), y(v2), z(v3) {}
 
 mth::Vec3::Vec3(const Vec3& vec):
-	m_values{vec.x, vec.y, vec.z} {}
+	x(vec.x), y(vec.y), z(vec.z) {}
 
 
 float mth::Vec3::len() const
@@ -33,14 +33,15 @@ float mth::Vec3::operator[](unsigned int index) const
 {
 	if (index >= 3)
 		throw std::out_of_range("Vector3 const size");
-	return m_values[index];
+	return *(&x + index);
+	//return (std::initializer_list<float>{x, y, z}.begin())[index];
 }
 
 float& mth::Vec3::operator[](unsigned int index)
 {
 	if (index >= 3)
 		throw std::out_of_range("Vector3 size");
-	return m_values[index];
+	return *(&x + index);
 }
 
 mth::Vec3& mth::Vec3::operator=(const Vec3& vec)
