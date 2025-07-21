@@ -8,6 +8,7 @@ include_directories("./include")
 
 
 set(SOURCE_FILES
+	src/Vec2.cpp
 	src/Vec3.cpp
 	src/Vec4.cpp
 	src/Mat4.cpp
