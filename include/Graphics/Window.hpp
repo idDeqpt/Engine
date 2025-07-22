@@ -7,6 +7,7 @@
 #include "VertexBuffer.hpp"
 #include "Shader.hpp"
 #include "RenderStates.hpp"
+#include "Drawable.hpp"
 
 
 struct GLFWwindow;
@@ -29,6 +30,7 @@ namespace gfx
 		void display();
 		void destroy();
 
+		void draw(Drawable& drawable, RenderStates& states);
 		void draw(VertexBuffer& vertex_buffer, RenderStates& states);
 
 	protected:

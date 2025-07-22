@@ -7,15 +7,16 @@
 
 namespace gfx
 {
+	class Texture;
 	class Shader;
 
 	struct RenderStates
 	{
 		RenderStates();
-		RenderStates(View& view, mth::Transform3& transform, Shader& shader);
 
 		View m_view;
 		mth::Transform3 m_transform;
+		Texture* m_texture;
 		Shader* m_shader;
 	};
 }

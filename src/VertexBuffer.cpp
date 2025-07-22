@@ -1,11 +1,16 @@
 #include <Graphics/VertexBuffer.hpp>
 
 #include <Graphics/Vertex.hpp>
+#include <Graphics/PrimitiveType.hpp>
 
 #include <glad/glad.h>
 
 
-gfx::VertexBuffer::VertexBuffer() : m_vao_id(0), m_vbo_id(0), m_ebo_id(0) {}
+gfx::VertexBuffer::VertexBuffer():
+    m_vao_id(0),
+    m_vbo_id(0),
+    m_ebo_id(0),
+    m_prim_type(gfx::PrimitiveType::TRIANGLE_FAN) {}
 
 gfx::VertexBuffer::~VertexBuffer()
 {
@@ -19,10 +24,9 @@ gfx::VertexBuffer::~VertexBuffer()
 }
 
 
-bool gfx::VertexBuffer::create(unsigned int vertex_count)
+bool gfx::VertexBuffer::create()
 {
 	if (m_vao_id) return false;
-	m_size = vertex_count;
 
     glGenVertexArrays(1, &m_vao_id);
     glGenBuffers(1, &m_vbo_id);
@@ -30,9 +34,10 @@ bool gfx::VertexBuffer::create(unsigned int vertex_count)
     return true;
 }
 
-bool gfx::VertexBuffer::update(Vertex* vertices)
+bool gfx::VertexBuffer::update(Vertex* vertices, unsigned int vertex_count)
 {
 	if (!m_vao_id) return false;
+    m_size = vertex_count;
 
     glBindVertexArray(m_vao_id);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo_id);

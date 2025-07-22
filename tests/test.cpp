@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <Graphics/Color.hpp>
 #include <Graphics/Window.hpp>
+#include <Graphics/Shape.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
 #include <Graphics/Drawable.hpp>
@@ -55,12 +56,14 @@ int main()
 		"in vec4 vertexColor;\n"
 		"in vec2 vertexTexCoord;\n"
 		"out vec4 color;\n"
-		"uniform sampler2D ourTexture1;\n"
-		"uniform sampler2D ourTexture2;\n"
+		"uniform bool use_texture;\n"
+		"uniform sampler2D u_texture;\n"
 		"void main()\n"
 		"{\n"
-		"	color = vertexColor;\n"
-		//"	color = mix(texture(ourTexture1, vertexTexCoord), texture(ourTexture2, vertexTexCoord), 0.5);\n"
+		"	if (use_texture)\n"
+		"		color = texture(u_texture, vertexTexCoord);\n"
+		"	else\n"
+		"		color = vertexColor;\n"
 		"}");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
@@ -86,21 +89,28 @@ int main()
 	//tr.setScale(mth::Vec3(0.5));
 	//tr.setRotation(mth::Vec3(0, 0, 1), 3.14*0.25);
 
-
 	gfx::VertexBuffer vb;
-	std::cout << "VertexBuffer create: " << vb.create(5) << std::endl;
-	std::cout << "VertexBuffer update: " << vb.update(vertices_obj) << std::endl;
+	std::cout << "VertexBuffer create: " << vb.create() << std::endl;
+	std::cout << "VertexBuffer update: " << vb.update(vertices_obj, 5) << std::endl;
 	vb.setPrimitiveType(gfx::PrimitiveType::TRIANGLE_FAN);
+
+	gfx::Shape shape;
+	shape.setColor(gfx::Color(200, 50, 100));
+	shape.addPoint(mth::Vec3(0), mth::Vec2(0));
+	shape.addPoint(mth::Vec3(0, 1, 0), mth::Vec2(0, 1));
+	shape.addPoint(mth::Vec3(1, 1, 0), mth::Vec2(1, 1));
+	shape.addPoint(mth::Vec3(1, 0, 0), mth::Vec2(1, 0));
+	shape.update();
+	shape.setTexture(tex1);
 
 	gfx::RenderStates states;
 	states.m_transform = tr.getGlobalTransform();
 	states.m_shader = &shader;
-	float width = 10;
-	float height = 20;
+	//states.m_texture = &tex1;
 	states.m_view.setOrtho(-10, 10, 10, -10, -30, 30);
 	//states.m_view.setPosition(mth::Vec3(10, 10, 0));
 	//states.m_view.setScale(mth::Vec3(2, 2, 1));
-	states.m_view.setOrigin(mth::Vec3(5, 5, 0));
+	//states.m_view.setOrigin(mth::Vec3(5, 5, 0));
 
 	print(tr.getGlobalTransform().getMatrix());
 	print(states.m_view.getGlobalTransform().getMatrix());
@@ -120,7 +130,8 @@ int main()
 
 	    window.clear(gfx::Color(125));
 
-	    window.draw(vb, states);
+	    //window.draw(vb, states);
+	    window.draw(shape, states);
 
 	    window.display();
 	}

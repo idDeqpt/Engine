@@ -13,8 +13,8 @@ namespace gfx
 		VertexBuffer();
 		~VertexBuffer();
 
-		bool create(unsigned int vertex_count);
-		bool update(Vertex* vertices);
+		bool create();
+		bool update(Vertex* vertices, unsigned int vertex_count);
 
 		void setPrimitiveType(const PrimitiveType& type);
 

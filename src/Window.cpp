@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <Graphics/VertexBuffer.hpp>
+#include <Graphics/Texture.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/View.hpp>
 #include <Math/Transform3.hpp>
@@ -71,13 +72,27 @@ void gfx::Window::destroy()
 }
 
 
+void gfx::Window::draw(Drawable& drawable, RenderStates& states)
+{
+	drawable.draw(this, states);
+}
+
 void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 {
 	static constexpr int modes[] =
         {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
     const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
 
+    bool use_texture = states.m_texture != nullptr;
+
 	states.m_shader->use();
+	states.m_shader->setUniform1i("use_texture", use_texture);
+	if (use_texture)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, states.m_texture->getId());
+		states.m_shader->setUniformMatrix4fv("u_texture", 0);
+	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("view", states.m_view.getGlobalTransform().getMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("model", states.m_transform.getMatrix().getValuesPtr());
@@ -91,6 +106,9 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	VertexBuffer::bind(nullptr);
 }
