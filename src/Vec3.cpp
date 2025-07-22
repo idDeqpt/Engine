@@ -60,6 +60,11 @@ mth::Vec3& mth::Vec3::operator+=(const Vec3& vec)
 	return *this;
 }
 
+mth::Vec3 mth::Vec3::operator-() const
+{
+	return Vec3(-x, -y, -z);
+}
+
 
 
 mth::Vec3 mth::operator*(const Vec3& vec, float coef)

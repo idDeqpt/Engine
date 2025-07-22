@@ -22,6 +22,7 @@ namespace mth
 		float& operator[](unsigned int index);
 		Vec3& operator=(const Vec3& vec);
 		Vec3& operator+=(const Vec3& vec);
+		Vec3 operator-() const;
 	};
 
 	Vec3 operator*(const Vec3& vec, float coef);
