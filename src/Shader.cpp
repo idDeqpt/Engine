@@ -12,6 +12,11 @@ gfx::Shader::Shader()
 	last_error_log = "Shaders sources have not been loaded";
 }
 
+gfx::Shader::Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
+{
+	loadFromBuffer(vertex_buffer, fragment_buffer);
+}
+
 
 bool gfx::Shader::loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
 {

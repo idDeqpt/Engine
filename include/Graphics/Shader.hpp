@@ -24,6 +24,7 @@ namespace gfx
 		};
 
 		Shader();
+		Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
 
 		bool loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
 		bool loadFromFile(std::string vertex_path, std::string fragment_path);
