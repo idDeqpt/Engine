@@ -36,6 +36,12 @@ void mth::Transformable3::scale(const Vec3& scale_v)
 }
 
 
+void mth::Transformable3::setOrigin(const Vec3& new_origin)
+{
+	m_origin = new_origin;
+	m_transform_need_update = true;
+}
+
 void mth::Transformable3::setPosition(const Vec3& new_position)
 {
 	m_position = new_position;
@@ -73,6 +79,7 @@ mth::Transform3 mth::Transformable3::getLocalTransform()
 		m_transform.translate(m_position);
 		m_transform.rotate(m_rot_vec, m_rot_angle);
 		m_transform.scale(m_scale);
+		m_transform.translate(-m_origin);
 
 		m_transform_need_update = false;
 	}

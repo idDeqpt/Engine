@@ -15,6 +15,7 @@ namespace mth
 		void move(const Vec3& offset);
 		void scale(const Vec3& scale_v);
 
+		void setOrigin(const Vec3& new_origin);
 		void setPosition(const Vec3& new_position);
 		void setScale(const Vec3& new_scale);
 		void setRotation(const Vec3& new_rot_vec, float new_rot_angle);
@@ -25,6 +26,7 @@ namespace mth
 		Transform3 getGlobalTransform();
 
 	protected:
+		Vec3 m_origin;
 		Vec3 m_position;
 		Vec3 m_scale;
 		Vec3 m_rot_vec;
