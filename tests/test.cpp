@@ -41,10 +41,12 @@ int main()
 		"layout (location = 2) in vec2 texCoord;\n"
 		"out vec4 vertexColor;\n"
 		"out vec2 vertexTexCoord;\n"
-		"uniform mat4 transform;\n"
+		"uniform mat4 projection;\n"
+		"uniform mat4 view;\n"
+		"uniform mat4 model;\n"
 		"void main()\n"
 		"{\n"
-		"    gl_Position = transform*vec4(position, 1.0f);\n"
+		"    gl_Position = projection*view*model*vec4(position, 1.0f);\n"
 		"    vertexColor = color;\n"
 		"    vertexTexCoord = texCoord;\n"
 		"}",
@@ -79,26 +81,34 @@ int main()
 	std::cout << "Tex2 error: " << tex2.getLastError() << std::endl;
 
 	mth::Transformable3 tr;
-	tr.setPosition(mth::Vec3(-0.5, -0.5, 0));
-	tr.setOrigin(mth::Vec3(0, -0.5, 0));
-	tr.setScale(mth::Vec3(0.5));
-	tr.setRotation(mth::Vec3(0, 0, 1), 3.14*0.25);
+	tr.setPosition(mth::Vec3(5, 5, 0));
+	//tr.setOrigin(mth::Vec3(0, -0.5, 0));
+	//tr.setScale(mth::Vec3(0.5));
+	//tr.setRotation(mth::Vec3(0, 0, 1), 3.14*0.25);
 
-	print(tr.getGlobalTransform().getMatrix());
 
 	gfx::VertexBuffer vb;
 	std::cout << "VertexBuffer create: " << vb.create(5) << std::endl;
 	std::cout << "VertexBuffer update: " << vb.update(vertices_obj) << std::endl;
 	vb.setPrimitiveType(gfx::PrimitiveType::TRIANGLE_FAN);
 
-	gfx::RenderStates states(tr.getGlobalTransform(), shader);
+	gfx::RenderStates states;
+	states.m_shader = &shader;
+	states.m_view.setOrtho(0, 10, 10, 0, -3, 3);
+
+	print(tr.getGlobalTransform().getMatrix());
+	print(states.m_view.getGlobalTransform().getMatrix());
+	print(states.m_view.getProjectionMatrix());
+
+	print(states.m_view.getGlobalTransform().getMatrix()*tr.getGlobalTransform().getMatrix());
+	print(states.m_view.getProjectionMatrix()*states.m_view.getGlobalTransform().getMatrix()*tr.getGlobalTransform().getMatrix());
 
 	while(window.isOpen())
 	{
 	    glfwPollEvents();
 
 	    float time = (GLfloat)glfwGetTime();
-	    tr.setRotation(mth::Vec3(0, 0, 1), time);
+	    tr.setRotation(mth::Vec3(1, 0, 0), time);
 	    states.m_transform = tr.getGlobalTransform();
 
 	    window.clear(gfx::Color(125));

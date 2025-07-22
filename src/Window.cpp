@@ -4,9 +4,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include <Math/Transform3.hpp>
 #include <Graphics/VertexBuffer.hpp>
 #include <Graphics/Shader.hpp>
+#include <Graphics/View.hpp>
+#include <Math/Transform3.hpp>
 
 
 gfx::Window::Window() : Window(800, 600, "Window"){}
@@ -77,7 +78,9 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
     const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
 
 	states.m_shader->use();
-	states.m_shader->setUniformMatrix4fv("transform", states.m_transform.getMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("view", states.m_view.getGlobalTransform().getMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("model", states.m_transform.getMatrix().getValuesPtr());
 
 	VertexBuffer::bind(&vertex_buffer);
 

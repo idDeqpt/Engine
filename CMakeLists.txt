@@ -11,11 +11,12 @@ include_directories("./include")
 
 add_library(${PROJECT_NAME} STATIC
 	src/Color.cpp
-	src/Shader.cpp
-	src/RenderStates.cpp
-	src/Texture.cpp
 	src/Drawable.cpp
+	src/RenderStates.cpp
+	src/Shader.cpp
+	src/Texture.cpp
 	src/VertexBuffer.cpp
+	src/View.cpp
 	src/Window.cpp)
 
 
