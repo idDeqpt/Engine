@@ -17,6 +17,11 @@ gfx::Texture::Texture(std::string path)
 	loadFromFile(path);
 }
 
+gfx::Texture::~Texture()
+{
+	glDeleteTextures(1, &id);
+}
+
 
 bool gfx::Texture::loadFromFile(std::string path)
 {

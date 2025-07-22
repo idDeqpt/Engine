@@ -20,6 +20,7 @@ namespace gfx
 
 		Texture();
 		Texture(std::string path);
+		~Texture();
 
 		bool loadFromFile(std::string path);
 
