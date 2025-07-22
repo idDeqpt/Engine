@@ -6,7 +6,12 @@
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
-#include <Graphics/Drawable3.hpp>
+#include <Graphics/Drawable.hpp>
+#include <Graphics/Vertex.hpp>
+#include <Graphics/RenderStates.hpp>
+#include <Graphics/PrimitiveType.hpp>
+#include <Math/Vec2.hpp>
+#include <Math/Vec3.hpp>
 #include <Math/Transform3.hpp>
 #include <Math/Transformable3.hpp>
 #include <cmath>
@@ -22,30 +27,19 @@ void print(const mth::Mat4& mat)
 	std::cout << std::endl;
 }
 
-class Dr : public gfx::Drawable3
-{
-public:
-	Dr() : gfx::Drawable3() {}
-	void draw(gfx::Window* window) const
-	{
-
-	}
-};
 
 int main()
 {
-
 	gfx::Window window(800, 600, "LearnOpenGL");
 
 	window.setViewport(0, 0, 800, 600);
 
-	gfx::Shader shader;
-	shader.loadFromBuffer(
+	gfx::Shader shader(
 		"#version 330 core\n"
 		"layout (location = 0) in vec3 position;\n"
-		"layout (location = 1) in vec3 color;\n"
+		"layout (location = 1) in vec4 color;\n"
 		"layout (location = 2) in vec2 texCoord;\n"
-		"out vec3 vertexColor;\n"
+		"out vec4 vertexColor;\n"
 		"out vec2 vertexTexCoord;\n"
 		"uniform mat4 transform;\n"
 		"void main()\n"
@@ -56,36 +50,26 @@ int main()
 		"}",
 
 		"#version 330 core\n"
-		"in vec3 vertexColor;\n"
+		"in vec4 vertexColor;\n"
 		"in vec2 vertexTexCoord;\n"
 		"out vec4 color;\n"
 		"uniform sampler2D ourTexture1;\n"
 		"uniform sampler2D ourTexture2;\n"
 		"void main()\n"
 		"{\n"
-		"	color = mix(texture(ourTexture1, vertexTexCoord), texture(ourTexture2, vertexTexCoord), 0.5);\n"
+		"	color = vertexColor;\n"
+		//"	color = mix(texture(ourTexture1, vertexTexCoord), texture(ourTexture2, vertexTexCoord), 0.5);\n"
 		"}");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
 
-	GLfloat texCoords[] = {
-	    0.0f, 0.0f,  // Нижний левый угол 
-	    1.0f, 0.0f,  // Нижний правый угол
-	    0.5f, 1.0f   // Верхняя центральная сторона
-	};
-
-	GLfloat vertices[] = {
-	    // Позиции          // Цвета             // Текстурные координаты
-	     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f,   // Верхний правый
-	     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,   // Нижний правый
-	    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f,   // Нижний левый
-	    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f    // Верхний левый
-	};
-
-	GLuint indexes[] = {  // Помните, что мы начинаем с 0!
-        0, 1, 3, // First Triangle
-        1, 2, 3  // Second Triangle
+	gfx::Vertex vertices_obj[] = {
+		{mth::Vec3(0.5, 0.5, 0), gfx::Color(255, 0, 0), mth::Vec2(1, 0)},
+		{mth::Vec3(0.5, -0.5, 0), gfx::Color(0, 255, 0), mth::Vec2(1, 1)},
+		{mth::Vec3(-0.5, -0.5, 0), gfx::Color(0, 0, 255), mth::Vec2(0, 1)},
+		{mth::Vec3(-0.5, 0.5, 0), gfx::Color(255, 255, 0), mth::Vec2(0, 0)},
+		{mth::Vec3(0, 1, 0), gfx::Color(255, 255, 255), mth::Vec2(0.5, 0)},
 	};
 
 	gfx::Texture tex1("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png");
@@ -94,36 +78,21 @@ int main()
 	std::cout << "Tex1 error: " << tex1.getLastError() << std::endl;
 	std::cout << "Tex2 error: " << tex2.getLastError() << std::endl;
 
-	GLuint VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT,GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);  
-
-	glBindVertexArray(0);
-
-	Dr tr;
-	tr.setPosition(mth::Vec3(0.5, 0.5, 1));
+	mth::Transformable3 tr;
+	//tr.setPosition(mth::Vec3(-0.75, -0.75, 1));
 	tr.setScale(mth::Vec3(0.5));
-	tr.setRotation(mth::Vec3(1, 0, 1), 45);
+	//tr.setRotation(mth::Vec3(0, 0, 1), 45);
 
 	print(tr.getGlobalTransform().getMatrix());
+
+	gfx::VertexBuffer vb;
+	std::cout << "CREATE: " << vb.create(5) << std::endl;
+	std::cout << "UPDATE: " << vb.update(vertices_obj) << std::endl;
+	std::cout << "VAO: " << vb.getVAOHandle() << std::endl;
+	std::cout << "VBO: " << vb.getVBOHandle() << std::endl;
+	vb.setPrimitiveType(gfx::PrimitiveType::TRIANGLE_FAN);
+
+	gfx::RenderStates states(tr.getGlobalTransform(), shader);
 
 	while(window.isOpen())
 	{
@@ -138,26 +107,10 @@ int main()
 
 	    window.clear(gfx::Color(125));
 
-		shader.use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex1.getId());
-		shader.setUniform1i("ourTexture1", 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, tex2.getId());
-		shader.setUniform1i("ourTexture2", 1);
-		shader.setUniformMatrix4fv("transform", tr.getGlobalTransform().getMatrix().getValuesPtr());
-
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+	    window.draw(vb, states);
 
 	    window.display();
 	}
-
-	glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
 
 	window.destroy();
 	system("pause");

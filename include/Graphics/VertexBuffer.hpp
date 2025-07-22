@@ -2,6 +2,7 @@
 #define VERTEX_BUFFER_CLASS_HEADER
 
 #include "Vertex.hpp"
+#include "PrimitiveType.hpp"
 
 
 namespace gfx
@@ -15,10 +16,13 @@ namespace gfx
 		bool create(unsigned int vertex_count);
 		bool update(Vertex* vertices);
 
+		void setPrimitiveType(const PrimitiveType& type);
+
 		unsigned int getVAOHandle();
 		unsigned int getVBOHandle();
 		unsigned int getEBOHandle();
 		unsigned int getSize();
+		PrimitiveType getPrimitiveType();
 
 		static void bind(VertexBuffer* vertex_buffer);
 
@@ -28,6 +32,7 @@ namespace gfx
 		unsigned int m_ebo_id;
 		bool using_ebo;
 		unsigned int m_size;
+		PrimitiveType m_prim_type;
 	};
 }
 

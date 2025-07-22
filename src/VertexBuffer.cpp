@@ -50,6 +50,12 @@ bool gfx::VertexBuffer::update(Vertex* vertices)
 }
 
 
+void gfx::VertexBuffer::setPrimitiveType(const PrimitiveType& type)
+{
+    m_prim_type = type;
+}
+
+
 unsigned int gfx::VertexBuffer::getVAOHandle()
 {
     return m_vao_id;
@@ -68,6 +74,11 @@ unsigned int gfx::VertexBuffer::getEBOHandle()
 unsigned int gfx::VertexBuffer::getSize()
 {
     return m_size;
+}
+
+gfx::PrimitiveType gfx::VertexBuffer::getPrimitiveType()
+{
+    return m_prim_type;
 }
 
 

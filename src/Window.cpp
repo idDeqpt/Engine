@@ -70,17 +70,21 @@ void gfx::Window::destroy()
 }
 
 
-void gfx::Window::draw(VertexBuffer& vertex_buffer, Shader& shader)
+void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 {
-	shader.use();
-	shader.setUniformMatrix4fv("transform", mth::Transform3::getIdentity().getValuesPtr());
+	static constexpr int modes[] =
+        {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
+    const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
+
+	states.m_shader->use();
+	states.m_shader->setUniformMatrix4fv("transform", states.m_transform->getMatrix().getValuesPtr());
 
 	VertexBuffer::bind(&vertex_buffer);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(mode, 0, vertex_buffer.getSize());
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);

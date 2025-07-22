@@ -1,0 +1,18 @@
+#ifndef PRIMITIVE_TYPE_ENUM_HEADER
+#define PRIMITIVE_TYPE_ENUM_HEADER
+
+namespace gfx
+{
+	enum class PrimitiveType
+	{
+		POINTS,
+		LINES,
+		LINE_STRIP,
+		LINE_LOOP,
+		TRIANGLES,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
+}
+
+#endif //PRIMITIVE_TYPE_ENUM_HEADER
