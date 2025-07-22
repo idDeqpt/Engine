@@ -11,10 +11,12 @@ mth::Transform3::Transform3()
 	m_matrix = Transform3::getIdentity();
 }
 
-mth::Transform3::Transform3(const Mat4 mat)
+mth::Transform3::Transform3(const Mat4& mat)
 {
 	m_matrix = mat;
 }
+
+mth::Transform3::Transform3(Transform3& transform) : Transform3(transform.getMatrix()) {}
 
 
 void mth::Transform3::translate(const Vec3& vec)

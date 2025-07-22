@@ -10,7 +10,8 @@ namespace mth
 	{
 	public:
 		Transform3();
-		Transform3(const Mat4 mat);
+		Transform3(const Mat4& mat);
+		Transform3(Transform3& transform);
 
 		void translate(const Vec3& vec);
 		void scale(const Vec3& vec);

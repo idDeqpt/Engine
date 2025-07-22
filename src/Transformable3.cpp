@@ -76,6 +76,7 @@ mth::Transform3 mth::Transformable3::getLocalTransform()
 {
 	if (m_transform_need_update)
 	{
+		m_transform = mth::Transform3::getIdentity();
 		m_transform.translate(m_position);
 		m_transform.rotate(m_rot_vec, m_rot_angle);
 		m_transform.scale(m_scale);
