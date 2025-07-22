@@ -1,7 +1,8 @@
 #ifndef RENDER_STATES_CLASS_HEADER
 #define RENDER_STATES_CLASS_HEADER
 
-namespace mth{class Transform3;}
+#include <Math/Transform3.hpp>
+
 
 namespace gfx
 {
@@ -12,7 +13,7 @@ namespace gfx
 		RenderStates();
 		RenderStates(mth::Transform3& transform, Shader& shader);
 
-		mth::Transform3* m_transform;
+		mth::Transform3 m_transform;
 		Shader* m_shader;
 	};
 }

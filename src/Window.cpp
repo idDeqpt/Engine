@@ -77,7 +77,7 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
     const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
 
 	states.m_shader->use();
-	states.m_shader->setUniformMatrix4fv("transform", states.m_transform->getMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("transform", states.m_transform.getMatrix().getValuesPtr());
 
 	VertexBuffer::bind(&vertex_buffer);
 

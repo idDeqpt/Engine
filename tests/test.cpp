@@ -30,9 +30,9 @@ void print(const mth::Mat4& mat)
 
 int main()
 {
-	gfx::Window window(800, 600, "LearnOpenGL");
+	gfx::Window window(800, 800, "LearnOpenGL");
 
-	window.setViewport(0, 0, 800, 600);
+	window.setViewport(0, 0, 800, 800);
 
 	gfx::Shader shader(
 		"#version 330 core\n"
@@ -79,17 +79,16 @@ int main()
 	std::cout << "Tex2 error: " << tex2.getLastError() << std::endl;
 
 	mth::Transformable3 tr;
-	//tr.setPosition(mth::Vec3(-0.75, -0.75, 1));
+	tr.setPosition(mth::Vec3(-0.5, -0.5, 0));
+	tr.setOrigin(mth::Vec3(0, -0.5, 0));
 	tr.setScale(mth::Vec3(0.5));
-	//tr.setRotation(mth::Vec3(0, 0, 1), 45);
+	tr.setRotation(mth::Vec3(0, 0, 1), 3.14*0.25);
 
 	print(tr.getGlobalTransform().getMatrix());
 
 	gfx::VertexBuffer vb;
-	std::cout << "CREATE: " << vb.create(5) << std::endl;
-	std::cout << "UPDATE: " << vb.update(vertices_obj) << std::endl;
-	std::cout << "VAO: " << vb.getVAOHandle() << std::endl;
-	std::cout << "VBO: " << vb.getVBOHandle() << std::endl;
+	std::cout << "VertexBuffer create: " << vb.create(5) << std::endl;
+	std::cout << "VertexBuffer update: " << vb.update(vertices_obj) << std::endl;
 	vb.setPrimitiveType(gfx::PrimitiveType::TRIANGLE_FAN);
 
 	gfx::RenderStates states(tr.getGlobalTransform(), shader);
@@ -99,11 +98,8 @@ int main()
 	    glfwPollEvents();
 
 	    float time = (GLfloat)glfwGetTime();
-	    mth::Transform3 trans;
-	    mth::Vec3 v = mth::Vec3(cos(time)*0.4, sin(time)*0.4, 0);
-		trans.translate(v);
-		trans.rotate(mth::Vec3(0, 0, 1), time);
-	    trans.scale(mth::Vec3(0.7 + cos(time*4)*0.2, 0.7 - cos(time*4)*0.2, 1));
+	    tr.setRotation(mth::Vec3(0, 0, 1), time);
+	    states.m_transform = tr.getGlobalTransform();
 
 	    window.clear(gfx::Color(125));
 
