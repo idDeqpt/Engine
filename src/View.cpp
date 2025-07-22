@@ -9,13 +9,19 @@ gfx::View::View() : mth::Transformable3()
 	setOrtho(-1, 1, -1, 1, -1, 1);
 }
 
-gfx::View::View(const View& view) : mth::Transformable3()
+gfx::View::View(View& view) : mth::Transformable3()
 {
-	m_projection = m_projection;
+	m_projection = view.getProjectionMatrix();
 	setOrigin(view.m_origin);
 	setPosition(view.m_position);
 	setScale(view.m_scale);
 	setRotation(view.m_rot_vec, view.m_rot_angle);
+}
+
+
+void gfx::View::move(const mth::Vec3& offset)
+{
+	mth::Transformable3::move(-offset);
 }
 
 
@@ -34,6 +40,12 @@ void gfx::View::setOrtho(float left, float right, float bottom, float top, float
 	m_projection[2][3] = -(far + near)/distance;
 
 	m_projection[3][3] = 1;
+}
+
+
+void gfx::View::setPosition(const mth::Vec3& new_position)
+{
+	mth::Transformable3::setPosition(-new_position);
 }
 
 

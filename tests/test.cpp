@@ -81,7 +81,7 @@ int main()
 	std::cout << "Tex2 error: " << tex2.getLastError() << std::endl;
 
 	mth::Transformable3 tr;
-	tr.setPosition(mth::Vec3(5, 5, 0));
+	tr.setPosition(mth::Vec3(0, 0, 0));
 	//tr.setOrigin(mth::Vec3(0, -0.5, 0));
 	//tr.setScale(mth::Vec3(0.5));
 	//tr.setRotation(mth::Vec3(0, 0, 1), 3.14*0.25);
@@ -93,8 +93,14 @@ int main()
 	vb.setPrimitiveType(gfx::PrimitiveType::TRIANGLE_FAN);
 
 	gfx::RenderStates states;
+	states.m_transform = tr.getGlobalTransform();
 	states.m_shader = &shader;
-	states.m_view.setOrtho(0, 10, 10, 0, -3, 3);
+	float width = 10;
+	float height = 20;
+	states.m_view.setOrtho(-10, 10, 10, -10, -30, 30);
+	//states.m_view.setPosition(mth::Vec3(10, 10, 0));
+	//states.m_view.setScale(mth::Vec3(2, 2, 1));
+	states.m_view.setOrigin(mth::Vec3(5, 5, 0));
 
 	print(tr.getGlobalTransform().getMatrix());
 	print(states.m_view.getGlobalTransform().getMatrix());
@@ -108,8 +114,9 @@ int main()
 	    glfwPollEvents();
 
 	    float time = (GLfloat)glfwGetTime();
-	    tr.setRotation(mth::Vec3(1, 0, 0), time);
-	    states.m_transform = tr.getGlobalTransform();
+	    //tr.setRotation(mth::Vec3(1, 0, 0), time);
+	    //states.m_transform = tr.getGlobalTransform();
+		states.m_view.setRotation(mth::Vec3(0, 0, 1), time);
 
 	    window.clear(gfx::Color(125));
 
