@@ -54,9 +54,9 @@ void gfx::View::setPerspective(float fovy, float aspect_ratio, float near, float
 
 	m_projection[0][0] = ct/aspect_ratio;
 	m_projection[1][1] = ct;
-	m_projection[2][2] = (far + near)/distance;
+	m_projection[2][2] = -(far + near)/distance;
 
-	m_projection[2][3] = 1;
+	m_projection[2][3] = -1;
 	m_projection[3][2] = -(2*far*near)/distance;
 
 	m_projection[3][3] = 0;
