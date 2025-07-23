@@ -3,13 +3,13 @@
 #include <glad/glad.h>
 
 #include <Graphics/RenderStates.hpp>
-#include <Graphics/Texture.hpp>
+#include <Graphics/TextureManager.hpp>
 #include <Graphics/Vertex.hpp>
 #include <Graphics/Window.hpp>
 #include <Math/Transformable3.hpp>
 
 
-gfx::Object::Object() : m_VAO(0), m_VBO(0), m_EBO(0), m_texture(nullptr), mth::Transformable3() {}
+gfx::Object::Object() : m_VAO(0), m_VBO(0), m_EBO(0), m_texture(0), mth::Transformable3() {}
 
 gfx::Object::~Object()
 {
@@ -56,9 +56,9 @@ bool gfx::Object::updateData(Vertex* vertices, unsigned int vertices_count, unsi
     return true;
 }
 
-void gfx::Object::setTexture(Texture& texture)
+void gfx::Object::setTexture(TextureId texture)
 {
-	m_texture = &texture;
+	m_texture = texture;
 }
 
 
@@ -67,14 +67,14 @@ void gfx::Object::draw(Window* window, RenderStates& states)
 	states.m_transform = getGlobalTransform();
 	states.m_texture = m_texture;
 
-	bool use_texture = states.m_texture != nullptr;
+	bool use_texture = states.m_texture != 0;
 
 	states.m_shader->use();
 	states.m_shader->setUniform1i("use_texture", use_texture);
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, states.m_texture->getId());
+		glBindTexture(GL_TEXTURE_2D, states.m_texture);
 		states.m_shader->setUniformMatrix4fv("u_texture", 0);
 	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());

@@ -22,7 +22,7 @@ namespace gfx
 
 		bool updateData(Vertex* vertices, unsigned int vertices_count, unsigned int* indexes, unsigned int indexies_count);
 
-		void setTexture(Texture& texture);
+		void setTexture(TextureId texture);
 
 		void draw(Window* window, RenderStates& states);
 
@@ -31,7 +31,7 @@ namespace gfx
 		unsigned int m_VBO;
 		unsigned int m_EBO;
 		unsigned int m_indexes_count;
-		Texture* m_texture;
+		TextureId m_texture;
 	};
 }
 

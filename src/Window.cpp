@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include <Graphics/VertexBuffer.hpp>
-#include <Graphics/Texture.hpp>
+#include <Graphics/TextureManager.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/View.hpp>
 #include <Math/Transform3.hpp>
@@ -20,6 +20,7 @@ gfx::Window::Window(int width, int height, std::string title)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
 	window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 	if (window_ptr == nullptr)
@@ -31,6 +32,7 @@ gfx::Window::Window(int width, int height, std::string title)
 	glfwMakeContextCurrent(window_ptr);
 	gladLoadGL();
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 }
 
 gfx::Window::~Window()
@@ -84,14 +86,14 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
         {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
     const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
 
-    bool use_texture = states.m_texture != nullptr;
+    bool use_texture = states.m_texture != 0;
 
 	states.m_shader->use();
 	states.m_shader->setUniform1i("use_texture", use_texture);
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, states.m_texture->getId());
+		glBindTexture(GL_TEXTURE_2D, states.m_texture);
 		states.m_shader->setUniformMatrix4fv("u_texture", 0);
 	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());

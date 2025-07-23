@@ -16,7 +16,7 @@ gfx::Shape::Shape() : mth::Transformable3()
 {
 	m_vertices.clear();
 	m_vertices_buffer.create();
-	m_texture = nullptr;
+	m_texture = 0;
 }
 
 
@@ -25,9 +25,9 @@ void gfx::Shape::setColor(const Color& color)
 	m_color = color;
 }
 
-void gfx::Shape::setTexture(Texture& texture)
+void gfx::Shape::setTexture(TextureId texture)
 {
-	m_texture = &texture;
+	m_texture = texture;
 }
 
 

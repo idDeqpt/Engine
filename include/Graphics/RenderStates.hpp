@@ -2,12 +2,12 @@
 #define RENDER_STATES_CLASS_HEADER
 
 #include <Graphics/View.hpp>
+#include <Graphics/TextureManager.hpp>
 #include <Math/Transform3.hpp>
 
 
 namespace gfx
 {
-	class Texture;
 	class Shader;
 
 	struct RenderStates
@@ -16,7 +16,7 @@ namespace gfx
 
 		View m_view;
 		mth::Transform3 m_transform;
-		Texture* m_texture;
+		TextureId m_texture;
 		Shader* m_shader;
 	};
 }

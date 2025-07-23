@@ -23,7 +23,7 @@ namespace gfx
 		Shape();
 
 		void setColor(const Color& color);
-		void setTexture(Texture& texture);
+		void setTexture(TextureId texture);
 
 		void addPoint(const mth::Vec3& vertex_pos, const mth::Vec2& vertex_tex_pos = mth::Vec2(0));
 		void update();
@@ -34,7 +34,7 @@ namespace gfx
 		std::vector<Vertex> m_vertices;
 		Color m_color;
 		VertexBuffer m_vertices_buffer;
-		Texture* m_texture;
+		TextureId m_texture;
 	};
 }
 

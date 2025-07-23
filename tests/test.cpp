@@ -5,7 +5,7 @@
 #include <Graphics/Color.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
-#include <Graphics/Texture.hpp>
+#include <Graphics/TextureManager.hpp>
 #include <Graphics/Object.hpp>
 #include <Graphics/Vertex.hpp>
 #include <Graphics/RenderStates.hpp>
@@ -107,21 +107,23 @@ int main()
 	unsigned int indexes_obj[] = {
 		0, 1, 2, 1, 2, 3, //низ
 		4, 5, 6, 5, 6, 7, //верх
-//		0, 1, 5, 0, 5, 4, //перед
-//		2, 3, 7, 2, 7, 6, //зад
-//		0, 2, 6, 0, 6, 4, //лево
-//		1, 3, 7, 1, 7, 5 //право
+		0, 1, 5, 0, 5, 4, //перед
+		2, 3, 7, 2, 7, 6, //зад
+		0, 2, 6, 0, 6, 4, //лево
+		1, 3, 7, 1, 7, 5 //право
 	};
 
-	gfx::Texture tex1("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png");
-	gfx::Texture tex2("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png");
+	gfx::TextureManager::initialize();
 
-	std::cout << "Tex1 error: " << tex1.getLastError() << std::endl;
-	std::cout << "Tex2 error: " << tex2.getLastError() << std::endl;
+	gfx::TextureId tex1 = gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png");
+	gfx::TextureId tex2 = gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png");
+
+	std::cout << "Tex1: " << tex1 << std::endl;
+	std::cout << "Tex2: " << tex2 << std::endl;
 
 	gfx::Object obj;
 	obj.create();
-	obj.updateData(vertices_obj, 8, indexes_obj, 12);
+	obj.updateData(vertices_obj, 8, indexes_obj, 36);
 	obj.setTexture(tex1);
 	//obj.setOrigin(mth::Vec3(0.5));
 	//obj.setScale(mth::Vec3(0.1));
@@ -133,7 +135,7 @@ int main()
 	//states.m_texture = &tex1;
 	//states.m_view.setOrtho(-5, 5, 5, -5, -30, 30);
 	states.m_view.setPerspective(3.14*0.25, 1, 1, 100);
-	//states.m_view.setPosition(mth::Vec3(0, 0, 3));
+	states.m_view.setPosition(mth::Vec3(0, 0, 3));
 	//states.m_view.setRotation(mth::Vec3(0, 1, 0), 3.14);
 
 	print(states.m_view.getProjectionMatrix());
@@ -170,6 +172,7 @@ int main()
 		//states.m_view.setPosition(mth::Vec3(0, cos(time), 5 + sin(time)));
 
 	    window.clear(gfx::Color(125));
+
 	    for (unsigned int i = 0; i < positions.size(); i++)
 	    {
 	    	obj.setPosition(positions[i]);
@@ -178,6 +181,8 @@ int main()
 
 	    window.display();
 	}
+
+	gfx::TextureManager::finalize();
 
 	window.destroy();
 	system("pause");
