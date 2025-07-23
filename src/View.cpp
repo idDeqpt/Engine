@@ -1,6 +1,9 @@
 #include <Graphics/View.hpp>
 
+#include <cmath>
+
 #include <Math/Mat4.hpp>
+#include <Math/Transform3.hpp>
 #include <Math/Transformable3.hpp>
 
 
@@ -31,6 +34,8 @@ void gfx::View::setOrtho(float left, float right, float bottom, float top, float
 	float height = top - bottom;
 	float distance = far - near;
 
+	m_projection = mth::Transform3::getIdentity();
+
 	m_projection[0][0] = 2.0/width;
 	m_projection[1][1] = 2.0/height;
 	m_projection[2][2] = -2.0/distance;
@@ -38,8 +43,23 @@ void gfx::View::setOrtho(float left, float right, float bottom, float top, float
 	m_projection[0][3] = -(right + left)/width;
 	m_projection[1][3] = -(top + bottom)/height;
 	m_projection[2][3] = -(far + near)/distance;
+}
 
-	m_projection[3][3] = 1;
+void gfx::View::setPerspective(float fovy, float aspect_ratio, float near, float far)
+{
+	float ct = 1.0/tan(fovy/2);
+	float distance = far - near;
+
+	m_projection = mth::Transform3::getIdentity();
+
+	m_projection[0][0] = ct/aspect_ratio;
+	m_projection[1][1] = ct;
+	m_projection[2][2] = (far + near)/distance;
+
+	m_projection[2][3] = 1;
+	m_projection[3][2] = -(2*far*near)/distance;
+
+	m_projection[3][3] = 0;
 }
 
 

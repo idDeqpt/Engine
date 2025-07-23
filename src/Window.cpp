@@ -30,6 +30,7 @@ gfx::Window::Window(int width, int height, std::string title)
 	}
 	glfwMakeContextCurrent(window_ptr);
 	gladLoadGL();
+	glEnable(GL_DEPTH_TEST);
 }
 
 gfx::Window::~Window()
@@ -58,7 +59,7 @@ bool gfx::Window::isOpen()
 void gfx::Window::clear(const gfx::Color& color)
 {
 	glClearColor(color.r/float(COLOR_MAX_VALUE), color.g/float(COLOR_MAX_VALUE), color.b/float(COLOR_MAX_VALUE), color.a/float(COLOR_MAX_VALUE));
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void gfx::Window::display()
@@ -102,7 +103,10 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glDrawArrays(mode, 0, vertex_buffer.getSize());
+
+	if (vertex_buffer.getEBOHandle() == 0)
+		glDrawArrays(mode, 0, vertex_buffer.getSize());
+
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);

@@ -16,7 +16,7 @@ namespace gfx
 		void move(const mth::Vec3& offset);
 
 		void setOrtho(float left, float right, float bottom, float top, float near, float far);
-		//void setFrustum(float left, float right, float top, float bottom, float near, float far);
+		void setPerspective(float fovy, float aspect_ratio, float near, float far);
 
 		void setPosition(const mth::Vec3& new_position);
 
