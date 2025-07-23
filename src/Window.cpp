@@ -32,7 +32,6 @@ gfx::Window::Window(int width, int height, std::string title)
 	glfwMakeContextCurrent(window_ptr);
 	gladLoadGL();
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
 }
 
 gfx::Window::~Window()
@@ -93,7 +92,7 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, states.m_texture);
+		TextureManaget::bind(states.m_texture);
 		states.m_shader->setUniformMatrix4fv("u_texture", 0);
 	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());

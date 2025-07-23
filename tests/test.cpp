@@ -115,16 +115,18 @@ int main()
 
 	gfx::TextureManager::initialize();
 
-	gfx::TextureId tex1 = gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png");
-	gfx::TextureId tex2 = gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png");
+	gfx::TextureId tex[] = {
+		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png"),
+		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png")
+	};
 
-	std::cout << "Tex1: " << tex1 << std::endl;
-	std::cout << "Tex2: " << tex2 << std::endl;
+	std::cout << "Tex1: " << tex[0] << std::endl;
+	std::cout << "Tex2: " << tex[1] << std::endl;
 
 	gfx::Object obj;
 	obj.create();
 	obj.updateData(vertices_obj, 8, indexes_obj, 36);
-	obj.setTexture(tex1);
+	//obj.setTexture(tex1);
 	//obj.setOrigin(mth::Vec3(0.5));
 	//obj.setScale(mth::Vec3(0.1));
 	obj.setPosition(mth::Vec3(0, 0, -1));
@@ -176,6 +178,7 @@ int main()
 	    for (unsigned int i = 0; i < positions.size(); i++)
 	    {
 	    	obj.setPosition(positions[i]);
+	    	obj.setTexture(tex[i % 2]);
 	    	window.draw(obj, states);
 	    }
 

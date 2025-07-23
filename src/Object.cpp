@@ -74,7 +74,7 @@ void gfx::Object::draw(Window* window, RenderStates& states)
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, states.m_texture);
+		TextureManaget::bind(states.m_texture);
 		states.m_shader->setUniformMatrix4fv("u_texture", 0);
 	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());
