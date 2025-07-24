@@ -103,6 +103,36 @@ int main()
 		{mth::Vec3(-0.5, 0.5, 0.5), gfx::Color(0, 0, 255), mth::Vec2(0, 0)},
 		{mth::Vec3(0.5, 0.5, 0.5), gfx::Color(255, 255, 0), mth::Vec2(1, 0)},
 	};
+	mth::Vec3 obj_pos[] = {
+		{-0.5, -0.5, -0.5},
+		{0.5, -0.5, -0.5},
+		{-0.5, 0.5, -0.5},
+		{0.5, 0.5, -0.5},
+		{-0.5, -0.5, 0.5},
+		{0.5, -0.5, 0.5},
+		{-0.5, 0.5, 0.5},
+		{0.5, 0.5, 0.5},
+	};
+	gfx::Color obj_col[] = {
+		{255, 0, 0},
+		{0, 255, 0},
+		{0, 0, 255},
+		{255, 255, 0},
+		{255, 0, 0},
+		{0, 255, 0},
+		{0, 0, 255},
+		{255, 255, 0},
+	};
+	mth::Vec2 obj_texc[] = {
+		{0, 0},
+		{1, 0},
+		{0, 1},
+		{1, 1},
+		{0, 1},
+		{1, 1},
+		{0, 0},
+		{1, 0},
+	};
 
 	unsigned int indexes_obj[] = {
 		0, 1, 2, 1, 2, 3, //низ
@@ -110,7 +140,7 @@ int main()
 		0, 1, 5, 0, 5, 4, //перед
 		2, 3, 7, 2, 7, 6, //зад
 		0, 2, 6, 0, 6, 4, //лево
-		1, 3, 7, 1, 7, 5 //право
+		1, 3, 7, 1, 7, 5, //право
 	};
 
 	gfx::TextureManager::initialize();
@@ -125,8 +155,8 @@ int main()
 
 	gfx::Object obj;
 	obj.create();
-	obj.updateData(vertices_obj, 8, indexes_obj, 36);
-	//obj.setTexture(tex1);
+	obj.loadData({obj_pos, obj_col, nullptr, indexes_obj, 8, 36});
+	obj.setTexture(tex[0]);
 	//obj.setOrigin(mth::Vec3(0.5));
 	//obj.setScale(mth::Vec3(0.1));
 	obj.setPosition(mth::Vec3(0, 0, -1));
