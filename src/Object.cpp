@@ -5,7 +5,6 @@
 
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/TextureManager.hpp>
-#include <Graphics/Vertex.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Color.hpp>
 #include <Math/Vec2.hpp>
@@ -13,9 +12,11 @@
 #include <Math/Transformable3.hpp>
 
 
-gfx::Object::Object() : m_VAO(0), m_VBO{0, 0, 0}, m_EBO(0), m_has_tex_coords(false), m_texture(0), mth::Transformable3()
+gfx::Object::Object() : m_VAO(0), m_VBO{0, 0, 0}, m_EBO(0), m_inited(false), m_has_tex_coords(false), m_texture(0), mth::Transformable3()
 {
-	create();
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(3, m_VBO);
+	glGenBuffers(1, &m_EBO);
 }
 
 gfx::Object::~Object()
@@ -29,20 +30,9 @@ gfx::Object::~Object()
 }
 
 
-bool gfx::Object::create()
+bool gfx::Object::loadData(ObjectData data)
 {
-	if (m_VAO) return false;
-
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(3, m_VBO);
-	glGenBuffers(1, &m_EBO);
-
-	return true;
-}
-
-
-void gfx::Object::loadData(ObjectData data)
-{
+	if (!data.points || !(data.colors || data.tex_coords) || !data.indexes) return m_inited = false;
 	glBindVertexArray(m_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO[0]);
@@ -50,10 +40,13 @@ void gfx::Object::loadData(ObjectData data)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mth::Vec3), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Color)*data.vertices_count, data.colors, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Color), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
+	if (data.colors)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[1]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Color)*data.vertices_count, data.colors, GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Color), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+	}
 
 	m_has_tex_coords = data.tex_coords != nullptr;
 	if (m_has_tex_coords)
@@ -69,6 +62,7 @@ void gfx::Object::loadData(ObjectData data)
 	m_indexes_count = data.indexes_count;
 	
 	glBindVertexArray(0);
+	return m_inited = true;
 }
 
 void gfx::Object::setTexture(TextureId texture)
@@ -79,6 +73,8 @@ void gfx::Object::setTexture(TextureId texture)
 
 void gfx::Object::draw(Window* window, RenderStates& states)
 {
+	if (!m_inited) return;
+
 	states.m_transform = getGlobalTransform();
 	states.m_texture = m_texture;
 

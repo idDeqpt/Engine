@@ -31,9 +31,7 @@ namespace gfx
 		Object();
 		~Object();
 
-		bool create();
-
-		void loadData(ObjectData data);
+		bool loadData(ObjectData data);
 		void setTexture(TextureId texture);
 
 		void draw(Window* window, RenderStates& states);
@@ -43,6 +41,7 @@ namespace gfx
 		unsigned int m_VBO[3];
 		unsigned int m_EBO;
 		unsigned int m_indexes_count;
+		bool m_inited;
 		bool m_has_tex_coords;
 		TextureId m_texture;
 	};

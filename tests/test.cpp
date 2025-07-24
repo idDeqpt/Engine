@@ -7,6 +7,7 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/TextureManager.hpp>
 #include <Graphics/Object.hpp>
+#include <Graphics/GeometricObject.hpp>
 #include <Graphics/Vertex.hpp>
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/PrimitiveType.hpp>
@@ -93,16 +94,6 @@ int main()
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
 
-	gfx::Vertex vertices_obj[] = {
-		{mth::Vec3(-0.5, -0.5, -0.5), gfx::Color(255, 0, 0), mth::Vec2(0, 0)},
-		{mth::Vec3(0.5, -0.5, -0.5), gfx::Color(0, 255, 0), mth::Vec2(1, 0)},
-		{mth::Vec3(-0.5, 0.5, -0.5), gfx::Color(0, 0, 255), mth::Vec2(0, 1)},
-		{mth::Vec3(0.5, 0.5, -0.5), gfx::Color(255, 255, 0), mth::Vec2(1, 1)},
-		{mth::Vec3(-0.5, -0.5, 0.5), gfx::Color(255, 0, 0), mth::Vec2(0, 1)},
-		{mth::Vec3(0.5, -0.5, 0.5), gfx::Color(0, 255, 0), mth::Vec2(1, 1)},
-		{mth::Vec3(-0.5, 0.5, 0.5), gfx::Color(0, 0, 255), mth::Vec2(0, 0)},
-		{mth::Vec3(0.5, 0.5, 0.5), gfx::Color(255, 255, 0), mth::Vec2(1, 0)},
-	};
 	mth::Vec3 obj_pos[] = {
 		{-0.5, -0.5, -0.5},
 		{0.5, -0.5, -0.5},
@@ -124,14 +115,14 @@ int main()
 		{255, 255, 0},
 	};
 	mth::Vec2 obj_texc[] = {
+		{0.25, 0.25},
+		{0.75, 0.25},
+		{0.25, 0.75},
+		{0.75, 0.75},
 		{0, 0},
 		{1, 0},
 		{0, 1},
 		{1, 1},
-		{0, 1},
-		{1, 1},
-		{0, 0},
-		{1, 0},
 	};
 
 	unsigned int indexes_obj[] = {
@@ -153,66 +144,98 @@ int main()
 	std::cout << "Tex1: " << tex[0] << std::endl;
 	std::cout << "Tex2: " << tex[1] << std::endl;
 
+	const unsigned int floor_size = 4;
+	mth::Vec3 floor_points[floor_size*floor_size];
+	gfx::Color floor_colors[floor_size*floor_size];
+	mth::Vec2 floor_tex_coords[floor_size*floor_size];
+	unsigned int floor_indexes[(floor_size - 1)*(floor_size - 1)*6];
+	unsigned int index = 0;
+	for (unsigned int i = 0; i < floor_size; i++)
+		for (unsigned int j = 0; j < floor_size; j++)
+		{
+			floor_points[index] = mth::Vec3(float(i)/floor_size, 0, float(j)/floor_size);
+			std::cout << floor_points[index].x << " " << floor_points[index].y << " " << floor_points[index].z << std::endl;
+			floor_colors[index] = gfx::Color(125, 0, 125);
+			floor_tex_coords[index++] = mth::Vec2(float(i)/floor_size, float(j)/floor_size);
+		}
+	index = 0;
+	for (unsigned int i = 0; i < (floor_size - 1); i++)
+		for (unsigned int j = 0; j < (floor_size - 1); j++)
+		{
+			unsigned int first = i*floor_size + j;
+			unsigned int second = first + floor_size;
+
+			floor_indexes[index++] = first;
+			floor_indexes[index++] = second;
+			floor_indexes[index++] = first + 1;
+
+			floor_indexes[index++] = second;
+			floor_indexes[index++] = second + 1;
+			floor_indexes[index++] = first + 1;
+		}
+
+	gfx::Object floor;
+	//floor.setScale(mth::Vec3(5));
+	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_colors, floor_tex_coords, floor_indexes, floor_size*floor_size, (floor_size - 1)*(floor_size - 1)}) << std::endl;
+	floor.setTexture(tex[0]);
+/*
 	gfx::Object obj;
 	obj.create();
-	obj.loadData({obj_pos, obj_col, nullptr, indexes_obj, 8, 36});
+	obj.loadData({obj_pos, obj_col, obj_texc, indexes_obj, 8, 36});
 	obj.setTexture(tex[0]);
 	//obj.setOrigin(mth::Vec3(0.5));
 	//obj.setScale(mth::Vec3(0.1));
 	obj.setPosition(mth::Vec3(0, 0, -1));
 	//obj.setRotation(mth::Vec3(0, 1, 0), 3.14*0.2);
+*/
+	gfx::GeometricObject obj(gfx::GeometricObject::Type::ELLIPSOID);
+	//obj.setAccuracy();
 
 	gfx::RenderStates states;
 	states.m_shader = &shader;
 	//states.m_texture = &tex1;
 	//states.m_view.setOrtho(-5, 5, 5, -5, -30, 30);
 	states.m_view.setPerspective(3.14*0.25, 1, 1, 100);
-	states.m_view.setPosition(mth::Vec3(0, 0, 3));
-	//states.m_view.setRotation(mth::Vec3(0, 1, 0), 3.14);
-
-	print(states.m_view.getProjectionMatrix());
-	print(states.m_view.getGlobalTransform().getMatrix());
-	print(obj.getGlobalTransform().getMatrix());
-
-	print(states.m_view.getProjectionMatrix()*states.m_view.getGlobalTransform().getMatrix()*obj.getGlobalTransform().getMatrix());
-	for (unsigned int i = 0; i < 8; i++)
-		print(mult(states.m_view.getProjectionMatrix()*states.m_view.getGlobalTransform().getMatrix()*obj.getGlobalTransform().getMatrix(),
-					mth::Vec4(vertices_obj[i].position.x, vertices_obj[i].position.y, vertices_obj[i].position.z, 1)));
+	states.m_view.setPosition(mth::Vec3(0, 1, 5));
+	states.m_view.setRotation(mth::Vec3(1, 0, 0), -3.14*0.25);
 
 	std::vector<mth::Vec3> positions = {
 		{0.0f,  0.0f,  0.0f}, 
-  		{2.0f,  5.0f, -15.0f}, 
-  		{-1.5f, -2.2f, -2.5f}, 
-  		{-3.8f, -2.0f, -12.3f}, 
-  		{2.4f, -0.4f, -3.5f}, 
-  		{-1.7f,  3.0f, -7.5f}, 
-  		{1.3f, -2.0f, -2.5f}, 
-  		{1.5f,  2.0f, -2.5f}, 
-  		{1.5f,  0.2f, -1.5f}, 
-  		{-1.3f,  1.0f, -1.5f}
+		{2.0f,  5.0f, -15.0f}, 
+		{-1.5f, -2.2f, -2.5f}, 
+		{-3.8f, -2.0f, -12.3f}, 
+		{2.4f, -0.4f, -3.5f}, 
+		{-1.7f,  3.0f, -7.5f}, 
+		{1.3f, -2.0f, -2.5f}, 
+		{1.5f,  2.0f, -2.5f}, 
+		{1.5f,  0.2f, -1.5f}, 
+		{-1.3f,  1.0f, -1.5f}
 	};
 
 	while(window.isOpen())
 	{
-	    glfwPollEvents();
+		glfwPollEvents();
 
-	    float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Vec3(0.5, 1, 0), time);
+		float time = (GLfloat)glfwGetTime();
+		obj.setRotation(mth::Vec3(0.5, 1, 0), time*0.5);
 		//states.m_view.setPosition(mth::Vec3(0, 0, 5 + sin(time)));
-		
-		std::cout << 5 - time*0.5 << std::endl;
+		float near = (sin(time/2) + 1)*2;
+		//states.m_view.setPerspective(3.14*0.25, 1, near, 100);
+		std::cout << near << std::endl;
 		//states.m_view.setPosition(mth::Vec3(0, cos(time), 5 + sin(time)));
+		states.m_view.setRotation(mth::Vec3(1, 0, 0), sin(time));
 
-	    window.clear(gfx::Color(125));
+		window.clear(gfx::Color(125));
 
-	    for (unsigned int i = 0; i < positions.size(); i++)
-	    {
-	    	obj.setPosition(positions[i]);
-	    	obj.setTexture(tex[i % 2]);
-	    	window.draw(obj, states);
-	    }
+		for (unsigned int i = 0; i < positions.size(); i++)
+		{
+			obj.setPosition(positions[i]);
+			obj.setTexture(tex[i % 2]);
+			window.draw(obj, states);
+		}
+		window.draw(floor, states);
 
-	    window.display();
+		window.display();
 	}
 
 	gfx::TextureManager::finalize();
