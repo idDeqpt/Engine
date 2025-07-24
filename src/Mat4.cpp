@@ -1,4 +1,5 @@
 #include <Math/Mat4.hpp>
+#include <Math/Mat3.hpp>
 
 #include <stdexcept>
 
@@ -26,6 +27,27 @@ mth::Mat4::Mat4(float v00, float v01, float v02, float v03,
 		   v10, v11, v12, v13,
 		   v20, v21, v22, v23,
 		   v30, v31, v32, v33} {}
+
+
+float mth::Mat4::det() const
+{
+	const Mat4& self = *this;
+	float det = 0;
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		Mat3 subMatrix;
+		for (unsigned int j = 1; j < 4; j++)
+			for (unsigned int k = 0; k < 4; k++)
+			{
+				if (k < i)
+					subMatrix[j - 1][k] = self[j][k];
+				else if (k > i)
+					subMatrix[j - 1][k - 1] = self[j][k];
+			}
+		det += (i % 2 == 0 ? 1 : -1) * self[0][i] * subMatrix.det();
+	}
+	return det;
+}
 
 
 float* mth::Mat4::getValuesPtr()

@@ -11,6 +11,7 @@ set(SOURCE_FILES
 	src/Vec2.cpp
 	src/Vec3.cpp
 	src/Vec4.cpp
+	src/Mat3.cpp
 	src/Mat4.cpp
 	src/Transform3.cpp
 	src/Transformable3.cpp)

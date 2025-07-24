@@ -26,6 +26,8 @@ namespace mth
 			 float v20, float v21, float v22, float v23,
 			 float v30, float v31, float v32, float v33);
 
+		float det() const;
+
 		float* getValuesPtr();
 
 		const Row operator[](unsigned int index) const;

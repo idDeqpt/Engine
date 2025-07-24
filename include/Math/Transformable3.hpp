@@ -24,6 +24,7 @@ namespace mth
 		Transformable3* getParent();
 		Transform3 getLocalTransform();
 		Transform3 getGlobalTransform();
+		Transform3 getInvertLocalTransform();
 
 	protected:
 		Vec3 m_origin;
@@ -32,8 +33,12 @@ namespace mth
 		Vec3 m_rot_vec;
 		float m_rot_angle;
 		Transform3 m_transform;
-		Transformable3* m_parent;
+		Transform3 m_invert_transform;
 		bool m_transform_need_update;
+		bool m_invert_transform_need_update;
+		Transformable3* m_parent;
+
+		void computeTransform();
 	};
 }
 
