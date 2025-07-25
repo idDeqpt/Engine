@@ -25,6 +25,7 @@ namespace gfx
 
 		void setViewport(int x, int y, int width, int height);
 		bool isOpen();
+		void close();
 
 		void clear(const Color& color);
 		void display();

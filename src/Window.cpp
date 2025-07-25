@@ -56,6 +56,11 @@ bool gfx::Window::isOpen()
 	return !glfwWindowShouldClose(window_ptr);
 }
 
+void gfx::Window::close()
+{
+	glfwSetWindowShouldClose(window_ptr, true);
+}
+
 
 void gfx::Window::clear(const gfx::Color& color)
 {
