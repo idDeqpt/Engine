@@ -35,6 +35,8 @@ namespace mth
 		Row operator[](unsigned int index);
 		Mat4& operator=(const Mat4& mat);
 
+		static Mat4 getIdentity();
+
 	protected:
 		float values[16];
 	};

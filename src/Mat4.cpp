@@ -4,6 +4,18 @@
 #include <stdexcept>
 
 
+mth::Mat4 mth::Mat4::getIdentity()
+{
+	return Mat4(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	);
+}
+
+
+
 mth::Mat4::Mat4() : Mat4(0) {}
 
 mth::Mat4::Mat4(float v)
@@ -52,7 +64,7 @@ float mth::Mat4::det() const
 bool mth::Mat4::invert(Mat4& out)
 {
 	Mat4 self(*this);
-	Mat4 I;
+	Mat4 I = getIdentity();
 
 	for (unsigned int i = 0; i < 4; i++)
 	{
