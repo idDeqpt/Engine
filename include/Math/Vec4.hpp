@@ -6,10 +6,10 @@ namespace mth
 	class Vec4
 	{
 	public:
-		float& x = values[0];
-		float& y = values[1];
-		float& z = values[2];
-		float& w = values[3];
+		float x;
+		float y;
+		float z;
+		float w;
 
 		Vec4();
 		Vec4(float v);
@@ -18,9 +18,6 @@ namespace mth
 
 		float operator[](unsigned int index) const;
 		float& operator[](unsigned int index);
-
-	protected:
-		float values[4];
 	};
 }
 

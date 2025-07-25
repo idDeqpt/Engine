@@ -34,7 +34,6 @@ float mth::Vec3::operator[](unsigned int index) const
 	if (index >= 3)
 		throw std::out_of_range("Vector3 const size");
 	return *(&x + index);
-	//return (std::initializer_list<float>{x, y, z}.begin())[index];
 }
 
 float& mth::Vec3::operator[](unsigned int index)
