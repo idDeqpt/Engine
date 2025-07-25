@@ -27,6 +27,7 @@ namespace mth
 			 float v30, float v31, float v32, float v33);
 
 		float det() const;
+		bool invert(Mat4& out);
 
 		float* getValuesPtr();
 

@@ -49,6 +49,39 @@ float mth::Mat4::det() const
 	return det;
 }
 
+bool mth::Mat4::invert(Mat4& out)
+{
+	Mat4 self(*this);
+	Mat4 I;
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		float pivot = self[i][i];
+		if (pivot == 0)
+			return false;
+		float pivot_inv = 1.0/pivot;
+
+		for (unsigned int j = 0; j < 4; j++)
+		{
+			self[i][j] *= pivot_inv;
+			I[i][j] *= pivot_inv;
+		}
+
+		for (unsigned int k = 0; k < 4; k++)
+			if (k != i)
+			{
+				float factor = self[k][i];
+				for (unsigned int j = 0; j < 4; j++)
+				{
+					self[k][j] -= factor * self[i][j];
+					I[k][j] -= factor * I[i][j];
+				}
+			}
+	}
+	out = I;
+	return true;
+}
+
 
 float* mth::Mat4::getValuesPtr()
 {
