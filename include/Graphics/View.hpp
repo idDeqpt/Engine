@@ -13,14 +13,11 @@ namespace gfx
 		View();
 		View(View& view);
 
-		void move(const mth::Vec3& offset);
-
 		void setOrtho(float left, float right, float bottom, float top, float near, float far);
 		void setPerspective(float fovy, float aspect_ratio, float near, float far);
 
-		void setPosition(const mth::Vec3& new_position);
-
 		mth::Mat4 getProjectionMatrix();
+		mth::Mat4 getViewMatrix();
 
 	protected:
 		mth::Mat4 m_projection;

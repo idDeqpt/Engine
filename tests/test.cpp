@@ -7,14 +7,15 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/TextureManager.hpp>
 #include <Graphics/EventManager.hpp>
-#include <Graphics/Object.hpp>
-#include <Graphics/GeometricObject.hpp>
+#include <Graphics/Mesh.hpp>
+#include <Graphics/GeometricMesh.hpp>
 #include <Graphics/Vertex.hpp>
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Math/Vec2.hpp>
 #include <Math/Vec3.hpp>
 #include <Math/Vec4.hpp>
+#include <Math/Quaternion.hpp>
 #include <Math/Transform3.hpp>
 #include <Math/Transformable3.hpp>
 #include <cmath>
@@ -32,12 +33,29 @@ void print(const mth::Mat4& mat)
 }
 
 
+void print(const mth::Quaternion& q)
+{
+	std::cout << q.w << " ";
+	std::cout << q.x << " ";
+	std::cout << q.y << " ";
+	std::cout << q.z << " ";
+	std::cout << std::endl;
+}
+
 void print(const mth::Vec4& vec)
 {
 	std::cout << vec.x << " ";
 	std::cout << vec.y << " ";
 	std::cout << vec.z << " ";
 	std::cout << vec.w << " ";
+	std::cout << std::endl;
+}
+
+void print(const mth::Vec3& vec)
+{
+	std::cout << vec.x << " ";
+	std::cout << vec.y << " ";
+	std::cout << vec.z << " ";
 	std::cout << std::endl;
 }
 
@@ -178,21 +196,12 @@ int main()
 			floor_indexes[index++] = first + 1;
 		}
 
-	gfx::Object floor;
+	gfx::Mesh floor;
 	//floor.setScale(mth::Vec3(5));
 	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_colors, floor_tex_coords, floor_indexes, floor_points_count, floor_indexes_count}) << std::endl;
 	floor.setTexture(tex[0]);
-/*
-	gfx::Object obj;
-	obj.create();
-	obj.loadData({obj_pos, obj_col, obj_texc, indexes_obj, 8, 36});
-	obj.setTexture(tex[0]);
-	//obj.setOrigin(mth::Vec3(0.5));
-	//obj.setScale(mth::Vec3(0.1));
-	obj.setPosition(mth::Vec3(0, 0, -1));
-	//obj.setRotation(mth::Vec3(0, 1, 0), 3.14*0.2);
-*/
-	gfx::GeometricObject obj(gfx::GeometricObject::Type::ELLIPSOID);
+
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	//obj.setAccuracy();
 
 	gfx::RenderStates states;
@@ -217,6 +226,7 @@ int main()
 	};
 
 	float speed = 0.1;
+	float rot = 0;
 	while(window.isOpen())
 	{
 		mth::Vec3 vel;
@@ -234,10 +244,25 @@ int main()
 			vel.y -= speed;
 		if (gfx::EventManager::isPressed(GLFW_KEY_SPACE))
 			vel.y += speed;
+		if (gfx::EventManager::isPressed(GLFW_KEY_Q))
+			rot += speed;
+		if (gfx::EventManager::isPressed(GLFW_KEY_E))
+			rot -= speed;
 
-		states.m_view.move(vel);
+		if (vel.x || vel.y || vel.z)
+		{
+			std::cout << "MATS\n";
+			mth::Quaternion rot = states.m_view.getRotation();
+			print(vel);
+			print(rot);
+			print(rot.rotateVec(vel));
+		}
+
+		states.m_view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), rot));
+		states.m_view.relativeMove(vel);
+		//states.m_view.move(vel);
 		float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Vec3(0.5, 1, 0), time*0.5);
+		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 		//states.m_view.setPosition(mth::Vec3(0, 0, 5 + sin(time)));
 		float near = (sin(time/2) + 1)*2;
 		//states.m_view.setPerspective(3.14*0.25, 1, near, 100);
@@ -251,7 +276,7 @@ int main()
 		{
 			obj.setPosition(positions[i]);
 			obj.setTexture(tex[i % 2]);
-			//window.draw(obj, states);
+			window.draw(obj, states);
 		}
 		window.draw(floor, states);
 

@@ -101,7 +101,7 @@ void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
 		states.m_shader->setUniformMatrix4fv("u_texture", 0);
 	}
 	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("view", states.m_view.getGlobalTransform().getMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("view", states.m_view.getViewMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("model", states.m_transform.getMatrix().getValuesPtr());
 
 	VertexBuffer::bind(&vertex_buffer);

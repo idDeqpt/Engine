@@ -18,13 +18,7 @@ gfx::View::View(View& view) : mth::Transformable3()
 	setOrigin(view.m_origin);
 	setPosition(view.m_position);
 	setScale(view.m_scale);
-	setRotation(view.m_rot_vec, view.m_rot_angle);
-}
-
-
-void gfx::View::move(const mth::Vec3& offset)
-{
-	mth::Transformable3::move(-offset);
+	setRotation(view.m_rotation);
 }
 
 
@@ -63,13 +57,14 @@ void gfx::View::setPerspective(float fovy, float aspect_ratio, float near, float
 }
 
 
-void gfx::View::setPosition(const mth::Vec3& new_position)
-{
-	mth::Transformable3::setPosition(-new_position);
-}
-
-
 mth::Mat4 gfx::View::getProjectionMatrix()
 {
 	return m_projection;
+}
+
+mth::Mat4 gfx::View::getViewMatrix()
+{
+	mth::Mat4 view_mat;
+	getGlobalTransform().getMatrix().invert(view_mat);
+	return view_mat;
 }
