@@ -1,8 +1,9 @@
 #ifndef TRANSFORM_3_CLASS_HEADER
 #define TRANSFORM_3_CLASS_HEADER
 
-#include "Mat4.hpp"
-#include "Vec3.hpp"
+#include <Math/Mat4.hpp>
+#include <Math/Vec3.hpp>
+#include <Math/Quaternion.hpp>
 
 namespace mth
 {
@@ -16,6 +17,7 @@ namespace mth
 		void translate(const Vec3& vec);
 		void scale(const Vec3& vec);
 		void rotate(const Vec3& vec, float angle); //radians
+		void rotate(const Quaternion& quat);
 
 		Mat4 getMatrix();
 

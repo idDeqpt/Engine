@@ -4,22 +4,12 @@
 #include <Math/Vec3.hpp>
 
 
-mth::Transformable3::Transformable3()
-{
-	m_parent = nullptr;
-	m_scale = Vec3(1);
-	m_rot_angle = 0;
-	m_rot_vec = Vec3(1, 0, 0);
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
-}
+mth::Transformable3::Transformable3() : mth::Transformable3::Transformable3(nullptr) {}
 
-mth::Transformable3::Transformable3(Transformable3& parent)
+mth::Transformable3::Transformable3(Transformable3* parent)
 {
-	m_parent = &parent;
+	m_parent = parent;
 	m_scale = Vec3(1);
-	m_rot_angle = 0;
-	m_rot_vec = Vec3(1, 0, 0);
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
@@ -32,9 +22,21 @@ void mth::Transformable3::move(const Vec3& offset)
 	m_invert_transform_need_update = true;
 }
 
+void mth::Transformable3::relativeMove(const Vec3& offset)
+{
+	move(m_rotation.rotateVec(offset));
+}
+
 void mth::Transformable3::scale(const Vec3& scale_v)
 {
 	m_scale += scale_v;
+	m_transform_need_update = true;
+	m_invert_transform_need_update = true;
+}
+
+void mth::Transformable3::rotate(const Quaternion& quat)
+{
+	m_rotation = m_rotation*quat;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
@@ -61,10 +63,9 @@ void mth::Transformable3::setScale(const Vec3& new_scale)
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable3::setRotation(const Vec3& new_rot_vec, float new_rot_angle)
+void mth::Transformable3::setRotation(const Quaternion& quat)
 {
-	m_rot_vec = new_rot_vec;
-	m_rot_angle = new_rot_angle;
+	m_rotation = quat;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
@@ -72,6 +73,12 @@ void mth::Transformable3::setRotation(const Vec3& new_rot_vec, float new_rot_ang
 void mth::Transformable3::setParent(Transformable3& parent)
 {
 	m_parent = &parent;
+}
+
+
+mth::Quaternion mth::Transformable3::getRotation()
+{
+	return m_rotation;
 }
 
 
@@ -113,7 +120,7 @@ void mth::Transformable3::computeTransform()
 	{
 		m_transform = mth::Transform3::getIdentity();
 		m_transform.translate(m_position);
-		m_transform.rotate(m_rot_vec, m_rot_angle);
+		m_transform.rotate(m_rotation);
 		m_transform.scale(m_scale);
 		m_transform.translate(-m_origin);
 

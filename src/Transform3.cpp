@@ -4,11 +4,12 @@
 
 #include <Math/Mat4.hpp>
 #include <Math/Vec3.hpp>
+#include <Math/Quaternion.hpp>
 
 
 mth::Transform3::Transform3()
 {
-	m_matrix = Transform3::getIdentity();
+	m_matrix = Mat4::getIdentity();
 }
 
 mth::Transform3::Transform3(const Mat4& mat)
@@ -66,6 +67,28 @@ void mth::Transform3::rotate(const Vec3& vec, float angle)
 	rotate_m[3][3] = 1;
 
 	m_matrix = m_matrix*rotate_m;
+}
+
+void mth::Transform3::rotate(const Quaternion& quat)
+{
+	Quaternion norm_q = quat.norm();
+
+	Mat4 rot_m;
+	rot_m[0][0] = 1 - 2 * (norm_q.y * norm_q.y + norm_q.z * norm_q.z);
+	rot_m[0][1] = 2 * (norm_q.x * norm_q.y - norm_q.w * norm_q.z);
+	rot_m[0][2] = 2 * (norm_q.x * norm_q.z + norm_q.w * norm_q.y);
+
+	rot_m[1][0] = 2 * (norm_q.x * norm_q.y + norm_q.w * norm_q.z);
+	rot_m[1][1] = 1 - 2 * (norm_q.x * norm_q.x + norm_q.z * norm_q.z);
+	rot_m[1][2] = 2 * (norm_q.y * norm_q.z - norm_q.w * norm_q.x);
+
+	rot_m[2][0] = 2 * (norm_q.x * norm_q.z - norm_q.w * norm_q.y);
+	rot_m[2][1] = 2 * (norm_q.y * norm_q.z + norm_q.w * norm_q.x);
+	rot_m[2][2] = 1 - 2 * (norm_q.x * norm_q.x + norm_q.y * norm_q.y);
+
+	rot_m[3][3] = 1;
+
+	m_matrix = m_matrix*rot_m;
 }
 
 
