@@ -12,8 +12,8 @@ include_directories("./include")
 add_library(${PROJECT_NAME} STATIC
 	src/Color.cpp
 	src/EventManager.cpp
-	src/GeometricObject.cpp
-	src/Object.cpp
+	src/GeometricMesh.cpp
+	src/Mesh.cpp
 	src/RenderStates.cpp
 	src/Shader.cpp
 	src/Shape.cpp

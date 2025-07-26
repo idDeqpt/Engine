@@ -1,5 +1,5 @@
-#ifndef DRAWABLE_OBJECT_3D_CLASS_HEADER
-#define DRAWABLE_OBJECT_3D_CLASS_HEADER
+#ifndef MESH_CLASS_HEADER
+#define MESH_CLASS_HEADER
 
 #include <Math/Vec2.hpp>
 #include <Math/Vec3.hpp>
@@ -15,10 +15,10 @@ namespace gfx
 	class Window;
 	class Texture;
 
-	class Object : public Drawable, public mth::Transformable3
+	class Mesh : public Drawable, public mth::Transformable3
 	{
 	public:
-		struct ObjectData
+		struct MeshData
 		{
 			mth::Vec3* points;
 			Color* colors;
@@ -28,10 +28,10 @@ namespace gfx
 			unsigned int indexes_count;
 		};
 
-		Object();
-		~Object();
+		Mesh();
+		~Mesh();
 
-		bool loadData(ObjectData data);
+		bool loadData(MeshData data);
 		void setTexture(TextureId texture);
 
 		void draw(Window* window, RenderStates& states);
@@ -47,4 +47,4 @@ namespace gfx
 	};
 }
 
-#endif //DRAWABLE_OBJECT_3D_CLASS_HEADER
+#endif //MESH_CLASS_HEADER
