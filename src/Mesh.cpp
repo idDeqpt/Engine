@@ -41,9 +41,9 @@ bool gfx::Mesh::loadData(MeshData data)
 	unsigned int* final_indexes = new unsigned int[final_vertices_count];
 	std::unordered_map<std::string, unsigned int> unique_vertices;
 
-	bool has_colors = data.colors_indexes;
-	bool has_tex_coords = data.tex_coords_indexes;
-	bool has_normals = data.normals_indexes;
+	bool has_colors = data.unique_colors;
+	bool has_tex_coords = data.unique_tex_coords;
+	bool has_normals = data.unique_normals;
 
 	for (unsigned int i = 0; i < final_vertices_count; i++)
 	{

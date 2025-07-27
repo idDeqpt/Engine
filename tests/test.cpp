@@ -83,78 +83,48 @@ int main()
 
 	gfx::Shader shader(
 		"#version 330 core\n"
-		"layout (location = 0) in vec3 position;\n"
-		"layout (location = 1) in vec4 color;\n"
-		"layout (location = 2) in vec2 tex_coord;\n"
-		"layout (location = 3) in vec3 normal;\n"
-		"out vec4 vertexColor;\n"
-		"out vec2 vertexTexCoord;\n"
-		"uniform mat4 projection;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 model;\n"
+		"layout (location = 0) in vec3 aPosition;\n"
+		"layout (location = 1) in vec4 aColor;\n"
+		"layout (location = 2) in vec2 aTexCoord;\n"
+		"layout (location = 3) in vec3 aNormal;\n"
+		"out vec4 fColor;\n"
+		"out vec2 fTexCoord;\n"
+		"out vec3 fViewPos;\n"
+		"out vec3 fNormal;\n"
+		"uniform mat4 uProjection;\n"
+		"uniform mat4 uView;\n"
+		"uniform mat4 uModel;\n"
 		"void main()\n"
 		"{\n"
-		"    gl_Position = projection*view*model*vec4(position, 1.0f);\n"
-		"    vertexColor = color;\n"
-		"    vertexTexCoord = tex_coord;\n"
+		"    gl_Position = uProjection*uView*uModel*vec4(aPosition, 1.0f);\n"
+		"    fColor = aColor;\n"
+		"    fTexCoord = aTexCoord;\n"
+		"    fViewPos = vec3(uView*uModel*vec4(aPosition, 1.0f));\n"
+		"    vec3 worldNormal = transpose(inverse(mat3(uModel)))*aNormal;\n"
+		"    vec3 viewNormal = mat3(uView)*worldNormal;\n"
+		"    fNormal = normalize(viewNormal);\n"
 		"}",
 
 		"#version 330 core\n"
-		"in vec4 vertexColor;\n"
-		"in vec2 vertexTexCoord;\n"
-		"out vec4 color;\n"
-		"uniform bool use_texture;\n"
-		"uniform sampler2D u_texture;\n"
+		"in vec4 fColor;\n"
+		"in vec2 fTexCoord;\n"
+		"in vec3 fViewPos;\n"
+		"in vec3 fNormal;\n"
+		"out vec4 oColor;\n"
+		"uniform bool uUseTexture;\n"
+		"uniform sampler2D uTexture;\n"
 		"void main()\n"
 		"{\n"
-		"	if (use_texture)\n"
-		"		color = texture(u_texture, vertexTexCoord);\n"
+		"	if (uUseTexture)\n"
+		"		oColor = texture(uTexture, fTexCoord);\n"
 		"	else\n"
-		"		color = vertexColor;\n"
+		"		oColor = fColor;\n"
+		"	float coef = max(dot(fNormal, normalize(-fViewPos)), 0.0f);\n"
+		"	oColor = vec4(oColor.rgb*coef, oColor.a);\n"
 		"}");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
-
-	mth::Vec3 obj_pos[] = {
-		{-0.5, -0.5, -0.5},
-		{0.5, -0.5, -0.5},
-		{-0.5, 0.5, -0.5},
-		{0.5, 0.5, -0.5},
-		{-0.5, -0.5, 0.5},
-		{0.5, -0.5, 0.5},
-		{-0.5, 0.5, 0.5},
-		{0.5, 0.5, 0.5},
-	};
-	gfx::Color obj_col[] = {
-		{255, 0, 0},
-		{0, 255, 0},
-		{0, 0, 255},
-		{255, 255, 0},
-		{255, 0, 0},
-		{0, 255, 0},
-		{0, 0, 255},
-		{255, 255, 0},
-	};
-	mth::Vec2 obj_texc[] = {
-		{0.25, 0.25},
-		{0.75, 0.25},
-		{0.25, 0.75},
-		{0.75, 0.75},
-		{0, 0},
-		{1, 0},
-		{0, 1},
-		{1, 1},
-	};
-
-	unsigned int indexes_obj[] = {
-		0, 1, 2, 1, 2, 3, //низ
-		4, 5, 6, 5, 6, 7, //верх
-		0, 1, 5, 0, 5, 4, //перед
-		2, 3, 7, 2, 7, 6, //зад
-		0, 2, 6, 0, 6, 4, //лево
-		1, 3, 7, 1, 7, 5, //право
-	};
 
 	gfx::TextureManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
@@ -207,7 +177,9 @@ int main()
 												nullptr, 0, nullptr, floor_indexes_count}) << std::endl;
 	floor.setTexture(tex[0]);
 
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	obj.setColor(gfx::Color(128, 64, 0));
 	//obj.setAccuracy();
 
 	gfx::RenderStates states;
@@ -255,26 +227,12 @@ int main()
 		if (gfx::EventManager::isPressed(GLFW_KEY_E))
 			rot -= speed;
 
-		if (vel.x || vel.y || vel.z)
-		{
-			std::cout << "MATS\n";
-			mth::Quaternion rot = states.m_view.getRotation();
-			print(vel);
-			print(rot);
-			print(rot.rotateVec(vel));
-		}
-
 		states.m_view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), rot));
-		states.m_view.relativeMove(vel);
-		//states.m_view.move(vel);
+		if (vel.x || vel.y || vel.z)
+			states.m_view.relativeMove(vel);
+
 		float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
-		//states.m_view.setPosition(mth::Vec3(0, 0, 5 + sin(time)));
-		float near = (sin(time/2) + 1)*2;
-		//states.m_view.setPerspective(3.14*0.25, 1, near, 100);
-		//std::cout << near << std::endl;
-		//states.m_view.setPosition(mth::Vec3(0, cos(time), 5 + sin(time)));
-		//states.m_view.setRotation(mth::Vec3(1, 0, 0), sin(time));
+		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));
 
 		window.clear(gfx::Color(125));
 
