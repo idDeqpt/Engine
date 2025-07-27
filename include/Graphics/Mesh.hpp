@@ -18,14 +18,33 @@ namespace gfx
 	class Mesh : public Drawable, public mth::Transformable3
 	{
 	public:
+		struct Vertex
+		{
+			mth::Vec3 position;
+			Color     color;
+			mth::Vec2 tex_coord;
+			mth::Vec3 normal;
+		};
+
 		struct MeshData
 		{
-			mth::Vec3* points;
-			Color* colors;
-			mth::Vec2* tex_coords;
-			unsigned int* indexes;
-			unsigned int vertices_count;
-			unsigned int indexes_count;
+			mth::Vec3*    unique_posisions;
+			unsigned int  unique_posisions_count;
+			unsigned int* posisions_indexes;
+
+			Color*        unique_colors;
+			unsigned int  unique_colors_count;
+			unsigned int* colors_indexes;
+
+			mth::Vec2*    unique_tex_coords;
+			unsigned int  unique_tex_coords_count;
+			unsigned int* tex_coords_indexes;
+
+			mth::Vec3*    unique_normals;
+			unsigned int  unique_normals_count;
+			unsigned int* normals_indexes;
+
+			unsigned int  vertices_indexes_count;
 		};
 
 		Mesh();
@@ -38,7 +57,7 @@ namespace gfx
 
 	protected:
 		unsigned int m_VAO;
-		unsigned int m_VBO[3];
+		unsigned int m_VBO;
 		unsigned int m_EBO;
 		unsigned int m_indexes_count;
 		bool m_inited;

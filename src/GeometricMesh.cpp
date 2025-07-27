@@ -104,7 +104,7 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 		points[i] = mth::Vec3(mesh->m_size.x*(i % 2), mesh->m_size.y*((i/2) % 2), mesh->m_size.z*(((i/2)/2) % 2));
 		colors[i] = mesh->m_color;
 	}
-	mesh->loadData({points, colors, tex_coords, indexes, 8, 36});
+	mesh->loadData({points, 8, indexes, colors, 8, indexes, tex_coords, 8, indexes, nullptr, 0, nullptr, 36});
 }
 
 void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
@@ -156,7 +156,10 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 			indexes[index++] = second + 1;
 			indexes[index++] = first + 1;
 		}
-	mesh->loadData({points, colors, tex_coords, indexes, points_count, indexes_count});
+	mesh->loadData({points, points_count, indexes,
+					colors, points_count, indexes,
+					tex_coords, points_count, indexes,
+					nullptr, 0, nullptr, indexes_count});
 
 	delete[] points;
 	delete[] colors;

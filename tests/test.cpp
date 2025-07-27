@@ -20,6 +20,7 @@
 #include <Math/Transformable3.hpp>
 #include <cmath>
 #include <vector>
+#include <random>
 
 void print(const mth::Mat4& mat)
 {
@@ -75,6 +76,7 @@ mth::Vec4 mult(const mth::Mat4& mat, const mth::Vec4& vec)
 
 int main()
 {
+	srand(0);
 	gfx::Window window(800, 800, "LearnOpenGL");
 
 	window.setViewport(0, 0, 800, 800);
@@ -83,7 +85,8 @@ int main()
 		"#version 330 core\n"
 		"layout (location = 0) in vec3 position;\n"
 		"layout (location = 1) in vec4 color;\n"
-		"layout (location = 2) in vec2 texCoord;\n"
+		"layout (location = 2) in vec2 tex_coord;\n"
+		"layout (location = 3) in vec3 normal;\n"
 		"out vec4 vertexColor;\n"
 		"out vec2 vertexTexCoord;\n"
 		"uniform mat4 projection;\n"
@@ -93,7 +96,7 @@ int main()
 		"{\n"
 		"    gl_Position = projection*view*model*vec4(position, 1.0f);\n"
 		"    vertexColor = color;\n"
-		"    vertexTexCoord = texCoord;\n"
+		"    vertexTexCoord = tex_coord;\n"
 		"}",
 
 		"#version 330 core\n"
@@ -164,8 +167,8 @@ int main()
 	std::cout << "Tex1: " << tex[0] << std::endl;
 	std::cout << "Tex2: " << tex[1] << std::endl;
 
-	const unsigned int floor_size = 2;
-	const unsigned int floor_accuracy = 4;
+	const unsigned int floor_size = 4;
+	const unsigned int floor_accuracy = 10;
 	const unsigned int floor_points_count = floor_accuracy*floor_accuracy;
 	const unsigned int floor_indexes_count = (floor_accuracy - 1)*(floor_accuracy - 1)*6;
 	mth::Vec3 floor_points[floor_points_count];
@@ -176,7 +179,7 @@ int main()
 	for (unsigned int i = 0; i < floor_accuracy; i++)
 		for (unsigned int j = 0; j < floor_accuracy; j++)
 		{
-			floor_points[index] = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), 0, floor_size*float(j)/(floor_accuracy-1));
+			floor_points[index] = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.05, floor_size*float(j)/(floor_accuracy-1));
 			floor_colors[index] = gfx::Color(125, 0, 125);
 			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1), float(j)/(floor_accuracy-1));
 		}
@@ -198,7 +201,10 @@ int main()
 
 	gfx::Mesh floor;
 	//floor.setScale(mth::Vec3(5));
-	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_colors, floor_tex_coords, floor_indexes, floor_points_count, floor_indexes_count}) << std::endl;
+	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
+												floor_colors, floor_points_count, floor_indexes,
+												floor_tex_coords, floor_points_count, floor_indexes,
+												nullptr, 0, nullptr, floor_indexes_count}) << std::endl;
 	floor.setTexture(tex[0]);
 
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);

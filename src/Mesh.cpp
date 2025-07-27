@@ -1,7 +1,8 @@
 #include <Graphics/Mesh.hpp>
 
 #include <glad/glad.h>
-#include <iostream>
+#include <string>
+#include <unordered_map>
 
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/TextureManager.hpp>
@@ -12,10 +13,10 @@
 #include <Math/Transformable3.hpp>
 
 
-gfx::Mesh::Mesh() : m_VAO(0), m_VBO{0, 0, 0}, m_EBO(0), m_inited(false), m_has_tex_coords(false), m_texture(0), mth::Transformable3()
+gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_inited(false), m_has_tex_coords(false), m_texture(0), mth::Transformable3()
 {
 	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(3, m_VBO);
+	glGenBuffers(1, &m_VBO);
 	glGenBuffers(1, &m_EBO);
 }
 
@@ -24,7 +25,7 @@ gfx::Mesh::~Mesh()
 	if (m_VAO)
 		glDeleteVertexArrays(1, &m_VAO);
 	if (m_VBO)
-		glDeleteBuffers(3, m_VBO);
+		glDeleteBuffers(1, &m_VBO);
 	if (m_EBO)
 		glDeleteBuffers(1, &m_EBO);
 }
@@ -32,36 +33,75 @@ gfx::Mesh::~Mesh()
 
 bool gfx::Mesh::loadData(MeshData data)
 {
-	if (!data.points || !(data.colors || data.tex_coords) || !data.indexes) return m_inited = false;
+	if (!(data.unique_posisions && data.posisions_indexes && data.unique_posisions_count && data.vertices_indexes_count)) return m_inited = false;
+
+	unsigned int final_vertices_count = data.vertices_indexes_count;
+	unsigned int last_vertex = 0;
+	Mesh::Vertex* final_vertices = new Mesh::Vertex[final_vertices_count];
+	unsigned int* final_indexes = new unsigned int[final_vertices_count];
+	std::unordered_map<std::string, unsigned int> unique_vertices;
+
+	bool has_colors = data.colors_indexes;
+	bool has_tex_coords = data.tex_coords_indexes;
+	bool has_normals = data.normals_indexes;
+
+	for (unsigned int i = 0; i < final_vertices_count; i++)
+	{
+		unsigned int pos_id = data.posisions_indexes[i];
+		unsigned int col_id = has_colors     ? data.colors_indexes[i]     : 0;
+		unsigned int tex_id = has_tex_coords ? data.tex_coords_indexes[i] : 0;
+		unsigned int nor_id = has_normals    ? data.normals_indexes[i]    : 0;
+
+		std::string key = std::to_string(pos_id);
+		if (has_colors)     key += "_" + col_id;
+		if (has_tex_coords) key += "_" + tex_id;
+		if (has_normals)    key += "_" + nor_id;
+
+		unsigned int vertex_index;
+		auto iter = unique_vertices.find(key);
+		if (iter != unique_vertices.end())
+			vertex_index = iter->second;
+		else
+		{
+			Mesh::Vertex vertex;
+			vertex.position = data.unique_posisions[pos_id];
+			vertex.color = has_colors ? data.unique_colors[col_id] : Color(255, 255, 255, 255);
+			vertex.tex_coord = has_tex_coords ? data.unique_tex_coords[tex_id] : mth::Vec2(1, 1);
+			vertex.normal = has_normals ? data.unique_normals[nor_id] : mth::Vec3(0, 1, 0);
+
+			vertex_index = last_vertex++;
+			final_vertices[vertex_index] = vertex;
+			unique_vertices[key] = vertex_index;
+		}
+		final_indexes[i] = vertex_index;
+	}
+
 	glBindVertexArray(m_VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Vec3)*data.vertices_count, data.points, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mth::Vec3), (GLvoid*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh::Vertex)*last_vertex, final_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, position));
 	glEnableVertexAttribArray(0);
 
-	if (data.colors)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[1]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Color)*data.vertices_count, data.colors, GL_STATIC_DRAW);
-		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Color), (GLvoid*)0);
-		glEnableVertexAttribArray(1);
-	}
+	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, color));
+	glEnableVertexAttribArray(1);
 
-	m_has_tex_coords = data.tex_coords != nullptr;
-	if (m_has_tex_coords)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[2]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Vec2)*data.vertices_count, data.tex_coords, GL_STATIC_DRAW);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(mth::Vec2), (GLvoid*)0);
-		glEnableVertexAttribArray(2);
-	}
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
+	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
+	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*data.indexes_count, data.indexes, GL_STATIC_DRAW);
-	m_indexes_count = data.indexes_count;
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
+	m_indexes_count = final_vertices_count;
 	
 	glBindVertexArray(0);
+
+	delete[] final_vertices;
+	delete[] final_indexes;
+	m_has_tex_coords = has_tex_coords;
 	return m_inited = true;
 }
 
