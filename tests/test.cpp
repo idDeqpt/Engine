@@ -204,12 +204,13 @@ int main()
 	};
 
 	float speed = 0.1;
-	float rot = 0;
+	mth::Vec2 rot_angles;
 	while(window.isOpen())
 	{
 		mth::Vec3 vel;
 		gfx::EventManager::pull();
 		if (gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
+		if (gfx::EventManager::isJustPressed(GLFW_KEY_L)) gfx::EventManager::setCursorLock(!gfx::EventManager::getCursorLock());
 		if (gfx::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
 		if (gfx::EventManager::isPressed(GLFW_KEY_S))
@@ -222,14 +223,23 @@ int main()
 			vel.y -= speed;
 		if (gfx::EventManager::isPressed(GLFW_KEY_SPACE))
 			vel.y += speed;
-		if (gfx::EventManager::isPressed(GLFW_KEY_Q))
-			rot += speed;
-		if (gfx::EventManager::isPressed(GLFW_KEY_E))
-			rot -= speed;
 
-		states.m_view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), rot));
+		if (gfx::EventManager::Mouse::moved())
+			rot_angles = rot_angles + gfx::EventManager::Mouse::getDelta();
+		
+		states.m_view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
+		states.m_view.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
+		states.m_view.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
+
 		if (vel.x || vel.y || vel.z)
 			states.m_view.relativeMove(vel);
+
+		if (gfx::EventManager::Mouse::moved())
+		{
+			std::cout << "MOVED: " << gfx::EventManager::Mouse::moved() << std::endl;
+			std::cout << "MOUSE POS: " << gfx::EventManager::Mouse::getPosition().x << " " << gfx::EventManager::Mouse::getPosition().y << std::endl;
+			std::cout << "MOUSE DEL: " << gfx::EventManager::Mouse::getDelta().x << " " << gfx::EventManager::Mouse::getDelta().y << std::endl;
+		}
 
 		float time = (GLfloat)glfwGetTime();
 		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));
