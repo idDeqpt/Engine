@@ -121,16 +121,16 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	bool use_texture = states.m_texture && m_has_tex_coords;
 
 	states.m_shader->use();
-	states.m_shader->setUniform1i("use_texture", use_texture);
+	states.m_shader->setUniform1i("uUseTexture", use_texture);
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		TextureManager::bind(states.m_texture);
-		states.m_shader->setUniformMatrix4fv("u_texture", 0);
+		states.m_shader->setUniformMatrix4fv("uTexture", 0);
 	}
-	states.m_shader->setUniformMatrix4fv("projection", states.m_view.getProjectionMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("view", states.m_view.getViewMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("model", states.m_transform.getMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("uProjection", states.m_view.getProjectionMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("uView", states.m_view.getViewMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0);
