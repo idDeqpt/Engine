@@ -2,6 +2,7 @@
 #define GEAOMETRIC_MESH_CLASS_HEADER
 
 #include <Graphics/GeometricMesh.hpp>
+#include <Graphics/Material.hpp>
 #include <Graphics/Mesh.hpp>
 #include <Graphics/Color.hpp>
 #include <Math/Vec3.hpp>
@@ -23,7 +24,6 @@ namespace gfx
 
 		void setType(const Type new_type);
 		void setSize(const mth::Vec3& new_size);
-		void setColor(const Color& new_color);
 		void setAccuracy(unsigned int accuracy);
 		void setGenerator(void (*generator)(GeometricMesh*));
 
@@ -32,7 +32,6 @@ namespace gfx
 	protected:
 		Type m_type;
 		mth::Vec3 m_size;
-		Color m_color;
 		unsigned int m_accuracy;
 		bool m_need_update;
 		void (*m_generator)(GeometricMesh*) = parallelepipedGenerator;

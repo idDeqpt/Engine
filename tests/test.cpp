@@ -84,43 +84,63 @@ int main()
 	gfx::Shader shader(
 		"#version 330 core\n"
 		"layout (location = 0) in vec3 aPosition;\n"
-		"layout (location = 1) in vec4 aColor;\n"
-		"layout (location = 2) in vec2 aTexCoord;\n"
-		"layout (location = 3) in vec3 aNormal;\n"
-		"out vec4 fColor;\n"
+		"layout (location = 1) in vec2 aTexCoord;\n"
+		"layout (location = 2) in vec3 aNormal;\n"
+		"out mat4 fView;\n"
 		"out vec2 fTexCoord;\n"
 		"out vec3 fViewPos;\n"
+		"out vec3 fFragPos;\n"
 		"out vec3 fNormal;\n"
 		"uniform mat4 uProjection;\n"
 		"uniform mat4 uView;\n"
 		"uniform mat4 uModel;\n"
 		"void main()\n"
 		"{\n"
-		"    gl_Position = uProjection*uView*uModel*vec4(aPosition, 1.0f);\n"
-		"    fColor = aColor;\n"
+		"    fFragPos = vec3(uView*uModel*vec4(aPosition, 1.0));\n"
+		"    gl_Position = uProjection*vec4(fFragPos, 1.0f);\n"
 		"    fTexCoord = aTexCoord;\n"
 		"    fViewPos = vec3(uView*uModel*vec4(aPosition, 1.0f));\n"
 		"    vec3 worldNormal = transpose(inverse(mat3(uModel)))*aNormal;\n"
 		"    vec3 viewNormal = mat3(uView)*worldNormal;\n"
 		"    fNormal = normalize(viewNormal);\n"
+		"    fView = uView;\n"
 		"}",
 
 		"#version 330 core\n"
-		"in vec4 fColor;\n"
+		"struct Material {\n"
+		"	vec3 ambient;\n"
+		"	vec3 diffuse;\n"
+		"	vec3 specular;\n"
+		"	float shininess;\n"
+		"};\n"
+		"in mat4 fView;\n"
 		"in vec2 fTexCoord;\n"
 		"in vec3 fViewPos;\n"
+		"in vec3 fFragPos;\n"
 		"in vec3 fNormal;\n"
 		"out vec4 oColor;\n"
 		"uniform bool uUseTexture;\n"
 		"uniform sampler2D uTexture;\n"
+		"uniform Material uMaterial;\n"
 		"void main()\n"
 		"{\n"
+		"	vec3 normal = normalize(fNormal);\n"
+		"	vec3 lightPos = (fView*vec4(vec3(10.0f), 1.0f)).xyz;\n"
+		"	vec3 viewDir = normalize(vec3(0.0f) - fFragPos);\n"
+		"	vec3 toLightDir = normalize(lightPos - fFragPos);\n"
+		"	vec3 reflectDir = reflect(-toLightDir, normal);\n"
+
+		"	vec3 ambient = uMaterial.ambient * uMaterial.diffuse;\n"
+
+		"	float diff = max(dot(normal, toLightDir), 0.0f);\n"
+		"	vec3 diffuse = diff * uMaterial.diffuse;\n"
+
+		"	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), uMaterial.shininess);\n"
+		"	vec3 specular = spec*uMaterial.specular;\n"
 		"	if (uUseTexture)\n"
-		"		oColor = texture(uTexture, fTexCoord);\n"
+		"		oColor = vec4((ambient + diffuse + specular)*texture(uTexture, fTexCoord).rgb, 1.0f);\n"
 		"	else\n"
-		"		oColor = fColor;\n"
-		"	float coef = max(dot(fNormal, normalize(-fViewPos)), 0.0f);\n"
-		"	oColor = vec4(oColor.rgb*coef, oColor.a);\n"
+		"		oColor = vec4(ambient + diffuse + specular, 1.0f);\n"
 		"}");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
@@ -141,16 +161,16 @@ int main()
 	const unsigned int floor_accuracy = 10;
 	const unsigned int floor_points_count = floor_accuracy*floor_accuracy;
 	const unsigned int floor_indexes_count = (floor_accuracy - 1)*(floor_accuracy - 1)*6;
+
 	mth::Vec3 floor_points[floor_points_count];
-	gfx::Color floor_colors[floor_points_count];
 	mth::Vec2 floor_tex_coords[floor_points_count];
 	unsigned int floor_indexes[floor_indexes_count];
+
 	unsigned int index = 0;
 	for (unsigned int i = 0; i < floor_accuracy; i++)
 		for (unsigned int j = 0; j < floor_accuracy; j++)
 		{
 			floor_points[index] = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.05, floor_size*float(j)/(floor_accuracy-1));
-			floor_colors[index] = gfx::Color(125, 0, 125);
 			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1), float(j)/(floor_accuracy-1));
 		}
 	index = 0;
@@ -172,14 +192,24 @@ int main()
 	gfx::Mesh floor;
 	//floor.setScale(mth::Vec3(5));
 	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
-												floor_colors, floor_points_count, floor_indexes,
 												floor_tex_coords, floor_points_count, floor_indexes,
 												nullptr, 0, nullptr, floor_indexes_count}) << std::endl;
 	floor.setTexture(tex[0]);
+	floor.setMaterial(gfx::Material(
+		{1, 0, 0},
+		{1, 0, 0},
+		{1, 0, 0},
+		1
+	));
 
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
-	obj.setColor(gfx::Color(128, 64, 0));
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	obj.setMaterial({
+		{0.0215, 0.1745, 0.0215},
+		{0.07568, 0.61424, 0.07568},
+		{0.633, 0.727811, 0.633},
+		128*0.6
+	});
 	//obj.setAccuracy();
 
 	gfx::RenderStates states;
@@ -234,15 +264,8 @@ int main()
 		if (vel.x || vel.y || vel.z)
 			states.m_view.relativeMove(vel);
 
-		if (gfx::EventManager::Mouse::moved())
-		{
-			std::cout << "MOVED: " << gfx::EventManager::Mouse::moved() << std::endl;
-			std::cout << "MOUSE POS: " << gfx::EventManager::Mouse::getPosition().x << " " << gfx::EventManager::Mouse::getPosition().y << std::endl;
-			std::cout << "MOUSE DEL: " << gfx::EventManager::Mouse::getDelta().x << " " << gfx::EventManager::Mouse::getDelta().y << std::endl;
-		}
-
 		float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));
+		//obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));
 
 		window.clear(gfx::Color(125));
 

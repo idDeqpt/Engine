@@ -5,6 +5,7 @@
 #include <Math/Vec3.hpp>
 #include <Math/Transformable3.hpp>
 #include <Graphics/RenderStates.hpp>
+#include <Graphics/Material.hpp>
 #include <Graphics/Drawable.hpp>
 #include <Graphics/Color.hpp>
 
@@ -21,7 +22,6 @@ namespace gfx
 		struct Vertex
 		{
 			mth::Vec3 position;
-			Color     color;
 			mth::Vec2 tex_coord;
 			mth::Vec3 normal;
 		};
@@ -31,10 +31,6 @@ namespace gfx
 			mth::Vec3*    unique_posisions;
 			unsigned int  unique_posisions_count;
 			unsigned int* posisions_indexes;
-
-			Color*        unique_colors;
-			unsigned int  unique_colors_count;
-			unsigned int* colors_indexes;
 
 			mth::Vec2*    unique_tex_coords;
 			unsigned int  unique_tex_coords_count;
@@ -52,6 +48,7 @@ namespace gfx
 
 		bool loadData(MeshData data);
 		void setTexture(TextureId texture);
+		void setMaterial(const Material& new_material);
 
 		void draw(Window* window, RenderStates& states);
 
@@ -63,6 +60,7 @@ namespace gfx
 		bool m_inited;
 		bool m_has_tex_coords;
 		TextureId m_texture;
+		Material m_material;
 	};
 }
 

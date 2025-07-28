@@ -1,5 +1,6 @@
 #include <Graphics/GeometricMesh.hpp>
 
+#include <Graphics/Material.hpp>
 #include <Graphics/Color.hpp>
 #include <Math/Vec3.hpp>
 #include <cmath>
@@ -39,12 +40,6 @@ void gfx::GeometricMesh::setSize(const mth::Vec3& new_size)
 	m_need_update = true;
 }
 
-void gfx::GeometricMesh::setColor(const Color& new_color)
-{
-	m_color = new_color;
-	m_need_update = true;
-}
-
 void gfx::GeometricMesh::setAccuracy(unsigned int accuracy)
 {
 	m_accuracy = accuracy;
@@ -80,7 +75,6 @@ void gfx::GeometricMesh::update()
 void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 {
 	mth::Vec3 points[8];
-	Color     colors[1];
 	mth::Vec2 tex_coords[4] = {
 		{0, 0},
 		{1, 0},
@@ -104,18 +98,12 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 		2, 6, 0, 6, 4, 0, //лево
 		7, 3, 5, 3, 1, 5, //право
 	};
-	unsigned int color_indexes[36];
 	unsigned int texture_indexes[36];
 	unsigned int normal_indexes[36];
 
 	for (unsigned int i = 0; i < 8; i++)
-	{
 		points[i] = mth::Vec3(mesh->m_size.x*(i % 2), mesh->m_size.y*((i/2) % 2), mesh->m_size.z*(((i/2)/2) % 2));
-		std::cout << i << ": " << points[i].x << " " << points[i].y << " " << points[i].z << std::endl;
-	}
-	colors[0] = mesh->m_color;
 
-	memset(color_indexes, 0, 36*sizeof(unsigned int));
 	for (unsigned int i = 0; i < 6; i++)
 	{
 		texture_indexes[i*6    ] = 0;
@@ -129,7 +117,6 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 		normal_indexes[i] = i/6;
 
 	mesh->loadData({points,     8, indexes,
-					colors,     1, color_indexes,
 					tex_coords, 4, texture_indexes,
 					normals,    6, normal_indexes, 36});
 }
@@ -141,12 +128,10 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 	unsigned int indexes_count = (n - 1)*(n - 1)*6;
 
 	mth::Vec3* points     = new mth::Vec3[points_count];
-	Color*     colors     = new Color[1];
 	mth::Vec2* tex_coords = new mth::Vec2[points_count];
 	mth::Vec3* normals    = new mth::Vec3[points_count];
 
 	unsigned int* indexes       = new unsigned int[indexes_count];
-	unsigned int* color_indexes = new unsigned int[indexes_count];
 
 	float pi       = 3.14159265359;
 	float n_inv    = 1.0/(n - 1);
@@ -171,7 +156,6 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 			normals[index++]  = ell_point;
 		}
 	}
-	colors[0] = mesh->m_color;
 
 	index = 0;
 	for (unsigned int i = 0; i < (n - 1); i++)
@@ -188,16 +172,12 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 			indexes[index++] = second + 1;
 			indexes[index++] = first + 1;
 		}
-	memset(color_indexes, 0, indexes_count*sizeof(unsigned int));
 
 	mesh->loadData({points,     points_count, indexes,
-					colors,     1,            color_indexes,
 					tex_coords, points_count, indexes,
 					normals,    points_count, indexes, indexes_count});
 
 	delete[] points;
-	delete[] colors;
 	delete[] tex_coords;
 	delete[] indexes;
-	delete[] color_indexes;
 }

@@ -41,19 +41,16 @@ bool gfx::Mesh::loadData(MeshData data)
 	unsigned int* final_indexes = new unsigned int[final_vertices_count];
 	std::unordered_map<std::string, unsigned int> unique_vertices;
 
-	bool has_colors = data.unique_colors;
 	bool has_tex_coords = data.unique_tex_coords;
 	bool has_normals = data.unique_normals;
 
 	for (unsigned int i = 0; i < final_vertices_count; i++)
 	{
 		unsigned int pos_id = data.posisions_indexes[i];
-		unsigned int col_id = has_colors     ? data.colors_indexes[i]     : 0;
 		unsigned int tex_id = has_tex_coords ? data.tex_coords_indexes[i] : 0;
 		unsigned int nor_id = has_normals    ? data.normals_indexes[i]    : 0;
 
 		std::string key = std::to_string(pos_id);
-		if (has_colors)     key += "_" + col_id;
 		if (has_tex_coords) key += "_" + tex_id;
 		if (has_normals)    key += "_" + nor_id;
 
@@ -65,7 +62,6 @@ bool gfx::Mesh::loadData(MeshData data)
 		{
 			Mesh::Vertex vertex;
 			vertex.position = data.unique_posisions[pos_id];
-			vertex.color = has_colors ? data.unique_colors[col_id] : Color(255, 255, 255, 255);
 			vertex.tex_coord = has_tex_coords ? data.unique_tex_coords[tex_id] : mth::Vec2(1, 1);
 			vertex.normal = has_normals ? data.unique_normals[nor_id] : mth::Vec3(0, 1, 0);
 
@@ -84,14 +80,11 @@ bool gfx::Mesh::loadData(MeshData data)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, position));
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, color));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
 	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
-	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
@@ -101,6 +94,7 @@ bool gfx::Mesh::loadData(MeshData data)
 
 	delete[] final_vertices;
 	delete[] final_indexes;
+
 	m_has_tex_coords = has_tex_coords;
 	return m_inited = true;
 }
@@ -108,6 +102,11 @@ bool gfx::Mesh::loadData(MeshData data)
 void gfx::Mesh::setTexture(TextureId texture)
 {
 	m_texture = texture;
+}
+
+void gfx::Mesh::setMaterial(const Material& new_material)
+{
+	m_material = new_material;
 }
 
 
@@ -131,6 +130,10 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	states.m_shader->setUniformMatrix4fv("uProjection", states.m_view.getProjectionMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uView", states.m_view.getViewMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
+	states.m_shader->setUniformVec3("uMaterial.ambient", m_material.ambient);
+	states.m_shader->setUniformVec3("uMaterial.diffuse", m_material.diffuse);
+	states.m_shader->setUniformVec3("uMaterial.specular", m_material.specular);
+	states.m_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0);
