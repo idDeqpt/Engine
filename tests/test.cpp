@@ -102,11 +102,14 @@ int main()
 	const unsigned int floor_size = 4;
 	const unsigned int floor_accuracy = 10;
 	const unsigned int floor_points_count = floor_accuracy*floor_accuracy;
-	const unsigned int floor_indexes_count = (floor_accuracy - 1)*(floor_accuracy - 1)*6;
+	const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
+	const unsigned int floor_indexes_count = floor_normals_count*3;
 
-	mth::Vec3 floor_points[floor_points_count];
+	mth::Vec3 floor_points    [floor_points_count];
 	mth::Vec2 floor_tex_coords[floor_points_count];
+	mth::Vec3 floor_normals   [floor_normals_count];
 	unsigned int floor_indexes[floor_indexes_count];
+	unsigned int floor_normal_indexes[floor_indexes_count];
 
 	unsigned int index = 0;
 	for (unsigned int i = 0; i < floor_accuracy; i++)
@@ -122,12 +125,20 @@ int main()
 			unsigned int first = i*floor_accuracy + j;
 			unsigned int second = first + floor_accuracy;
 
+			floor_normals[index/3] = (floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
+			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = first;
+			floor_normal_indexes[index] = index/3 + 1;
 			floor_indexes[index++] = second;
+			floor_normal_indexes[index] = index/3 + 2;
 			floor_indexes[index++] = first + 1;
 
+			floor_normals[index/3] = (floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
+			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = second;
+			floor_normal_indexes[index] = index/3 + 1;
 			floor_indexes[index++] = second + 1;
+			floor_normal_indexes[index] = index/3 + 2;
 			floor_indexes[index++] = first + 1;
 		}
 
@@ -135,14 +146,14 @@ int main()
 	//floor.setScale(mth::Vec3(5));
 	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
 												floor_tex_coords, floor_points_count, floor_indexes,
-												nullptr, 0, nullptr, floor_indexes_count}) << std::endl;
+												floor_normals, floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setTexture(tex[0]);
-	floor.setMaterial(gfx::Material(
-		{1, 0, 0},
-		{1, 0, 0},
-		{1, 0, 0},
-		1
-	));
+	floor.setMaterial({
+		{0.59225, 0.59225, 0.59225},
+		{0.50754, 0.50754, 0.50754},
+		{0.508273, 0.508273, 0.508273},
+		128*0.4
+	});
 
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
