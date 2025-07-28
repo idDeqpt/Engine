@@ -127,8 +127,9 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 		TextureManager::bind(states.m_texture);
 		states.m_shader->setUniformMatrix4fv("uTexture", 0);
 	}
-	states.m_shader->setUniformMatrix4fv("uProjection", states.m_view.getProjectionMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("uView", states.m_view.getViewMatrix().getValuesPtr());
+	View* active_view = gfx::View::getActive();
+	states.m_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
+	states.m_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
 	states.m_shader->setUniformVec3("uMaterial.ambient", m_material.ambient);
 	states.m_shader->setUniformVec3("uMaterial.diffuse", m_material.diffuse);

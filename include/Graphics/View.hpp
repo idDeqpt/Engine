@@ -19,10 +19,12 @@ namespace gfx
 		mth::Mat4 getProjectionMatrix();
 		mth::Mat4 getViewMatrix();
 
+		static void setActive(View* target);
+		static View* getActive();
+
 	protected:
 		mth::Mat4 m_projection;
-
-
+		static View* m_active;
 	};
 }
 

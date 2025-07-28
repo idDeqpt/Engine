@@ -158,8 +158,10 @@ int main()
 	states.m_shader = &shader;
 	//states.m_texture = &tex1;
 	//states.m_view.setOrtho(-5, 5, 5, -5, -30, 30);
-	states.m_view.setPerspective(3.14*0.25, 1, 1, 100);
-	states.m_view.setPosition(mth::Vec3(0, 1, 2));
+	gfx::View view;
+	gfx::View::setActive(&view);
+	view.setPerspective(3.14*0.25, 1, 1, 100);
+	view.setPosition(mth::Vec3(0, 1, 2));
 	//states.m_view.setRotation(mth::Vec3(1, 0, 0), -3.14*0.25);
 
 	std::vector<mth::Vec3> positions = {
@@ -199,12 +201,12 @@ int main()
 		if (gfx::EventManager::Mouse::moved())
 			rot_angles = rot_angles + gfx::EventManager::Mouse::getDelta();
 		
-		states.m_view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
-		states.m_view.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
-		states.m_view.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
+		view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
+		view.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
+		view.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
 
 		if (vel.x || vel.y || vel.z)
-			states.m_view.relativeMove(vel);
+			view.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
 		//obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));

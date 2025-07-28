@@ -14,7 +14,6 @@ namespace gfx
 	{
 		RenderStates();
 
-		View m_view;
 		mth::Transform3 m_transform;
 		TextureId m_texture;
 		Shader* m_shader;

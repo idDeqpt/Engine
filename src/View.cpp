@@ -7,6 +7,9 @@
 #include <Math/Transformable3.hpp>
 
 
+gfx::View* gfx::View::m_active = nullptr;
+
+
 gfx::View::View() : mth::Transformable3()
 {
 	setOrtho(-1, 1, -1, 1, -1, 1);
@@ -67,4 +70,16 @@ mth::Mat4 gfx::View::getViewMatrix()
 	mth::Mat4 view_mat;
 	getGlobalTransform().getMatrix().invert(view_mat);
 	return view_mat;
+}
+
+
+
+void gfx::View::setActive(View* target)
+{
+	m_active = target;
+}
+
+gfx::View* gfx::View::getActive()
+{
+	return m_active;
 }
