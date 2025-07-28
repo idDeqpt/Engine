@@ -28,6 +28,15 @@ mth::Vec3 mth::Vec3::norm(float new_len) const
 	return Vec3(x*coef, y*coef, z*coef);
 }
 
+mth::Vec3 mth::Vec3::cross(const Vec3& vec)
+{
+	return Vec3(
+		y * vec.z - z * vec.y,
+        z * vec.x - x * vec.z,
+        x * vec.y - y * vec.x
+	);
+}
+
 
 float mth::Vec3::operator[](unsigned int index) const
 {
@@ -65,6 +74,11 @@ mth::Vec3 mth::Vec3::operator-() const
 }
 
 
+
+mth::Vec3 mth::operator-(const Vec3& left, const Vec3& rigth)
+{
+	return Vec3(left.x - rigth.x, left.y - rigth.y, left.z - rigth.z);
+}
 
 mth::Vec3 mth::operator*(const Vec3& vec, float coef)
 {

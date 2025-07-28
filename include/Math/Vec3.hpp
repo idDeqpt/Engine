@@ -17,6 +17,7 @@ namespace mth
 
 		float len() const;
 		Vec3 norm(float new_len = 1) const;
+		Vec3 cross(const Vec3& vec);
 
 		float operator[](unsigned int index) const;
 		float& operator[](unsigned int index);
@@ -25,6 +26,7 @@ namespace mth
 		Vec3 operator-() const;
 	};
 
+	Vec3 operator-(const Vec3& left, const Vec3& rigth);
 	Vec3 operator*(const Vec3& vec, float coef);
 	Vec3 operator*(float coef, const Vec3& vec);
 }
