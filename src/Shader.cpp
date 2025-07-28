@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <Math/Vec3.hpp>
 
 
 gfx::Shader::Shader()
@@ -120,6 +121,16 @@ std::string gfx::Shader::getLastErrorLog()
 void gfx::Shader::setUniform1i(std::string name, int value)
 {
 	glUniform1i(glGetUniformLocation(shader_program_id, name.c_str()), value);
+}
+
+void gfx::Shader::setUniform1f(std::string name, float value)
+{
+	glUniform1f(glGetUniformLocation(shader_program_id, name.c_str()), value);
+}
+
+void gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
+{
+	glUniform3f(glGetUniformLocation(shader_program_id, name.c_str()), vec.x, vec.y, vec.z);
 }
 
 void gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
