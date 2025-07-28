@@ -38,16 +38,19 @@ bool gfx::TextureManager::bind(TextureId uid)
 
 gfx::TextureId gfx::TextureManager::loadFromFile(std::string path)
 {
-	static constexpr int modes[] = {0, 0, 0, GL_RGB, GL_RGBA};
-    TextureId uid;
     TextureData data;
-
 	unsigned char *image_data = stbi_load(path.c_str(), &(data.width), &(data.height), &(data.channels), 0);
-	const GLenum mode = modes[data.channels];
-	
-	std::cout << data.width << " " << data.height << " " << data.channels << std::endl;
-    if (image_data == nullptr)
+	return loadFromBuffer(image_data, data);
+}
+
+gfx::TextureId gfx::TextureManager::loadFromBuffer(unsigned char* image_data, TextureData data)
+{
+	if (image_data == nullptr)
     	return 0;
+
+    static constexpr int modes[] = {0, 0, 0, GL_RGB, GL_RGBA};
+    const GLenum mode = modes[data.channels];
+    TextureId uid;
 
 	glGenTextures(1, &uid);
 	glBindTexture(GL_TEXTURE_2D, uid);
@@ -59,4 +62,17 @@ gfx::TextureId gfx::TextureManager::loadFromFile(std::string path)
     m_textures.push_back(uid);
     m_textures_data.push_back(data);
 	return uid;
+}
+
+
+void gfx::TextureManager::deleteTexture(TextureId id)
+{
+	for (unsigned int i = 0; i < m_textures.size(); i++)
+		if (m_textures[i] == id)
+		{
+			m_textures.erase(m_textures.begin() + i);
+			m_textures_data.erase(m_textures_data.begin() + i);
+			glDeleteTextures(1, (GLuint*)&id);
+		}
+	
 }

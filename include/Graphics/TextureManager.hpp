@@ -27,6 +27,9 @@ namespace gfx
 		static bool bind(TextureId uid);
 
 		static TextureId loadFromFile(std::string path);
+		static TextureId loadFromBuffer(unsigned char* image_data, TextureData data);
+
+		static void deleteTexture(TextureId id);
 
 	protected:
 		static std::vector<TextureId> m_textures;
