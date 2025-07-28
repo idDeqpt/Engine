@@ -81,67 +81,9 @@ int main()
 
 	window.setViewport(0, 0, 800, 800);
 
-	gfx::Shader shader(
-		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPosition;\n"
-		"layout (location = 1) in vec2 aTexCoord;\n"
-		"layout (location = 2) in vec3 aNormal;\n"
-		"out mat4 fView;\n"
-		"out vec2 fTexCoord;\n"
-		"out vec3 fViewPos;\n"
-		"out vec3 fFragPos;\n"
-		"out vec3 fNormal;\n"
-		"uniform mat4 uProjection;\n"
-		"uniform mat4 uView;\n"
-		"uniform mat4 uModel;\n"
-		"void main()\n"
-		"{\n"
-		"    fFragPos = vec3(uView*uModel*vec4(aPosition, 1.0));\n"
-		"    gl_Position = uProjection*vec4(fFragPos, 1.0f);\n"
-		"    fTexCoord = aTexCoord;\n"
-		"    fViewPos = vec3(uView*uModel*vec4(aPosition, 1.0f));\n"
-		"    vec3 worldNormal = transpose(inverse(mat3(uModel)))*aNormal;\n"
-		"    vec3 viewNormal = mat3(uView)*worldNormal;\n"
-		"    fNormal = normalize(viewNormal);\n"
-		"    fView = uView;\n"
-		"}",
-
-		"#version 330 core\n"
-		"struct Material {\n"
-		"	vec3 ambient;\n"
-		"	vec3 diffuse;\n"
-		"	vec3 specular;\n"
-		"	float shininess;\n"
-		"};\n"
-		"in mat4 fView;\n"
-		"in vec2 fTexCoord;\n"
-		"in vec3 fViewPos;\n"
-		"in vec3 fFragPos;\n"
-		"in vec3 fNormal;\n"
-		"out vec4 oColor;\n"
-		"uniform bool uUseTexture;\n"
-		"uniform sampler2D uTexture;\n"
-		"uniform Material uMaterial;\n"
-		"void main()\n"
-		"{\n"
-		"	vec3 normal = normalize(fNormal);\n"
-		"	vec3 lightPos = (fView*vec4(vec3(10.0f), 1.0f)).xyz;\n"
-		"	vec3 viewDir = normalize(vec3(0.0f) - fFragPos);\n"
-		"	vec3 toLightDir = normalize(lightPos - fFragPos);\n"
-		"	vec3 reflectDir = reflect(-toLightDir, normal);\n"
-
-		"	vec3 ambient = uMaterial.ambient * uMaterial.diffuse;\n"
-
-		"	float diff = max(dot(normal, toLightDir), 0.0f);\n"
-		"	vec3 diffuse = diff * uMaterial.diffuse;\n"
-
-		"	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), uMaterial.shininess);\n"
-		"	vec3 specular = spec*uMaterial.specular;\n"
-		"	if (uUseTexture)\n"
-		"		oColor = vec4((ambient + diffuse + specular)*texture(uTexture, fTexCoord).rgb, 1.0f);\n"
-		"	else\n"
-		"		oColor = vec4(ambient + diffuse + specular, 1.0f);\n"
-		"}");
+	gfx::Shader shader;
+	shader.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/default.frag",
+						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/default.vert");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
