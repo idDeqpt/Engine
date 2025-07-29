@@ -95,11 +95,15 @@ int main()
 
 	gfx::TextureId tex[] = {
 		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png"),
-		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png")
+		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png"),
+		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box.png"),
+		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box-map.png")
 	};
 
 	std::cout << "Tex1: " << tex[0] << std::endl;
 	std::cout << "Tex2: " << tex[1] << std::endl;
+	std::cout << "Tex3: " << tex[2] << std::endl;
+	std::cout << "Tex4: " << tex[3] << std::endl;
 
 	const unsigned int floor_size = 4;
 	const unsigned int floor_accuracy = 10;
@@ -149,21 +153,18 @@ int main()
 	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
 												floor_tex_coords, floor_points_count, floor_indexes,
 												floor_normals, floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
-	floor.setTexture(tex[0]);
 	floor.setMaterial({
-		{0.59225, 0.59225, 0.59225},
-		{0.50754, 0.50754, 0.50754},
-		{0.508273, 0.508273, 0.508273},
+		tex[2],
+		tex[3],
 		128*0.4
 	});
 
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	obj.setMaterial({
-		{0.6, 0.6, 0.6},
-		{0.6, 0.6, 0.6},
-		{0.6, 0.6, 0.6},
-		128*0.6
+		tex[2],
+		tex[3],
+		128*0.4
 	});
 	//obj.setAccuracy();
 
@@ -192,7 +193,7 @@ int main()
 
 	gfx::LightId light_id = gfx::LightManager::addLight();
 	gfx::LightManager::setDirection(light_id, mth::Vec3(0, -1, 0));
-	gfx::LightManager::setColor(light_id, mth::Vec3(0, 1, 0));
+	gfx::LightManager::setColor(light_id, mth::Vec3(1, 1, 1));
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -233,7 +234,7 @@ int main()
 		for (unsigned int i = 0; i < positions.size(); i++)
 		{
 			obj.setPosition(positions[i]);
-			obj.setTexture(tex[i % 2]);
+			//obj.setTexture(tex[i % 2]);
 			window.draw(obj, states);
 		}
 		window.draw(floor, states);

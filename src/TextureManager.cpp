@@ -76,7 +76,7 @@ gfx::TextureId gfx::TextureManager::loadFromBuffer(float* image_data, TextureDat
 
 	glGenTextures(1, &uid);
 	glBindTexture(GL_TEXTURE_2D, uid);
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, GL_RGBA, GL_FLOAT, image_data);
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, GL_RGB, GL_FLOAT, image_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 

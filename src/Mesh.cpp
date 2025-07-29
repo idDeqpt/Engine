@@ -16,7 +16,7 @@
 #include <Math/Transformable3.hpp>
 
 
-gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_inited(false), m_has_tex_coords(false), m_texture(0), mth::Transformable3()
+gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -102,11 +102,6 @@ bool gfx::Mesh::loadData(MeshData data)
 	return m_inited = true;
 }
 
-void gfx::Mesh::setTexture(TextureId texture)
-{
-	m_texture = texture;
-}
-
 void gfx::Mesh::setMaterial(const Material& new_material)
 {
 	m_material = new_material;
@@ -118,18 +113,8 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	if (!m_inited) return;
 
 	states.m_transform = getGlobalTransform();
-	states.m_texture = m_texture;
-
-	bool use_texture = states.m_texture && m_has_tex_coords;
 
 	states.m_shader->use();
-	states.m_shader->setUniform1i("uUseTexture", use_texture);
-	if (use_texture)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::bind(states.m_texture);
-		states.m_shader->setUniform1i("uTexture", 0);
-	}
 	View* active_view = gfx::View::getActive();
 	mth::Vec3 view_loc_pos = active_view->getPosition();
 	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
@@ -138,18 +123,23 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	states.m_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
-	states.m_shader->setUniformVec3("uMaterial.ambient", m_material.ambient);
-	states.m_shader->setUniformVec3("uMaterial.diffuse", m_material.diffuse);
-	states.m_shader->setUniformVec3("uMaterial.specular", m_material.specular);
+
+	glActiveTexture(GL_TEXTURE0);
+	TextureManager::bind(m_material.diffuse);
+	states.m_shader->setUniform1i("uMaterial.diffuse", 0);
+	glActiveTexture(GL_TEXTURE1);
+	TextureManager::bind(m_material.specular);
+	states.m_shader->setUniform1i("uMaterial.specular", 1);
 	states.m_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
+
 	states.m_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 	states.m_shader->setUniform1i("uLightsCount", LightManager::getLightsCount());
 	if (LightManager::getLightsCount())
 	{
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE2);
 		TextureManager::bind(LightManager::getLightsTexture());
-		states.m_shader->setUniform1i("uLightsTexture", 1);
+		states.m_shader->setUniform1i("uLightsTexture", 2);
 	}
 
 	glBindVertexArray(m_VAO);

@@ -1,9 +1,9 @@
 #include <Graphics/Material.hpp>
 
-#include <Math/Vec3.hpp>
+#include <Graphics/TextureManager.hpp>
 
 
-gfx::Material::Material() : ambient(1), diffuse(1), specular(1), shininess(1) {}
+gfx::Material::Material() : diffuse(0), specular(0), shininess(1) {}
 
-gfx::Material::Material(mth::Vec3 ambient, mth::Vec3 diffuse, mth::Vec3 specular, float shininess):
-	ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess) {}
+gfx::Material::Material(TextureId diffuse, TextureId specular, float shininess):
+	diffuse(diffuse), specular(specular), shininess(shininess) {}

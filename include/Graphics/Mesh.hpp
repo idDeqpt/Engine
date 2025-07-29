@@ -47,7 +47,6 @@ namespace gfx
 		~Mesh();
 
 		bool loadData(MeshData data);
-		void setTexture(TextureId texture);
 		void setMaterial(const Material& new_material);
 
 		void draw(Window* window, RenderStates& states);
@@ -59,7 +58,6 @@ namespace gfx
 		unsigned int m_indexes_count;
 		bool m_inited;
 		bool m_has_tex_coords;
-		TextureId m_texture;
 		Material m_material;
 	};
 }

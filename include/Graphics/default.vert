@@ -2,9 +2,8 @@
 
 struct Material
 {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	sampler2D diffuse;
+	sampler2D specular;
 	float shininess;
 };
 
@@ -20,8 +19,6 @@ in vec3 fNormal;
 
 out vec4 oColor;
 
-uniform bool uUseTexture;
-uniform sampler2D uTexture;
 uniform Material uMaterial;
 uniform int uLightsCount;
 uniform sampler2D uLightsTexture;
@@ -30,8 +27,8 @@ uniform vec3 uViewPos;
 Light getLight(int index)
 {
 	Light light;
-	float dir_u = (index + 0.5)/float(uLightsCount*2);
-	float col_u = (index + 1.5)/float(uLightsCount*2);
+	float dir_u = (index*2 + 0.5)/float(uLightsCount*2);
+	float col_u = (index*2 + 1.5)/float(uLightsCount*2);
 	float v = 0.5;
 	light.direction = texture(uLightsTexture, vec2(dir_u, v)).rgb;
 	light.color = texture(uLightsTexture, vec2(col_u, v)).rgb;
@@ -40,12 +37,10 @@ Light getLight(int index)
 
 void main()
 {
+	vec3 color = texture(uMaterial.diffuse, fTexCoord).rgb;
 	if (uLightsCount == 0)
 	{
-		if (uUseTexture)
-			oColor = texture(uTexture, fTexCoord);
-		else
-			oColor = vec4(1.0f);
+		oColor = vec4(color, 1.0f);
 		return;
 	}
 
@@ -55,16 +50,13 @@ void main()
 	vec3 toLightDir = normalize(-light.direction);
 	vec3 reflectDir = reflect(-toLightDir, normal);
 
-	vec3 ambient = uMaterial.ambient * uMaterial.diffuse;
+	vec3 ambient = color*light.color;
 
 	float diff = max(dot(normal, toLightDir), 0.0f);
-	vec3 diffuse = diff * uMaterial.diffuse;
+	vec3 diffuse = diff*color*light.color;
 
 	float spec = pow(max(dot(toViewDir, reflectDir), 0.0f), uMaterial.shininess);
-	vec3 specular = spec*uMaterial.specular;
+	vec3 specular = spec*texture(uMaterial.specular, fTexCoord).rgb*light.color;
 	
-	if (uUseTexture)
-		oColor = vec4((ambient + diffuse + specular)*texture(uTexture, fTexCoord).rgb, 1.0f);
-	else
-		oColor = vec4(ambient + diffuse + specular, 1.0f);
+	oColor = vec4(ambient + diffuse + specular, 1.0f);
 }
