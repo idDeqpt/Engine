@@ -24,6 +24,7 @@ namespace mth
 		void setRotation(const Quaternion& quat);
 		void setParent(Transformable3& parent);
 
+		Vec3 getPosition();
 		Quaternion getRotation();
 
 		Transformable3* getParent();

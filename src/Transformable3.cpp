@@ -76,6 +76,11 @@ void mth::Transformable3::setParent(Transformable3& parent)
 }
 
 
+mth::Vec3 mth::Transformable3::getPosition()
+{
+	return m_position;
+}
+
 mth::Quaternion mth::Transformable3::getRotation()
 {
 	return m_rotation;
