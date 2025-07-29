@@ -133,6 +133,11 @@ void gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
 	glUniform3f(glGetUniformLocation(shader_program_id, name.c_str()), vec.x, vec.y, vec.z);
 }
 
+void gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
+{
+	glUniform3fv(glGetUniformLocation(shader_program_id, name.c_str()), count, values_ptr);
+}
+
 void gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
 {
 	glUniformMatrix4fv(glGetUniformLocation(shader_program_id, name.c_str()), 1, GL_TRUE, mat_ptr);
