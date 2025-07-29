@@ -1,5 +1,6 @@
 #include <Math/Vec4.hpp>
 
+#include <Math/Mat4.hpp>
 #include <stdexcept>
 
 
@@ -28,4 +29,15 @@ float& mth::Vec4::operator[](unsigned int index)
 	if (index >= 4)
 		throw std::out_of_range("Vector4 size");
 	return *(&x + index);
+}
+
+
+
+mth::Vec4 mth::operator*(const Mat4& left, const Vec4& right)
+{
+	Vec4 result;
+	for (unsigned int i = 0; i < 4; i++)
+		for (unsigned int j = 0; j < 4; j++)
+			result[i] += left[i][j]*right[j];
+	return result;
 }

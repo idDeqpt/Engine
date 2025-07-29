@@ -1,6 +1,8 @@
 #ifndef VECTOR_4_HEADER
 #define VECTOR_4_HEADER
 
+#include <Math/Mat4.hpp>
+
 namespace mth
 {
 	class Vec4
@@ -19,6 +21,8 @@ namespace mth
 		float operator[](unsigned int index) const;
 		float& operator[](unsigned int index);
 	};
+
+	Vec4 operator*(const Mat4& left, const Vec4& right);
 }
 
 #endif //VECTOR_4_HEADER
