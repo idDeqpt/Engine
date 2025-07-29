@@ -6,10 +6,13 @@
 
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/TextureManager.hpp>
+#include <Graphics/LightManager.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Color.hpp>
 #include <Math/Vec2.hpp>
 #include <Math/Vec3.hpp>
+#include <Math/Vec4.hpp>
+#include <Math/Mat4.hpp>
 #include <Math/Transformable3.hpp>
 
 
@@ -125,9 +128,13 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		TextureManager::bind(states.m_texture);
-		states.m_shader->setUniformMatrix4fv("uTexture", 0);
+		states.m_shader->setUniform1i("uTexture", 0);
 	}
 	View* active_view = gfx::View::getActive();
+	mth::Vec3 view_loc_pos = active_view->getPosition();
+	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
+	mth::Vec4 view_glob_pos = view_transform_mat*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+
 	states.m_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
 	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
@@ -135,6 +142,15 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	states.m_shader->setUniformVec3("uMaterial.diffuse", m_material.diffuse);
 	states.m_shader->setUniformVec3("uMaterial.specular", m_material.specular);
 	states.m_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
+	states.m_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+
+	states.m_shader->setUniform1i("uLightsCount", LightManager::getLightsCount());
+	if (LightManager::getLightsCount())
+	{
+		glActiveTexture(GL_TEXTURE1);
+		TextureManager::bind(LightManager::getLightsTexture());
+		states.m_shader->setUniform1i("uLightsTexture", 1);
+	}
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0);

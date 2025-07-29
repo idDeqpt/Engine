@@ -8,10 +8,14 @@ struct Material
 	float shininess;
 };
 
-in mat4 fView;
-in vec2 fTexCoord;
-in vec3 fViewPos;
+struct Light
+{
+	vec3 direction;
+	vec3 color;
+};
+
 in vec3 fFragPos;
+in vec2 fTexCoord;
 in vec3 fNormal;
 
 out vec4 oColor;
@@ -19,13 +23,36 @@ out vec4 oColor;
 uniform bool uUseTexture;
 uniform sampler2D uTexture;
 uniform Material uMaterial;
+uniform int uLightsCount;
+uniform sampler2D uLightsTexture;
+uniform vec3 uViewPos;
+
+Light getLight(int index)
+{
+	Light light;
+	float dir_u = (index + 0.5)/float(uLightsCount*2);
+	float col_u = (index + 1.5)/float(uLightsCount*2);
+	float v = 0.5;
+	light.direction = texture(uLightsTexture, vec2(dir_u, v)).rgb;
+	light.color = texture(uLightsTexture, vec2(col_u, v)).rgb;
+	return light;
+}
 
 void main()
 {
+	if (uLightsCount == 0)
+	{
+		if (uUseTexture)
+			oColor = texture(uTexture, fTexCoord);
+		else
+			oColor = vec4(1.0f);
+		return;
+	}
+
+	Light light = getLight(0);
 	vec3 normal = normalize(fNormal);
-	vec3 lightPos = (fView*vec4(vec3(10.0f), 1.0f)).xyz;
-	vec3 viewDir = normalize(vec3(0.0f) - fFragPos);
-	vec3 toLightDir = normalize(lightPos - fFragPos);
+	vec3 toViewDir = normalize(uViewPos - fFragPos);
+	vec3 toLightDir = normalize(-light.direction);
 	vec3 reflectDir = reflect(-toLightDir, normal);
 
 	vec3 ambient = uMaterial.ambient * uMaterial.diffuse;
@@ -33,7 +60,7 @@ void main()
 	float diff = max(dot(normal, toLightDir), 0.0f);
 	vec3 diffuse = diff * uMaterial.diffuse;
 
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), uMaterial.shininess);
+	float spec = pow(max(dot(toViewDir, reflectDir), 0.0f), uMaterial.shininess);
 	vec3 specular = spec*uMaterial.specular;
 	
 	if (uUseTexture)

@@ -6,6 +6,7 @@
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/TextureManager.hpp>
+#include <Graphics/LightManager.hpp>
 #include <Graphics/EventManager.hpp>
 #include <Graphics/Mesh.hpp>
 #include <Graphics/GeometricMesh.hpp>
@@ -89,6 +90,7 @@ int main()
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
 
 	gfx::TextureManager::initialize();
+	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
 	gfx::TextureId tex[] = {
@@ -158,9 +160,9 @@ int main()
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	obj.setMaterial({
-		{0.0215, 0.1745, 0.0215},
-		{0.07568, 0.61424, 0.07568},
-		{0.633, 0.727811, 0.633},
+		{0.6, 0.6, 0.6},
+		{0.6, 0.6, 0.6},
+		{0.6, 0.6, 0.6},
 		128*0.6
 	});
 	//obj.setAccuracy();
@@ -187,6 +189,10 @@ int main()
 		{1.5f,  0.2f, -1.5f}, 
 		{-1.3f,  1.0f, -1.5f}
 	};
+
+	gfx::LightId light_id = gfx::LightManager::addLight();
+	gfx::LightManager::setDirection(light_id, mth::Vec3(0, -1, 0));
+	gfx::LightManager::setColor(light_id, mth::Vec3(0, 1, 0));
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;

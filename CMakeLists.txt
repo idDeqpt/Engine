@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/Color.cpp
 	src/EventManager.cpp
 	src/GeometricMesh.cpp
+	src/LightManager.cpp
 	src/Material.cpp
 	src/Mesh.cpp
 	src/RenderStates.cpp
