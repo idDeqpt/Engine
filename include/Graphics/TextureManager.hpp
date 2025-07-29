@@ -28,6 +28,7 @@ namespace gfx
 
 		static TextureId loadFromFile(std::string path);
 		static TextureId loadFromBuffer(unsigned char* image_data, TextureData data);
+		static TextureId loadFromBuffer(float* image_data, TextureData data);
 
 		static void deleteTexture(TextureId id);
 

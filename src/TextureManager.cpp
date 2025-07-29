@@ -40,7 +40,9 @@ gfx::TextureId gfx::TextureManager::loadFromFile(std::string path)
 {
     TextureData data;
 	unsigned char *image_data = stbi_load(path.c_str(), &(data.width), &(data.height), &(data.channels), 0);
-	return loadFromBuffer(image_data, data);
+	TextureId id = loadFromBuffer(image_data, data);
+	stbi_image_free(image_data);
+	return id;
 }
 
 gfx::TextureId gfx::TextureManager::loadFromBuffer(unsigned char* image_data, TextureData data)
@@ -56,7 +58,26 @@ gfx::TextureId gfx::TextureManager::loadFromBuffer(unsigned char* image_data, Te
 	glBindTexture(GL_TEXTURE_2D, uid);
 	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, mode, GL_UNSIGNED_BYTE, image_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(image_data);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+    m_textures.push_back(uid);
+    m_textures_data.push_back(data);
+	return uid;
+}
+
+gfx::TextureId gfx::TextureManager::loadFromBuffer(float* image_data, TextureData data)
+{
+	if (image_data == nullptr)
+    	return 0;
+
+    static constexpr int modes[] = {0, 0, 0, GL_RGB32F, GL_RGBA32F};
+    const GLenum mode = modes[data.channels];
+    TextureId uid;
+
+	glGenTextures(1, &uid);
+	glBindTexture(GL_TEXTURE_2D, uid);
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, GL_RGBA, GL_FLOAT, image_data);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
     m_textures.push_back(uid);
