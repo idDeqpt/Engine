@@ -14,7 +14,9 @@ set(SOURCE_FILES
 	src/Mat3.cpp
 	src/Mat4.cpp
 	src/Quaternion.cpp
+	src/Transform2.cpp
 	src/Transform3.cpp
+	src/Transformable2.cpp
 	src/Transformable3.cpp)
 
 

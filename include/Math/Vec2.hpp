@@ -15,6 +15,8 @@ namespace mth
 		Vec2(const Vec2& vec);
 
 		Vec2& operator=(const Vec2& vec);
+		Vec2& operator+=(const Vec2& vec);
+		Vec2 operator-() const;
 	};
 
 	Vec2 operator+(const Vec2& left, const Vec2& right);

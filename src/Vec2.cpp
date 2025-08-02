@@ -21,6 +21,18 @@ mth::Vec2& mth::Vec2::operator=(const Vec2& vec)
 	return *this;
 }
 
+mth::Vec2& mth::Vec2::operator+=(const Vec2& vec)
+{
+	x += vec.x;
+	y += vec.y;
+	return *this;
+}
+
+mth::Vec2 mth::Vec2::operator-() const
+{
+	return Vec2(-x, -y);
+}
+
 
 
 mth::Vec2 mth::operator+(const Vec2& left, const Vec2& right)
