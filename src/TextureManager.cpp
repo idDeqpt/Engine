@@ -22,67 +22,106 @@ void gfx::TextureManager::finalize()
 }
 
 
-bool gfx::TextureManager::bind(TextureId uid)
+bool gfx::TextureManager::bind(TextureId id)
 {
-	if (uid == 0) {glBindTexture(GL_TEXTURE_2D, 0); return true;}
+	if (id == 0) {glBindTexture(GL_TEXTURE_2D, 0); return true;}
 
 	for (unsigned int i = 0; i < m_textures.size(); i++)
-		if (uid == m_textures[i])
+		if (id == m_textures[i])
 		{
-			glBindTexture(GL_TEXTURE_2D, uid);
+			glBindTexture(GL_TEXTURE_2D, id);
 			return true;
 		}
 	return false;
 }
 
 
+gfx::TextureId gfx::TextureManager::create()
+{
+	TextureId id;
+	glGenTextures(1, &id);
+	m_textures.push_back(id);
+	m_textures_data.emplace_back();
+	return id;
+}
+
 gfx::TextureId gfx::TextureManager::loadFromFile(std::string path)
 {
-    TextureData data;
-	unsigned char *image_data = stbi_load(path.c_str(), &(data.width), &(data.height), &(data.channels), 0);
-	TextureId id = loadFromBuffer(image_data, data);
+	TextureId id = create();
+	TextureData data;
+	int channels;
+	unsigned char *image_data = stbi_load(path.c_str(), &(data.width), &(data.height), &channels, 0);
+
+	static constexpr TextureData::Channel formats[] = {
+		TextureData::Channel::RED,
+		TextureData::Channel::RED,
+		TextureData::Channel::RED,
+		TextureData::Channel::RGB,
+		TextureData::Channel::RGBA
+	};
+	data.internal_format = formats[channels];
+	data.format = formats[channels];
+
+	loadFromBuffer(id, image_data, data);
+
 	stbi_image_free(image_data);
 	return id;
 }
 
-gfx::TextureId gfx::TextureManager::loadFromBuffer(unsigned char* image_data, TextureData data)
+bool gfx::TextureManager::loadFromBuffer(TextureId id, unsigned char* image_data, TextureData data)
 {
 	if (image_data == nullptr)
-    	return 0;
+		return false;
 
-    static constexpr int modes[] = {0, 0, 0, GL_RGB, GL_RGBA};
-    const GLenum mode = modes[data.channels];
-    TextureId uid;
+	static constexpr GLenum formats[] = {
+		GL_RED, GL_BLUE, GL_GREEN, GL_ALPHA,
+		GL_RGB, GL_RGB4, GL_RGB5, GL_RGB8, GL_RGB10, GL_RGB12, GL_RGB16, GL_RGB16F, GL_RGB32F,
+		GL_RGBA, GL_RGBA2, GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, GL_RGBA16F,GL_RGBA32F,
+		GL_RGB5_A1, GL_RGB10_A2
+	};
+	const GLenum internal_format = formats[int(data.internal_format)];
+	const GLenum format = formats[int(data.format)];
 
-	glGenTextures(1, &uid);
-	glBindTexture(GL_TEXTURE_2D, uid);
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, mode, GL_UNSIGNED_BYTE, image_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	for (unsigned int i = 0; i < m_textures.size(); i++)
+		if (m_textures[i] == id)
+		{
+			glBindTexture(GL_TEXTURE_2D, id);
+			glTexImage2D(GL_TEXTURE_2D, 0, internal_format, data.width, data.height, 0, format, GL_UNSIGNED_BYTE, image_data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_textures.push_back(uid);
-    m_textures_data.push_back(data);
-	return uid;
+			m_textures_data[i] = data;
+			return true;
+		}
+	return false;
 }
 
-gfx::TextureId gfx::TextureManager::loadFromBuffer(float* image_data, TextureData data)
+bool gfx::TextureManager::loadFromBuffer(TextureId id, float* image_data, TextureData data)
 {
 	if (image_data == nullptr)
-    	return 0;
+		return false;
 
-    static constexpr int modes[] = {0, 0, 0, GL_RGB32F, GL_RGBA32F};
-    const GLenum mode = modes[data.channels];
-    TextureId uid;
+	static constexpr GLenum formats[] = {
+		GL_RED, GL_BLUE, GL_GREEN, GL_ALPHA,
+		GL_RGB, GL_RGB4, GL_RGB5, GL_RGB8, GL_RGB10, GL_RGB12, GL_RGB16, GL_RGB16F, GL_RGB32F,
+		GL_RGBA, GL_RGBA2, GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, GL_RGBA16F,GL_RGBA32F,
+		GL_RGB5_A1, GL_RGB10_A2
+	};
+	const GLenum internal_format = formats[int(data.internal_format)];
+	const GLenum format = formats[int(data.format)];
 
-	glGenTextures(1, &uid);
-	glBindTexture(GL_TEXTURE_2D, uid);
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, data.width, data.height, 0, GL_RGB, GL_FLOAT, image_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	for (unsigned int i = 0; i < m_textures.size(); i++)
+		if (m_textures[i] == id)
+		{
+			glBindTexture(GL_TEXTURE_2D, id);
+			glTexImage2D(GL_TEXTURE_2D, 0, internal_format, data.width, data.height, 0, format, GL_FLOAT, image_data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_textures.push_back(uid);
-    m_textures_data.push_back(data);
-	return uid;
+			m_textures_data[i] = data;
+			return true;
+		}
+	return false;
 }
 
 
@@ -95,5 +134,19 @@ void gfx::TextureManager::deleteTexture(TextureId id)
 			m_textures_data.erase(m_textures_data.begin() + i);
 			glDeleteTextures(1, (GLuint*)&id);
 		}
-	
 }
+
+
+
+
+gfx::TextureManager::TextureData::TextureData():
+	width(0),
+	height(0),
+	internal_format(Channel::RED),
+	format(Channel::RED) {}
+
+gfx::TextureManager::TextureData::TextureData(int width, int height, Channel internal_format, Channel format):
+	width(width),
+	height(height),
+	internal_format(internal_format),
+	format(format) {}
