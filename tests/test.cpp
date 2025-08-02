@@ -5,7 +5,9 @@
 #include <Graphics/Color.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
+#include <Graphics/Text.hpp>
 #include <Graphics/TextureManager.hpp>
+#include <Graphics/FontManager.hpp>
 #include <Graphics/LightManager.hpp>
 #include <Graphics/EventManager.hpp>
 #include <Graphics/Mesh.hpp>
@@ -90,6 +92,7 @@ int main()
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
 
 	gfx::TextureManager::initialize();
+	gfx::FontManager::initialize();
 	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
@@ -104,6 +107,10 @@ int main()
 	std::cout << "Tex2: " << tex[1] << std::endl;
 	std::cout << "Tex3: " << tex[2] << std::endl;
 	std::cout << "Tex4: " << tex[3] << std::endl;
+	std::cout << "Err: " << glGetError() << std::endl;
+
+	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf");
+	std::cout << "Font: " << fontid << std::endl;
 
 	const unsigned int floor_size = 4;
 	const unsigned int floor_accuracy = 10;
@@ -131,7 +138,7 @@ int main()
 			unsigned int first = i*floor_accuracy + j;
 			unsigned int second = first + floor_accuracy;
 
-			floor_normals[index/3] = (floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
+			floor_normals[index/3] = -(floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
 			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = first;
 			floor_normal_indexes[index] = index/3 + 1;
@@ -139,7 +146,7 @@ int main()
 			floor_normal_indexes[index] = index/3 + 2;
 			floor_indexes[index++] = first + 1;
 
-			floor_normals[index/3] = (floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
+			floor_normals[index/3] = -(floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
 			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = second;
 			floor_normal_indexes[index] = index/3 + 1;
@@ -192,8 +199,13 @@ int main()
 	};
 
 	gfx::LightId light_id = gfx::LightManager::addLight();
-	gfx::LightManager::setDirection(light_id, mth::Vec3(0, -1, 0));
+	gfx::LightManager::setDirection(light_id, mth::Vec3(1, -1, 0));
 	gfx::LightManager::setColor(light_id, mth::Vec3(1, 1, 1));
+
+	gfx::Text text;
+	text.setFontId(fontid);
+	text.setString("fontid");
+	text.setScale(mth::Vec3(0.02));
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -227,7 +239,7 @@ int main()
 			view.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
-		//obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 0, 0), time*0.5));
+		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 
 		window.clear(gfx::Color(125));
 
@@ -237,11 +249,13 @@ int main()
 			//obj.setTexture(tex[i % 2]);
 			window.draw(obj, states);
 		}
-		window.draw(floor, states);
+		//window.draw(floor, states);
+		window.draw(text, states);
 
 		window.display();
 	}
 
+	gfx::FontManager::finalize();
 	gfx::TextureManager::finalize();
 
 	window.destroy();

@@ -12,9 +12,7 @@
 
 namespace gfx
 {
-	class Vertex;
 	class Window;
-	class Texture;
 
 	class Mesh : public Drawable, public mth::Transformable3
 	{

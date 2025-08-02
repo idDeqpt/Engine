@@ -5,6 +5,7 @@ set(PATH_TO_LIB "C:/Projects/C++/libraries/Engine/Graphics")
 set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
 set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
 set(PATH_TO_MATH "C:/Projects/C++/libraries/Engine/Math")
+set(PATH_TO_FREETYPE "C:/Projects/C++/libraries/freetype")
 
 
 project(${PROJECT_NAME} CXX)
@@ -18,11 +19,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
 
+#target_link_libraries(${PROJECT_NAME} PRIVATE graphics)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/bin/lib/Debug/graphics.lib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/bin/lib/Debug/Math.lib)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/build/Debug/freetyped.lib)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 

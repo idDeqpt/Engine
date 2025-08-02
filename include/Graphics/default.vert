@@ -58,5 +58,6 @@ void main()
 	float spec = pow(max(dot(toViewDir, reflectDir), 0.0f), uMaterial.shininess);
 	vec3 specular = spec*texture(uMaterial.specular, fTexCoord).rgb*light.color;
 	
-	oColor = vec4(ambient + diffuse + specular, 1.0f);
+	oColor = vec4(ambient*0.5 + diffuse + specular, 1.0f);
+	//oColor = vec4(color, 1.0f);
 }

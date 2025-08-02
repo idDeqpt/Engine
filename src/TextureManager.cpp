@@ -42,6 +42,7 @@ gfx::TextureId gfx::TextureManager::create()
 	glGenTextures(1, &id);
 	m_textures.push_back(id);
 	m_textures_data.emplace_back();
+	std::cout << "NEW ID: " << id << std::endl;
 	return id;
 }
 
