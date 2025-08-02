@@ -95,7 +95,17 @@ void gfx::LightManager::updateTexture()
 			std::cout << pixels[i] << " ";
 		std::cout << std::endl;
 
-		m_lights_texture = TextureManager::loadFromBuffer((float*)pixels.data(), {int(m_lights.size())*2, 1, 3});
+		m_lights_texture = TextureManager::create();
+		TextureManager::loadFromBuffer(
+			m_lights_texture,
+			(float*)pixels.data(),
+			TextureManager::TextureData(
+				m_lights.size()*2,
+				1,
+				TextureManager::TextureData::Channel::RGB32F,
+				TextureManager::TextureData::Channel::RGB
+			)
+		);
 
 		m_need_update = false;
 	}
