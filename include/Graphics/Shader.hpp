@@ -41,10 +41,14 @@ namespace gfx
 
 		bool use();
 
+		static void setActive(Shader* target);
+		static Shader* getActive();
+
 	protected:
 		GLuint shader_program_id;
 		Error last_error;
 		std::string last_error_log;
+		static Shader* active;
 	};
 }
 

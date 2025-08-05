@@ -7,6 +7,9 @@
 #include <Math/Vec3.hpp>
 
 
+gfx::Shader* gfx::Shader::active = nullptr;
+
+
 gfx::Shader::Shader()
 {
 	last_error = Shader::Error::UNINITED;
@@ -151,4 +154,16 @@ bool gfx::Shader::use()
 
 	glUseProgram(shader_program_id);
 	return true;
+}
+
+
+
+void gfx::Shader::setActive(Shader* target)
+{
+	active = target;
+}
+
+gfx::Shader* gfx::Shader::getActive()
+{
+	return active;
 }

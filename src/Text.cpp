@@ -59,26 +59,25 @@ void gfx::Text::draw(Window* window, RenderStates& states)
 {
 	if (font_id == 0) return;
 
-	states.m_transform = getGlobalTransform();
-
-	states.m_shader->use();
 	View* active_view = gfx::View::getActive();
+	Shader* active_shader = gfx::Shader::getActive();
 	mth::Vec3 view_loc_pos = active_view->getPosition();
 	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
 	mth::Vec4 view_glob_pos = view_transform_mat*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 
-	states.m_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
+	active_shader->use();
+	active_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
+	active_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
+	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
-	states.m_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
-	states.m_shader->setUniform1i("uLightsCount", LightManager::getLightsCount());
+	active_shader->setUniform1i("uLightsCount", LightManager::getLightsCount());
 	if (LightManager::getLightsCount())
 	{
 		glActiveTexture(GL_TEXTURE2);
 		TextureManager::bind(LightManager::getLightsTexture());
-		states.m_shader->setUniform1i("uLightsTexture", 2);
+		active_shader->setUniform1i("uLightsTexture", 2);
 	}
 
 	glBindVertexArray(m_VAO);
@@ -106,10 +105,10 @@ void gfx::Text::draw(Window* window, RenderStates& states)
         // Render glyph texture over quad
         glActiveTexture(GL_TEXTURE0);
         TextureManager::bind(ch.id);
-        states.m_shader->setUniform1i("uMaterial.diffuse", 0);
+        active_shader->setUniform1i("uMaterial.diffuse", 0);
         glActiveTexture(GL_TEXTURE1);
         TextureManager::bind(ch.id);
-        states.m_shader->setUniform1i("uMaterial.specular", 1);
+        active_shader->setUniform1i("uMaterial.specular", 1);
         // Update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
