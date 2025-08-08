@@ -3,8 +3,7 @@
 #include <stdexcept>
 
 
-gfx::Color::Color():
-	r(0), g(0), b(0), a(0) {}
+gfx::Color::Color(): Color(COLOR_MAX_VALUE) {}
 
 gfx::Color::Color(color_t common_value):
 	r(common_value), g(common_value), b(common_value), a(common_value) {}
