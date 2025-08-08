@@ -37,6 +37,7 @@ namespace gfx
 		bool setUniform1f(std::string name, float value);
 		bool setUniformVec3(std::string name, const mth::Vec3& vec);
 		bool setUniform3fv(std::string name, int count, float* values_ptr);
+		bool setUniformMatrix3v(std::string name, float* mat_ptr);
 		bool setUniformMatrix4fv(std::string name, float* mat_ptr);
 
 		bool use();
