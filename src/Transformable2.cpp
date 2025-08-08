@@ -9,6 +9,7 @@ mth::Transformable2::Transformable2() : mth::Transformable2::Transformable2(null
 mth::Transformable2::Transformable2(Transformable2* parent)
 {
 	m_parent = parent;
+	m_rotation = 0;
 	m_scale = Vec2(1);
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
