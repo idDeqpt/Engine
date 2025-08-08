@@ -160,6 +160,16 @@ bool gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
 	return true;
 }
 
+bool gfx::Shader::setUniform4fv(std::string name, int count, float* values_ptr)
+{
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniform4fv(location, count, values_ptr);
+	return true;
+}
+
 bool gfx::Shader::setUniformMatrix3fv(std::string name, float* mat_ptr)
 {
 	int location = glGetUniformLocation(shader_program_id, name.c_str());
