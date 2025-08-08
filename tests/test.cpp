@@ -80,16 +80,17 @@ mth::Vec4 mult(const mth::Mat4& mat, const mth::Vec4& vec)
 int main()
 {
 	srand(0);
-	gfx::Window window(800, 800, "LearnOpenGL");
+	gfx::Window window(800, 600, "LearnOpenGL");
 
 	window.setViewport(0, 0, 800, 800);
 
 	gfx::Shader shader;
-	shader.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/default.frag",
-						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/default.vert");
+	shader.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.vert",
+						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.frag");
 	std::cout << "Shader error: " << shader.getLastError() << std::endl;
 	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
+	gfx::Shader::setActive(&shader);
 
 	gfx::TextureManager::initialize();
 	gfx::FontManager::initialize();
@@ -246,10 +247,9 @@ int main()
 		for (unsigned int i = 0; i < positions.size(); i++)
 		{
 			obj.setPosition(positions[i]);
-			//obj.setTexture(tex[i % 2]);
 			window.draw(obj, states);
 		}
-		//window.draw(floor, states);
+		window.draw(floor, states);
 		window.draw(text, states);
 
 		window.display();
