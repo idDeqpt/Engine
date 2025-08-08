@@ -11,6 +11,7 @@ project(${PROJECT_NAME} CXX)
 include_directories("./include")
 
 add_library(${PROJECT_NAME} STATIC
+	src/CanvasItem.cpp
 	src/Color.cpp
 	src/EventManager.cpp
 	src/FontManager.cpp

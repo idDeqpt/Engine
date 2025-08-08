@@ -15,6 +15,7 @@
 #include <Graphics/Vertex.hpp>
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/PrimitiveType.hpp>
+#include <Graphics/CanvasItem.hpp>
 #include <Math/Vec2.hpp>
 #include <Math/Vec3.hpp>
 #include <Math/Vec4.hpp>
@@ -82,15 +83,20 @@ int main()
 	srand(0);
 	gfx::Window window(800, 600, "LearnOpenGL");
 
-	window.setViewport(0, 0, 800, 800);
+	window.setViewport(0, 0, 800, 600);
 
-	gfx::Shader shader;
-	shader.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.vert",
+	gfx::Shader shader3d;
+	shader3d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.vert",
 						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.frag");
-	std::cout << "Shader error: " << shader.getLastError() << std::endl;
-	if (shader.getLastError() != gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader error log: " << shader.getLastErrorLog() << std::endl;
-	gfx::Shader::setActive(&shader);
+	std::cout << "Shader error: " << shader3d.getLastError() << std::endl;
+	if (shader3d.getLastError() != gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader error log: " << shader3d.getLastErrorLog() << std::endl;
+	gfx::Shader shader2d;
+	shader2d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default2d.vert",
+						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default2d.frag");
+	std::cout << "Shader error: " << shader2d.getLastError() << std::endl;
+	if (shader2d.getLastError() != gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader error log: " << shader2d.getLastErrorLog() << std::endl;
 
 	gfx::TextureManager::initialize();
 	gfx::FontManager::initialize();
@@ -177,14 +183,12 @@ int main()
 	//obj.setAccuracy();
 
 	gfx::RenderStates states;
-	states.m_shader = &shader;
-	//states.m_texture = &tex1;
-	//states.m_view.setOrtho(-5, 5, 5, -5, -30, 30);
-	gfx::View view;
-	gfx::View::setActive(&view);
-	view.setPerspective(3.14*0.25, 1, 1, 100);
-	view.setPosition(mth::Vec3(0, 1, 2));
-	//states.m_view.setRotation(mth::Vec3(1, 0, 0), -3.14*0.25);
+	gfx::View view3d;
+	view3d.setOrtho(0, 10, 10, 0, -30, 30);
+	//view3d.setPerspective(3.14*0.25, 1, 1, 100);
+	view3d.setPosition(mth::Vec3(0, 1, 2));
+	gfx::View view2d;
+	view2d.setOrtho(0, 800, 600, 0, -10, 10);
 
 	std::vector<mth::Vec3> positions = {
 		{0.0f,  0.0f,  0.0f}, 
@@ -207,6 +211,17 @@ int main()
 	text.setFontId(fontid);
 	text.setString("fontid");
 	text.setScale(mth::Vec3(0.02));
+
+	gfx::CanvasItem ci;
+	//ci.setColor(gfx::Color(255, 0, 0, 255));
+	gfx::CanvasItem::Vertex verts[4] = {
+		{{0, 0}, {0, 0}},
+		{{100, 0}, {1, 0}},
+		{{100, 100}, {1, 1}},
+		{{0, 100}, {0, 1}}
+	};
+	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
+	ci.setTexture(tex[0]);
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -232,18 +247,20 @@ int main()
 		if (gfx::EventManager::Mouse::moved())
 			rot_angles = rot_angles + gfx::EventManager::Mouse::getDelta();
 		
-		view.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
-		view.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
-		view.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
+		view3d.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
+		//view3d.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
+		//view3d.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
 
 		if (vel.x || vel.y || vel.z)
-			view.relativeMove(vel);
+			view3d.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
 		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 
 		window.clear(gfx::Color(125));
 
+		gfx::View::setActive(&view3d);
+		gfx::Shader::setActive(&shader3d);
 		for (unsigned int i = 0; i < positions.size(); i++)
 		{
 			obj.setPosition(positions[i]);
@@ -251,6 +268,11 @@ int main()
 		}
 		window.draw(floor, states);
 		window.draw(text, states);
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+		gfx::View::setActive(&view2d);
+		gfx::Shader::setActive(&shader2d);
+		window.draw(ci, states);
 
 		window.display();
 	}
