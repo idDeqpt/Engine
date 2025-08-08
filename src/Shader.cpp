@@ -121,29 +121,53 @@ std::string gfx::Shader::getLastErrorLog()
 }
 
 
-void gfx::Shader::setUniform1i(std::string name, int value)
+bool gfx::Shader::setUniform1i(std::string name, int value)
 {
-	glUniform1i(glGetUniformLocation(shader_program_id, name.c_str()), value);
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniform1i(location, value);
+	return true;
 }
 
-void gfx::Shader::setUniform1f(std::string name, float value)
+bool gfx::Shader::setUniform1f(std::string name, float value)
 {
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
 	glUniform1f(glGetUniformLocation(shader_program_id, name.c_str()), value);
 }
 
-void gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
+bool gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
 {
-	glUniform3f(glGetUniformLocation(shader_program_id, name.c_str()), vec.x, vec.y, vec.z);
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniform3f(location, vec.x, vec.y, vec.z);
+	return true;
 }
 
-void gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
+bool gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
 {
-	glUniform3fv(glGetUniformLocation(shader_program_id, name.c_str()), count, values_ptr);
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniform3fv(location, count, values_ptr);
+	return true;
 }
 
-void gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
+bool gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
 {
-	glUniformMatrix4fv(glGetUniformLocation(shader_program_id, name.c_str()), 1, GL_TRUE, mat_ptr);
+	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniformMatrix4fv(location, 1, GL_TRUE, mat_ptr);
+	return true;
 }
 
 

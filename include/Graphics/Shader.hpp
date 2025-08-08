@@ -33,11 +33,11 @@ namespace gfx
 		Error getLastError();
 		std::string getLastErrorLog();
 
-		void setUniform1i(std::string name, int value);
-		void setUniform1f(std::string name, float value);
-		void setUniformVec3(std::string name, const mth::Vec3& vec);
-		void setUniform3fv(std::string name, int count, float* values_ptr);
-		void setUniformMatrix4fv(std::string name, float* mat_ptr);
+		bool setUniform1i(std::string name, int value);
+		bool setUniform1f(std::string name, float value);
+		bool setUniformVec3(std::string name, const mth::Vec3& vec);
+		bool setUniform3fv(std::string name, int count, float* values_ptr);
+		bool setUniformMatrix4fv(std::string name, float* mat_ptr);
 
 		bool use();
 
