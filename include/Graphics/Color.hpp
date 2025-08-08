@@ -18,6 +18,8 @@ namespace gfx
 		Color(color_t red, color_t green, color_t blue);
 		Color(color_t red, color_t green, color_t blue, color_t alpha);
 		Color(const Color& color);
+
+		color_t& operator[](unsigned int index);
 	};
 }
 

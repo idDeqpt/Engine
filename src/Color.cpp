@@ -16,3 +16,11 @@ gfx::Color::Color(color_t red, color_t green, color_t blue, color_t alpha):
 
 gfx::Color::Color(const Color& color):
 	r(color.r), g(color.g), b(color.b), a(color.a) {}
+
+
+color_t& gfx::Color::operator[](unsigned int index)
+{
+	if (index >= 4)
+		throw std::out_of_range("Color size");
+	return *(&r + index);
+}
