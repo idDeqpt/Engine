@@ -50,6 +50,7 @@ namespace gfx
 	protected:
 		static std::vector<TextureId> m_textures;
 		static std::vector<TextureData> m_textures_data;
+		static std::vector<unsigned char*> m_textures_pixels;
 	};
 }
 
