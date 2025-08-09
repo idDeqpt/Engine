@@ -72,30 +72,39 @@ bool gfx::TextureManager::loadFromBuffer(TextureId id, void* image_data, Texture
 	if (image_data == nullptr)
 		return false;
 
-	static constexpr GLenum formats[] = {
-		GL_RED,  GL_BLUE, GL_GREEN, GL_ALPHA,
-		GL_RGB,  GL_RGB,
-		GL_RGBA, GL_RGBA
+	static constexpr GLenum formats[][3] = { //{internal_format, format, type}
+		{GL_RED,   GL_RED,   GL_UNSIGNED_BYTE},
+		{GL_BLUE,  GL_BLUE,  GL_UNSIGNED_BYTE},
+		{GL_GREEN, GL_GREEN, GL_UNSIGNED_BYTE},
+		{GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
+
+		{GL_RGB,    GL_RGB, GL_UNSIGNED_BYTE},
+		{GL_RGB32F, GL_RGB, GL_FLOAT},
+
+		{GL_RGBA,    GL_RGBA, GL_UNSIGNED_BYTE},
+		{GL_RGBA32F, GL_RGBA, GL_FLOAT},
 	};
-	static constexpr GLenum internal_formats[] = {
-		GL_RED,  GL_BLUE,  GL_GREEN, GL_ALPHA,
-		GL_RGB,  GL_RGB32F,
-		GL_RGBA, GL_RGBA32F
+	static constexpr unsigned int type_sizes[] = {
+		sizeof(unsigned char),
+		sizeof(unsigned char),
+		sizeof(unsigned char),
+		sizeof(unsigned char),
+		
+		sizeof(unsigned char),
+		sizeof(float),
+		
+		sizeof(unsigned char),
+		sizeof(float)
 	};
-	static constexpr GLenum types[] = {
-		GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE,
-		GL_UNSIGNED_BYTE, GL_FLOAT,
-		GL_UNSIGNED_BYTE, GL_FLOAT
-	};
-	const GLenum format          = formats[int(data.format)];
-	const GLenum internal_format = internal_formats[int(data.format)];
-	const GLenum type            = types[int(data.format)];
+	const int format_index = int(data.format);
+	const GLenum format[3] = {formats[format_index][0], formats[format_index][1], formats[format_index][2]};
+	const unsigned int type_size = type_sizes[format_index];
 
 	for (unsigned int i = 0; i < m_textures.size(); i++)
 		if (m_textures[i] == id)
 		{
 			glBindTexture(GL_TEXTURE_2D, id);
-			glTexImage2D(GL_TEXTURE_2D, 0, internal_format, data.width, data.height, 0, format, type, image_data);
+			glTexImage2D(GL_TEXTURE_2D, 0, format[0], data.width, data.height, 0, format[1], format[2], image_data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 

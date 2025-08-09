@@ -163,7 +163,6 @@ int main()
 		}
 
 	gfx::Mesh floor;
-	//floor.setScale(mth::Vec3(5));
 	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
 												floor_tex_coords, floor_points_count, floor_indexes,
 												floor_normals, floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
@@ -180,7 +179,6 @@ int main()
 		tex[3],
 		128*0.4
 	});
-	//obj.setAccuracy();
 
 	gfx::RenderStates states;
 	gfx::View view3d;
