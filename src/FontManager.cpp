@@ -85,7 +85,6 @@ bool gfx::FontManager::loadChar(FontId font_id, unsigned char character)
 				TextureManager::TextureData(
 					m_fonts[i].face->glyph->bitmap.width,
 					m_fonts[i].face->glyph->bitmap.rows,
-					TextureManager::TextureData::RED,
 					TextureManager::TextureData::RED
 			));
 

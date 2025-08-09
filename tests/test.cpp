@@ -184,8 +184,8 @@ int main()
 
 	gfx::RenderStates states;
 	gfx::View view3d;
-	view3d.setOrtho(0, 10, 10, 0, -30, 30);
-	//view3d.setPerspective(3.14*0.25, 1, 1, 100);
+	//view3d.setOrtho(0, 10, 10, 0, -30, 30);
+	view3d.setPerspective(3.14*0.25, 1, 1, 100);
 	view3d.setPosition(mth::Vec3(0, 1, 2));
 	gfx::View view2d;
 	view2d.setOrtho(0, 800, 600, 0, -10, 10);
@@ -248,8 +248,8 @@ int main()
 			rot_angles = rot_angles + gfx::EventManager::Mouse::getDelta();
 		
 		view3d.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
-		//view3d.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
-		//view3d.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
+		view3d.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
+		view3d.rotate(mth::Quaternion(mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
 
 		if (vel.x || vel.y || vel.z)
 			view3d.relativeMove(vel);

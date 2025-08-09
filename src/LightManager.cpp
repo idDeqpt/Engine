@@ -102,8 +102,7 @@ void gfx::LightManager::updateTexture()
 			TextureManager::TextureData(
 				m_lights.size()*2,
 				1,
-				TextureManager::TextureData::Channel::RGB32F,
-				TextureManager::TextureData::Channel::RGB
+				TextureManager::TextureData::Channel::RGB32F
 			)
 		);
 

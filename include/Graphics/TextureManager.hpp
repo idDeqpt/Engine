@@ -23,32 +23,16 @@ namespace gfx
 				GREEN,
 				ALPHA,
 				RGB,
-				RGB4,
-				RGB5,
-				RGB8,
-				RGB10,
-				RGB12,
-				RGB16,
-				RGB16F,
 				RGB32F,
 				RGBA,
-				RGBA2,
-				RGBA4,
-				RGBA8,
-				RGBA12,
-				RGBA16,
-				RGBA16F,
 				RGBA32F,
-				RGB5_A1,
-				RGB10_A2,
 			};
 
 			TextureData();
-			TextureData(int width, int height, Channel internal_format, Channel format);
+			TextureData(int width, int height, Channel format);
 
 			int width;
 			int height;
-			Channel internal_format;
 			Channel format;
 		};
 
@@ -59,8 +43,7 @@ namespace gfx
 
 		static TextureId create();
 		static TextureId loadFromFile(std::string path);
-		static bool loadFromBuffer(TextureId id, unsigned char* image_data, TextureData data);
-		static bool loadFromBuffer(TextureId id, float* image_data, TextureData data);
+		static bool loadFromBuffer(TextureId id, void* image_data, TextureData data);
 
 		static void deleteTexture(TextureId id);
 
