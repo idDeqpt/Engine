@@ -46,7 +46,7 @@ void mth::Transform2::rotate(float angle)
 	Mat3 rotation_m(
 		cos_angle, -sin_angle, 0,
 		sin_angle,  cos_angle, 0,
-		0,          0,         0
+		0,          0,         1
 	);
 	m_matrix = m_matrix*rotation_m;
 }
