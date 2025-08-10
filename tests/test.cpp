@@ -6,6 +6,7 @@
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Text.hpp>
+#include <Graphics/Text2D.hpp>
 #include <Graphics/TextureManager.hpp>
 #include <Graphics/FontManager.hpp>
 #include <Graphics/LightManager.hpp>
@@ -80,10 +81,12 @@ mth::Vec4 mult(const mth::Mat4& mat, const mth::Vec4& vec)
 
 int main()
 {
+	unsigned int width = 1600;
+	unsigned int height = 900;
 	srand(0);
-	gfx::Window window(800, 600, "LearnOpenGL");
+	gfx::Window window(width, height, "LearnOpenGL");
 
-	window.setViewport(0, 0, 800, 600);
+	window.setViewport(0, 0, width, height);
 
 	gfx::Shader shader3d;
 	shader3d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.vert",
@@ -115,15 +118,11 @@ int main()
 	std::cout << "Tex3: " << tex[2] << std::endl;
 	std::cout << "Tex4: " << tex[3] << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
-	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf");
+	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 32);
 	std::cout << "Font: " << fontid << std::endl;
-	gfx::FontManager::getCharacter(fontid, 'a');
-	gfx::FontManager::getCharacter(fontid, 'J');
-	gfx::FontManager::getCharacter(fontid, 'h');
-	gfx::FontManager::getCharacter(fontid, 'h');
 
-	const unsigned int floor_size = 4;
-	const unsigned int floor_accuracy = 10;
+	const unsigned int floor_size = 20;
+	const unsigned int floor_accuracy = 20;
 	const unsigned int floor_points_count = floor_accuracy*floor_accuracy;
 	const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
 	const unsigned int floor_indexes_count = floor_normals_count*3;
@@ -186,10 +185,10 @@ int main()
 	gfx::RenderStates states;
 	gfx::View view3d;
 	//view3d.setOrtho(0, 10, 10, 0, -30, 30);
-	view3d.setPerspective(3.14*0.25, 4/3.0, 1, 100);
+	view3d.setPerspective(3.14*0.25, float(width)/height, 1, 100);
 	view3d.setPosition(mth::Vec3(0, 1, 2));
 	gfx::View view2d;
-	view2d.setOrtho(0, 800, 600, 0, -10, 10);
+	view2d.setOrtho(0, width, height, 0, -10, 10);
 
 	std::vector<mth::Vec3> positions = {
 		{0.0f,  0.0f,  0.0f}, 
@@ -224,10 +223,16 @@ int main()
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	ci.setTexture(gfx::FontManager::getTexture(fontid));
 
+	gfx::Text2D text2d;
+	text2d.setString("text string");
+	text2d.setFont(fontid);
+
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
+	float delta_time = 0;
 	while(window.isOpen())
 	{
+		float start_time = glfwGetTime();
 		mth::Vec3 vel;
 		gfx::EventManager::pull();
 		if (gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
@@ -258,6 +263,8 @@ int main()
 		float time = (GLfloat)glfwGetTime();
 		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 
+		text2d.setString("Frame time: " + std::to_string(delta_time));
+
 		window.clear(gfx::Color(125));
 
 		gfx::View::setActive(&view3d);
@@ -273,9 +280,13 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		gfx::View::setActive(&view2d);
 		gfx::Shader::setActive(&shader2d);
-		window.draw(ci, states);
+
+		//window.draw(ci, states);
+		window.draw(text2d, states);
 
 		window.display();
+
+		delta_time = glfwGetTime() - start_time;
 	}
 
 	gfx::FontManager::finalize();

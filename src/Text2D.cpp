@@ -1,0 +1,103 @@
+#include <Graphics/Text2D.hpp>
+
+#include <Graphics/CanvasItem.hpp>
+#include <Graphics/FontManager.hpp>
+#include <Graphics/TextureManager.hpp>
+#include <Math/Vec2.hpp>
+#include <string>
+#include <iostream>
+
+
+gfx::Text2D::Text2D() : m_font_id(0), m_text_need_update(false), CanvasItem()
+{
+	setPrimitiveType(PrimitiveType::TRIANGLES);
+}
+
+
+void gfx::Text2D::setFont(FontId new_font_id)
+{
+	m_font_id = new_font_id;
+	m_text_need_update = true;
+}
+
+void gfx::Text2D::setString(const std::string& new_text)
+{
+	m_text = new_text;
+	m_text_need_update = true;
+}
+
+
+std::string gfx::Text2D::getString()
+{
+	return m_text;
+}
+
+
+void gfx::Text2D::draw(Window* window, RenderStates& states)
+{
+	this->updateString();
+	CanvasItem::draw(window, states);
+}
+
+
+void gfx::Text2D::updateString()
+{
+	if (m_text_need_update)
+	{
+		if (m_text.size() && m_font_id)
+		{
+			Font::Character* characters = new Font::Character[m_text.size()];
+			for (unsigned int i = 0; i < m_text.size(); i++)
+				characters[i] = FontManager::getCharacter(m_font_id, m_text[i]);
+
+			unsigned int vertices_count = m_text.size()*6;
+			CanvasItem::Vertex* total_vertices = new CanvasItem::Vertex[vertices_count];
+			CanvasItem::Vertex symbol_vertices[4];
+
+			TextureId font_tex = FontManager::getTexture(m_font_id);
+			TextureManager::TextureData tex_data = TextureManager::getData(font_tex);
+
+			float last_char_x = 0;
+			for (unsigned int i = 0; i < m_text.size(); i++)
+			{
+				unsigned int vert_i = i*6;
+				mth::Vec2 tex_lt = {
+					float(characters[i].shift_into_tex)/tex_data.width,
+					0
+				};
+				mth::Vec2 tex_rd = {
+					float(characters[i].shift_into_tex + characters[i].width)/tex_data.width,
+					float(characters[i].height)/tex_data.height
+				};
+
+				mth::Vec2 char_pos = {
+					last_char_x + characters[i].bearingX,
+					FontManager::getSize(m_font_id) - float(characters[i].bearingY)
+				};
+
+				symbol_vertices[0] = {{char_pos.x,                       char_pos.y},                        {tex_lt.x, tex_lt.y}};
+				symbol_vertices[1] = {{char_pos.x + characters[i].width, char_pos.y},                        {tex_rd.x, tex_lt.y}};
+				symbol_vertices[2] = {{char_pos.x,                       char_pos.y + characters[i].height}, {tex_lt.x, tex_rd.y}};
+				symbol_vertices[3] = {{char_pos.x + characters[i].width, char_pos.y + characters[i].height}, {tex_rd.x, tex_rd.y}};
+
+				total_vertices[vert_i]     = symbol_vertices[0];
+				total_vertices[vert_i + 1] = symbol_vertices[1];
+				total_vertices[vert_i + 2] = symbol_vertices[2];
+				total_vertices[vert_i + 3] = symbol_vertices[2];
+				total_vertices[vert_i + 4] = symbol_vertices[1];
+				total_vertices[vert_i + 5] = symbol_vertices[3];
+
+				last_char_x += characters[i].advance;
+			}
+			loadData(total_vertices, vertices_count);
+			setTexture(font_tex);
+
+			delete[] characters;
+			delete[] total_vertices;
+		}
+		else
+			unloadData();
+
+		m_text_need_update = false;
+	}
+}
