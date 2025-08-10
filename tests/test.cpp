@@ -117,6 +117,10 @@ int main()
 	std::cout << "Err: " << glGetError() << std::endl;
 	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf");
 	std::cout << "Font: " << fontid << std::endl;
+	gfx::FontManager::getCharacter(fontid, 'a');
+	gfx::FontManager::getCharacter(fontid, 'J');
+	gfx::FontManager::getCharacter(fontid, 'h');
+	gfx::FontManager::getCharacter(fontid, 'h');
 
 	const unsigned int floor_size = 4;
 	const unsigned int floor_accuracy = 10;
@@ -204,10 +208,10 @@ int main()
 	gfx::LightManager::setDirection(light_id, mth::Vec3(1, -1, 0));
 	gfx::LightManager::setColor(light_id, mth::Vec3(1, 1, 1));
 
-	gfx::Text text;
+	/*gfx::Text text;
 	text.setFontId(fontid);
 	text.setString("fontid");
-	text.setScale(mth::Vec3(0.02));
+	text.setScale(mth::Vec3(0.02));*/
 
 	gfx::CanvasItem ci;
 	//ci.setColor(gfx::Color(255, 0, 0, 255));
@@ -218,7 +222,7 @@ int main()
 		{{0, 600}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
-	ci.setTexture(tex[0]);
+	ci.setTexture(gfx::FontManager::getTexture(fontid));
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -264,7 +268,7 @@ int main()
 			window.draw(obj, states);
 		}
 		window.draw(floor, states);
-		window.draw(text, states);
+		//window.draw(text, states);
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		gfx::View::setActive(&view2d);

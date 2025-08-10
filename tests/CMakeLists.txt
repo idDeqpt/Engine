@@ -19,7 +19,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE graphics)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/bin/lib/Debug/graphics.lib)
 

@@ -19,16 +19,18 @@ namespace gfx
 		struct Character
 		{
 			unsigned char value;
-			TextureId id;
-			int width;
-			int height;
-			int bearingX;
-			int bearingY;
-			int advance;
+			unsigned int width;
+			unsigned int height;
+			unsigned int advance;
+			unsigned int shift_into_tex;
+
+			Character();
 		};
 
 		FontId id;
 		FT_Face face;
+		TextureId tex_id;
+		unsigned int size;
 		std::vector<Character> characters;
 	};
 
@@ -42,6 +44,7 @@ namespace gfx
 
 		static void setSize(FontId id, unsigned int size);
 
+		static TextureId getTexture(FontId id);
 		static Font::Character getCharacter(FontId font_id, unsigned char character);
 
 	protected:
