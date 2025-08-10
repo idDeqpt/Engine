@@ -4,6 +4,7 @@
 #include <Graphics/Color.hpp>
 #include <Graphics/Drawable.hpp>
 #include <Graphics/RenderStates.hpp>
+#include <Graphics/PrimitiveType.hpp>
 #include <Graphics/TextureManager.hpp>
 #include <Math/Transformable2.hpp>
 #include <vector>
@@ -27,6 +28,7 @@ namespace gfx
 
 		void setColor(const Color& new_color);
 		void setTexture(const TextureId& new_texture);
+		void setPrimitiveType(const PrimitiveType& new_primitive_type);
 
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
 		void unloadData();
@@ -37,6 +39,7 @@ namespace gfx
 		unsigned int m_vertices_count;
 		unsigned int m_VAO;
 		unsigned int m_VBO;
+		PrimitiveType m_primitive_type;
 		Color m_color;
 		bool m_visible;
 		TextureId m_texture;

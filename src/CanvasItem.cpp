@@ -3,13 +3,14 @@
 #include <Graphics/Color.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Drawable.hpp>
+#include <Graphics/PrimitiveType.hpp>
 #include <Math/Transformable2.hpp>
 
 #include <glad/glad.h>
 #include <vector>
 
 
-gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_visible(true), m_texture(0), Drawable(), mth::Transformable2()
+gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_primitive_type(PrimitiveType::TRIANGLE_FAN), m_visible(true), m_texture(0), Drawable(), mth::Transformable2()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -30,6 +31,11 @@ void gfx::CanvasItem::setColor(const Color& new_color)
 void gfx::CanvasItem::setTexture(const TextureId& new_texture)
 {
 	m_texture = new_texture;
+}
+
+void gfx::CanvasItem::setPrimitiveType(const PrimitiveType& new_primitive_type)
+{
+	m_primitive_type = new_primitive_type;
 }
 
 
@@ -64,6 +70,17 @@ void gfx::CanvasItem::draw(Window* window, RenderStates& states)
 {
 	if (!m_visible || !m_vertices_count) return;
 
+	static constexpr GLenum OPENGL_PRIMITIVE_TYPES[] = {
+		GL_POINTS,
+		GL_LINES,
+		GL_LINE_STRIP,
+		GL_LINE_LOOP,
+		GL_TRIANGLES,
+		GL_TRIANGLE_STRIP,
+		GL_TRIANGLE_FAN
+	};
+	const GLenum primitive_type = OPENGL_PRIMITIVE_TYPES[int(m_primitive_type)];
+
 	View* active_view = gfx::View::getActive();
 	Shader* active_shader = gfx::Shader::getActive();
 	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
@@ -88,8 +105,6 @@ void gfx::CanvasItem::draw(Window* window, RenderStates& states)
 	}
 
 	glBindVertexArray(m_VAO);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertices_count);
+	glDrawArrays(primitive_type, 0, m_vertices_count);
 	glBindVertexArray(0);
-
-
 }
