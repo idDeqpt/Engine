@@ -10,6 +10,32 @@
 #include <stb/stb_image.h>
 
 
+static constexpr GLenum OPENGL_TEXTURE_FORMATS[][3] = { //{internal_format, format, type}
+	{GL_RED,   GL_RED,   GL_UNSIGNED_BYTE},
+	{GL_BLUE,  GL_BLUE,  GL_UNSIGNED_BYTE},
+	{GL_GREEN, GL_GREEN, GL_UNSIGNED_BYTE},
+	{GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
+
+	{GL_RGB,    GL_RGB, GL_UNSIGNED_BYTE},
+	{GL_RGB32F, GL_RGB, GL_FLOAT},
+
+	{GL_RGBA,    GL_RGBA, GL_UNSIGNED_BYTE},
+	{GL_RGBA32F, GL_RGBA, GL_FLOAT},
+};
+static constexpr unsigned int OPENGL_TEXTURE_TYPE_SIZES[] = {
+	sizeof(unsigned char),
+	sizeof(unsigned char),
+	sizeof(unsigned char),
+	sizeof(unsigned char),
+	
+	sizeof(unsigned char),
+	sizeof(float),
+	
+	sizeof(unsigned char),
+	sizeof(float)
+};
+
+
 std::vector<gfx::TextureId> gfx::TextureManager::m_textures;
 std::vector<gfx::TextureManager::TextureData> gfx::TextureManager::m_textures_data;
 std::vector<unsigned char*> gfx::TextureManager::m_textures_pixels;
@@ -99,44 +125,24 @@ bool gfx::TextureManager::loadFromBuffer(TextureId id, void* image_data, Texture
 	if (image_data == nullptr)
 		return false;
 
-	static constexpr GLenum formats[][3] = { //{internal_format, format, type}
-		{GL_RED,   GL_RED,   GL_UNSIGNED_BYTE},
-		{GL_BLUE,  GL_BLUE,  GL_UNSIGNED_BYTE},
-		{GL_GREEN, GL_GREEN, GL_UNSIGNED_BYTE},
-		{GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
-
-		{GL_RGB,    GL_RGB, GL_UNSIGNED_BYTE},
-		{GL_RGB32F, GL_RGB, GL_FLOAT},
-
-		{GL_RGBA,    GL_RGBA, GL_UNSIGNED_BYTE},
-		{GL_RGBA32F, GL_RGBA, GL_FLOAT},
-	};
-	static constexpr unsigned int type_sizes[] = {
-		sizeof(unsigned char),
-		sizeof(unsigned char),
-		sizeof(unsigned char),
-		sizeof(unsigned char),
-		
-		sizeof(unsigned char),
-		sizeof(float),
-		
-		sizeof(unsigned char),
-		sizeof(float)
-	};
-	const int format_index = int(data.format);
-	const GLenum format[3] = {formats[format_index][0], formats[format_index][1], formats[format_index][2]};
-	const unsigned int type_size = type_sizes[format_index];
-
 	for (int i = m_textures.size() - 1; i >= 0; i--)
 		if (m_textures[i] == id)
 		{
+			const int format_index = int(data.format);
+			const GLenum format[3] = {
+				OPENGL_TEXTURE_FORMATS[format_index][0],
+				OPENGL_TEXTURE_FORMATS[format_index][1],
+				OPENGL_TEXTURE_FORMATS[format_index][2]
+			};
+			const unsigned int type_size = OPENGL_TEXTURE_TYPE_SIZES[format_index];
+
 			glBindTexture(GL_TEXTURE_2D, id);
 			glTexImage2D(GL_TEXTURE_2D, 0, format[0], data.width, data.height, 0, format[1], format[2], image_data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 
 			unsigned int data_size = data.width*data.height*ChannelEnumToChannelCount(data.format)*type_size;
-			unsigned int old_data_size = m_textures_data[i].width*m_textures_data[i].height*ChannelEnumToChannelCount(m_textures_data[i].format)*type_sizes[int(m_textures_data[i].format)];
+			unsigned int old_data_size = m_textures_data[i].width*m_textures_data[i].height*ChannelEnumToChannelCount(m_textures_data[i].format)*OPENGL_TEXTURE_TYPE_SIZES[int(m_textures_data[i].format)];
 
 			if (data_size > old_data_size)
 			{
@@ -149,6 +155,69 @@ bool gfx::TextureManager::loadFromBuffer(TextureId id, void* image_data, Texture
 			return true;
 		}
 	return false;
+}
+
+bool gfx::TextureManager::loadSubTexture(TextureId id, void* subimage_data, const mth::Vec2& position, TextureData data)
+{
+	if ((subimage_data == nullptr) || (position.x < 0) || (position.y < 0)) return false;
+
+	for (unsigned int i = 0; i < m_textures.size();i++)
+		if (m_textures[i] == id)
+		{
+			if ((m_textures_data[i].format != data.format) || ((position.x + data.width) > m_textures_data[i].width) || ((position.y + data.height) > m_textures_data[i].height)) return false;
+
+			const unsigned int type_size = OPENGL_TEXTURE_TYPE_SIZES[int(data.format)];
+			unsigned int pixel_size = ChannelEnumToChannelCount(data.format)*type_size;
+			unsigned int pixel_row_size = data.width*pixel_size;
+			unsigned int old_pixel_row_size = m_textures_data[i].width*pixel_size;
+
+			unsigned char* subimage_bytes = static_cast<unsigned char*>(subimage_data);
+			for (unsigned int y = 0; y < data.height; y++)
+				memcpy(m_textures_pixels[i] + int((y + position.y)*old_pixel_row_size) + int(position.x*pixel_size), subimage_bytes + int(y*pixel_row_size), pixel_row_size);
+
+			return loadFromBuffer(id, m_textures_pixels[i], m_textures_data[i]);
+		}
+	return false;
+}
+
+
+bool gfx::TextureManager::resize(TextureId id, const mth::Vec2& new_size)
+{
+	if ((new_size.x <= 0) || (new_size.y <= 0)) return false;
+
+	for (unsigned int i = 0; i < m_textures.size();i++)
+		if (m_textures[i] == id)
+		{
+			const unsigned int type_size = OPENGL_TEXTURE_TYPE_SIZES[int(m_textures_data[i].format)];
+			unsigned int pixel_row_size = new_size.x*ChannelEnumToChannelCount(m_textures_data[i].format)*type_size;
+			unsigned int old_pixel_row_size = m_textures_data[i].width*ChannelEnumToChannelCount(m_textures_data[i].format)*type_size;
+			unsigned int pixels_size = pixel_row_size*new_size.y;
+			unsigned char* new_pixels = new unsigned char[pixels_size];
+			if ((new_size.x > m_textures_data[i].width) || (new_size.y > m_textures_data[i].height))
+				memset(new_pixels, 0, pixels_size);
+
+			unsigned int min_row = (pixel_row_size < old_pixel_row_size) ? pixel_row_size : old_pixel_row_size;
+			unsigned int min_rows_count = (new_size.y < m_textures_data[i].height) ? new_size.y : m_textures_data[i].height;
+			
+			for (unsigned int y = 0; y < min_rows_count; y++)
+				memcpy(new_pixels + int(y*pixel_row_size), m_textures_pixels[i] + int(y*old_pixel_row_size), min_row);
+
+			TextureData new_data = m_textures_data[i];
+			new_data.width = new_size.x;
+			new_data.height = new_size.y;
+			bool result = loadFromBuffer(id, new_pixels, new_data);
+			delete[] new_pixels;
+			return result;
+		}
+	return false;
+}
+
+gfx::TextureManager::TextureData gfx::TextureManager::getData(TextureId id)
+{
+	for (unsigned int i = 0; i < m_textures.size(); i++)
+		if (m_textures[i] == id)
+			return m_textures_data[i];
+	return TextureData();
 }
 
 

@@ -115,7 +115,6 @@ int main()
 	std::cout << "Tex3: " << tex[2] << std::endl;
 	std::cout << "Tex4: " << tex[3] << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
-
 	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf");
 	std::cout << "Font: " << fontid << std::endl;
 
@@ -183,7 +182,7 @@ int main()
 	gfx::RenderStates states;
 	gfx::View view3d;
 	//view3d.setOrtho(0, 10, 10, 0, -30, 30);
-	view3d.setPerspective(3.14*0.25, 1, 1, 100);
+	view3d.setPerspective(3.14*0.25, 4/3.0, 1, 100);
 	view3d.setPosition(mth::Vec3(0, 1, 2));
 	gfx::View view2d;
 	view2d.setOrtho(0, 800, 600, 0, -10, 10);
@@ -214,9 +213,9 @@ int main()
 	//ci.setColor(gfx::Color(255, 0, 0, 255));
 	gfx::CanvasItem::Vertex verts[4] = {
 		{{0, 0}, {0, 0}},
-		{{100, 0}, {1, 0}},
-		{{100, 100}, {1, 1}},
-		{{0, 100}, {0, 1}}
+		{{800, 0}, {1, 0}},
+		{{800, 600}, {1, 1}},
+		{{0, 600}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	ci.setTexture(tex[0]);

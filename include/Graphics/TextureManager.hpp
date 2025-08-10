@@ -44,6 +44,10 @@ namespace gfx
 		static TextureId create();
 		static TextureId loadFromFile(std::string path);
 		static bool loadFromBuffer(TextureId id, void* image_data, TextureData data);
+		static bool loadSubTexture(TextureId id, void* subimage_data, const mth::Vec2& position, TextureData data);
+
+		static bool resize(TextureId id, const mth::Vec2& new_size);
+		static TextureData getData(TextureId id);
 
 		static void deleteTexture(TextureId id);
 
