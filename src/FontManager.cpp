@@ -70,26 +70,33 @@ gfx::TextureId gfx::FontManager::getTexture(FontId id)
 	return 0;
 }
 
-gfx::Font::Character gfx::FontManager::getCharacter(FontId font_id, unsigned char character)
+gfx::Font::Character gfx::FontManager::getCharacter(FontId id, unsigned char character)
 {
 	for (unsigned int i = 0; i < m_fonts.size(); i++)
-		if (m_fonts[i].id == font_id)
+		if (m_fonts[i].id == id)
 		{
 			for (unsigned int j = 0; j < m_fonts[i].characters.size(); j++)
 				if (m_fonts[i].characters[j].value == character)
 					return m_fonts[i].characters[j];
-			if (loadChar(font_id, character))
+			if (loadChar(id, character))
 				return m_fonts[i].characters.back();
 		}
 	return Font::Character();
 }
 
-
-
-bool gfx::FontManager::loadChar(FontId font_id, unsigned char character)
+unsigned int gfx::FontManager::getSize(FontId id)
 {
 	for (unsigned int i = 0; i < m_fonts.size(); i++)
-		if (m_fonts[i].id == font_id)
+		if (m_fonts[i].id == id) return m_fonts[i].size;
+	return 0;
+}
+
+
+
+bool gfx::FontManager::loadChar(FontId id, unsigned char character)
+{
+	for (unsigned int i = 0; i < m_fonts.size(); i++)
+		if (m_fonts[i].id == id)
 		{
 			if (FT_Load_Char(m_fonts[i].face, character, FT_LOAD_RENDER)) return false;
 
@@ -109,6 +116,8 @@ bool gfx::FontManager::loadChar(FontId font_id, unsigned char character)
 
 			m_fonts[i].characters.emplace_back();
 			m_fonts[i].characters.back().value = character;
+			m_fonts[i].characters.back().bearingX = m_fonts[i].face->glyph->bitmap_left;
+			m_fonts[i].characters.back().bearingY = m_fonts[i].face->glyph->bitmap_top;
 			m_fonts[i].characters.back().width = m_fonts[i].face->glyph->bitmap.width;
 			m_fonts[i].characters.back().height = m_fonts[i].face->glyph->bitmap.rows;
 			m_fonts[i].characters.back().advance = m_fonts[i].face->glyph->advance.x  >> 6;
@@ -120,4 +129,11 @@ bool gfx::FontManager::loadChar(FontId font_id, unsigned char character)
 }
 
 
-gfx::Font::Character::Character() : value(0), width(0), height(0), advance(0), shift_into_tex(0) {}
+gfx::Font::Character::Character():
+	value(0),
+	bearingX(0),
+	bearingY(0),
+	width(0),
+	height(0),
+	advance(0),
+	shift_into_tex(0) {}

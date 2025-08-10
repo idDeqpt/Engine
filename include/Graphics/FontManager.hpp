@@ -19,6 +19,8 @@ namespace gfx
 		struct Character
 		{
 			unsigned char value;
+			unsigned int bearingX;
+			unsigned int bearingY;
 			unsigned int width;
 			unsigned int height;
 			unsigned int advance;
@@ -45,14 +47,15 @@ namespace gfx
 		static void setSize(FontId id, unsigned int size);
 
 		static TextureId getTexture(FontId id);
-		static Font::Character getCharacter(FontId font_id, unsigned char character);
+		static Font::Character getCharacter(FontId id, unsigned char character);
+		static unsigned int getSize(FontId id);
 
 	protected:
 		static std::vector<Font> m_fonts;
 		static FT_Library m_lib;
 		static FontId m_fonts_counter;
 
-		static bool loadChar(FontId font_id, unsigned char character);
+		static bool loadChar(FontId id, unsigned char character);
 	};
 }
 
