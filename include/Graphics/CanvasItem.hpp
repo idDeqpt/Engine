@@ -29,10 +29,9 @@ namespace gfx
 		void setTexture(const TextureId& new_texture);
 
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
+		void unloadData();
 
 		void draw(Window* window, RenderStates& states);
-
-		static void drawAll(Window* window, RenderStates& states);
 
 	protected:
 		unsigned int m_vertices_count;
@@ -41,7 +40,6 @@ namespace gfx
 		Color m_color;
 		bool m_visible;
 		TextureId m_texture;
-		static std::vector<CanvasItem*> m_objects;
 	};
 }
 

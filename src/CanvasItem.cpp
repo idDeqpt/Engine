@@ -9,23 +9,16 @@
 #include <vector>
 
 
-std::vector<gfx::CanvasItem*> gfx::CanvasItem::m_objects;
-
-
 gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_visible(true), m_texture(0), Drawable(), mth::Transformable2()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
-	m_objects.push_back(this);
 }
 
 gfx::CanvasItem::~CanvasItem()
 {
 	glDeleteVertexArrays(1, &m_VAO);
 	glDeleteBuffers(1, &m_VBO);
-	for (unsigned int i = 0; i < m_objects.size(); i++)
-		if (m_objects[i] == this)
-			m_objects.erase(m_objects.begin() + i);
 }
 
 
@@ -61,6 +54,11 @@ bool gfx::CanvasItem::loadData(CanvasItem::Vertex* vertices, unsigned int vertic
 	return true;
 }
 
+void gfx::CanvasItem::unloadData()
+{
+	m_vertices_count = 0;
+}
+
 
 void gfx::CanvasItem::draw(Window* window, RenderStates& states)
 {
@@ -94,12 +92,4 @@ void gfx::CanvasItem::draw(Window* window, RenderStates& states)
 	glBindVertexArray(0);
 
 
-}
-
-
-void gfx::CanvasItem::drawAll(Window* window, RenderStates& states)
-{
-	for (unsigned int i = 0; i < m_objects.size(); i++)
-		if (m_objects[i] != nullptr)
-			m_objects[i]->draw(window, states);
 }
