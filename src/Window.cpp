@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include <Graphics/VertexBuffer.hpp>
 #include <Graphics/TextureManager.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/View.hpp>
@@ -82,44 +81,4 @@ void gfx::Window::destroy()
 void gfx::Window::draw(Drawable& drawable, RenderStates& states)
 {
 	drawable.draw(this, states);
-}
-
-void gfx::Window::draw(VertexBuffer& vertex_buffer, RenderStates& states)
-{
-	static constexpr int modes[] =
-        {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
-    const GLenum mode = modes[int(vertex_buffer.getPrimitiveType())];
-
-    bool use_texture = states.m_texture != 0;
-
-	states.m_shader->use();
-	states.m_shader->setUniform1i("uUseTexture", use_texture);
-	if (use_texture)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		TextureManager::bind(states.m_texture);
-		states.m_shader->setUniformMatrix4fv("uTexture", 0);
-	}
-	View* active_view = gfx::View::getActive();
-	states.m_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
-	states.m_shader->setUniformMatrix4fv("uModel", states.m_transform.getMatrix().getValuesPtr());
-
-	VertexBuffer::bind(&vertex_buffer);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	if (vertex_buffer.getEBOHandle() == 0)
-		glDrawArrays(mode, 0, vertex_buffer.getSize());
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	VertexBuffer::bind(nullptr);
 }

@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Color.hpp"
-#include "VertexBuffer.hpp"
 #include "Shader.hpp"
 #include "RenderStates.hpp"
 #include "Drawable.hpp"
@@ -32,7 +31,6 @@ namespace gfx
 		void destroy();
 
 		void draw(Drawable& drawable, RenderStates& states);
-		void draw(VertexBuffer& vertex_buffer, RenderStates& states);
 
 	protected:
 		GLFWwindow* window_ptr;
