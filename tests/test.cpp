@@ -97,8 +97,6 @@ int main()
 	srand(0);
 	gfx::Window window(width, height, "LearnOpenGL");
 
-	window.setViewport(0, 0, width, height);
-
 	gfx::Shader shader3d;
 	shader3d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.vert",
 						"C:/Projects/C++/libraries/Engine/Graphics/include/Graphics/shaders/default3d.frag");
@@ -129,7 +127,7 @@ int main()
 	std::cout << "Tex3: " << tex[2] << std::endl;
 	std::cout << "Tex4: " << tex[3] << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
-	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 33);
+	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 24);
 	std::cout << "Font: " << fontid << std::endl;
 
 	const unsigned int floor_size = 20;
@@ -227,15 +225,13 @@ int main()
 	//ci.setColor(gfx::Color(255, 0, 0, 255));
 	gfx::CanvasItem::Vertex verts[4] = {
 		{{0, 0}, {0, 0}},
-		{{500, 0}, {1, 0}},
-		{{500, 100}, {1, 1}},
-		{{0, 100}, {0, 1}}
+		{{1000, 0}, {1, 0}},
+		{{1000, 300}, {1, 1}},
+		{{0, 300}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	ci.setTexture(gfx::FontManager::getTexture(fontid));
-	print(ci.getGlobalTransform().getMatrix());
-	ci.setPosition(mth::Vec2(0, 500));
-	print(ci.getGlobalTransform().getMatrix());
+	ci.setPosition(mth::Vec2(0, 300));
 
 	gfx::Text2D info_texts[2];
 	for (unsigned int i = 0; i < 2; i++)
