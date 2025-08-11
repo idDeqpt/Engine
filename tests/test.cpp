@@ -38,6 +38,17 @@ void print(const mth::Mat4& mat)
 	std::cout << std::endl;
 }
 
+void print(const mth::Mat3& mat)
+{
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		for (unsigned int j = 0; j < 3; j++)
+			std::cout << mat[i][j] << " ";
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
 
 void print(const mth::Quaternion& q)
 {
@@ -118,7 +129,7 @@ int main()
 	std::cout << "Tex3: " << tex[2] << std::endl;
 	std::cout << "Tex4: " << tex[3] << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
-	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 32);
+	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 33);
 	std::cout << "Font: " << fontid << std::endl;
 
 	const unsigned int floor_size = 20;
@@ -216,16 +227,22 @@ int main()
 	//ci.setColor(gfx::Color(255, 0, 0, 255));
 	gfx::CanvasItem::Vertex verts[4] = {
 		{{0, 0}, {0, 0}},
-		{{800, 0}, {1, 0}},
-		{{800, 600}, {1, 1}},
-		{{0, 600}, {0, 1}}
+		{{500, 0}, {1, 0}},
+		{{500, 100}, {1, 1}},
+		{{0, 100}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	ci.setTexture(gfx::FontManager::getTexture(fontid));
+	print(ci.getGlobalTransform().getMatrix());
+	ci.setPosition(mth::Vec2(0, 500));
+	print(ci.getGlobalTransform().getMatrix());
 
-	gfx::Text2D text2d;
-	text2d.setString("text string");
-	text2d.setFont(fontid);
+	gfx::Text2D info_texts[2];
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		info_texts[i].setFont(fontid);
+		info_texts[i].setPosition(mth::Vec2(0, gfx::FontManager::getSize(fontid)*i));
+	}
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -263,7 +280,8 @@ int main()
 		float time = (GLfloat)glfwGetTime();
 		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 
-		text2d.setString("Frame time: " + std::to_string(delta_time));
+		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
+		info_texts[1].setString("Position: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
 		window.clear(gfx::Color(125));
 
@@ -281,8 +299,9 @@ int main()
 		gfx::View::setActive(&view2d);
 		gfx::Shader::setActive(&shader2d);
 
-		//window.draw(ci, states);
-		window.draw(text2d, states);
+		window.draw(ci, states);
+		for (unsigned int i = 0; i < 2; i++)
+			window.draw(info_texts[i], states);
 
 		window.display();
 

@@ -98,6 +98,6 @@ void gfx::Text2D::updateString()
 		else
 			unloadData();
 
-		m_text_need_update = false;
+		//m_text_need_update = false; // При изменении текстуры шрифта буквы едут, надо исправить
 	}
 }
