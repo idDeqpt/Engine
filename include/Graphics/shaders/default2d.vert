@@ -16,6 +16,6 @@ void main()
     fTexCoord = aTexCoord;
     fColor = uColor;
     
-    vec3 model_pos = uModel*vec3(aPosition, -1.0f);
+    vec3 model_pos = uModel*vec3(aPosition, 1.0f);
     gl_Position = uProjection*uView*vec4(model_pos, 1.0f);
 }
