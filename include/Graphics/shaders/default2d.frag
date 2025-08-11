@@ -11,7 +11,7 @@ uniform vec4 uColor;
 void main()
 {
 	if (uUseTexture)
-		oColor = texture(uTexture, fTexCoord)*fColor;
+		oColor = texture(uTexture, fTexCoord)*uColor;
 	else
 		oColor = uColor;
 }
