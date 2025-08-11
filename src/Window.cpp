@@ -30,6 +30,8 @@ gfx::Window::Window(int width, int height, std::string title)
 	}
 	glfwMakeContextCurrent(window_ptr);
 	gladLoadGL();
+
+	setViewport(0, 0, width, height);
 	glEnable(GL_DEPTH_TEST);
 }
 
