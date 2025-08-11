@@ -64,7 +64,10 @@ unsigned int ChannelEnumToChannelCount(gfx::TextureManager::TextureData::Channel
 }
 
 
-void gfx::TextureManager::initialize() {}
+void gfx::TextureManager::initialize()
+{
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+}
 
 void gfx::TextureManager::finalize()
 {
@@ -189,18 +192,29 @@ bool gfx::TextureManager::resize(TextureId id, const mth::Vec2& new_size)
 		if (m_textures[i] == id)
 		{
 			const unsigned int type_size = OPENGL_TEXTURE_TYPE_SIZES[int(m_textures_data[i].format)];
-			unsigned int pixel_row_size = new_size.x*ChannelEnumToChannelCount(m_textures_data[i].format)*type_size;
-			unsigned int old_pixel_row_size = m_textures_data[i].width*ChannelEnumToChannelCount(m_textures_data[i].format)*type_size;
-			unsigned int pixels_size = pixel_row_size*new_size.y;
-			unsigned char* new_pixels = new unsigned char[pixels_size];
-			if ((new_size.x > m_textures_data[i].width) || (new_size.y > m_textures_data[i].height))
-				memset(new_pixels, 0, pixels_size);
+			unsigned int pixel_bytes = ChannelEnumToChannelCount(m_textures_data[i].format)*type_size;
+			unsigned int pixel_row_bytes = new_size.x*pixel_bytes;
+			unsigned int old_pixel_row_bytes = m_textures_data[i].width*pixel_bytes;
+			unsigned int pixels_bytes = pixel_row_bytes*new_size.y;
 
-			unsigned int min_row = (pixel_row_size < old_pixel_row_size) ? pixel_row_size : old_pixel_row_size;
+			unsigned char* new_pixels = new unsigned char[pixels_bytes];
+			if ((new_size.x > m_textures_data[i].width) || (new_size.y > m_textures_data[i].height))
+				memset(new_pixels, 128, pixels_bytes);
+
+			unsigned int min_row_bytes = (pixel_row_bytes < old_pixel_row_bytes) ? pixel_row_bytes : old_pixel_row_bytes;
 			unsigned int min_rows_count = (new_size.y < m_textures_data[i].height) ? new_size.y : m_textures_data[i].height;
-			
+
+			std::cout << "RES: "
+				<< m_textures_data[i].width << " "
+				<< new_size.x << " "
+				<< type_size << " "
+				<< pixel_bytes << " "
+				<< pixel_row_bytes << " "
+				<< old_pixel_row_bytes << " "
+				<< pixels_bytes << std::endl;
+
 			for (unsigned int y = 0; y < min_rows_count; y++)
-				memcpy(new_pixels + int(y*pixel_row_size), m_textures_pixels[i] + int(y*old_pixel_row_size), min_row);
+				memcpy(new_pixels + int(y*pixel_row_bytes), m_textures_pixels[i] + int(y*old_pixel_row_bytes), min_row_bytes);
 
 			TextureData new_data = m_textures_data[i];
 			new_data.width = new_size.x;
