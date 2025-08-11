@@ -4,7 +4,6 @@
 
 #include <glad/glad.h>
 #include <string>
-#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -199,19 +198,10 @@ bool gfx::TextureManager::resize(TextureId id, const mth::Vec2& new_size)
 
 			unsigned char* new_pixels = new unsigned char[pixels_bytes];
 			if ((new_size.x > m_textures_data[i].width) || (new_size.y > m_textures_data[i].height))
-				memset(new_pixels, 128, pixels_bytes);
+				memset(new_pixels, 0, pixels_bytes);
 
 			unsigned int min_row_bytes = (pixel_row_bytes < old_pixel_row_bytes) ? pixel_row_bytes : old_pixel_row_bytes;
 			unsigned int min_rows_count = (new_size.y < m_textures_data[i].height) ? new_size.y : m_textures_data[i].height;
-
-			std::cout << "RES: "
-				<< m_textures_data[i].width << " "
-				<< new_size.x << " "
-				<< type_size << " "
-				<< pixel_bytes << " "
-				<< pixel_row_bytes << " "
-				<< old_pixel_row_bytes << " "
-				<< pixels_bytes << std::endl;
 
 			for (unsigned int y = 0; y < min_rows_count; y++)
 				memcpy(new_pixels + int(y*pixel_row_bytes), m_textures_pixels[i] + int(y*old_pixel_row_bytes), min_row_bytes);
