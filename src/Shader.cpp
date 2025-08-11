@@ -138,6 +138,7 @@ bool gfx::Shader::setUniform1f(std::string name, float value)
 		return false;
 
 	glUniform1f(glGetUniformLocation(shader_program_id, name.c_str()), value);
+	return true;
 }
 
 bool gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
