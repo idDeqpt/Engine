@@ -13,7 +13,6 @@
 #include <Graphics/EventManager.hpp>
 #include <Graphics/Mesh.hpp>
 #include <Graphics/GeometricMesh.hpp>
-#include <Graphics/Vertex.hpp>
 #include <Graphics/RenderStates.hpp>
 #include <Graphics/PrimitiveType.hpp>
 #include <Graphics/CanvasItem.hpp>
