@@ -5,10 +5,9 @@
 #include <Graphics/Color.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Shader.hpp>
-#include <Graphics/Text.hpp>
 #include <Graphics/Text2D.hpp>
 #include <Graphics/Texture.hpp>
-#include <Graphics/FontManager.hpp>
+#include <Graphics/Font.hpp>
 #include <Graphics/LightManager.hpp>
 #include <Graphics/EventManager.hpp>
 #include <Graphics/Mesh.hpp>
@@ -109,7 +108,6 @@ int main()
 	if (shader2d.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader2d.getLastErrorLog() << std::endl;
 
-	gfx::FontManager::initialize();
 	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
@@ -121,8 +119,8 @@ int main()
 	std::cout << "Tex4: " << tex[3].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box-map.png") << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
 
-	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 24);
-	std::cout << "Font: " << fontid << std::endl;
+	gfx::Font font;
+	font.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 24);
 
 	const unsigned int floor_size = 20;
 	const unsigned int floor_accuracy = 20;
@@ -225,14 +223,14 @@ int main()
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	//ci.setTexture(tex[2]);
-	ci.setTexture(*gfx::FontManager::getTexture(fontid));
+	ci.setTexture(*font.getTexture());
 	ci.setPosition(mth::Vec2(0, 300));
 
 	gfx::Text2D info_texts[2];
 	for (unsigned int i = 0; i < 2; i++)
 	{
-		info_texts[i].setFont(fontid);
-		info_texts[i].setPosition(mth::Vec2(0, gfx::FontManager::getSize(fontid)*i));
+		info_texts[i].setFont(font);
+		info_texts[i].setPosition(mth::Vec2(0, font.getSize()*i));
 	}
 
 	float speed = 0.1;
@@ -293,7 +291,7 @@ int main()
 		window.draw(ci, states);
 		for (unsigned int i = 0; i < 2; i++)
 		{
-			//info_texts[i].setColor(gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
+			info_texts[i].setColor(gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
 			window.draw(info_texts[i], states);
 		}
 
@@ -302,7 +300,7 @@ int main()
 		delta_time = glfwGetTime() - start_time;
 	}
 
-	gfx::FontManager::finalize();
+	gfx::LightManager::finalize();
 
 	window.destroy();
 	system("pause");

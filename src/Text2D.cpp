@@ -1,22 +1,22 @@
 #include <Graphics/Text2D.hpp>
 
 #include <Graphics/CanvasItem.hpp>
-#include <Graphics/FontManager.hpp>
+#include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>
 #include <Math/Vec2.hpp>
 #include <string>
 #include <iostream>
 
 
-gfx::Text2D::Text2D() : m_font_id(0), m_text_need_update(false), CanvasItem()
+gfx::Text2D::Text2D() : m_font(nullptr), m_text_need_update(false), CanvasItem()
 {
 	setPrimitiveType(PrimitiveType::TRIANGLES);
 }
 
 
-void gfx::Text2D::setFont(FontId new_font_id)
+void gfx::Text2D::setFont(Font& new_font)
 {
-	m_font_id = new_font_id;
+	m_font = &new_font;
 	m_text_need_update = true;
 }
 
@@ -44,17 +44,17 @@ void gfx::Text2D::updateString()
 {
 	if (m_text_need_update)
 	{
-		if (m_text.size() && m_font_id)
+		if (m_text.size() && m_font && m_font->getTexture())
 		{
 			Font::Character* characters = new Font::Character[m_text.size()];
 			for (unsigned int i = 0; i < m_text.size(); i++)
-				characters[i] = FontManager::getCharacter(m_font_id, m_text[i]);
+				characters[i] = m_font->getCharacter(m_text[i]);
 
 			unsigned int vertices_count = m_text.size()*6;
 			CanvasItem::Vertex* total_vertices = new CanvasItem::Vertex[vertices_count];
 			CanvasItem::Vertex symbol_vertices[4];
 
-			Texture* font_tex = FontManager::getTexture(m_font_id);
+			Texture* font_tex = m_font->getTexture();
 			mth::Vec2 tex_size = font_tex->getSize();
 
 			float last_char_x = 0;
@@ -72,7 +72,7 @@ void gfx::Text2D::updateString()
 
 				mth::Vec2 char_pos = {
 					last_char_x + characters[i].bearingX,
-					FontManager::getSize(m_font_id) - float(characters[i].bearingY)
+					m_font->getSize() - float(characters[i].bearingY)
 				};
 
 				symbol_vertices[0] = {{char_pos.x,                       char_pos.y},                        {tex_lt.x, tex_lt.y}};

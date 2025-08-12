@@ -14,14 +14,13 @@ add_library(${PROJECT_NAME} STATIC
 	src/CanvasItem.cpp
 	src/Color.cpp
 	src/EventManager.cpp
-	src/FontManager.cpp
+	src/Font.cpp
 	src/GeometricMesh.cpp
 	src/LightManager.cpp
 	src/Material.cpp
 	src/Mesh.cpp
 	src/RenderStates.cpp
 	src/Shader.cpp
-	#src/Text.cpp
 	src/Text2D.cpp
 	src/Texture.cpp
 	src/View.cpp
