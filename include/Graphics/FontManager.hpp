@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 
 struct FT_LibraryRec_;
 struct FT_FaceRec_;
@@ -31,7 +31,7 @@ namespace gfx
 
 		FontId id;
 		FT_Face face;
-		TextureId tex_id;
+		Texture* texture;
 		unsigned int size;
 		std::vector<Character> characters;
 	};
@@ -46,7 +46,7 @@ namespace gfx
 
 		static void setSize(FontId id, unsigned int size);
 
-		static TextureId getTexture(FontId id);
+		static Texture* getTexture(FontId id);
 		static Font::Character getCharacter(FontId id, unsigned char character);
 		static unsigned int getSize(FontId id);
 

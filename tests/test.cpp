@@ -7,7 +7,7 @@
 #include <Graphics/Shader.hpp>
 #include <Graphics/Text.hpp>
 #include <Graphics/Text2D.hpp>
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 #include <Graphics/FontManager.hpp>
 #include <Graphics/LightManager.hpp>
 #include <Graphics/EventManager.hpp>
@@ -110,23 +110,18 @@ int main()
 	if (shader2d.getLastError() != gfx::Shader::Error::NO_ERROR)
 		std::cout << "Shader error log: " << shader2d.getLastErrorLog() << std::endl;
 
-	gfx::TextureManager::initialize();
 	gfx::FontManager::initialize();
 	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
-	gfx::TextureId tex[] = {
-		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png"),
-		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png"),
-		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box.png"),
-		gfx::TextureManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box-map.png")
-	};
-
-	std::cout << "Tex1: " << tex[0] << std::endl;
-	std::cout << "Tex2: " << tex[1] << std::endl;
-	std::cout << "Tex3: " << tex[2] << std::endl;
-	std::cout << "Tex4: " << tex[3] << std::endl;
+	gfx::Texture tex[4] = {gfx::Texture(), gfx::Texture(), gfx::Texture(), gfx::Texture()};
+	std::cout << "TEXTURE\n";
+	std::cout << "Tex1: " << tex[0].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image1.png") << std::endl;
+	std::cout << "Tex2: " << tex[1].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/image2.png") << std::endl;
+	std::cout << "Tex3: " << tex[2].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box.png") << std::endl;
+	std::cout << "Tex4: " << tex[3].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/box-map.png") << std::endl;
 	std::cout << "Err: " << glGetError() << std::endl;
+
 	gfx::FontId fontid = gfx::FontManager::loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/GameFont.ttf", 24);
 	std::cout << "Font: " << fontid << std::endl;
 
@@ -178,16 +173,16 @@ int main()
 												floor_tex_coords, floor_points_count, floor_indexes,
 												floor_normals, floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setMaterial({
-		tex[2],
-		tex[3],
+		&tex[2],
+		&tex[3],
 		128*0.4
 	});
 
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	obj.setMaterial({
-		tex[2],
-		tex[3],
+		&tex[2],
+		&tex[3],
 		128*0.4
 	});
 
@@ -230,7 +225,8 @@ int main()
 		{{0, 300}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
-	ci.setTexture(gfx::FontManager::getTexture(fontid));
+	//ci.setTexture(tex[2]);
+	ci.setTexture(*gfx::FontManager::getTexture(fontid));
 	ci.setPosition(mth::Vec2(0, 300));
 
 	gfx::Text2D info_texts[2];
@@ -297,7 +293,10 @@ int main()
 
 		window.draw(ci, states);
 		for (unsigned int i = 0; i < 2; i++)
+		{
+			//info_texts[i].setColor(gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
 			window.draw(info_texts[i], states);
+		}
 
 		window.display();
 
@@ -305,7 +304,6 @@ int main()
 	}
 
 	gfx::FontManager::finalize();
-	gfx::TextureManager::finalize();
 
 	window.destroy();
 	system("pause");

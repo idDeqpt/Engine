@@ -2,7 +2,6 @@
 #define RENDER_STATES_CLASS_HEADER
 
 #include <Graphics/View.hpp>
-#include <Graphics/TextureManager.hpp>
 #include <Math/Transform3.hpp>
 
 
@@ -15,7 +14,6 @@ namespace gfx
 		RenderStates();
 
 		mth::Transform3 m_transform;
-		TextureId m_texture;
 		Shader* m_shader;
 	};
 }

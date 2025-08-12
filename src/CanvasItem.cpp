@@ -10,7 +10,7 @@
 #include <vector>
 
 
-gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_primitive_type(PrimitiveType::TRIANGLE_FAN), m_visible(true), m_texture(0), Drawable(), mth::Transformable2()
+gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_primitive_type(PrimitiveType::TRIANGLE_FAN), m_visible(true), m_texture(nullptr), Drawable(), mth::Transformable2()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -28,9 +28,9 @@ void gfx::CanvasItem::setColor(const Color& new_color)
 	m_color = new_color;
 }
 
-void gfx::CanvasItem::setTexture(const TextureId& new_texture)
+void gfx::CanvasItem::setTexture(Texture& new_texture)
 {
-	m_texture = new_texture;
+	m_texture = &new_texture;
 }
 
 void gfx::CanvasItem::setPrimitiveType(const PrimitiveType& new_primitive_type)
@@ -95,12 +95,12 @@ void gfx::CanvasItem::draw(Window* window, RenderStates& states)
 		color[i] = float(m_color[i])/COLOR_MAX_VALUE;
 	active_shader->setUniform4fv("uColor", 1, color);
 
-	bool use_texture = m_texture != 0;
+	bool use_texture = m_texture != nullptr;
 	active_shader->setUniform1i("uUseTexture", use_texture);
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		TextureManager::bind(m_texture);
+		Texture::bind(m_texture);
 		active_shader->setUniform1i("uTexture", 0);
 	}
 

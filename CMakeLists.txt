@@ -23,7 +23,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/Shader.cpp
 	#src/Text.cpp
 	src/Text2D.cpp
-	src/TextureManager.cpp
+	src/Texture.cpp
 	src/View.cpp
 	src/Window.cpp)
 

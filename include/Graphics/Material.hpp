@@ -1,18 +1,18 @@
 #ifndef MATERIAL_CLASS_HEADER
 #define MATERIAL_CLASS_HEADER
 
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 
 namespace gfx
 {
 	struct Material
 	{
-		TextureId diffuse;
-		TextureId specular;
+		Texture* diffuse;
+		Texture* specular;
 		float     shininess;
 
 		Material();
-		Material(TextureId diffuse, TextureId specular, float shininess);
+		Material(Texture* diffuse, Texture* specular, float shininess);
 	};
 }
 

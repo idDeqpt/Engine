@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include <Graphics/TextureManager.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/View.hpp>
 #include <Math/Transform3.hpp>

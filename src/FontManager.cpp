@@ -1,6 +1,6 @@
 #include <Graphics/FontManager.hpp>
 
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 #include <Math/Vec2.hpp>
 
 #include <ft2build.h>
@@ -24,7 +24,10 @@ bool gfx::FontManager::initialize()
 bool gfx::FontManager::finalize()
 {
 	for (unsigned int i = 0; i < m_fonts.size(); i++)
+	{
+		delete m_fonts[i].texture;
 		FT_Done_Face(m_fonts[i].face);
+	}
     FT_Done_FreeType(m_lib);
     return true;
 }
@@ -39,11 +42,12 @@ gfx::FontId gfx::FontManager::loadFromFile(std::string path, unsigned int size)
 	Font font;
 	font.id = m_fonts_counter;
 	font.face = face;
-	font.tex_id = TextureManager::create();
+	font.texture = new Texture();
 	font.size = size;
 
+	font.texture->create();
 	unsigned char* data = new unsigned char[0];
-	TextureManager::loadFromBuffer(font.tex_id, data, TextureManager::TextureData(0, size, TextureManager::TextureData::RGBA));
+	font.texture->loadFromBuffer(data, 0, size, Texture::PixelFormat::RGBA);
 	delete[] data;
 
 	m_fonts.push_back(font);
@@ -63,11 +67,11 @@ void gfx::FontManager::setSize(FontId id, unsigned int size)
 }
 
 
-gfx::TextureId gfx::FontManager::getTexture(FontId id)
+gfx::Texture* gfx::FontManager::getTexture(FontId id)
 {
 	for (unsigned int i = 0; i < m_fonts.size(); i++)
-		if (m_fonts[i].id == id) return m_fonts[i].tex_id;
-	return 0;
+		if (m_fonts[i].id == id) return m_fonts[i].texture;
+	return nullptr;
 }
 
 gfx::Font::Character gfx::FontManager::getCharacter(FontId id, unsigned char character)
@@ -100,7 +104,7 @@ bool gfx::FontManager::loadChar(FontId id, unsigned char character)
 		{
 			if (FT_Load_Char(m_fonts[i].face, character, FT_LOAD_RENDER)) return false;
 
-			unsigned int right_pos = TextureManager::getData(m_fonts[i].tex_id).width;
+			unsigned int right_pos = m_fonts[i].texture->getSize().x;
 			unsigned int new_size = right_pos + m_fonts[i].face->glyph->bitmap.width;
 
 			unsigned int pixels_count = m_fonts[i].face->glyph->bitmap.width*m_fonts[i].face->glyph->bitmap.rows;
@@ -114,16 +118,13 @@ bool gfx::FontManager::loadChar(FontId id, unsigned char character)
 				pixels_rgba[pix_j + 3] = m_fonts[i].face->glyph->bitmap.buffer[j];
 			}
 
-			TextureManager::resize(m_fonts[i].tex_id, mth::Vec2(new_size, m_fonts[i].size));
-			TextureManager::loadSubTexture(
-				m_fonts[i].tex_id,
+			m_fonts[i].texture->resize(mth::Vec2(new_size, m_fonts[i].size));
+			m_fonts[i].texture->loadSubTexture(
 				pixels_rgba,
 				mth::Vec2(right_pos, 0),
-				TextureManager::TextureData(
-					m_fonts[i].face->glyph->bitmap.width,
-					m_fonts[i].face->glyph->bitmap.rows,
-					TextureManager::TextureData::RGBA
-			));
+				m_fonts[i].face->glyph->bitmap.width,
+				m_fonts[i].face->glyph->bitmap.rows
+			);
 
 			delete[] pixels_rgba;
 

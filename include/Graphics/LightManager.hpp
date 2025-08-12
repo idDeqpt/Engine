@@ -1,7 +1,7 @@
 #ifndef LIGHT_MANAGER_STATIC_CLASS_HEADER
 #define LIGHT_MANAGER_STATIC_CLASS_HEADER
 
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 #include <Math/Vec3.hpp>
 #include <vector>
 
@@ -27,11 +27,11 @@ namespace gfx
 		static void setColor(LightId id, const mth::Vec3& color);
 
 		static unsigned int getLightsCount();
-		static TextureId getLightsTexture();
+		static Texture* getLightsTexture();
 
 	protected:
 		static std::vector<DirectionalLight> m_lights;
-		static TextureId m_lights_texture;
+		static Texture* m_lights_texture;
 		static bool m_need_update;
 		static LightId m_id_counter;
 

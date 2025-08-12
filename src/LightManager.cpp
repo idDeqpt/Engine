@@ -8,7 +8,7 @@
 
 
 std::vector<gfx::LightManager::DirectionalLight> gfx::LightManager::m_lights;
-gfx::TextureId gfx::LightManager::m_lights_texture;
+gfx::Texture* gfx::LightManager::m_lights_texture;
 bool gfx::LightManager::m_need_update;
 gfx::LightId gfx::LightManager::m_id_counter;
 
@@ -16,14 +16,15 @@ gfx::LightId gfx::LightManager::m_id_counter;
 void gfx::LightManager::initialize()
 {
 	m_lights.clear();
-	m_lights_texture = 0;
 	m_need_update = true;
 	m_id_counter = 1;
+	if (m_lights_texture != nullptr) delete m_lights_texture;
+	m_lights_texture = new Texture();
 }
 
 void gfx::LightManager::finalize()
 {
-	TextureManager::deleteTexture(m_lights_texture);
+	if (m_lights_texture != nullptr) delete m_lights_texture;
 }
 
 
@@ -62,7 +63,7 @@ unsigned int gfx::LightManager::getLightsCount()
 	return m_lights.size();
 }
 
-gfx::TextureId gfx::LightManager::getLightsTexture()
+gfx::Texture* gfx::LightManager::getLightsTexture()
 {
 	updateTexture();
 	return m_lights_texture;
@@ -73,38 +74,26 @@ void gfx::LightManager::updateTexture()
 {
 	if (m_need_update)
 	{
-		TextureManager::deleteTexture(m_lights_texture);
-		if (!m_lights.size())
+		if (m_lights.size())
 		{
-			m_lights_texture = 0;
-			return;
+			std::vector<float> pixels(m_lights.size()*2*3);
+			for (unsigned int i = 0; i < m_lights.size(); i++)
+			{
+				pixels[i    ] = m_lights[i].direction.x;
+				pixels[i + 1] = m_lights[i].direction.y;
+				pixels[i + 2] = m_lights[i].direction.z;
+				pixels[i + 3] = m_lights[i].color.x;
+				pixels[i + 4] = m_lights[i].color.y;
+				pixels[i + 5] = m_lights[i].color.z;
+			}
+
+			for (unsigned int i = 0; i < pixels.size(); i++)
+				std::cout << pixels[i] << " ";
+			std::cout << std::endl;
+
+			m_lights_texture->create();
+			m_lights_texture->loadFromBuffer((float*)pixels.data(), m_lights.size()*2, 1, Texture::PixelFormat::RGB32F);
 		}
-
-		std::vector<float> pixels(m_lights.size()*2*3);
-		for (unsigned int i = 0; i < m_lights.size(); i++)
-		{
-			pixels[i    ] = m_lights[i].direction.x;
-			pixels[i + 1] = m_lights[i].direction.y;
-			pixels[i + 2] = m_lights[i].direction.z;
-			pixels[i + 3] = m_lights[i].color.x;
-			pixels[i + 4] = m_lights[i].color.y;
-			pixels[i + 5] = m_lights[i].color.z;
-		}
-
-		for (unsigned int i = 0; i < pixels.size(); i++)
-			std::cout << pixels[i] << " ";
-		std::cout << std::endl;
-
-		m_lights_texture = TextureManager::create();
-		TextureManager::loadFromBuffer(
-			m_lights_texture,
-			(float*)pixels.data(),
-			TextureManager::TextureData(
-				m_lights.size()*2,
-				1,
-				TextureManager::TextureData::Channel::RGB32F
-			)
-		);
 
 		m_need_update = false;
 	}

@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include <Graphics/RenderStates.hpp>
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 #include <Graphics/LightManager.hpp>
 #include <Graphics/Window.hpp>
 #include <Graphics/Color.hpp>
@@ -124,10 +124,10 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
-	TextureManager::bind(m_material.diffuse);
+	Texture::bind(m_material.diffuse);
 	active_shader->setUniform1i("uMaterial.diffuse", 0);
 	glActiveTexture(GL_TEXTURE1);
-	TextureManager::bind(m_material.specular);
+	Texture::bind(m_material.specular);
 	active_shader->setUniform1i("uMaterial.specular", 1);
 	active_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
 
@@ -137,7 +137,7 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	if (LightManager::getLightsCount())
 	{
 		glActiveTexture(GL_TEXTURE2);
-		TextureManager::bind(LightManager::getLightsTexture());
+		Texture::bind(LightManager::getLightsTexture());
 		active_shader->setUniform1i("uLightsTexture", 2);
 	}
 

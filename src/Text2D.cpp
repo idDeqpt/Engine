@@ -2,7 +2,7 @@
 
 #include <Graphics/CanvasItem.hpp>
 #include <Graphics/FontManager.hpp>
-#include <Graphics/TextureManager.hpp>
+#include <Graphics/Texture.hpp>
 #include <Math/Vec2.hpp>
 #include <string>
 #include <iostream>
@@ -54,20 +54,20 @@ void gfx::Text2D::updateString()
 			CanvasItem::Vertex* total_vertices = new CanvasItem::Vertex[vertices_count];
 			CanvasItem::Vertex symbol_vertices[4];
 
-			TextureId font_tex = FontManager::getTexture(m_font_id);
-			TextureManager::TextureData tex_data = TextureManager::getData(font_tex);
+			Texture* font_tex = FontManager::getTexture(m_font_id);
+			mth::Vec2 tex_size = font_tex->getSize();
 
 			float last_char_x = 0;
 			for (unsigned int i = 0; i < m_text.size(); i++)
 			{
 				unsigned int vert_i = i*6;
 				mth::Vec2 tex_lt = {
-					float(characters[i].shift_into_tex)/tex_data.width,
+					float(characters[i].shift_into_tex)/tex_size.x,
 					0
 				};
 				mth::Vec2 tex_rd = {
-					float(characters[i].shift_into_tex + characters[i].width)/tex_data.width,
-					float(characters[i].height)/tex_data.height
+					float(characters[i].shift_into_tex + characters[i].width)/tex_size.x,
+					float(characters[i].height)/tex_size.y
 				};
 
 				mth::Vec2 char_pos = {
@@ -90,7 +90,7 @@ void gfx::Text2D::updateString()
 				last_char_x += characters[i].advance;
 			}
 			loadData(total_vertices, vertices_count);
-			setTexture(font_tex);
+			setTexture(*font_tex);
 
 			delete[] characters;
 			delete[] total_vertices;
