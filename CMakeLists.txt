@@ -48,13 +48,13 @@ set(PACKAGE_VERSION "1.0.0")
 
 #Генерация файла конфигурации с версией
 configure_file(
-    "cmake/MathConfigVersion.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/MathConfigVersion.cmake"
+    "cmake/${PROJECT_NAME}ConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
     @ONLY
 )
 
 #Установка файла конфигурации
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/MathConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
     DESTINATION lib/cmake/${PROJECT_NAME}
 )
