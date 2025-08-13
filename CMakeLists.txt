@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0.3)
+cmake_minimum_required(VERSION 3.10)
 
 set(PROJECT_NAME graphics)
 set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
@@ -9,6 +9,9 @@ set(PATH_TO_FREETYPE "C:/Projects/C++/libraries/freetype")
 
 project(${PROJECT_NAME} CXX)
 include_directories("./include")
+
+list(APPEND CMAKE_PREFIX_PATH ${PATH_TO_MATH})
+find_package(Math REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
 	src/CanvasItem.cpp
@@ -26,6 +29,9 @@ add_library(${PROJECT_NAME} STATIC
 	src/View.cpp
 	src/Window.cpp)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${MATH_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE Engine::Math)
+
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_STB}/include)
 
@@ -37,9 +43,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/build/Debug/freetyped.lib)
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_MATH}/bin/lib/Debug/Math.lib)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
