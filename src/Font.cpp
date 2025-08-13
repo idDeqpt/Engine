@@ -92,6 +92,11 @@ gfx::Font::Character gfx::Font::getCharacter(unsigned char character)
 	return Font::Character();
 }
 
+unsigned int gfx::Font::getLoadedCharactersCount()
+{
+	return m_characters.size();
+}
+
 unsigned int gfx::Font::getSize()
 {
 	return m_size;

@@ -38,6 +38,7 @@ namespace gfx
 
 		Texture* getTexture();
 		Font::Character getCharacter(unsigned char character);
+		unsigned int getLoadedCharactersCount();
 		unsigned int getSize();
 
 	protected:
