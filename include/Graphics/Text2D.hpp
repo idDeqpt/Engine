@@ -23,6 +23,7 @@ namespace gfx
 		Font* m_font;
 		std::string m_text;
 		bool m_text_need_update;
+		unsigned int m_last_font_characters;
 
 		void updateString();
 	};
