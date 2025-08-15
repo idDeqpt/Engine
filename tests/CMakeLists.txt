@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.0.3)
 
-set(PATH_TO_LIB "C:/Projects/C++/libraries/Engine/Graphics")
+set(PATH_TO_LIB "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
 set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
 

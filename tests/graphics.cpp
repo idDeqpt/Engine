@@ -90,41 +90,44 @@ mth::Vec4 mult(const mth::Mat4& mat, const mth::Vec4& vec)
 
 int main()
 {
-	unsigned int width = 1600;
+	unsigned int width  = 1600;
 	unsigned int height = 900;
 	srand(0);
 	gfx::Window window(width, height, "LearnOpenGL");
 
+	std::string shaders_dir = "C:/Projects/C++/libraries/Engine/include/Engine/Graphics/shaders";
 	gfx::Shader shader3d;
-	shader3d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Engine/Graphics/shaders/default3d.vert",
-						"C:/Projects/C++/libraries/Engine/Graphics/include/Engine/Graphics/shaders/default3d.frag");
-	std::cout << "Shader error: " << shader3d.getLastError() << std::endl;
+	shader3d.loadFromFile(shaders_dir + "/default3d.vert",
+						  shaders_dir + "/default3d.frag");
+	std::cout << "Shader 3d error: " << shader3d.getLastError() << std::endl;
 	if (shader3d.getLastError() != gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader error log: " << shader3d.getLastErrorLog() << std::endl;
+		std::cout << "Shader 3d error log: " << shader3d.getLastErrorLog() << std::endl;
+
 	gfx::Shader shader2d;
-	shader2d.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/include/Engine/Graphics/shaders/default2d.vert",
-						"C:/Projects/C++/libraries/Engine/Graphics/include/Engine/Graphics/shaders/default2d.frag");
-	std::cout << "Shader error: " << shader2d.getLastError() << std::endl;
+	shader2d.loadFromFile(shaders_dir + "/default2d.vert",
+						  shaders_dir + "/default2d.frag");
+	std::cout << "Shader 2d error: " << shader2d.getLastError() << std::endl;
 	if (shader2d.getLastError() != gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader error log: " << shader2d.getLastErrorLog() << std::endl;
+		std::cout << "Shader 2d error log: " << shader2d.getLastErrorLog() << std::endl;
 
 	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
-	gfx::Texture tex[4] = {gfx::Texture(), gfx::Texture(), gfx::Texture(), gfx::Texture()};
+	std::string resources_dir = "C:/Projects/C++/libraries/Engine/tests/resources";
+	gfx::Texture tex[4];
 	std::cout << "TEXTURE\n";
-	std::cout << "Tex1: " << tex[0].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/resources/image1.png") << std::endl;
-	std::cout << "Tex2: " << tex[1].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/resources/image2.png") << std::endl;
-	std::cout << "Tex3: " << tex[2].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/resources/box.png") << std::endl;
-	std::cout << "Tex4: " << tex[3].loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/resources/box-map.png") << std::endl;
-	std::cout << "Err: " << glGetError() << std::endl;
+	std::cout << "Tex1: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
+	std::cout << "Tex2: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
+	std::cout << "Tex3: " << tex[2].loadFromFile(resources_dir + "/box.png") << std::endl;
+	std::cout << "Tex4: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
+	std::cout << "Err: "  << glGetError() << std::endl;
 
 	gfx::Font font;
-	font.loadFromFile("C:/Projects/C++/libraries/Engine/Graphics/tests/resources/GameFont.ttf", 24);
+	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
 
-	const unsigned int floor_size = 20;
+	const unsigned int floor_size     = 20;
 	const unsigned int floor_accuracy = 20;
-	const unsigned int floor_points_count = floor_accuracy*floor_accuracy;
+	const unsigned int floor_points_count  = floor_accuracy*floor_accuracy;
 	const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
 	const unsigned int floor_indexes_count = floor_normals_count*3;
 
@@ -138,14 +141,14 @@ int main()
 	for (unsigned int i = 0; i < floor_accuracy; i++)
 		for (unsigned int j = 0; j < floor_accuracy; j++)
 		{
-			floor_points[index] = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.05, floor_size*float(j)/(floor_accuracy-1));
-			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1), float(j)/(floor_accuracy-1));
+			floor_points[index]       = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.05,           floor_size*float(j)/(floor_accuracy-1));
+			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1),            float(j)/(floor_accuracy-1));
 		}
 	index = 0;
 	for (unsigned int i = 0; i < (floor_accuracy - 1); i++)
 		for (unsigned int j = 0; j < (floor_accuracy - 1); j++)
 		{
-			unsigned int first = i*floor_accuracy + j;
+			unsigned int first  = i*floor_accuracy + j;
 			unsigned int second = first + floor_accuracy;
 
 			floor_normals[index/3] = -(floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
@@ -166,9 +169,9 @@ int main()
 		}
 
 	gfx::Mesh floor;
-	std::cout << "SUCCESS: " << floor.loadData({floor_points, floor_points_count, floor_indexes,
-												floor_tex_coords, floor_points_count, floor_indexes,
-												floor_normals, floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
+	std::cout << "SUCCESS: " << floor.loadData({floor_points,     floor_points_count,  floor_indexes,
+												floor_tex_coords, floor_points_count,  floor_indexes,
+												floor_normals,    floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setMaterial({
 		&tex[2],
 		&tex[3],
@@ -192,15 +195,15 @@ int main()
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
 	std::vector<mth::Vec3> positions = {
-		{0.0f,  0.0f,  0.0f}, 
-		{2.0f,  5.0f, -15.0f}, 
+		{ 0.0f,  0.0f,  0.0f}, 
+		{ 2.0f,  5.0f, -15.0f}, 
 		{-1.5f, -2.2f, -2.5f}, 
 		{-3.8f, -2.0f, -12.3f}, 
-		{2.4f, -0.4f, -3.5f}, 
+		{ 2.4f, -0.4f, -3.5f}, 
 		{-1.7f,  3.0f, -7.5f}, 
-		{1.3f, -2.0f, -2.5f}, 
-		{1.5f,  2.0f, -2.5f}, 
-		{1.5f,  0.2f, -1.5f}, 
+		{ 1.3f, -2.0f, -2.5f}, 
+		{ 1.5f,  2.0f, -2.5f}, 
+		{ 1.5f,  0.2f, -1.5f}, 
 		{-1.3f,  1.0f, -1.5f}
 	};
 
@@ -216,10 +219,10 @@ int main()
 	gfx::CanvasItem ci;
 	//ci.setColor(gfx::Color(255, 0, 0, 255));
 	gfx::CanvasItem::Vertex verts[4] = {
-		{{0, 0}, {0, 0}},
-		{{1000, 0}, {1, 0}},
+		{{0,    0},   {0, 0}},
+		{{1000, 0},   {1, 0}},
 		{{1000, 300}, {1, 1}},
-		{{0, 300}, {0, 1}}
+		{{0,    300}, {0, 1}}
 	};
 	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
 	//ci.setTexture(tex[2]);
