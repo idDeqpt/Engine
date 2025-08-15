@@ -4,7 +4,6 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <cmath>
-#include <iostream>
 #include <string.h>
 
 
@@ -131,7 +130,7 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 	mth::Vec2* tex_coords = new mth::Vec2[points_count];
 	mth::Vec3* normals    = new mth::Vec3[points_count];
 
-	unsigned int* indexes       = new unsigned int[indexes_count];
+	unsigned int* indexes = new unsigned int[indexes_count];
 
 	float pi       = 3.14159265359;
 	float n_inv    = 1.0/(n - 1);
