@@ -15,7 +15,8 @@ set(GRAPHICS_SOURCE_FILES
 	src/Graphics/Material.cpp
 	src/Graphics/Mesh.cpp
 	src/Graphics/RenderStates.cpp
-	src/Graphics/Shader.cpp
+    src/Graphics/Shader.cpp
+	src/Graphics/Shape2D.cpp
 	src/Graphics/Text2D.cpp
 	src/Graphics/Texture.cpp
 	src/Graphics/View.cpp

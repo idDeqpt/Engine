@@ -5,6 +5,7 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Window.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Graphics/Shape2D.hpp>
 #include <Engine/Graphics/Text2D.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Font.hpp>
@@ -236,6 +237,11 @@ int main()
 		info_texts[i].setPosition(mth::Vec2(0, font.getSize()*i));
 	}
 
+	gfx::Shape2D shape(gfx::Shape2D::Type::CIRCLE);
+	shape.setPosition(mth::Vec2(800, 450));
+	shape.setSize(mth::Vec2(100, 100));
+	shape.setTexture(tex[0]);
+
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
 	float delta_time = 0;
@@ -291,12 +297,13 @@ int main()
 		gfx::View::setActive(&view2d);
 		gfx::Shader::setActive(&shader2d);
 
-		window.draw(ci, states);
+		//window.draw(ci, states);
 		for (unsigned int i = 0; i < 2; i++)
 		{
 			info_texts[i].setColor(gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
 			window.draw(info_texts[i], states);
 		}
+		window.draw(shape, states);
 
 		window.display();
 
