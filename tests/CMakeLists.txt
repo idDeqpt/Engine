@@ -11,13 +11,13 @@ set(PATH_TO_FREETYPE "C:/Projects/C++/libraries/freetype")
 project(${PROJECT_NAME} CXX)
 
 
-list(APPEND CMAKE_PREFIX_PATH ${PATH_TO_MATH})
-find_package(Math REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH ${PATH_TO_LIB})
+find_package(Graphics REQUIRED)
 
 add_executable(${PROJECT_NAME} test.cpp)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${MATH_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE Engine::Math)
+target_include_directories(${PROJECT_NAME} PRIVATE ${GRAPHICS_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE Engine::Graphics)
 
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/include)
@@ -26,11 +26,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_LIB}/bin/lib/Debug/graphics.lib)
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/build/Debug/freetyped.lib)
+#target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/include)
+#target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/build/Debug/freetyped.lib)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
