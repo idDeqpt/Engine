@@ -1,35 +1,34 @@
 cmake_minimum_required(VERSION 4.0.3)
 
-set(PROJECT_NAME graphics_lib_test)
 set(PATH_TO_LIB "C:/Projects/C++/libraries/Engine/Graphics")
 set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
 set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
-set(PATH_TO_MATH "C:/Projects/C++/libraries/Engine/Math")
-set(PATH_TO_FREETYPE "C:/Projects/C++/libraries/freetype")
 
 
-project(${PROJECT_NAME} CXX)
+project(tests CXX)
 
 
 list(APPEND CMAKE_PREFIX_PATH ${PATH_TO_LIB})
-find_package(Graphics REQUIRED)
+find_package(Engine REQUIRED)
 
-add_executable(${PROJECT_NAME} test.cpp)
+add_executable(graphics_tests graphics.cpp)
+add_executable(math_tests math.cpp)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GRAPHICS_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE Engine::Graphics)
+target_include_directories(math_tests PRIVATE ${ENGINE_INCLUDE_DIRS})
+target_link_libraries(math_tests PRIVATE Engine::Engine)
+
+target_include_directories(graphics_tests PRIVATE ${ENGINE_INCLUDE_DIRS})
+target_link_libraries(graphics_tests PRIVATE Engine::Engine)
 
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
+target_include_directories(graphics_tests PRIVATE ${PATH_TO_GLAD}/include)
+target_link_libraries(graphics_tests PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
+target_include_directories(graphics_tests PRIVATE ${PATH_TO_GLFW}/include)
+target_link_libraries(graphics_tests PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
 
-#target_include_directories(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/include)
-#target_link_libraries(${PROJECT_NAME} PRIVATE ${PATH_TO_FREETYPE}/build/Debug/freetyped.lib)
-
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(math_tests PRIVATE cxx_std_17)
+target_compile_features(graphics_tests PRIVATE cxx_std_17)
 
 set(dir ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
 set(EXECUTABLE_OUTPUT_PATH ${dir} CACHE PATH "Build directory" FORCE)

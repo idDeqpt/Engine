@@ -1,55 +1,59 @@
 cmake_minimum_required(VERSION 3.18)
 
-set(PROJECT_NAME Graphics)
+set(PROJECT_NAME Engine)
 set(BUILD_SHARED_LIBS FALSE)
 
 project(${PROJECT_NAME} CXX)
-include_directories("./include")
 
-set(SOURCE_FILES
-    src/CanvasItem.cpp
-	src/Color.cpp
-	src/EventManager.cpp
-	src/Font.cpp
-	src/GeometricMesh.cpp
-	src/LightManager.cpp
-	src/Material.cpp
-	src/Mesh.cpp
-	src/RenderStates.cpp
-	src/Shader.cpp
-	src/Text2D.cpp
-	src/Texture.cpp
-	src/View.cpp
-	src/Window.cpp)
+set(GRAPHICS_SOURCE_FILES
+    src/Graphics/CanvasItem.cpp
+	src/Graphics/Color.cpp
+	src/Graphics/EventManager.cpp
+	src/Graphics/Font.cpp
+	src/Graphics/GeometricMesh.cpp
+	src/Graphics/LightManager.cpp
+	src/Graphics/Material.cpp
+	src/Graphics/Mesh.cpp
+	src/Graphics/RenderStates.cpp
+	src/Graphics/Shader.cpp
+	src/Graphics/Text2D.cpp
+	src/Graphics/Texture.cpp
+	src/Graphics/View.cpp
+	src/Graphics/Window.cpp)
 
-set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
-set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
-set(PATH_TO_STB "C:/Projects/C++/libraries/stb")
-set(PATH_TO_MATH "C:/Projects/C++/libraries/Engine/Math")
-set(PATH_TO_FREETYPE "C:/Projects/C++/libraries/freetype")
+set(MATH_SOURCE_FILES
+    src/Math/Vec2.cpp
+    src/Math/Vec3.cpp
+    src/Math/Vec4.cpp
+    src/Math/Mat3.cpp
+    src/Math/Mat4.cpp
+    src/Math/Quaternion.cpp
+    src/Math/Transform2.cpp
+    src/Math/Transform3.cpp
+    src/Math/Transformable2.cpp
+    src/Math/Transformable3.cpp)
+
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
 find_package(stb REQUIRED)
-find_package(Math REQUIRED)
 find_package(freetype REQUIRED)
 find_package(glad REQUIRED)
 find_package(glfw REQUIRED)
 
 if (BUILD_SHARED_LIBS)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+    add_library(${PROJECT_NAME} SHARED )
 else()
-    add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+    add_library(${PROJECT_NAME} STATIC ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
 endif()
 
+target_include_directories(${PROJECT_NAME} PRIVATE "./include")
 target_include_directories(${PROJECT_NAME} PRIVATE ${STB_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${MATH_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${GLAD_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIR})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${MATH_LIB_FILE})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIB_FILE})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLAD_LIB_FILE})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIB_FILE})
