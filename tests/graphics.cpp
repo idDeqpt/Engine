@@ -181,7 +181,7 @@ int main()
 
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
-	obj.setAccuracy(1000);
+	obj.setAccuracy(100);
 	obj.setMaterial({
 		&tex[2],
 		&tex[3],
@@ -196,7 +196,11 @@ int main()
 	gfx::View view2d;
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
-	std::vector<mth::Vec3> positions = {
+	std::vector<mth::Vec3> positions;
+	for (unsigned int i = 0; i < 10; i++)
+		for (unsigned int j = 0; j < 10; j++)
+			positions.push_back(mth::Vec3(i, j, 0));
+	/* = {
 		{ 0.0f,  0.0f,  0.0f}, 
 		{ 2.0f,  5.0f, -15.0f}, 
 		{-1.5f, -2.2f, -2.5f}, 
@@ -207,7 +211,7 @@ int main()
 		{ 1.5f,  2.0f, -2.5f}, 
 		{ 1.5f,  0.2f, -1.5f}, 
 		{-1.3f,  1.0f, -1.5f}
-	};
+	};*/
 
 	gfx::LightId light_id = gfx::LightManager::addLight();
 	gfx::LightManager::setDirection(light_id, mth::Vec3(1, -1, 0));

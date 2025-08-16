@@ -144,7 +144,7 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 		for (unsigned int j = 0; j < n; j++)
 		{
 			float phi = j*pi_div_n*2;
-			mth::Vec3 ell_point = mth::Vec3(sin_th*cos(phi), cos(theta), sin_th*sin(phi));
+			mth::Vec3 ell_point = mth::Vec3(sin_th*cos(phi)/2, cos(theta)/2, sin_th*sin(phi)/2);
 			mth::Vec3 point(
 				mesh->m_size.x*ell_point.x,
 				mesh->m_size.y*ell_point.y,
