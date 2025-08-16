@@ -1,13 +1,14 @@
 #ifndef MESH_CLASS_HEADER
 #define MESH_CLASS_HEADER
 
-#include <Engine/Math/Vec2.hpp>
-#include <Engine/Math/Vec3.hpp>
-#include <Engine/Math/Transformable3.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/Color.hpp>
+#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Transformable3.hpp>
 
 
 namespace gfx
@@ -45,6 +46,7 @@ namespace gfx
 		~Mesh();
 
 		bool loadData(MeshData data);
+		void loadInstances(mth::Mat4* transforms, unsigned int transforms_count);
 		void setMaterial(const Material& new_material);
 
 		void draw(Window* window, RenderStates& states);
@@ -54,6 +56,8 @@ namespace gfx
 		unsigned int m_VBO;
 		unsigned int m_EBO;
 		unsigned int m_indexes_count;
+		unsigned int m_instance_VBO;
+		unsigned int m_instances_count;
 		bool m_inited;
 		bool m_has_tex_coords;
 		Material m_material;

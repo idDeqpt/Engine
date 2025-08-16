@@ -179,8 +179,10 @@ int main()
 		128*0.4
 	});
 
+	float obj_size = 0.1;
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	obj.setSize(mth::Vec3(obj_size));
 	obj.setAccuracy(100);
 	obj.setMaterial({
 		&tex[2],
@@ -197,9 +199,19 @@ int main()
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
 	std::vector<mth::Vec3> positions;
-	for (unsigned int i = 0; i < 10; i++)
-		for (unsigned int j = 0; j < 10; j++)
-			positions.push_back(mth::Vec3(i, j, 0));
+	for (unsigned int i = 0; i < 50; i++)
+		for (unsigned int j = 0; j < 50; j++)
+			positions.push_back(mth::Vec3(i*obj_size, j*obj_size, 0));
+	std::vector<mth::Mat4> translations;
+	for (unsigned int i = 0; i < 50; i++)
+		for (unsigned int j = 0; j < 50; j++)
+		{
+			translations.push_back(mth::Mat4(1, 0, 0, i*obj_size,
+											 0, 1, 0, j*obj_size,
+											 0, 0, 1, 0,
+											 0, 0, 0, 1));
+		}
+	obj.loadInstances(translations.data(), translations.size());
 	/* = {
 		{ 0.0f,  0.0f,  0.0f}, 
 		{ 2.0f,  5.0f, -15.0f}, 
@@ -281,7 +293,7 @@ int main()
 			view3d.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
+		//obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
 
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
 		info_texts[1].setString("Position: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
@@ -290,11 +302,12 @@ int main()
 
 		gfx::View::setActive(&view3d);
 		gfx::Shader::setActive(&shader3d);
-		for (unsigned int i = 0; i < positions.size(); i++)
+		/*for (unsigned int i = 0; i < positions.size(); i++)
 		{
 			obj.setPosition(positions[i]);
 			window.draw(obj, states);
-		}
+		}*/
+		window.draw(obj, states);
 		window.draw(floor, states);
 		//window.draw(text, states);
 

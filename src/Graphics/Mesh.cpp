@@ -22,10 +22,10 @@ struct VertexKey {
 	unsigned int normalIndex;
 
 	friend bool operator==(const VertexKey& lhs, const VertexKey& rhs) noexcept {
-        return (lhs.positionIndex     == rhs.positionIndex     &&
-                lhs.textureCoordIndex == rhs.textureCoordIndex &&
-                lhs.normalIndex       == rhs.normalIndex);
-    }
+		return (lhs.positionIndex     == rhs.positionIndex     &&
+				lhs.textureCoordIndex == rhs.textureCoordIndex &&
+				lhs.normalIndex       == rhs.normalIndex);
+	}
 };
 
 template <>
@@ -38,11 +38,14 @@ struct std::hash<VertexKey> {
 };
 
 
-gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
+gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
 	glGenBuffers(1, &m_EBO);
+	glGenBuffers(1, &m_instance_VBO);
+
+	loadInstances(nullptr, 0);
 }
 
 gfx::Mesh::~Mesh()
@@ -53,6 +56,8 @@ gfx::Mesh::~Mesh()
 		glDeleteBuffers(1, &m_VBO);
 	if (m_EBO)
 		glDeleteBuffers(1, &m_EBO);
+	if (m_instance_VBO)
+		glDeleteBuffers(1, &m_instance_VBO);
 }
 
 
@@ -99,15 +104,35 @@ bool gfx::Mesh::loadData(MeshData data)
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh::Vertex)*last_vertex, final_vertices, GL_STATIC_DRAW);
+	{
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, position));
+		glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, position));
-	glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
+		glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
-	glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
+		glEnableVertexAttribArray(2);
+	}
 
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
-	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
+	{
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
+		glEnableVertexAttribArray(3);
+		glVertexAttribDivisor(3, 1);
+
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
+		glEnableVertexAttribArray(4);
+		glVertexAttribDivisor(4, 1);
+
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
+		glEnableVertexAttribArray(5);
+		glVertexAttribDivisor(5, 1);
+
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
+		glEnableVertexAttribArray(6);
+		glVertexAttribDivisor(6, 1);
+	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
@@ -121,6 +146,28 @@ bool gfx::Mesh::loadData(MeshData data)
 	m_has_tex_coords = has_tex_coords;
 	return m_inited  = true;
 }
+
+void gfx::Mesh::loadInstances(mth::Mat4* transforms, unsigned int transforms_count)
+{
+	glBindVertexArray(m_VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
+
+	if (!transforms || !transforms_count)
+	{
+		mth::Mat4 identity = mth::Mat4::getIdentity();
+		glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4), &identity, GL_STATIC_DRAW);
+		m_instances_count = 1;
+	}
+	else
+	{
+		glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4)*transforms_count, transforms, GL_STATIC_DRAW);
+		m_instances_count = transforms_count;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 
 void gfx::Mesh::setMaterial(const Material& new_material)
 {
@@ -162,6 +209,6 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	}
 
 	glBindVertexArray(m_VAO);
-	glDrawElements(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0);
+	glDrawElementsInstanced(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0, m_instances_count);
 	glBindVertexArray(0);
 }

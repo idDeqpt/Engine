@@ -3,6 +3,7 @@
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
+layout (location = 3) in mat4 aInstanceTransform;
 
 out vec3 fFragPos;
 out vec2 fTexCoord;
@@ -14,10 +15,10 @@ uniform mat4 uModel;
 
 void main()
 {
-    fFragPos = vec3(uModel*vec4(aPosition, 1.0f));
+    mat4 result_model = uModel*transpose(aInstanceTransform);
+    fFragPos = vec3(result_model*vec4(aPosition, 1.0f));
     fTexCoord = aTexCoord;
-    vec3 worldNormal = transpose(inverse(mat3(uModel)))*aNormal;
-    //vec3 viewNormal = mat3(uView)*worldNormal;
+    vec3 worldNormal = transpose(inverse(mat3(result_model)))*aNormal;
     fNormal = normalize(worldNormal);
     
     gl_Position = uProjection*uView*vec4(fFragPos, 1.0f);
