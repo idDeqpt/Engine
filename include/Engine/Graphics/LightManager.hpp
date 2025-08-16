@@ -1,9 +1,7 @@
 #ifndef LIGHT_MANAGER_STATIC_CLASS_HEADER
 #define LIGHT_MANAGER_STATIC_CLASS_HEADER
 
-#include <Engine/Graphics/Texture.hpp>
 #include <Engine/Math/Vec3.hpp>
-#include <vector>
 
 namespace gfx
 {
@@ -14,7 +12,6 @@ namespace gfx
 	public:
 		struct DirectionalLight
 		{
-			LightId id;
 			mth::Vec3 direction;
 			mth::Vec3 color;
 		};
@@ -22,20 +19,13 @@ namespace gfx
 		static void initialize();
 		static void finalize();
 
-		static LightId addLight();
-		static void setDirection(LightId id, const mth::Vec3& direction);
-		static void setColor(LightId id, const mth::Vec3& color);
+		static void enableDirectionalLight(DirectionalLight light);
+		static void disableDirectionalLight();
 
-		static unsigned int getLightsCount();
-		static Texture* getLightsTexture();
+		static DirectionalLight getDirectionalLight();
 
 	protected:
-		static std::vector<DirectionalLight> m_lights;
-		static Texture* m_lights_texture;
-		static bool m_need_update;
-		static LightId m_id_counter;
-
-		static void updateTexture();
+		static DirectionalLight s_directional_light;
 	};
 }
 

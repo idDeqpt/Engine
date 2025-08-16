@@ -7,7 +7,7 @@ struct Material
 	float shininess;
 };
 
-struct Light
+struct DirectionalLight
 {
 	vec3 direction;
 	vec3 color;
@@ -20,31 +20,20 @@ in vec3 fNormal;
 out vec4 oColor;
 
 uniform Material uMaterial;
-uniform int uLightsCount;
-uniform sampler2D uLightsTexture;
 uniform vec3 uViewPos;
-
-Light getLight(int index)
-{
-	Light light;
-	float dir_u = (index*2 + 0.5)/float(uLightsCount*2);
-	float col_u = (index*2 + 1.5)/float(uLightsCount*2);
-	float v = 0.5;
-	light.direction = texture(uLightsTexture, vec2(dir_u, v)).rgb;
-	light.color = texture(uLightsTexture, vec2(col_u, v)).rgb;
-	return light;
-}
+uniform bool uUseDirectionalLight;
+uniform DirectionalLight uDirectionalLight;
 
 void main()
 {
 	vec3 color = texture(uMaterial.diffuse, fTexCoord).rgb;
-	if (uLightsCount == 0)
+	if (!uUseDirectionalLight)
 	{
 		oColor = vec4(color, 1.0f);
 		return;
 	}
 
-	Light light = getLight(0);
+	DirectionalLight light = uDirectionalLight;
 	vec3 normal = normalize(fNormal);
 	vec3 toViewDir = normalize(uViewPos - fFragPos);
 	vec3 toLightDir = normalize(-light.direction);

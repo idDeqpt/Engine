@@ -95,7 +95,7 @@ int main()
 	unsigned int height = 900;
 	srand(0);
 	gfx::Window window(width, height, "LearnOpenGL");
-	glEnable(GL_CULL_FACE);
+	
 	glCullFace(GL_FRONT);
 
 	std::string shaders_dir = "C:/Projects/C++/libraries/Engine/include/Engine/Graphics/shaders";
@@ -129,7 +129,7 @@ int main()
 	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
 
 	const unsigned int floor_size     = 20;
-	const unsigned int floor_accuracy = 20;
+	const unsigned int floor_accuracy = 10;
 	const unsigned int floor_points_count  = floor_accuracy*floor_accuracy;
 	const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
 	const unsigned int floor_indexes_count = floor_normals_count*3;
@@ -144,7 +144,7 @@ int main()
 	for (unsigned int i = 0; i < floor_accuracy; i++)
 		for (unsigned int j = 0; j < floor_accuracy; j++)
 		{
-			floor_points[index]       = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.05,           floor_size*float(j)/(floor_accuracy-1));
+			floor_points[index]       = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.1,           floor_size*float(j)/(floor_accuracy-1));
 			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1),            float(j)/(floor_accuracy-1));
 		}
 	index = 0;
@@ -184,11 +184,11 @@ int main()
 	float obj_size = 1;
 	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
 	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
-	obj.setSize(mth::Vec3(obj_size));
+	obj.setSize(mth::Vec3(0.1, 2, 0.1));
 	obj.setAccuracy(100);
 	obj.setMaterial({
-		&tex[2],
-		&tex[3],
+		&tex[0],
+		&tex[0],
 		128*0.4
 	});
 
@@ -201,37 +201,14 @@ int main()
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
 	std::vector<mth::Mat4> translations;
-	for (unsigned int i = 0; i < 5; i++)
-		for (unsigned int j = 0; j < 5; j++)
-		{
-			translations.push_back(mth::Mat4(1, 0, 0, i*obj_size,
-											 0, 1, 0, j*obj_size,
-											 0, 0, 1, 0,
-											 0, 0, 0, 1));
-		}
+	for (unsigned int i = 0; i < floor_points_count; i++)
+		translations.push_back(mth::Mat4(1, 0, 0, floor_points[i].x,
+										 0, 1, 0, floor_points[i].y,
+										 0, 0, 1, floor_points[i].z,
+										 0, 0, 0, 1));
 	obj.loadInstances(translations.data(), translations.size());
 
-	gfx::LightId light_id = gfx::LightManager::addLight();
-	gfx::LightManager::setDirection(light_id, mth::Vec3(1, -1, 0));
-	gfx::LightManager::setColor(light_id, mth::Vec3(1, 1, 1));
-
-	/*gfx::Text text;
-	text.setFontId(fontid);
-	text.setString("fontid");
-	text.setScale(mth::Vec3(0.02));*/
-
-	gfx::CanvasItem ci;
-	//ci.setColor(gfx::Color(255, 0, 0, 255));
-	gfx::CanvasItem::Vertex verts[4] = {
-		{{0,    0},   {0, 0}},
-		{{1000, 0},   {1, 0}},
-		{{1000, 300}, {1, 1}},
-		{{0,    300}, {0, 1}}
-	};
-	std::cout << "CAN: " << ci.loadData(verts, 4) << std::endl;
-	//ci.setTexture(tex[2]);
-	ci.setTexture(*font.getTexture());
-	ci.setPosition(mth::Vec2(0, 300));
+	gfx::LightManager::enableDirectionalLight({mth::Vec3(1, -1, 0), mth::Vec3(1, 1, 1)});
 
 	gfx::Text2D info_texts[2];
 	for (unsigned int i = 0; i < 2; i++)
@@ -240,10 +217,11 @@ int main()
 		info_texts[i].setPosition(mth::Vec2(0, font.getSize()*i));
 	}
 
+	//gfx::Shape2D shape(gfx::Shape2D::Type::RECTANGLE);
 	gfx::Shape2D shape(gfx::Shape2D::Type::CIRCLE);
 	shape.setPosition(mth::Vec2(800, 450));
 	shape.setSize(mth::Vec2(100, 100));
-	shape.setTexture(tex[0]);
+	shape.setTexture(tex[2]);
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
@@ -279,19 +257,21 @@ int main()
 			view3d.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
-		//obj.setRotation(mth::Quaternion(mth::Vec3(0.5, 1, 0), time*0.5));
+		obj.setRotation(mth::Quaternion(mth::Vec3(0.1, 1, 0), time*0.5));
 
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
 		info_texts[1].setString("Position: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
 		window.clear(gfx::Color(125));
 
+		glEnable(GL_CULL_FACE);
 		gfx::View::setActive(&view3d);
 		gfx::Shader::setActive(&shader3d);
 
 		window.draw(obj, states);
 		window.draw(floor, states);
 
+		glDisable(GL_CULL_FACE);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		gfx::View::setActive(&view2d);
 		gfx::Shader::setActive(&shader2d);

@@ -191,21 +191,22 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
-	Texture::bind(m_material.diffuse);
-	active_shader->setUniform1i("uMaterial.diffuse", 0);
+		Texture::bind(m_material.diffuse);
+		active_shader->setUniform1i("uMaterial.diffuse", 0);
 	glActiveTexture(GL_TEXTURE1);
-	Texture::bind(m_material.specular);
-	active_shader->setUniform1i("uMaterial.specular", 1);
+		Texture::bind(m_material.specular);
+		active_shader->setUniform1i("uMaterial.specular", 1);
 	active_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
 
 	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
-	active_shader->setUniform1i("uLightsCount", LightManager::getLightsCount());
-	if (LightManager::getLightsCount())
+	LightManager::DirectionalLight light = LightManager::getDirectionalLight();
+	bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
+	active_shader->setUniform1i("uUseDirectionalLight", use_directional_light);
+	if (use_directional_light)
 	{
-		glActiveTexture(GL_TEXTURE2);
-		Texture::bind(LightManager::getLightsTexture());
-		active_shader->setUniform1i("uLightsTexture", 2);
+		active_shader->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
+		active_shader->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
 	}
 
 	glBindVertexArray(m_VAO);
