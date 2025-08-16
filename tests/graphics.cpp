@@ -128,8 +128,8 @@ int main()
 	gfx::Font font;
 	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
 
-	const unsigned int floor_size     = 20;
-	const unsigned int floor_accuracy = 10;
+	const unsigned int floor_size     = 50;
+	const unsigned int floor_accuracy = 30;
 	const unsigned int floor_points_count  = floor_accuracy*floor_accuracy;
 	const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
 	const unsigned int floor_indexes_count = floor_normals_count*3;
@@ -182,10 +182,11 @@ int main()
 	});
 
 	float obj_size = 1;
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
-	obj.setSize(mth::Vec3(0.1, 2, 0.1));
-	obj.setAccuracy(100);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	obj.setSize(mth::Vec3(1.5, 1.5, 1.5));
+	obj.setOrigin(mth::Vec3(0, -2.5, 0));
+	//obj.setAccuracy(500);
 	obj.setMaterial({
 		&tex[0],
 		&tex[0],

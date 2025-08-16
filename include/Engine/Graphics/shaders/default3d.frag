@@ -37,16 +37,15 @@ void main()
 	vec3 normal = normalize(fNormal);
 	vec3 toViewDir = normalize(uViewPos - fFragPos);
 	vec3 toLightDir = normalize(-light.direction);
-	vec3 reflectDir = reflect(-toLightDir, normal);
+	vec3 halfWayDir = normalize(toLightDir + toViewDir);
 
 	vec3 ambient = color*light.color;
 
 	float diff = max(dot(normal, toLightDir), 0.0f);
 	vec3 diffuse = diff*color*light.color;
 
-	float spec = pow(max(dot(toViewDir, reflectDir), 0.0f), uMaterial.shininess);
+	float spec = pow(max(dot(fNormal, halfWayDir), 0.0f), uMaterial.shininess);
 	vec3 specular = spec*texture(uMaterial.specular, fTexCoord).rgb*light.color;
 	
 	oColor = vec4(ambient*0.5 + diffuse + specular, 1.0f);
-	//oColor = vec4(color, 1.0f);
 }
