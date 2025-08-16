@@ -95,6 +95,8 @@ int main()
 	unsigned int height = 900;
 	srand(0);
 	gfx::Window window(width, height, "LearnOpenGL");
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
 	std::string shaders_dir = "C:/Projects/C++/libraries/Engine/include/Engine/Graphics/shaders";
 	gfx::Shader shader3d;
@@ -179,9 +181,9 @@ int main()
 		128*0.4
 	});
 
-	float obj_size = 0.1;
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	float obj_size = 1;
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	obj.setSize(mth::Vec3(obj_size));
 	obj.setAccuracy(100);
 	obj.setMaterial({
@@ -198,13 +200,9 @@ int main()
 	gfx::View view2d;
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
-	std::vector<mth::Vec3> positions;
-	for (unsigned int i = 0; i < 50; i++)
-		for (unsigned int j = 0; j < 50; j++)
-			positions.push_back(mth::Vec3(i*obj_size, j*obj_size, 0));
 	std::vector<mth::Mat4> translations;
-	for (unsigned int i = 0; i < 50; i++)
-		for (unsigned int j = 0; j < 50; j++)
+	for (unsigned int i = 0; i < 5; i++)
+		for (unsigned int j = 0; j < 5; j++)
 		{
 			translations.push_back(mth::Mat4(1, 0, 0, i*obj_size,
 											 0, 1, 0, j*obj_size,
@@ -212,18 +210,6 @@ int main()
 											 0, 0, 0, 1));
 		}
 	obj.loadInstances(translations.data(), translations.size());
-	/* = {
-		{ 0.0f,  0.0f,  0.0f}, 
-		{ 2.0f,  5.0f, -15.0f}, 
-		{-1.5f, -2.2f, -2.5f}, 
-		{-3.8f, -2.0f, -12.3f}, 
-		{ 2.4f, -0.4f, -3.5f}, 
-		{-1.7f,  3.0f, -7.5f}, 
-		{ 1.3f, -2.0f, -2.5f}, 
-		{ 1.5f,  2.0f, -2.5f}, 
-		{ 1.5f,  0.2f, -1.5f}, 
-		{-1.3f,  1.0f, -1.5f}
-	};*/
 
 	gfx::LightId light_id = gfx::LightManager::addLight();
 	gfx::LightManager::setDirection(light_id, mth::Vec3(1, -1, 0));
@@ -302,14 +288,9 @@ int main()
 
 		gfx::View::setActive(&view3d);
 		gfx::Shader::setActive(&shader3d);
-		/*for (unsigned int i = 0; i < positions.size(); i++)
-		{
-			obj.setPosition(positions[i]);
-			window.draw(obj, states);
-		}*/
+
 		window.draw(obj, states);
 		window.draw(floor, states);
-		//window.draw(text, states);
 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		gfx::View::setActive(&view2d);
