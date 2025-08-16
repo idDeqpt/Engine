@@ -3,8 +3,8 @@
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec3.hpp>
+
 #include <cmath>
-#include <string.h>
 
 
 void (*gfx::GeometricMesh::generators[])(gfx::GeometricMesh*) = {
@@ -122,8 +122,8 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 
 void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 {
-	unsigned int n = mesh->m_accuracy;
-	unsigned int points_count = n*n;
+	unsigned int n             = mesh->m_accuracy;
+	unsigned int points_count  = n*n;
 	unsigned int indexes_count = (n - 1)*(n - 1)*6;
 
 	mth::Vec3* points     = new mth::Vec3[points_count];

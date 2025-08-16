@@ -16,6 +16,28 @@
 #include <unordered_map>
 
 
+struct VertexKey {
+	unsigned int positionIndex;
+	unsigned int textureCoordIndex;
+	unsigned int normalIndex;
+
+	friend bool operator==(const VertexKey& lhs, const VertexKey& rhs) noexcept {
+        return (lhs.positionIndex     == rhs.positionIndex     &&
+                lhs.textureCoordIndex == rhs.textureCoordIndex &&
+                lhs.normalIndex       == rhs.normalIndex);
+    }
+};
+
+template <>
+struct std::hash<VertexKey> {
+	size_t operator()(const VertexKey &key) const noexcept {
+		return std::hash<unsigned int>{}(key.positionIndex)           ^
+			  (std::hash<unsigned int>{}(key.textureCoordIndex) << 1) ^
+			  (std::hash<unsigned int>{}(key.normalIndex)       >> 1);
+	}
+};
+
+
 gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
 {
 	glGenVertexArrays(1, &m_VAO);
@@ -38,14 +60,14 @@ bool gfx::Mesh::loadData(MeshData data)
 {
 	if (!(data.unique_posisions && data.posisions_indexes && data.unique_posisions_count && data.vertices_indexes_count)) return m_inited = false;
 
-	unsigned int final_vertices_count = data.vertices_indexes_count;
-	unsigned int last_vertex = 0;
-	Mesh::Vertex* final_vertices = new Mesh::Vertex[final_vertices_count];
-	unsigned int* final_indexes = new unsigned int[final_vertices_count];
-	std::unordered_map<std::string, unsigned int> unique_vertices;
+	unsigned int  final_vertices_count = data.vertices_indexes_count;
+	unsigned int  last_vertex          = 0;
+	Mesh::Vertex* final_vertices       = new Mesh::Vertex[final_vertices_count];
+	unsigned int* final_indexes        = new unsigned int[final_vertices_count];
+	std::unordered_map<VertexKey, unsigned int> unique_vertices;
 
 	bool has_tex_coords = data.unique_tex_coords;
-	bool has_normals = data.unique_normals;
+	bool has_normals    = data.unique_normals;
 
 	for (unsigned int i = 0; i < final_vertices_count; i++)
 	{
@@ -53,9 +75,7 @@ bool gfx::Mesh::loadData(MeshData data)
 		unsigned int tex_id = has_tex_coords ? data.tex_coords_indexes[i] : 0;
 		unsigned int nor_id = has_normals    ? data.normals_indexes[i]    : 0;
 
-		std::string key = std::to_string(pos_id);
-		if (has_tex_coords) key += "_" + tex_id;
-		if (has_normals)    key += "_" + nor_id;
+		VertexKey key {pos_id, tex_id, nor_id};
 
 		unsigned int vertex_index;
 		auto iter = unique_vertices.find(key);
@@ -64,13 +84,13 @@ bool gfx::Mesh::loadData(MeshData data)
 		else
 		{
 			Mesh::Vertex vertex;
-			vertex.position = data.unique_posisions[pos_id];
+			vertex.position  = data.unique_posisions[pos_id];
 			vertex.tex_coord = has_tex_coords ? data.unique_tex_coords[tex_id] : mth::Vec2(1, 1);
-			vertex.normal = has_normals ? data.unique_normals[nor_id] : mth::Vec3(0, 1, 0);
+			vertex.normal    = has_normals    ? data.unique_normals[nor_id]    : mth::Vec3(0, 1, 0);
 
-			vertex_index = last_vertex++;
+			vertex_index                 = last_vertex++;
 			final_vertices[vertex_index] = vertex;
-			unique_vertices[key] = vertex_index;
+			unique_vertices[key]         = vertex_index;
 		}
 		final_indexes[i] = vertex_index;
 	}
@@ -99,7 +119,7 @@ bool gfx::Mesh::loadData(MeshData data)
 	delete[] final_indexes;
 
 	m_has_tex_coords = has_tex_coords;
-	return m_inited = true;
+	return m_inited  = true;
 }
 
 void gfx::Mesh::setMaterial(const Material& new_material)

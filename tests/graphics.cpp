@@ -179,8 +179,9 @@ int main()
 		128*0.4
 	});
 
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	obj.setAccuracy(1000);
 	obj.setMaterial({
 		&tex[2],
 		&tex[3],
