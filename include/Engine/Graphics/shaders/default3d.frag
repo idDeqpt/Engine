@@ -2,8 +2,10 @@
 
 struct Material
 {
+	bool useNormal;
 	sampler2D diffuse;
 	sampler2D specular;
+	sampler2D normal;
 	float shininess;
 };
 
@@ -15,7 +17,7 @@ struct DirectionalLight
 
 in vec3 fFragPos;
 in vec2 fTexCoord;
-in vec3 fNormal;
+in mat3 fTBN;
 
 out vec4 oColor;
 
@@ -34,8 +36,8 @@ void main()
 	}
 
 	DirectionalLight light = uDirectionalLight;
-	vec3 normal = normalize(fNormal);
-	vec3 toViewDir = normalize(uViewPos - fFragPos);
+	vec3 normal     = uMaterial.useNormal ? (fTBN*(texture(uMaterial.normal, fTexCoord).rgb*2.0f - 1.0f)) : fTBN[2];
+	vec3 toViewDir  = normalize(uViewPos - fFragPos);
 	vec3 toLightDir = normalize(-light.direction);
 	vec3 halfWayDir = normalize(toLightDir + toViewDir);
 
@@ -44,8 +46,8 @@ void main()
 	float diff = max(dot(normal, toLightDir), 0.0f);
 	vec3 diffuse = diff*color*light.color;
 
-	float spec = pow(max(dot(fNormal, halfWayDir), 0.0f), uMaterial.shininess);
+	float spec = pow(max(dot(normal, halfWayDir), 0.0f), uMaterial.shininess);
 	vec3 specular = spec*texture(uMaterial.specular, fTexCoord).rgb*light.color;
 	
-	oColor = vec4(ambient*0.5 + diffuse + specular, 1.0f);
+	oColor = vec4(ambient*0.2 + diffuse + specular, 1.0f);
 }

@@ -88,6 +88,14 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 		{-1,  0,  0},
 		{ 1,  0,  0},
 	};
+	mth::Vec3 tangents[6] = {
+		{-1, 0,  0},
+		{ 1, 0,  0},
+		{ 1, 0,  0},
+		{ 1, 0,  0},
+		{ 0, 0,  1},
+		{ 0, 0, -1},
+	};
 
 	unsigned int indexes[36] = {
 		3, 2, 1, 2, 0, 1, //зад
@@ -117,7 +125,8 @@ void gfx::GeometricMesh::parallelepipedGenerator(GeometricMesh* mesh)
 
 	mesh->loadData({points,     8, indexes,
 					tex_coords, 4, texture_indexes,
-					normals,    6, normal_indexes, 36});
+					normals,    6, normal_indexes,
+					tangents,   6, normal_indexes, 36});
 }
 
 void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
@@ -129,6 +138,7 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 	mth::Vec3* points     = new mth::Vec3[points_count];
 	mth::Vec2* tex_coords = new mth::Vec2[points_count];
 	mth::Vec3* normals    = new mth::Vec3[points_count];
+	mth::Vec3* tangents   = new mth::Vec3[points_count];
 
 	unsigned int* indexes = new unsigned int[indexes_count];
 
@@ -152,7 +162,28 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 			);
 			points[index]     = point;
 			tex_coords[index] = mth::Vec2(float(j) * n_inv, float(i) * n_inv);
-			normals[index++]  = ell_point;
+			normals[index]  = ell_point;
+
+			if ((i > 0 && i < n - 1) && (j > 0 && j < n - 1))
+			{ // Только внутренние точки
+				// Соседние вершины слева-справа и сверху-внизу
+				mth::Vec3 left_point  = points[(i*n) + j - 1];
+				mth::Vec3 right_point = points[(i*n) + j + 1];
+				
+				mth::Vec3 top_point    = points[((i - 1)*n) + j];
+				mth::Vec3 bottom_point = points[((i + 1)*n) + j];
+				
+				// Производные позиции по U и V
+				mth::Vec3 dPdu = (right_point - left_point)/2.0f;
+				mth::Vec3 dPdv = (bottom_point - top_point)/2.0f;
+				
+				// Ориентация тангента должна соответствовать направлению изменения U-текстурных координат
+				tangents[index] = dPdu.norm();
+			}
+			else
+				tangents[index] = mth::Vec3(1.0f, 0.0f, 0.0f);
+
+			index++;
 		}
 	}
 
@@ -174,9 +205,12 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 
 	mesh->loadData({points,     points_count, indexes,
 					tex_coords, points_count, indexes,
-					normals,    points_count, indexes, indexes_count});
+					normals,    points_count, indexes,
+					tangents,   points_count, indexes, indexes_count});
 
 	delete[] points;
+	delete[] normals;
+	delete[] tangents;
 	delete[] tex_coords;
 	delete[] indexes;
 }

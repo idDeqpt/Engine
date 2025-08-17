@@ -17,10 +17,12 @@ static constexpr GLenum OPENGL_TEXTURE_FORMATS[][3] = { //{internal_format, form
 	{GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
 
 	{GL_RGB,    GL_RGB, GL_UNSIGNED_BYTE},
+	{GL_SRGB,   GL_RGB, GL_UNSIGNED_BYTE},
 	{GL_RGB32F, GL_RGB, GL_FLOAT},
 
-	{GL_RGBA,    GL_RGBA, GL_UNSIGNED_BYTE},
-	{GL_RGBA32F, GL_RGBA, GL_FLOAT},
+	{GL_RGBA,       GL_RGBA, GL_UNSIGNED_BYTE},
+	{GL_SRGB_ALPHA, GL_RGBA, GL_UNSIGNED_BYTE},
+	{GL_RGBA32F,    GL_RGBA, GL_FLOAT},
 };
 static constexpr unsigned int OPENGL_TEXTURE_TYPE_SIZES[] = {
 	sizeof(unsigned char),
@@ -29,8 +31,10 @@ static constexpr unsigned int OPENGL_TEXTURE_TYPE_SIZES[] = {
 	sizeof(unsigned char),
 	
 	sizeof(unsigned char),
+	sizeof(unsigned char),
 	sizeof(float),
 	
+	sizeof(unsigned char),
 	sizeof(unsigned char),
 	sizeof(float)
 };
@@ -91,19 +95,19 @@ void gfx::Texture::remove()
 	if (m_pixels != nullptr) {delete[] m_pixels; m_pixels = nullptr;}
 }
 
-bool gfx::Texture::loadFromFile(std::string path)
+bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
 {
 	create();
 
 	int width, height, channels;
 	unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
-	static constexpr PixelFormat formats[] = {
+	static PixelFormat formats[] = {
 		PixelFormat::RED,
 		PixelFormat::RED,
 		PixelFormat::RED,
-		PixelFormat::RGB,
-		PixelFormat::RGBA
+		(sRGB) ? PixelFormat::SRGB : PixelFormat::RGB,
+		(sRGB) ? PixelFormat::SRGBA : PixelFormat::RGBA
 	};
 	PixelFormat format = formats[channels];
 

@@ -19,8 +19,10 @@ namespace gfx
 			GREEN,
 			ALPHA,
 			RGB,
+			SRGB,
 			RGB32F,
 			RGBA,
+			SRGBA,
 			RGBA32F,
 		};
 
@@ -30,7 +32,7 @@ namespace gfx
 		void create();
 		void remove();
 
-		bool loadFromFile(std::string path);
+		bool loadFromFile(std::string path, bool sRGB = false);
 		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height, PixelFormat format);
 		bool loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height);
 

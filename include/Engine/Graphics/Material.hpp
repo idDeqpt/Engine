@@ -9,10 +9,11 @@ namespace gfx
 	{
 		Texture* diffuse;
 		Texture* specular;
-		float     shininess;
+		Texture* normal;
+		float    shininess;
 
 		Material();
-		Material(Texture* diffuse, Texture* specular, float shininess);
+		Material(Texture* diffuse, Texture* specular, Texture* normal, float shininess);
 	};
 }
 

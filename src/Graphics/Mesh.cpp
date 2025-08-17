@@ -73,12 +73,14 @@ bool gfx::Mesh::loadData(MeshData data)
 
 	bool has_tex_coords = data.unique_tex_coords;
 	bool has_normals    = data.unique_normals;
+	bool has_tangents   = data.unique_tangents;
 
 	for (unsigned int i = 0; i < final_vertices_count; i++)
 	{
 		unsigned int pos_id = data.posisions_indexes[i];
 		unsigned int tex_id = has_tex_coords ? data.tex_coords_indexes[i] : 0;
 		unsigned int nor_id = has_normals    ? data.normals_indexes[i]    : 0;
+		unsigned int tan_id = has_tangents   ? data.tangents_indexes[i]   : 0;
 
 		VertexKey key {pos_id, tex_id, nor_id};
 
@@ -92,6 +94,7 @@ bool gfx::Mesh::loadData(MeshData data)
 			vertex.position  = data.unique_posisions[pos_id];
 			vertex.tex_coord = has_tex_coords ? data.unique_tex_coords[tex_id] : mth::Vec2(1, 1);
 			vertex.normal    = has_normals    ? data.unique_normals[nor_id]    : mth::Vec3(0, 1, 0);
+			vertex.tangent   = has_tangents   ? data.unique_tangents[nor_id]   : mth::Vec3(1, 0, 0);
 
 			vertex_index                 = last_vertex++;
 			final_vertices[vertex_index] = vertex;
@@ -113,25 +116,28 @@ bool gfx::Mesh::loadData(MeshData data)
 
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
 		glEnableVertexAttribArray(2);
+
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tangent));
+		glEnableVertexAttribArray(3);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
 	{
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
-		glEnableVertexAttribArray(3);
-		glVertexAttribDivisor(3, 1);
-
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
 		glEnableVertexAttribArray(4);
 		glVertexAttribDivisor(4, 1);
 
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
 		glEnableVertexAttribArray(5);
 		glVertexAttribDivisor(5, 1);
 
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
 		glEnableVertexAttribArray(6);
 		glVertexAttribDivisor(6, 1);
+
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
+		glEnableVertexAttribArray(7);
+		glVertexAttribDivisor(7, 1);
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
@@ -196,6 +202,11 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	glActiveTexture(GL_TEXTURE1);
 		Texture::bind(m_material.specular);
 		active_shader->setUniform1i("uMaterial.specular", 1);
+	bool use_normal_map = m_material.normal;
+	active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
+	glActiveTexture(GL_TEXTURE2);
+		Texture::bind(m_material.normal);
+		active_shader->setUniform1i("uMaterial.normal", 2);
 	active_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
 
 	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);

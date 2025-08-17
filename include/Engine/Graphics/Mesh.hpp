@@ -23,6 +23,7 @@ namespace gfx
 			mth::Vec3 position;
 			mth::Vec2 tex_coord;
 			mth::Vec3 normal;
+			mth::Vec3 tangent;
 		};
 
 		struct MeshData
@@ -38,6 +39,10 @@ namespace gfx
 			mth::Vec3*    unique_normals;
 			unsigned int  unique_normals_count;
 			unsigned int* normals_indexes;
+
+			mth::Vec3*    unique_tangents;
+			unsigned int  unique_tangents_count;
+			unsigned int* tangents_indexes;
 
 			unsigned int  vertices_indexes_count;
 		};

@@ -117,12 +117,13 @@ int main()
 	gfx::EventManager::initialize(window.getHandler());
 
 	std::string resources_dir = "C:/Projects/C++/libraries/Engine/tests/resources";
-	gfx::Texture tex[4];
+	gfx::Texture tex[5];
 	std::cout << "TEXTURE\n";
 	std::cout << "Tex1: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
 	std::cout << "Tex2: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
 	std::cout << "Tex3: " << tex[2].loadFromFile(resources_dir + "/box.png") << std::endl;
 	std::cout << "Tex4: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
+	std::cout << "Tex5: " << tex[4].loadFromFile(resources_dir + "/box-normal.png") << std::endl;
 	std::cout << "Err: "  << glGetError() << std::endl;
 
 	gfx::Font font;
@@ -137,6 +138,7 @@ int main()
 	mth::Vec3 floor_points    [floor_points_count];
 	mth::Vec2 floor_tex_coords[floor_points_count];
 	mth::Vec3 floor_normals   [floor_normals_count];
+	mth::Vec3 floor_tangents  [floor_normals_count];
 	unsigned int floor_indexes[floor_indexes_count];
 	unsigned int floor_normal_indexes[floor_indexes_count];
 
@@ -144,7 +146,7 @@ int main()
 	for (unsigned int i = 0; i < floor_accuracy; i++)
 		for (unsigned int j = 0; j < floor_accuracy; j++)
 		{
-			floor_points[index]       = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.1,           floor_size*float(j)/(floor_accuracy-1));
+			floor_points[index]       = mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.0,           floor_size*float(j)/(floor_accuracy-1));
 			floor_tex_coords[index++] = mth::Vec2(float(i)/(floor_accuracy-1),            float(j)/(floor_accuracy-1));
 		}
 	index = 0;
@@ -154,7 +156,8 @@ int main()
 			unsigned int first  = i*floor_accuracy + j;
 			unsigned int second = first + floor_accuracy;
 
-			floor_normals[index/3] = -(floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
+			floor_normals[index/3]  = -(floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
+			floor_tangents[index/3] = mth::Vec3(1, 0, 0);
 			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = first;
 			floor_normal_indexes[index] = index/3 + 1;
@@ -162,7 +165,8 @@ int main()
 			floor_normal_indexes[index] = index/3 + 2;
 			floor_indexes[index++] = first + 1;
 
-			floor_normals[index/3] = -(floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
+			floor_normals[index/3]  = -(floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
+			floor_tangents[index/3] = mth::Vec3(1, 0, 0);
 			floor_normal_indexes[index] = index/3;
 			floor_indexes[index++] = second;
 			floor_normal_indexes[index] = index/3 + 1;
@@ -174,22 +178,25 @@ int main()
 	gfx::Mesh floor;
 	std::cout << "SUCCESS: " << floor.loadData({floor_points,     floor_points_count,  floor_indexes,
 												floor_tex_coords, floor_points_count,  floor_indexes,
-												floor_normals,    floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
+												floor_normals,    floor_normals_count, floor_indexes,
+												floor_tangents,   floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setMaterial({
 		&tex[2],
 		&tex[3],
+		&tex[4],
 		128*0.4
 	});
 
 	float obj_size = 1;
-	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
-	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
+	gfx::GeometricMesh obj(gfx::GeometricMesh::Type::PARALLELEPIPED);
+	//gfx::GeometricMesh obj(gfx::GeometricMesh::Type::ELLIPSOID);
 	obj.setSize(mth::Vec3(1.5, 1.5, 1.5));
 	obj.setOrigin(mth::Vec3(0, -2.5, 0));
 	//obj.setAccuracy(500);
 	obj.setMaterial({
-		&tex[0],
-		&tex[0],
+		&tex[2],
+		&tex[3],
+		&tex[4],
 		128*0.4
 	});
 
@@ -202,14 +209,14 @@ int main()
 	view2d.setOrtho(0, width, height, 0, -10, 10);
 
 	std::vector<mth::Mat4> translations;
-	for (unsigned int i = 0; i < floor_points_count; i++)
+	for (unsigned int i = 0; i < floor_points_count; i+=10)
 		translations.push_back(mth::Mat4(1, 0, 0, floor_points[i].x,
 										 0, 1, 0, floor_points[i].y,
 										 0, 0, 1, floor_points[i].z,
 										 0, 0, 0, 1));
 	obj.loadInstances(translations.data(), translations.size());
 
-	gfx::LightManager::enableDirectionalLight({mth::Vec3(1, -1, 0), mth::Vec3(1, 1, 1)});
+	gfx::LightManager::enableDirectionalLight({mth::Vec3(0, -1, 0), mth::Vec3(1, 1, 1)});
 
 	gfx::Text2D info_texts[2];
 	for (unsigned int i = 0; i < 2; i++)
@@ -218,21 +225,25 @@ int main()
 		info_texts[i].setPosition(mth::Vec2(0, font.getSize()*i));
 	}
 
-	//gfx::Shape2D shape(gfx::Shape2D::Type::RECTANGLE);
-	gfx::Shape2D shape(gfx::Shape2D::Type::CIRCLE);
-	shape.setPosition(mth::Vec2(800, 450));
+	gfx::Shape2D shape(gfx::Shape2D::Type::RECTANGLE);
+	//gfx::Shape2D shape(gfx::Shape2D::Type::CIRCLE);
+	shape.setPosition(mth::Vec2(700, 400));
 	shape.setSize(mth::Vec2(100, 100));
+	//shape.setTexture(*font.getTexture());
 	shape.setTexture(tex[2]);
 
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
 	float delta_time = 0;
+	float light_rot = 0;
 	while(window.isOpen())
 	{
 		float start_time = glfwGetTime();
 		mth::Vec3 vel;
 		gfx::EventManager::pull();
 		if (gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
+		if (gfx::EventManager::isJustPressed(GLFW_KEY_R)) glEnable(GL_FRAMEBUFFER_SRGB);
+		if (gfx::EventManager::isJustReleased(GLFW_KEY_R)) glDisable(GL_FRAMEBUFFER_SRGB);
 		if (gfx::EventManager::isJustPressed(GLFW_KEY_L)) gfx::EventManager::setCursorLock(!gfx::EventManager::getCursorLock());
 		if (gfx::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
@@ -246,9 +257,14 @@ int main()
 			vel.y -= speed;
 		if (gfx::EventManager::isPressed(GLFW_KEY_SPACE))
 			vel.y += speed;
+		if (gfx::EventManager::isPressed(GLFW_KEY_RIGHT))
+			light_rot += 0.05;
+		if (gfx::EventManager::isPressed(GLFW_KEY_LEFT))
+			light_rot -= 0.05;
 
 		if (gfx::EventManager::Mouse::moved())
 			rot_angles = rot_angles + gfx::EventManager::Mouse::getDelta();
+		gfx::LightManager::enableDirectionalLight({mth::Quaternion(mth::Vec3(0, 0, 1), light_rot).rotateVec(mth::Vec3(0, -1, 0)), mth::Vec3(1, 1, 1)});
 		
 		view3d.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), 0));
 		view3d.rotate(mth::Quaternion(mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
