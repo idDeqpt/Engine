@@ -29,6 +29,7 @@ namespace mth
 	Vec3 operator-(const Vec3& left, const Vec3& rigth);
 	Vec3 operator*(const Vec3& vec, float coef);
 	Vec3 operator*(float coef, const Vec3& vec);
+	Vec3 operator/(const Vec3& vec, float coef);
 }
 
 #endif //VECTOR_3_HEADER

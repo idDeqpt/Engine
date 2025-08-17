@@ -89,3 +89,9 @@ mth::Vec3 mth::operator*(float coef, const Vec3& vec)
 {
 	return Vec3(vec.x*coef, vec.y*coef, vec.z*coef);
 }
+
+mth::Vec3 mth::operator/(const Vec3& vec, float coef)
+{
+	float ratio = 1.0/coef;
+	return Vec3(vec.x*ratio, vec.y*ratio, vec.z*ratio);
+}
