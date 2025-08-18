@@ -101,6 +101,8 @@ bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
 
 	int width, height, channels;
 	unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+	if (!image_data)
+		return false;
 
 	static PixelFormat formats[] = {
 		PixelFormat::RED,
