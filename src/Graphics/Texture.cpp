@@ -95,6 +95,27 @@ void gfx::Texture::remove()
 	if (m_pixels != nullptr) {delete[] m_pixels; m_pixels = nullptr;}
 }
 
+
+bool gfx::Texture::setSmooth(bool flag)
+{
+	if (!m_native_handle) return false;
+
+	glBindTexture(GL_TEXTURE_2D, m_native_handle);
+	if (flag)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return true;
+}
+
+
 bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
 {
 	create();
