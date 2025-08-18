@@ -203,10 +203,15 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 		Texture::bind(m_material.specular);
 		active_shader->setUniform1i("uMaterial.specular", 1);
 	bool use_normal_map = m_material.normal;
-	active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
-	glActiveTexture(GL_TEXTURE2);
+		active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
+		glActiveTexture(GL_TEXTURE2);
 		Texture::bind(m_material.normal);
 		active_shader->setUniform1i("uMaterial.normal", 2);
+	bool use_parallax_map = m_material.parallax;
+		active_shader->setUniform1i("uMaterial.useParallax", use_parallax_map);
+		glActiveTexture(GL_TEXTURE3);
+		Texture::bind(m_material.parallax);
+		active_shader->setUniform1i("uMaterial.parallax", 3);
 	active_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
 
 	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);

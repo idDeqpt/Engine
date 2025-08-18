@@ -117,14 +117,16 @@ int main()
 	gfx::EventManager::initialize(window.getHandler());
 
 	std::string resources_dir = "C:/Projects/C++/libraries/Engine/tests/resources";
-	gfx::Texture tex[5];
+	gfx::Texture tex[6];
 	std::cout << "TEXTURE\n";
 	std::cout << "Tex1: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
 	std::cout << "Tex2: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
-	std::cout << "Tex3: " << tex[2].loadFromFile(resources_dir + "/box.png") << std::endl;
+	std::cout << "Tex3: " << tex[2].loadFromFile(resources_dir + "/bricks.jpg") << std::endl;
 	std::cout << "Tex4: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
-	std::cout << "Tex5: " << tex[4].loadFromFile(resources_dir + "/box-normal.png") << std::endl;
+	std::cout << "Tex5: " << tex[4].loadFromFile(resources_dir + "/bricks-normal.jpg") << std::endl;
+	std::cout << "Tex6: " << tex[5].loadFromFile(resources_dir + "/bricks-parallax.jpg") << std::endl;
 	std::cout << "Err: "  << glGetError() << std::endl;
+
 
 	gfx::Font font;
 	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
@@ -184,6 +186,7 @@ int main()
 		&tex[2],
 		&tex[3],
 		&tex[4],
+		nullptr,
 		128*0.4
 	});
 
@@ -197,6 +200,7 @@ int main()
 		&tex[2],
 		&tex[3],
 		&tex[4],
+		nullptr,
 		128*0.4
 	});
 
@@ -232,6 +236,9 @@ int main()
 	//shape.setTexture(*font.getTexture());
 	shape.setTexture(tex[2]);
 
+	mth::Transformable3 parent;
+	obj.setParent(parent);
+
 	float speed = 0.1;
 	mth::Vec2 rot_angles;
 	float delta_time = 0;
@@ -242,8 +249,8 @@ int main()
 		mth::Vec3 vel;
 		gfx::EventManager::pull();
 		if (gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
-		if (gfx::EventManager::isJustPressed(GLFW_KEY_R)) glEnable(GL_FRAMEBUFFER_SRGB);
-		if (gfx::EventManager::isJustReleased(GLFW_KEY_R)) glDisable(GL_FRAMEBUFFER_SRGB);
+		if (gfx::EventManager::isJustPressed(GLFW_KEY_R)) tex[5].setSmooth(false);
+		if (gfx::EventManager::isJustReleased(GLFW_KEY_R)) tex[5].setSmooth(true);
 		if (gfx::EventManager::isJustPressed(GLFW_KEY_L)) gfx::EventManager::setCursorLock(!gfx::EventManager::getCursorLock());
 		if (gfx::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
@@ -274,7 +281,8 @@ int main()
 			view3d.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
-		obj.setRotation(mth::Quaternion(mth::Vec3(0.1, 1, 0), time*0.5));
+		//obj.setRotation(mth::Quaternion(mth::Vec3(0.1, 1, 0), time*0.5));
+		parent.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), time*0.5));
 
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
 		info_texts[1].setString("Position: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
