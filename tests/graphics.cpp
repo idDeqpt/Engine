@@ -91,14 +91,14 @@ mth::Vec4 mult(const mth::Mat4& mat, const mth::Vec4& vec)
 
 int main()
 {
-	unsigned int width  = 1600;
-	unsigned int height = 900;
+	unsigned int width  = 900;
+	unsigned int height = 600;
 	srand(0);
 	gfx::Window window(width, height, "LearnOpenGL");
 	
 	glCullFace(GL_FRONT);
 
-	std::string shaders_dir = "C:/Projects/C++/libraries/Engine/include/Engine/Graphics/shaders";
+	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 	gfx::Shader shader3d;
 	shader3d.loadFromFile(shaders_dir + "/default3d.vert",
 						  shaders_dir + "/default3d.frag");
@@ -116,7 +116,7 @@ int main()
 	gfx::LightManager::initialize();
 	gfx::EventManager::initialize(window.getHandler());
 
-	std::string resources_dir = "C:/Projects/C++/libraries/Engine/tests/resources";
+	std::string resources_dir = "E:/Programming/Projects/C++/Engine/tests/resources";
 	gfx::Texture tex[6];
 	std::cout << "TEXTURE\n";
 	std::cout << "Tex1: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
@@ -285,7 +285,7 @@ int main()
 		parent.setRotation(mth::Quaternion(mth::Vec3(0, 1, 0), time*0.5));
 
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
-		info_texts[1].setString("Position: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
+		info_texts[1].setString("Posi\ntion: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
 		window.clear(gfx::Color(125));
 

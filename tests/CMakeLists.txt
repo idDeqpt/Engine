@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 4.0.3)
 
 set(PATH_TO_LIB "${CMAKE_CURRENT_SOURCE_DIR}/..")
-set(PATH_TO_GLAD "C:/Projects/C++/libraries/glad")
-set(PATH_TO_GLFW "C:/Projects/C++/libraries/glfw-3.4")
 
 
 project(tests CXX)
@@ -21,11 +19,11 @@ target_include_directories(graphics_tests PRIVATE ${ENGINE_INCLUDE_DIRS})
 target_link_libraries(graphics_tests PRIVATE Engine::Engine)
 
 
-target_include_directories(graphics_tests PRIVATE ${PATH_TO_GLAD}/include)
-target_link_libraries(graphics_tests PRIVATE ${PATH_TO_GLAD}/lib/glad.lib)
+target_include_directories(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/includes/glad) #for tests
+target_link_libraries(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/libs/glad/glad.lib) #for tests
 
-target_include_directories(graphics_tests PRIVATE ${PATH_TO_GLFW}/include)
-target_link_libraries(graphics_tests PRIVATE ${PATH_TO_GLFW}/lib/glfw3.lib)
+target_include_directories(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/includes/glfw-3.4) #for tests
+target_link_libraries(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/libs/glfw-3.4/glfw3.lib) #for tests
 
 target_compile_features(math_tests PRIVATE cxx_std_17)
 target_compile_features(graphics_tests PRIVATE cxx_std_17)

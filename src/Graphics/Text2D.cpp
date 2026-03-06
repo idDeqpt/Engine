@@ -65,8 +65,15 @@ void gfx::Text2D::updateString()
 		mth::Vec2 tex_size = font_tex->getSize();
 
 		float last_char_x = 0;
+		float last_char_y = 0;
 		for (unsigned int i = 0; i < m_text.size(); i++)
 		{
+			if (m_text[i] == '\n')
+			{
+				last_char_x = 0;
+				last_char_y += m_font->getSize();
+				continue;
+			}
 			unsigned int vert_i = i*6;
 			mth::Vec2 tex_lt = {
 				float(characters[i].shift_into_tex)/tex_size.x,
@@ -79,7 +86,7 @@ void gfx::Text2D::updateString()
 
 			mth::Vec2 char_pos = {
 				last_char_x + characters[i].bearingX,
-				m_font->getSize() - float(characters[i].bearingY)
+				last_char_y + m_font->getSize() - float(characters[i].bearingY)
 			};
 
 			symbol_vertices[0] = {{char_pos.x,                       char_pos.y},                        {tex_lt.x, tex_lt.y}};
