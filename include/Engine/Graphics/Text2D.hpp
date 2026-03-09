@@ -17,7 +17,7 @@ namespace gfx
 
 		std::string getString();
 
-		void draw(Window* window, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states);
 
 	protected:
 		Font* m_font;

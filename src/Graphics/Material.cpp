@@ -3,7 +3,20 @@
 #include <Engine/Graphics/Texture.hpp>
 
 
-gfx::Material::Material() : diffuse(nullptr), specular(nullptr), normal(nullptr), parallax(nullptr), shininess(1) {}
+gfx::Material::Material():
+	albedo(nullptr),
+	normal(nullptr),
+	metallic(nullptr),
+	roughness(nullptr),
+	height(nullptr),
+	ao(nullptr),
+	emission(nullptr) {}
 
-gfx::Material::Material(Texture* diffuse, Texture* specular, Texture* normal, Texture* parallax, float shininess):
-	diffuse(diffuse), specular(specular), normal(normal), parallax(parallax), shininess(shininess) {}
+gfx::Material::Material(Texture* albedo, Texture* normal, Texture* metallic, Texture* roughness, Texture* height, Texture* ao, Texture* emission):
+	albedo(albedo),
+	normal(normal),
+	metallic(metallic),
+	roughness(roughness),
+	height(height),
+	ao(ao),
+	emission(emission) {}

@@ -27,7 +27,7 @@ namespace gfx
 		void setAccuracy(unsigned int accuracy);
 		void setGenerator(void (*generator)(GeometricMesh*));
 
-		void draw(Window* window, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states);
 
 	protected:
 		Type m_type;

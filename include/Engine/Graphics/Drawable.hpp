@@ -3,13 +3,13 @@
 
 namespace gfx
 {
-	class Window;
+	class RenderTarget;
 	class RenderStates;
 
 	class Drawable
 	{
 	public:
-		virtual void draw(Window* window, RenderStates& states) = 0;
+		virtual void draw(RenderTarget* target, RenderStates& states) = 0;
 	};
 }
 

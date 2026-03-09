@@ -29,19 +29,20 @@ namespace gfx
 		Texture();
 		~Texture();
 
-		void create();
+		void create(PixelFormat pixel_format);
 		void remove();
 
 		bool setSmooth(bool flag);
 
 		bool loadFromFile(std::string path, bool sRGB = false);
-		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height, PixelFormat format);
+		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height);
 		bool loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height);
 
 		bool resize(const mth::Vec2& new_size);
 
 		mth::Vec2 getSize();
 		PixelFormat getPixelFormat();
+		GLuint getNativeHandle();
 
 
 		static void bind(Texture* texture_ptr);

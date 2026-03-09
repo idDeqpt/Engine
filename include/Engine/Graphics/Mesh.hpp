@@ -13,7 +13,7 @@
 
 namespace gfx
 {
-	class Window;
+	class RenderTarget;
 
 	class Mesh : public Drawable, public mth::Transformable3
 	{
@@ -54,7 +54,7 @@ namespace gfx
 		void loadInstances(mth::Mat4* transforms, unsigned int transforms_count);
 		void setMaterial(const Material& new_material);
 
-		void draw(Window* window, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states);
 
 	protected:
 		unsigned int m_VAO;

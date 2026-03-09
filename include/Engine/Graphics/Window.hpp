@@ -3,17 +3,14 @@
 
 #include <string>
 
-#include <Engine/Graphics/Color.hpp>
-#include <Engine/Graphics/Shader.hpp>
-#include <Engine/Graphics/RenderStates.hpp>
-#include <Engine/Graphics/Drawable.hpp>
+#include <Engine/Graphics/RenderTarget.hpp>
 
 
 struct GLFWwindow;
 
 namespace gfx
 {
-	class Window
+	class Window : public RenderTarget
 	{
 	public:
 		Window();
@@ -21,16 +18,11 @@ namespace gfx
 		~Window();
 
 		GLFWwindow* getHandler();
-
-		void setViewport(int x, int y, int width, int height);
 		bool isOpen();
 		void close();
 
-		void clear(const Color& color);
 		void display();
 		void destroy();
-
-		void draw(Drawable& drawable, RenderStates& states);
 
 	protected:
 		GLFWwindow* window_ptr;

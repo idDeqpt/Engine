@@ -24,7 +24,7 @@ namespace gfx
 		void setSize(const mth::Vec2& new_size);
 		void setGenerator(void (*generator)(Shape2D*));
 
-		void draw(Window* window, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states);
 
 	protected:
 		Type         m_type;

@@ -23,23 +23,23 @@ gfx::CanvasItem::~CanvasItem()
 }
 
 
-void gfx::CanvasItem::setColor(const Color& new_color)
+void gfx::CanvasItem::setColor(const gfx::Color& new_color)
 {
 	m_color = new_color;
 }
 
-void gfx::CanvasItem::setTexture(Texture& new_texture)
+void gfx::CanvasItem::setTexture(gfx::Texture& new_texture)
 {
 	m_texture = &new_texture;
 }
 
-void gfx::CanvasItem::setPrimitiveType(const PrimitiveType& new_primitive_type)
+void gfx::CanvasItem::setPrimitiveType(const gfx::PrimitiveType& new_primitive_type)
 {
 	m_primitive_type = new_primitive_type;
 }
 
 
-bool gfx::CanvasItem::loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count)
+bool gfx::CanvasItem::loadData(gfx::CanvasItem::Vertex* vertices, unsigned int vertices_count)
 {
 	if (!vertices || !vertices_count) return false;
 
@@ -66,7 +66,7 @@ void gfx::CanvasItem::unloadData()
 }
 
 
-void gfx::CanvasItem::draw(Window* window, RenderStates& states)
+void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 {
 	if (!m_visible || !m_vertices_count) return;
 

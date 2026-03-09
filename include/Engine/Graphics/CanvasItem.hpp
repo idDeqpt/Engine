@@ -12,7 +12,7 @@
 
 namespace gfx
 {
-	class Window;
+	class RenderTarget;
 
 	class CanvasItem : public Drawable, public mth::Transformable2
 	{
@@ -33,7 +33,7 @@ namespace gfx
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
 		void unloadData();
 
-		void draw(Window* window, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states);
 
 	protected:
 		unsigned int m_vertices_count;

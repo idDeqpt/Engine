@@ -57,10 +57,10 @@ void gfx::Shape2D::setGenerator(void (*generator)(Shape2D*))
 }
 
 
-void gfx::Shape2D::draw(Window* window, RenderStates& states)
+void gfx::Shape2D::draw(RenderTarget* target, RenderStates& states)
 {
 	updateShape();
-	CanvasItem::draw(window, states);
+	CanvasItem::draw(target, states);
 }
 
 

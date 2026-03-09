@@ -14,6 +14,7 @@
 #include <Engine/Graphics/Mesh.hpp>
 #include <Engine/Graphics/GeometricMesh.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
+#include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Graphics/CanvasItem.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -99,12 +100,20 @@ int main()
 	glCullFace(GL_FRONT);
 
 	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
-	gfx::Shader shader3d;
-	shader3d.loadFromFile(shaders_dir + "/default3d.vert",
-						  shaders_dir + "/default3d.frag");
-	std::cout << "Shader 3d error: " << shader3d.getLastError() << std::endl;
-	if (shader3d.getLastError() != gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 3d error log: " << shader3d.getLastErrorLog() << std::endl;
+
+	gfx::Shader shader3d_deferred;
+	shader3d_deferred.loadFromFile(shaders_dir + "/default3d.vert",
+						  shaders_dir + "/default3d-deferred.frag");
+	std::cout << "Shader 3d-deferred error: " << shader3d_deferred.getLastError() << std::endl;
+	if (shader3d_deferred.getLastError() != gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader 3d-deferred error log: " << shader3d_deferred.getLastErrorLog() << std::endl;
+
+	gfx::Shader shader2d_deferred_light;
+	shader2d_deferred_light.loadFromFile(shaders_dir + "/default2d.vert",
+						  shaders_dir + "/default3d-deferred-light.frag");
+	std::cout << "Shader 2d-deferred-light error: " << shader2d_deferred_light.getLastError() << std::endl;
+	if (shader2d_deferred_light.getLastError() != gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader 2d-deferred-light error log: " << shader2d_deferred_light.getLastErrorLog() << std::endl;
 
 	gfx::Shader shader2d;
 	shader2d.loadFromFile(shaders_dir + "/default2d.vert",
@@ -117,14 +126,20 @@ int main()
 	gfx::EventManager::initialize(window.getHandler());
 
 	std::string resources_dir = "E:/Programming/Projects/C++/Engine/tests/resources";
-	gfx::Texture tex[6];
+	gfx::Texture tex[12];
 	std::cout << "TEXTURE\n";
-	std::cout << "Tex1: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
-	std::cout << "Tex2: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
-	std::cout << "Tex3: " << tex[2].loadFromFile(resources_dir + "/bricks.jpg") << std::endl;
-	std::cout << "Tex4: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
-	std::cout << "Tex5: " << tex[4].loadFromFile(resources_dir + "/bricks-normal.jpg") << std::endl;
-	std::cout << "Tex6: " << tex[5].loadFromFile(resources_dir + "/bricks-parallax.jpg") << std::endl;
+	std::cout << "Tex0: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
+	std::cout << "Tex1: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
+	std::cout << "Tex2: " << tex[2].loadFromFile(resources_dir + "/bricks.jpg") << std::endl;
+	std::cout << "Tex3: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
+	std::cout << "Tex4: " << tex[4].loadFromFile(resources_dir + "/bricks-normal.jpg") << std::endl;
+	std::cout << "Tex5: " << tex[5].loadFromFile(resources_dir + "/bricks-parallax.jpg") << std::endl;
+	std::cout << "Tex6: " << tex[6].loadFromFile(resources_dir + "/bricks/redbricks2b-albedo.png") << std::endl;
+	std::cout << "Tex7: " << tex[7].loadFromFile(resources_dir + "/bricks/redbricks2b-normal.png") << std::endl;
+	std::cout << "Tex8: " << tex[8].loadFromFile(resources_dir + "/bricks/redbricks2b-metalness.png") << std::endl;
+	std::cout << "Tex9: " << tex[9].loadFromFile(resources_dir + "/bricks/redbricks2b-rough.png") << std::endl;
+	std::cout << "Tex10: " << tex[10].loadFromFile(resources_dir + "/bricks/redbricks2b-height4b.png") << std::endl;
+	std::cout << "Tex11: " << tex[11].loadFromFile(resources_dir + "/bricks/redbricks2b-ao.png") << std::endl;
 	std::cout << "Err: "  << glGetError() << std::endl;
 
 
@@ -183,11 +198,13 @@ int main()
 												floor_normals,    floor_normals_count, floor_indexes,
 												floor_tangents,   floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setMaterial({
-		&tex[2],
-		&tex[3],
-		&tex[4],
-		nullptr,
-		128*0.4
+		&tex[6],
+		&tex[7],
+		&tex[8],
+		&tex[9],
+		&tex[10],
+		&tex[11],
+		nullptr
 	});
 
 	float obj_size = 1;
@@ -197,11 +214,13 @@ int main()
 	obj.setOrigin(mth::Vec3(0, -2.5, 0));
 	//obj.setAccuracy(500);
 	obj.setMaterial({
-		&tex[2],
-		&tex[3],
-		&tex[4],
-		nullptr,
-		128*0.4
+		&tex[6],
+		&tex[7],
+		&tex[8],
+		&tex[9],
+		&tex[10],
+		&tex[11],
+		nullptr
 	});
 
 	gfx::RenderStates states;
@@ -235,6 +254,53 @@ int main()
 	shape.setSize(mth::Vec2(100, 100));
 	//shape.setTexture(*font.getTexture());
 	shape.setTexture(tex[2]);
+
+	gfx::Texture::PixelFormat formats[] = {
+		gfx::Texture::PixelFormat::RGBA32F, //position
+		gfx::Texture::PixelFormat::RGBA32F, //normal
+		gfx::Texture::PixelFormat::RGBA, //albedo
+		gfx::Texture::PixelFormat::RGBA, //met rog hei ao
+		gfx::Texture::PixelFormat::RGBA //emission
+	};
+	gfx::RenderTarget rt(5, formats);
+
+	gfx::Shape2D render_shape0(gfx::Shape2D::Type::RECTANGLE);
+	render_shape0.setPosition(mth::Vec2(0, 180));
+	render_shape0.setSize(mth::Vec2(240, 180));
+	render_shape0.setScale(mth::Vec2(1, -1));
+	render_shape0.setTexture(rt.getTexture(0));
+
+	gfx::Shape2D render_shape1(gfx::Shape2D::Type::RECTANGLE);
+	render_shape1.setPosition(mth::Vec2(240, 180));
+	render_shape1.setSize(mth::Vec2(240, 180));
+	render_shape1.setScale(mth::Vec2(1, -1));
+	render_shape1.setTexture(rt.getTexture(1));
+
+	gfx::Shape2D render_shape2(gfx::Shape2D::Type::RECTANGLE);
+	render_shape2.setPosition(mth::Vec2(480, 180));
+	render_shape2.setSize(mth::Vec2(240, 180));
+	render_shape2.setScale(mth::Vec2(1, -1));
+	render_shape2.setTexture(rt.getTexture(2));
+
+	gfx::Shape2D render_shape3(gfx::Shape2D::Type::RECTANGLE);
+	render_shape3.setPosition(mth::Vec2(0, 360));
+	render_shape3.setSize(mth::Vec2(240, 180));
+	render_shape3.setScale(mth::Vec2(1, -1));
+	render_shape3.setTexture(rt.getTexture(3));
+
+	gfx::Shape2D render_shape4(gfx::Shape2D::Type::RECTANGLE);
+	render_shape4.setPosition(mth::Vec2(240, 360));
+	render_shape4.setSize(mth::Vec2(240, 180));
+	render_shape4.setScale(mth::Vec2(1, -1));
+	render_shape4.setTexture(rt.getTexture(4));
+
+	gfx::Shape2D light_shape(gfx::Shape2D::Type::RECTANGLE);
+	light_shape.setPosition(mth::Vec2(0, 1));
+	light_shape.setSize(mth::Vec2(1));
+	light_shape.setScale(mth::Vec2(1, -1));
+
+	gfx::View light_view;
+	light_view.setOrtho(0, 1, 1, 0, -10, 10);
 
 	mth::Transformable3 parent;
 	obj.setParent(parent);
@@ -287,31 +353,68 @@ int main()
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
 		info_texts[1].setString("Posi\ntion: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
-		window.clear(gfx::Color(125));
+		window.clear(gfx::Color(160));
+		rt.clear(gfx::Color(0));
 
 		glEnable(GL_CULL_FACE);
 		gfx::View::setActive(&view3d);
-		gfx::Shader::setActive(&shader3d);
+		gfx::Shader::setActive(&shader3d_deferred);
 
-		window.draw(obj, states);
-		window.draw(floor, states);
+		rt.draw(obj, states);
+		rt.draw(floor, states);
 
 		glDisable(GL_CULL_FACE);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_DEPTH_BUFFER_BIT);
 		gfx::View::setActive(&view2d);
 		gfx::Shader::setActive(&shader2d);
 
 		//window.draw(ci, states);
-		for (unsigned int i = 0; i < 2; i++)
+		for (unsigned int i = 0; i < 0; i++)
 		{
 			info_texts[i].setColor(gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
 			window.draw(info_texts[i], states);
 		}
 		window.draw(shape, states);
+		/*window.draw(render_shape0, states);
+		window.draw(render_shape1, states);
+		window.draw(render_shape2, states);
+		window.draw(render_shape3, states);
+		window.draw(render_shape4, states);*/
+
+		gfx::View::setActive(&light_view);
+		gfx::Shader::setActive(&shader2d_deferred_light);
+
+			shader2d_deferred_light.use();
+			gfx::View* active_view = &view3d;
+			mth::Vec3 view_loc_pos = active_view->getPosition();
+			mth::Vec4 view_glob_pos = active_view->getGlobalTransform().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+			shader2d_deferred_light.setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+
+			glActiveTexture(GL_TEXTURE0);
+			gfx::Texture::bind(&(rt.getTexture(0)));
+			shader2d_deferred_light.setUniform1i("uPosition", 0);
+			glActiveTexture(GL_TEXTURE1);
+			gfx::Texture::bind(&(rt.getTexture(1)));
+			shader2d_deferred_light.setUniform1i("uNormal", 1);
+			glActiveTexture(GL_TEXTURE2);
+			gfx::Texture::bind(&(rt.getTexture(2)));
+			shader2d_deferred_light.setUniform1i("uAlbedo", 2);
+
+			gfx::LightManager::DirectionalLight light = gfx::LightManager::getDirectionalLight();
+			bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
+			shader2d_deferred_light.setUniform1i("uUseDirectionalLight", use_directional_light);
+			if (use_directional_light)
+			{
+				shader2d_deferred_light.setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
+				shader2d_deferred_light.setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
+			}
+
+		window.draw(light_shape, states);
 
 		window.display();
 
 		delta_time = glfwGetTime() - start_time;
+		std::cout << delta_time << std::endl;
 	}
 
 	gfx::LightManager::finalize();

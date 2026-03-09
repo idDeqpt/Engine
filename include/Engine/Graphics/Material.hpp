@@ -7,14 +7,16 @@ namespace gfx
 {
 	struct Material
 	{
-		Texture* diffuse;
-		Texture* specular;
+		Texture* albedo;
 		Texture* normal;
-		Texture* parallax;
-		float    shininess;
+		Texture* metallic;
+		Texture* roughness;
+		Texture* height;
+		Texture* ao;
+		Texture* emission;
 
 		Material();
-		Material(Texture* diffuse, Texture* specular, Texture* normal, Texture* parallax, float shininess);
+		Material(Texture* albedo, Texture* normal, Texture* metallic, Texture* roughness, Texture* height, Texture* ao, Texture* emission);
 	};
 }
 

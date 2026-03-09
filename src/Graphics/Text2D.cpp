@@ -34,10 +34,10 @@ std::string gfx::Text2D::getString()
 }
 
 
-void gfx::Text2D::draw(Window* window, RenderStates& states)
+void gfx::Text2D::draw(RenderTarget* target, RenderStates& states)
 {
 	this->updateString();
-	CanvasItem::draw(window, states);
+	CanvasItem::draw(target, states);
 }
 
 

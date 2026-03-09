@@ -1,9 +1,10 @@
 #include <Engine/Graphics/Mesh.hpp>
 
 #include <Engine/Graphics/RenderStates.hpp>
+#include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/LightManager.hpp>
-#include <Engine/Graphics/Window.hpp>
+#include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
@@ -181,7 +182,7 @@ void gfx::Mesh::setMaterial(const Material& new_material)
 }
 
 
-void gfx::Mesh::draw(Window* window, RenderStates& states)
+void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 {
 	if (!m_inited) return;
 
@@ -197,22 +198,44 @@ void gfx::Mesh::draw(Window* window, RenderStates& states)
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
-		Texture::bind(m_material.diffuse);
-		active_shader->setUniform1i("uMaterial.diffuse", 0);
+		Texture::bind(m_material.albedo);
+		active_shader->setUniform1i("uMaterial.albedo", 0);
+
 	glActiveTexture(GL_TEXTURE1);
-		Texture::bind(m_material.specular);
-		active_shader->setUniform1i("uMaterial.specular", 1);
 	bool use_normal_map = m_material.normal;
 		active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
-		glActiveTexture(GL_TEXTURE2);
 		Texture::bind(m_material.normal);
-		active_shader->setUniform1i("uMaterial.normal", 2);
-	bool use_parallax_map = m_material.parallax;
-		active_shader->setUniform1i("uMaterial.useParallax", use_parallax_map);
-		glActiveTexture(GL_TEXTURE3);
-		Texture::bind(m_material.parallax);
-		active_shader->setUniform1i("uMaterial.parallax", 3);
-	active_shader->setUniform1f("uMaterial.shininess", m_material.shininess);
+		active_shader->setUniform1i("uMaterial.normal", 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	bool use_metallic_map = m_material.metallic;
+		active_shader->setUniform1i("uMaterial.useMetallicic", use_metallic_map);
+		Texture::bind(m_material.metallic);
+		active_shader->setUniform1i("uMaterial.metallic", 2);
+
+	glActiveTexture(GL_TEXTURE3);
+	bool use_roughness_map = m_material.roughness;
+		active_shader->setUniform1i("uMaterial.useRoughnessic", use_roughness_map);
+		Texture::bind(m_material.roughness);
+		active_shader->setUniform1i("uMaterial.roughness", 3);
+
+	glActiveTexture(GL_TEXTURE4);
+	bool use_height_map = m_material.height;
+		active_shader->setUniform1i("uMaterial.useHeight", use_height_map);
+		Texture::bind(m_material.height);
+		active_shader->setUniform1i("uMaterial.height", 4);
+
+	glActiveTexture(GL_TEXTURE5);
+	bool use_ao_map = m_material.ao;
+		active_shader->setUniform1i("uMaterial.useAo", use_ao_map);
+		Texture::bind(m_material.ao);
+		active_shader->setUniform1i("uMaterial.ao", 5);
+
+	glActiveTexture(GL_TEXTURE6);
+	bool use_emission_map = m_material.emission;
+		active_shader->setUniform1i("uMaterial.useEmission", use_emission_map);
+		Texture::bind(m_material.emission);
+		active_shader->setUniform1i("uMaterial.emission", 6);
 
 	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 

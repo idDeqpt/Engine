@@ -79,14 +79,14 @@ gfx::Texture::~Texture()
 }
 
 
-void gfx::Texture::create()
+void gfx::Texture::create(PixelFormat pixel_format)
 {
 	remove();
 
 	glGenTextures(1, &m_native_handle);
 	m_width  = 0;
 	m_height = 0;
-	m_format = PixelFormat::RED;
+	m_format = pixel_format;
 }
 
 void gfx::Texture::remove()
@@ -118,8 +118,6 @@ bool gfx::Texture::setSmooth(bool flag)
 
 bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
 {
-	create();
-
 	int width, height, channels;
 	unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 	if (!image_data)
@@ -134,18 +132,19 @@ bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
 	};
 	PixelFormat format = formats[channels];
 
-	bool result = loadFromBuffer(image_data, width, height, format);
+	create(format);
+	bool result = loadFromBuffer(image_data, width, height);
 
 	stbi_image_free(image_data);
 	return result;
 }
 
-bool gfx::Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned int height, PixelFormat format)
+bool gfx::Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned int height)
 {
 	if ((image_data == nullptr) || !m_native_handle)
 		return false;
 
-	const int format_index = int(format);
+	const int format_index = int(m_format);
 	const GLenum pixel_format[3] = {
 		OPENGL_TEXTURE_FORMATS[format_index][0],
 		OPENGL_TEXTURE_FORMATS[format_index][1],
@@ -158,7 +157,7 @@ bool gfx::Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	unsigned int data_size     = width*height*ChannelEnumToChannelCount(format)*type_size;
+	unsigned int data_size     = width*height*ChannelEnumToChannelCount(m_format)*type_size;
 	unsigned int old_data_size = m_width*m_height*ChannelEnumToChannelCount(m_format)*OPENGL_TEXTURE_TYPE_SIZES[int(m_format)];
 
 	if (data_size > old_data_size)
@@ -170,7 +169,6 @@ bool gfx::Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned
 
 	m_width  = width;
 	m_height = height;
-	m_format = format;
 	return true;
 }
 
@@ -192,7 +190,7 @@ bool gfx::Texture::loadSubTexture(void* subimage_data, const mth::Vec2& position
 	for (unsigned int y = 0; y < height; y++)
 		memcpy(m_pixels + int((y + position.y)*old_pixel_row_size) + int(position.x*pixel_size), subimage_bytes + int(y*pixel_row_size), pixel_row_size);
 
-	return loadFromBuffer(m_pixels, m_width, m_height, m_format);
+	return loadFromBuffer(m_pixels, m_width, m_height);
 }
 
 
@@ -216,7 +214,7 @@ bool gfx::Texture::resize(const mth::Vec2& new_size)
 	for (unsigned int y = 0; y < min_rows_count; y++)
 		memcpy(new_pixels + int(y*pixel_row_bytes), m_pixels + int(y*old_pixel_row_bytes), min_row_bytes);
 
-	bool result = loadFromBuffer(new_pixels, new_size.x, new_size.y, m_format);
+	bool result = loadFromBuffer(new_pixels, new_size.x, new_size.y);
 	
 	delete[] new_pixels;
 	return result;
@@ -231,6 +229,11 @@ mth::Vec2 gfx::Texture::getSize()
 gfx::Texture::PixelFormat gfx::Texture::getPixelFormat()
 {
 	return m_format;
+}
+
+GLuint gfx::Texture::getNativeHandle()
+{
+	return m_native_handle;
 }
 
 

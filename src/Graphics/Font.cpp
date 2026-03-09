@@ -66,9 +66,9 @@ bool gfx::Font::loadFromFile(std::string path, unsigned int size)
 	m_texture = new Texture();
 	m_size = size;
 
-	m_texture->create();
+	m_texture->create(Texture::PixelFormat::RGBA);
 	unsigned char* data = new unsigned char[0];
-	m_texture->loadFromBuffer(data, 0, size, Texture::PixelFormat::RGBA);
+	m_texture->loadFromBuffer(data, 0, size);
 	delete[] data;
 
 	return true;
