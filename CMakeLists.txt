@@ -11,7 +11,6 @@ set(CORE_SOURCE_FILES
 set(GRAPHICS_SOURCE_FILES
     src/Graphics/CanvasItem.cpp
     src/Graphics/Color.cpp
-    src/Graphics/EventManager.cpp
     src/Graphics/Font.cpp
     src/Graphics/GeometricMesh.cpp
     src/Graphics/LightManager.cpp
@@ -23,8 +22,7 @@ set(GRAPHICS_SOURCE_FILES
     src/Graphics/Shape2D.cpp
     src/Graphics/Text2D.cpp
     src/Graphics/Texture.cpp
-    src/Graphics/View.cpp
-    src/Graphics/Window.cpp)
+    src/Graphics/View.cpp)
 
 set(MATH_SOURCE_FILES
     src/Math/Vec2.cpp
@@ -38,6 +36,10 @@ set(MATH_SOURCE_FILES
     src/Math/Transformable2.cpp
     src/Math/Transformable3.cpp)
 
+set(SYSTEM_SOURCE_FILES
+    src/System/EventManager.cpp
+    src/System/Window.cpp)
+
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
@@ -48,9 +50,9 @@ find_package(glfw REQUIRED)
 
 if (BUILD_SHARED_LIBS)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    add_library(${PROJECT_NAME} SHARED ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
+    add_library(${PROJECT_NAME} SHARED ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES} ${SYSTEM_SOURCE_FILES})
 else()
-    add_library(${PROJECT_NAME} STATIC ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
+    add_library(${PROJECT_NAME} STATIC ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES} ${SYSTEM_SOURCE_FILES})
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE "./include")

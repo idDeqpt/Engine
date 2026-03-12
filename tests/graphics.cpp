@@ -4,14 +4,14 @@
 #include <GLFW/glfw3.h>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Graphics/Window.hpp>
+#include <Engine/System/Window.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Shape2D.hpp>
 #include <Engine/Graphics/Text2D.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Font.hpp>
 #include <Engine/Graphics/LightManager.hpp>
-#include <Engine/Graphics/EventManager.hpp>
+#include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/Mesh.hpp>
 #include <Engine/Graphics/GeometricMesh.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
@@ -96,7 +96,7 @@ int main()
 	unsigned int width  = 900;
 	unsigned int height = 600;
 	srand(0);
-	eng::gfx::Window window(width, height, "LearnOpenGL");
+	eng::sys::Window window(width, height, "LearnOpenGL");
 	
 	glCullFace(GL_FRONT);
 
@@ -127,7 +127,7 @@ int main()
 		std::cout << "Shader 2d error log: " << shader2d->getLastErrorLog() << std::endl;
 
 	eng::gfx::LightManager::initialize();
-	eng::gfx::EventManager::initialize(window.getHandler());
+	eng::sys::EventManager::initialize(window.getHandler());
 
 	std::string resources_dir = "E:/Programming/Projects/C++/Engine/tests/resources";
 	eng::gfx::Texture* tex[12];
@@ -326,30 +326,30 @@ int main()
 	{
 		float start_time = glfwGetTime();
 		eng::mth::Vec3 vel;
-		eng::gfx::EventManager::pull();
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
-		if (eng::gfx::EventManager::isJustPressed(GLFW_KEY_R)) tex[5]->setSmooth(false);
-		if (eng::gfx::EventManager::isJustReleased(GLFW_KEY_R)) tex[5]->setSmooth(true);
-		if (eng::gfx::EventManager::isJustPressed(GLFW_KEY_L)) eng::gfx::EventManager::setCursorLock(!eng::gfx::EventManager::getCursorLock());
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_W))
+		eng::sys::EventManager::pull();
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
+		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_R)) tex[5]->setSmooth(false);
+		if (eng::sys::EventManager::isJustReleased(GLFW_KEY_R)) tex[5]->setSmooth(true);
+		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_L)) eng::sys::EventManager::setCursorLock(!eng::sys::EventManager::getCursorLock());
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_S))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_S))
 			vel.z += speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_A))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_A))
 			vel.x -= speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_D))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_D))
 			vel.x += speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_LEFT_CONTROL))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT_CONTROL))
 			vel.y -= speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_SPACE))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_SPACE))
 			vel.y += speed;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_RIGHT))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_RIGHT))
 			light_rot += 0.05;
-		if (eng::gfx::EventManager::isPressed(GLFW_KEY_LEFT))
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT))
 			light_rot -= 0.05;
 
-		if (eng::gfx::EventManager::Mouse::moved())
-			rot_angles = rot_angles + eng::gfx::EventManager::Mouse::getDelta();
+		if (eng::sys::EventManager::Mouse::moved())
+			rot_angles = rot_angles + eng::sys::EventManager::Mouse::getDelta();
 		eng::gfx::LightManager::enableDirectionalLight({eng::mth::Quaternion(eng::mth::Vec3(0, 0, 1), light_rot).rotateVec(eng::mth::Vec3(0, -1, 0)), eng::mth::Vec3(1, 1, 1)});
 		
 		view3d.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));

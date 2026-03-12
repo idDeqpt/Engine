@@ -1,4 +1,4 @@
-#include <Engine/Graphics/EventManager.hpp>
+#include <Engine/System/EventManager.hpp>
 
 #include <Engine/Math/Vec2.hpp>
 #include <GLFW/glfw3.h>
@@ -8,18 +8,18 @@
 namespace eng
 {
 
-GLFWwindow* gfx::EventManager::m_active_window_ptr;
-bool gfx::EventManager::m_key_pressed[1032];
-uint gfx::EventManager::m_key_change_frames[1032];
-uint gfx::EventManager::m_current_frame;
-bool gfx::EventManager::m_cursor_locked;
+GLFWwindow* sys::EventManager::m_active_window_ptr;
+bool sys::EventManager::m_key_pressed[1032];
+uint sys::EventManager::m_key_change_frames[1032];
+uint sys::EventManager::m_current_frame;
+bool sys::EventManager::m_cursor_locked;
 
-bool gfx::EventManager::Mouse::m_moved;
-mth::Vec2 gfx::EventManager::Mouse::m_position;
-mth::Vec2 gfx::EventManager::Mouse::m_delta;
+bool sys::EventManager::Mouse::m_moved;
+mth::Vec2 sys::EventManager::Mouse::m_position;
+mth::Vec2 sys::EventManager::Mouse::m_delta;
 
 
-void gfx::EventManager::key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode)
+void sys::EventManager::key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode)
 {
 	if (action == GLFW_PRESS)
 	{
@@ -33,7 +33,7 @@ void gfx::EventManager::key_callback(GLFWwindow* window_ptr, int key, int scanco
 	}
 }
 
-void gfx::EventManager::mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode)
+void sys::EventManager::mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode)
 {
 	if (action == GLFW_PRESS)
 	{
@@ -47,7 +47,7 @@ void gfx::EventManager::mouse_button_callback(GLFWwindow* window_ptr, int button
 	}
 }
 
-void gfx::EventManager::cursor_position_callback(GLFWwindow* window_ptr, double xpos, double ypos){
+void sys::EventManager::cursor_position_callback(GLFWwindow* window_ptr, double xpos, double ypos){
 	Mouse::m_moved = true;
 	mth::Vec2 new_pos = mth::Vec2(xpos, ypos);
 
@@ -57,7 +57,7 @@ void gfx::EventManager::cursor_position_callback(GLFWwindow* window_ptr, double 
 
 
 
-void gfx::EventManager::initialize(GLFWwindow* window_ptr)
+void sys::EventManager::initialize(GLFWwindow* window_ptr)
 {
 	m_cursor_locked = false;
 	Mouse::m_moved = false;
@@ -71,7 +71,7 @@ void gfx::EventManager::initialize(GLFWwindow* window_ptr)
 	glfwSetCursorPosCallback(m_active_window_ptr, cursor_position_callback);
 }
 
-void gfx::EventManager::pull()
+void sys::EventManager::pull()
 {
 	m_current_frame++;
 	Mouse::m_moved = false;
@@ -80,64 +80,64 @@ void gfx::EventManager::pull()
 }
 
 
-bool gfx::EventManager::isPressed(int key_code)
+bool sys::EventManager::isPressed(int key_code)
 {
 	return m_key_pressed[key_code];
 }
 
-bool gfx::EventManager::isJustPressed(int key_code)
+bool sys::EventManager::isJustPressed(int key_code)
 {
 	return m_key_pressed[key_code] && (m_key_change_frames[key_code] == m_current_frame);
 }
 
-bool gfx::EventManager::isReleased(int key_code)
+bool sys::EventManager::isReleased(int key_code)
 {
 	return !m_key_pressed[key_code];
 }
 
-bool gfx::EventManager::isJustReleased(int key_code)
+bool sys::EventManager::isJustReleased(int key_code)
 {
 	return !m_key_pressed[key_code] && (m_key_change_frames[key_code] == m_current_frame);
 }
 
 
-void gfx::EventManager::lockCursor()
+void sys::EventManager::lockCursor()
 {
 	m_cursor_locked = true;
 	glfwSetInputMode(m_active_window_ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void gfx::EventManager::unlockCursor()
+void sys::EventManager::unlockCursor()
 {
 	m_cursor_locked = false;
 	glfwSetInputMode(m_active_window_ptr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void gfx::EventManager::setCursorLock(bool state)
+void sys::EventManager::setCursorLock(bool state)
 {
 	m_cursor_locked = state;
 	if (state) lockCursor();
 	else     unlockCursor();
 }
 
-bool gfx::EventManager::getCursorLock()
+bool sys::EventManager::getCursorLock()
 {
 	return m_cursor_locked;
 }
 
 
 
-bool gfx::EventManager::Mouse::moved()
+bool sys::EventManager::Mouse::moved()
 {
 	return m_moved;
 }
 
-mth::Vec2 gfx::EventManager::Mouse::getPosition()
+mth::Vec2 sys::EventManager::Mouse::getPosition()
 {
 	return m_position;
 }
 
-mth::Vec2 gfx::EventManager::Mouse::getDelta()
+mth::Vec2 sys::EventManager::Mouse::getDelta()
 {
 	return m_delta;
 }

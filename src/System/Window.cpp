@@ -1,4 +1,4 @@
-#include <Engine/Graphics/Window.hpp>
+#include <Engine/System/Window.hpp>
 
 #include <Engine/Math/Transform3.hpp>
 
@@ -10,9 +10,9 @@
 namespace eng
 {
 
-gfx::Window::Window() : Window(800, 600, "Window"){}
+sys::Window::Window() : Window(800, 600, "Window"){}
 
-gfx::Window::Window(int width, int height, std::string title) : RenderTarget()
+sys::Window::Window(int width, int height, std::string title) : gfx::RenderTarget()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -37,35 +37,35 @@ gfx::Window::Window(int width, int height, std::string title) : RenderTarget()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-gfx::Window::~Window()
+sys::Window::~Window()
 {
 	destroy();
 }
 
 
-GLFWwindow* gfx::Window::getHandler()
+GLFWwindow* sys::Window::getHandler()
 {
 	return window_ptr;
 }
 
 
-bool gfx::Window::isOpen()
+bool sys::Window::isOpen()
 {
 	return !glfwWindowShouldClose(window_ptr);
 }
 
-void gfx::Window::close()
+void sys::Window::close()
 {
 	glfwSetWindowShouldClose(window_ptr, true);
 }
 
 
-void gfx::Window::display()
+void sys::Window::display()
 {
 	glfwSwapBuffers(window_ptr);
 }
 
-void gfx::Window::destroy()
+void sys::Window::destroy()
 {
 	glfwTerminate();
 }

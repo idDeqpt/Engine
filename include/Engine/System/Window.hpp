@@ -8,9 +8,9 @@
 
 struct GLFWwindow;
 
-namespace eng::gfx
+namespace eng::sys
 {
-	class Window : public RenderTarget
+	class Window : public gfx::RenderTarget
 	{
 	public:
 		Window();
