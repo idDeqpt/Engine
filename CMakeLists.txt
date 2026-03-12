@@ -5,23 +5,26 @@ set(BUILD_SHARED_LIBS FALSE)
 
 project(${PROJECT_NAME} CXX)
 
+set(CORE_SOURCE_FILES
+    src/Core/ResourceManager.cpp)
+
 set(GRAPHICS_SOURCE_FILES
     src/Graphics/CanvasItem.cpp
-	src/Graphics/Color.cpp
-	src/Graphics/EventManager.cpp
-	src/Graphics/Font.cpp
-	src/Graphics/GeometricMesh.cpp
-	src/Graphics/LightManager.cpp
-	src/Graphics/Material.cpp
-	src/Graphics/Mesh.cpp
+    src/Graphics/Color.cpp
+    src/Graphics/EventManager.cpp
+    src/Graphics/Font.cpp
+    src/Graphics/GeometricMesh.cpp
+    src/Graphics/LightManager.cpp
+    src/Graphics/Material.cpp
+    src/Graphics/Mesh.cpp
     src/Graphics/RenderStates.cpp
-	src/Graphics/RenderTarget.cpp
+    src/Graphics/RenderTarget.cpp
     src/Graphics/Shader.cpp
-	src/Graphics/Shape2D.cpp
-	src/Graphics/Text2D.cpp
-	src/Graphics/Texture.cpp
-	src/Graphics/View.cpp
-	src/Graphics/Window.cpp)
+    src/Graphics/Shape2D.cpp
+    src/Graphics/Text2D.cpp
+    src/Graphics/Texture.cpp
+    src/Graphics/View.cpp
+    src/Graphics/Window.cpp)
 
 set(MATH_SOURCE_FILES
     src/Math/Vec2.cpp
@@ -45,9 +48,9 @@ find_package(glfw REQUIRED)
 
 if (BUILD_SHARED_LIBS)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    add_library(${PROJECT_NAME} SHARED )
+    add_library(${PROJECT_NAME} SHARED ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
 else()
-    add_library(${PROJECT_NAME} STATIC ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
+    add_library(${PROJECT_NAME} STATIC ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES})
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE "./include")

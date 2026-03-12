@@ -103,7 +103,7 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 	if (use_texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		Texture::bind(m_texture);
+		m_texture->bind();
 		active_shader->setUniform1i("uTexture", 0);
 	}
 

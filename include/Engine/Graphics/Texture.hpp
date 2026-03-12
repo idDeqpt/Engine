@@ -1,15 +1,19 @@
 #ifndef TEXTURE_CLASS_HEADER
 #define TEXTURE_CLASS_HEADER
 
+#include <Engine/Core/Resource.hpp>
+#include <Engine/Math/Vec2.hpp>
+
+#include <initializer_list>
 #include <string>
 #include <vector>
-#include <Engine/Math/Vec2.hpp>
+
 
 typedef unsigned int GLuint;
 
 namespace eng::gfx
 {
-	class Texture
+	class Texture : public core::Resource
 	{
 	public:
 		enum PixelFormat
@@ -26,6 +30,12 @@ namespace eng::gfx
 			RGBA32F,
 		};
 
+		enum Error
+		{
+			NO_ERROR,
+			FILE_NOT_FOUND,
+		};
+
 		Texture();
 		~Texture();
 
@@ -34,7 +44,8 @@ namespace eng::gfx
 
 		bool setSmooth(bool flag);
 
-		bool loadFromFile(std::string path, bool sRGB = false);
+		bool loadFromFile(std::initializer_list<std::string> paths);
+		bool loadFromFile(const std::string& path);
 		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height);
 		bool loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height);
 
@@ -43,9 +54,10 @@ namespace eng::gfx
 		mth::Vec2 getSize();
 		PixelFormat getPixelFormat();
 		GLuint getNativeHandle();
+		int getLastError();
 
-
-		static void bind(Texture* texture_ptr);
+		void bind()   const;
+		void unbind() const;
 
 	protected:
 		GLuint m_native_handle;

@@ -1,5 +1,6 @@
 #include <Engine/Graphics/Texture.hpp>
 
+#include <Engine/Core/Resource.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 #include <glad/glad.h>
@@ -45,8 +46,8 @@ static constexpr unsigned int OPENGL_TEXTURE_TYPE_SIZES[] = {
 
 unsigned int ChannelEnumToChannelCount(gfx::Texture::PixelFormat channel)
 {
-  switch(channel)
-  {
+	switch(channel)
+	{
 	case gfx::Texture::PixelFormat::RED:
 	case gfx::Texture::PixelFormat::BLUE:
 	case gfx::Texture::PixelFormat::GREEN:
@@ -62,7 +63,7 @@ unsigned int ChannelEnumToChannelCount(gfx::Texture::PixelFormat channel)
 		return 4; break;
 
 	default: return 0; break;
-  }
+	}
 }
 
 
@@ -73,6 +74,7 @@ gfx::Texture::Texture():
 	m_format(PixelFormat::RED),
 	m_pixels(nullptr)
 {
+	m_last_error = Texture::Error::NO_ERROR;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
@@ -119,19 +121,27 @@ bool gfx::Texture::setSmooth(bool flag)
 }
 
 
-bool gfx::Texture::loadFromFile(std::string path, bool sRGB)
+bool gfx::Texture::loadFromFile(std::initializer_list<std::string> paths)
+{
+	return loadFromFile(*paths.begin());
+}
+
+bool gfx::Texture::loadFromFile(const std::string& path)
 {
 	int width, height, channels;
-	unsigned char *image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+	unsigned char* image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 	if (!image_data)
+	{
+		m_last_error = gfx::Texture::Error::FILE_NOT_FOUND;
 		return false;
+	}
 
 	static PixelFormat formats[] = {
 		PixelFormat::RED,
 		PixelFormat::RED,
 		PixelFormat::RED,
-		(sRGB) ? PixelFormat::SRGB : PixelFormat::RGB,
-		(sRGB) ? PixelFormat::SRGBA : PixelFormat::RGBA
+		PixelFormat::RGB,
+		PixelFormat::RGBA
 	};
 	PixelFormat format = formats[channels];
 
@@ -239,12 +249,20 @@ GLuint gfx::Texture::getNativeHandle()
 	return m_native_handle;
 }
 
-
-
-void gfx::Texture::bind(Texture* texture_ptr)
+int gfx::Texture::getLastError()
 {
-	if (texture_ptr) glBindTexture(GL_TEXTURE_2D, texture_ptr->m_native_handle);
-	else             glBindTexture(GL_TEXTURE_2D, 0);
+	return m_last_error;
+}
+
+
+void gfx::Texture::bind() const
+{
+	glBindTexture(GL_TEXTURE_2D, m_native_handle);
+}
+
+void gfx::Texture::unbind() const
+{
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 } //namespace eng

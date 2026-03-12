@@ -1,8 +1,10 @@
 #ifndef SHADER_CLASS_HEADER
 #define SHADER_CLASS_HEADER
 
-#include <string>
+#include <Engine/Core/Resource.hpp>
 #include <Engine/Math/Vec3.hpp>
+
+#include <string>
 
 
 typedef unsigned int GLuint;
@@ -10,7 +12,7 @@ typedef char GLchar;
 
 namespace eng::gfx
 {
-	class Shader
+	class Shader : public core::Resource
 	{
 	public:
 		enum Error
@@ -27,10 +29,11 @@ namespace eng::gfx
 		Shader();
 		Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
 
-		bool loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
+		bool loadFromFile(std::initializer_list<std::string> paths);
 		bool loadFromFile(std::string vertex_path, std::string fragment_path);
+		bool loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
 
-		Error getLastError();
+		int getLastError();
 		std::string getLastErrorLog();
 
 		bool setUniform1i(std::string name, int value);
@@ -47,10 +50,9 @@ namespace eng::gfx
 		static Shader* getActive();
 
 	protected:
-		GLuint shader_program_id;
-		Error last_error;
-		std::string last_error_log;
-		static Shader* active;
+		GLuint m_shader_program_id;
+		std::string m_last_error_log;
+		static Shader* s_active;
 	};
 }
 

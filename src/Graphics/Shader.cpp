@@ -11,13 +11,13 @@
 namespace eng
 {
 
-gfx::Shader* gfx::Shader::active = nullptr;
+gfx::Shader* gfx::Shader::s_active = nullptr;
 
 
 gfx::Shader::Shader()
 {
-	last_error = Shader::Error::UNINITED;
-	last_error_log = "Shaders sources have not been loaded";
+	m_last_error = Shader::Error::UNINITED;
+	m_last_error_log = "Shaders sources have not been loaded";
 }
 
 gfx::Shader::Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
@@ -25,6 +25,40 @@ gfx::Shader::Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
 	loadFromBuffer(vertex_buffer, fragment_buffer);
 }
 
+
+bool gfx::Shader::loadFromFile(std::initializer_list<std::string> paths)
+{
+	return loadFromFile(*paths.begin(), *(paths.begin() + 1));
+}
+
+bool gfx::Shader::loadFromFile(std::string vertex_path, std::string fragment_path)
+{
+	std::string vertex_source;
+	std::ifstream vertex_file(vertex_path);
+	if (!vertex_file)
+	{
+		m_last_error = Shader::Error::VERTEX_FILE_NOT_EXIST;
+		m_last_error_log = "Vertex shader file does not exist in the path: " + vertex_path;
+		return false;
+	}
+	std::stringstream vertex_buffer;
+	vertex_buffer << vertex_file.rdbuf();
+	vertex_file.close();
+
+	std::string fragment_source;
+	std::ifstream fragment_file(fragment_path);
+	if (!fragment_file)
+	{
+		m_last_error = Shader::Error::FRAGMENT_FILE_NOT_EXIST;
+		m_last_error_log = "Fragment shader file does not exist in the path: " + vertex_path;
+		return false;
+	}
+	std::stringstream fragment_buffer;
+	fragment_buffer << fragment_file.rdbuf();
+	fragment_file.close();
+
+	return loadFromBuffer(vertex_buffer.str().c_str(), fragment_buffer.str().c_str());
+}
 
 bool gfx::Shader::loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
 {
@@ -41,8 +75,8 @@ bool gfx::Shader::loadFromBuffer(const GLchar* vertex_buffer, const GLchar* frag
 	if (!success)
 	{
 		glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
-		last_error = Shader::Error::VERTEX_COMPILE_FAILED;
-		last_error_log = infoLog;
+		m_last_error = Shader::Error::VERTEX_COMPILE_FAILED;
+		m_last_error_log = infoLog;
 		return false;
 	}
 
@@ -57,77 +91,48 @@ bool gfx::Shader::loadFromBuffer(const GLchar* vertex_buffer, const GLchar* frag
 	{
 		glDeleteShader(vertex_shader);
 		glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
-		last_error = Shader::Error::FRAGMENT_COMPILE_FAILED;
-		last_error_log = infoLog;
+		m_last_error = Shader::Error::FRAGMENT_COMPILE_FAILED;
+		m_last_error_log = infoLog;
 		return false;
 	}
 
-	shader_program_id = glCreateProgram();
+	m_shader_program_id = glCreateProgram();
 
-	glAttachShader(shader_program_id, vertex_shader);
-	glAttachShader(shader_program_id, fragment_shader);
-	glLinkProgram(shader_program_id);
+	glAttachShader(m_shader_program_id, vertex_shader);
+	glAttachShader(m_shader_program_id, fragment_shader);
+	glLinkProgram(m_shader_program_id);
 
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
 
-	glGetProgramiv(shader_program_id, GL_LINK_STATUS, &success);
+	glGetProgramiv(m_shader_program_id, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(shader_program_id, 512, NULL, infoLog);
-		last_error = Shader::Error::PROGRAM_LINKING_FAILED;
-		last_error_log = infoLog;
+		glGetProgramInfoLog(m_shader_program_id, 512, NULL, infoLog);
+		m_last_error = Shader::Error::PROGRAM_LINKING_FAILED;
+		m_last_error_log = infoLog;
 		return false;
 	}
 
-	last_error = Shader::Error::NO_ERROR;
+	m_last_error = Shader::Error::NO_ERROR;
 	return true;
 }
 
-bool gfx::Shader::loadFromFile(std::string vertex_path, std::string fragment_path)
+
+int gfx::Shader::getLastError()
 {
-	std::string vertex_source;
-	std::ifstream vertex_file(vertex_path);
-	if (!vertex_file)
-	{
-		last_error = Shader::Error::VERTEX_FILE_NOT_EXIST;
-		last_error_log = "Vertex shader file does not exist in the path: " + vertex_path;
-		return false;
-	}
-	std::stringstream vertex_buffer;
-	vertex_buffer << vertex_file.rdbuf();
-	vertex_file.close();
-
-	std::string fragment_source;
-	std::ifstream fragment_file(fragment_path);
-	if (!fragment_file)
-	{
-		last_error = Shader::Error::FRAGMENT_FILE_NOT_EXIST;
-		last_error_log = "Fragment shader file does not exist in the path: " + vertex_path;
-		return false;
-	}
-	std::stringstream fragment_buffer;
-	fragment_buffer << fragment_file.rdbuf();
-	fragment_file.close();
-
-	return loadFromBuffer(vertex_buffer.str().c_str(), fragment_buffer.str().c_str());
-}
-
-
-gfx::Shader::Error gfx::Shader::getLastError()
-{
-	return last_error;
+	return m_last_error;
 }
 
 std::string gfx::Shader::getLastErrorLog()
 {
-	return last_error_log;
+	return m_last_error_log;
 }
 
 
 bool gfx::Shader::setUniform1i(std::string name, int value)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -137,17 +142,17 @@ bool gfx::Shader::setUniform1i(std::string name, int value)
 
 bool gfx::Shader::setUniform1f(std::string name, float value)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
-	glUniform1f(glGetUniformLocation(shader_program_id, name.c_str()), value);
+	glUniform1f(glGetUniformLocation(m_shader_program_id, name.c_str()), value);
 	return true;
 }
 
 bool gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -157,7 +162,7 @@ bool gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
 
 bool gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -167,7 +172,7 @@ bool gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
 
 bool gfx::Shader::setUniform4fv(std::string name, int count, float* values_ptr)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -177,7 +182,7 @@ bool gfx::Shader::setUniform4fv(std::string name, int count, float* values_ptr)
 
 bool gfx::Shader::setUniformMatrix3fv(std::string name, float* mat_ptr)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -187,7 +192,7 @@ bool gfx::Shader::setUniformMatrix3fv(std::string name, float* mat_ptr)
 
 bool gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
 {
-	int location = glGetUniformLocation(shader_program_id, name.c_str());
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
 	if (location == -1)
 		return false;
 
@@ -198,10 +203,10 @@ bool gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
 
 bool gfx::Shader::use()
 {
-	if (last_error != Shader::Error::NO_ERROR)
+	if (m_last_error != Shader::Error::NO_ERROR)
 		return false;
 
-	glUseProgram(shader_program_id);
+	glUseProgram(m_shader_program_id);
 	return true;
 }
 
@@ -209,12 +214,12 @@ bool gfx::Shader::use()
 
 void gfx::Shader::setActive(Shader* target)
 {
-	active = target;
+	s_active = target;
 }
 
 gfx::Shader* gfx::Shader::getActive()
 {
-	return active;
+	return s_active;
 }
 
 } //namespace eng

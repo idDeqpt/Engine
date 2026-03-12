@@ -200,44 +200,62 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
-		Texture::bind(m_material.albedo);
+		m_material.albedo->bind();
 		active_shader->setUniform1i("uMaterial.albedo", 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	bool use_normal_map = m_material.normal;
+	if (use_normal_map)
+	{
 		active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
-		Texture::bind(m_material.normal);
+		m_material.normal->bind();
 		active_shader->setUniform1i("uMaterial.normal", 1);
+	}
 
 	glActiveTexture(GL_TEXTURE2);
 	bool use_metallic_map = m_material.metallic;
+	if (use_metallic_map)
+	{
 		active_shader->setUniform1i("uMaterial.useMetallicic", use_metallic_map);
-		Texture::bind(m_material.metallic);
+		m_material.metallic->bind();
 		active_shader->setUniform1i("uMaterial.metallic", 2);
+	}
 
 	glActiveTexture(GL_TEXTURE3);
 	bool use_roughness_map = m_material.roughness;
+	if (use_roughness_map)
+	{
 		active_shader->setUniform1i("uMaterial.useRoughnessic", use_roughness_map);
-		Texture::bind(m_material.roughness);
+		m_material.roughness->bind();
 		active_shader->setUniform1i("uMaterial.roughness", 3);
+	}
 
 	glActiveTexture(GL_TEXTURE4);
 	bool use_height_map = m_material.height;
+	if (use_height_map)
+	{
 		active_shader->setUniform1i("uMaterial.useHeight", use_height_map);
-		Texture::bind(m_material.height);
+		m_material.height->bind();
 		active_shader->setUniform1i("uMaterial.height", 4);
+	}
 
 	glActiveTexture(GL_TEXTURE5);
 	bool use_ao_map = m_material.ao;
+	if (use_ao_map)
+	{
 		active_shader->setUniform1i("uMaterial.useAo", use_ao_map);
-		Texture::bind(m_material.ao);
+		m_material.ao->bind();
 		active_shader->setUniform1i("uMaterial.ao", 5);
+	}
 
 	glActiveTexture(GL_TEXTURE6);
 	bool use_emission_map = m_material.emission;
+	if (use_emission_map)
+	{
 		active_shader->setUniform1i("uMaterial.useEmission", use_emission_map);
-		Texture::bind(m_material.emission);
+		m_material.emission->bind();
 		active_shader->setUniform1i("uMaterial.emission", 6);
+	}
 
 	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 

@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Window.hpp>
 #include <Engine/Graphics/Shader.hpp>
@@ -101,47 +102,57 @@ int main()
 
 	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 
-	eng::gfx::Shader shader3d_deferred;
-	shader3d_deferred.loadFromFile(shaders_dir + "/default3d.vert",
-						  shaders_dir + "/default3d-deferred.frag");
-	std::cout << "Shader 3d-deferred error: " << shader3d_deferred.getLastError() << std::endl;
-	if (shader3d_deferred.getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 3d-deferred error log: " << shader3d_deferred.getLastErrorLog() << std::endl;
+	eng::gfx::Shader* shader3d_deferred = eng::core::ResourceManager::load<eng::gfx::Shader>({
+		shaders_dir + "/default3d.vert",
+		shaders_dir + "/default3d-deferred.frag"
+	}).second;
+	std::cout << "Shader 3d-deferred error: " << shader3d_deferred->getLastError() << std::endl;
+	if (shader3d_deferred->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader 3d-deferred error log: " << shader3d_deferred->getLastErrorLog() << std::endl;
 
-	eng::gfx::Shader shader2d_deferred_light;
-	shader2d_deferred_light.loadFromFile(shaders_dir + "/default2d.vert",
-						  shaders_dir + "/default3d-deferred-light.frag");
-	std::cout << "Shader 2d-deferred-light error: " << shader2d_deferred_light.getLastError() << std::endl;
-	if (shader2d_deferred_light.getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 2d-deferred-light error log: " << shader2d_deferred_light.getLastErrorLog() << std::endl;
+	eng::gfx::Shader* shader2d_deferred_light = eng::core::ResourceManager::load<eng::gfx::Shader>({
+		shaders_dir + "/default2d.vert",
+		shaders_dir + "/default3d-deferred-light.frag"
+	}).second;
+	std::cout << "Shader 2d-deferred-light error: " << shader2d_deferred_light->getLastError() << std::endl;
+	if (shader2d_deferred_light->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader 2d-deferred-light error log: " << shader2d_deferred_light->getLastErrorLog() << std::endl;
 
-	eng::gfx::Shader shader2d;
-	shader2d.loadFromFile(shaders_dir + "/default2d.vert",
-						  shaders_dir + "/default2d.frag");
-	std::cout << "Shader 2d error: " << shader2d.getLastError() << std::endl;
-	if (shader2d.getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 2d error log: " << shader2d.getLastErrorLog() << std::endl;
+	eng::gfx::Shader* shader2d = eng::core::ResourceManager::load<eng::gfx::Shader>({
+		shaders_dir + "/default2d.vert",
+		shaders_dir + "/default2d.frag"
+	}).second;
+	std::cout << "Shader 2d error: " << shader2d->getLastError() << std::endl;
+	if (shader2d->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
+		std::cout << "Shader 2d error log: " << shader2d->getLastErrorLog() << std::endl;
 
 	eng::gfx::LightManager::initialize();
 	eng::gfx::EventManager::initialize(window.getHandler());
 
 	std::string resources_dir = "E:/Programming/Projects/C++/Engine/tests/resources";
-	eng::gfx::Texture tex[12];
-	std::cout << "TEXTURE\n";
-	std::cout << "Tex0: " << tex[0].loadFromFile(resources_dir + "/image1.png") << std::endl;
-	std::cout << "Tex1: " << tex[1].loadFromFile(resources_dir + "/image2.png") << std::endl;
-	std::cout << "Tex2: " << tex[2].loadFromFile(resources_dir + "/bricks.jpg") << std::endl;
-	std::cout << "Tex3: " << tex[3].loadFromFile(resources_dir + "/box-map.png") << std::endl;
-	std::cout << "Tex4: " << tex[4].loadFromFile(resources_dir + "/bricks-normal.jpg") << std::endl;
-	std::cout << "Tex5: " << tex[5].loadFromFile(resources_dir + "/bricks-parallax.jpg") << std::endl;
-	std::cout << "Tex6: " << tex[6].loadFromFile(resources_dir + "/bricks/redbricks2b-albedo.png") << std::endl;
-	std::cout << "Tex7: " << tex[7].loadFromFile(resources_dir + "/bricks/redbricks2b-normal.png") << std::endl;
-	std::cout << "Tex8: " << tex[8].loadFromFile(resources_dir + "/bricks/redbricks2b-metalness.png") << std::endl;
-	std::cout << "Tex9: " << tex[9].loadFromFile(resources_dir + "/bricks/redbricks2b-rough.png") << std::endl;
-	std::cout << "Tex10: " << tex[10].loadFromFile(resources_dir + "/bricks/redbricks2b-height4b.png") << std::endl;
-	std::cout << "Tex11: " << tex[11].loadFromFile(resources_dir + "/bricks/redbricks2b-ao.png") << std::endl;
-	std::cout << "Err: "  << glGetError() << std::endl;
+	eng::gfx::Texture* tex[12];
+	std::vector<std::string>images = {
+		"/image1.png",
+		"/image2.png",
+		"/bricks.jpg",
+		"/box-map.png",
+		"/bricks-normal.jpg",
+		"/bricks-parallax.jpg",
+		"/bricks/redbricks2b-albedo.png",
+		"/bricks/redbricks2b-normal.png",
+		"/bricks/redbricks2b-metalness.png",
+		"/bricks/redbricks2b-rough.png",
+		"/bricks/redbricks2b-height4b.png",
+		"/bricks/redbricks2b-ao.png"
+	};
 
+	std::cout << "TEXTURES\n";
+	for (unsigned int i = 0; i < images.size(); i++)
+	{
+		auto load_result = eng::core::ResourceManager::load<eng::gfx::Texture>({resources_dir + images[i]});
+		tex[i] = load_result.second;
+		std::cout << "Tex" << i << ": " << tex[i]->getLastError() << std::endl;
+	}
 
 	eng::gfx::Font font;
 	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
@@ -198,12 +209,12 @@ int main()
 												floor_normals,    floor_normals_count, floor_indexes,
 												floor_tangents,   floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
 	floor.setMaterial({
-		&tex[6],
-		&tex[7],
-		&tex[8],
-		&tex[9],
-		&tex[10],
-		&tex[11],
+		tex[6],
+		tex[7],
+		tex[8],
+		tex[9],
+		tex[10],
+		tex[11],
 		nullptr
 	});
 
@@ -214,12 +225,12 @@ int main()
 	obj.setOrigin(eng::mth::Vec3(0, -2.5, 0));
 	//obj.setAccuracy(500);
 	obj.setMaterial({
-		&tex[6],
-		&tex[7],
-		&tex[8],
-		&tex[9],
-		&tex[10],
-		&tex[11],
+		tex[6],
+		tex[7],
+		tex[8],
+		tex[9],
+		tex[10],
+		tex[11],
 		nullptr
 	});
 
@@ -253,7 +264,7 @@ int main()
 	shape.setPosition(eng::mth::Vec2(700, 400));
 	shape.setSize(eng::mth::Vec2(100, 100));
 	//shape.setTexture(*font.getTexture());
-	shape.setTexture(tex[2]);
+	shape.setTexture(*tex[2]);
 
 	eng::gfx::Texture::PixelFormat formats[] = {
 		eng::gfx::Texture::PixelFormat::RGBA32F, //position
@@ -309,14 +320,16 @@ int main()
 	eng::mth::Vec2 rot_angles;
 	float delta_time = 0;
 	float light_rot = 0;
+
+	std::cout << "START" << std::endl;
 	while(window.isOpen())
 	{
 		float start_time = glfwGetTime();
 		eng::mth::Vec3 vel;
 		eng::gfx::EventManager::pull();
 		if (eng::gfx::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
-		if (eng::gfx::EventManager::isJustPressed(GLFW_KEY_R)) tex[5].setSmooth(false);
-		if (eng::gfx::EventManager::isJustReleased(GLFW_KEY_R)) tex[5].setSmooth(true);
+		if (eng::gfx::EventManager::isJustPressed(GLFW_KEY_R)) tex[5]->setSmooth(false);
+		if (eng::gfx::EventManager::isJustReleased(GLFW_KEY_R)) tex[5]->setSmooth(true);
 		if (eng::gfx::EventManager::isJustPressed(GLFW_KEY_L)) eng::gfx::EventManager::setCursorLock(!eng::gfx::EventManager::getCursorLock());
 		if (eng::gfx::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
@@ -358,7 +371,7 @@ int main()
 
 		glEnable(GL_CULL_FACE);
 		eng::gfx::View::setActive(&view3d);
-		eng::gfx::Shader::setActive(&shader3d_deferred);
+		eng::gfx::Shader::setActive(shader3d_deferred);
 
 		rt.draw(obj, states);
 		rt.draw(floor, states);
@@ -366,7 +379,7 @@ int main()
 		glDisable(GL_CULL_FACE);
 		//glClear(GL_DEPTH_BUFFER_BIT);
 		eng::gfx::View::setActive(&view2d);
-		eng::gfx::Shader::setActive(&shader2d);
+		eng::gfx::Shader::setActive(shader2d);
 
 		//window.draw(ci, states);
 		for (unsigned int i = 0; i < 0; i++)
@@ -382,31 +395,31 @@ int main()
 		window.draw(render_shape4, states);*/
 
 		eng::gfx::View::setActive(&light_view);
-		eng::gfx::Shader::setActive(&shader2d_deferred_light);
+		eng::gfx::Shader::setActive(shader2d_deferred_light);
 
-			shader2d_deferred_light.use();
+			shader2d_deferred_light->use();
 			eng::gfx::View* active_view = &view3d;
 			eng::mth::Vec3 view_loc_pos = active_view->getPosition();
 			eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
-			shader2d_deferred_light.setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+			shader2d_deferred_light->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 			glActiveTexture(GL_TEXTURE0);
-			eng::gfx::Texture::bind(&(rt.getTexture(0)));
-			shader2d_deferred_light.setUniform1i("uPosition", 0);
+			rt.getTexture(0).bind();
+			shader2d_deferred_light->setUniform1i("uPosition", 0);
 			glActiveTexture(GL_TEXTURE1);
-			eng::gfx::Texture::bind(&(rt.getTexture(1)));
-			shader2d_deferred_light.setUniform1i("uNormal", 1);
+			rt.getTexture(1).bind();
+			shader2d_deferred_light->setUniform1i("uNormal", 1);
 			glActiveTexture(GL_TEXTURE2);
-			eng::gfx::Texture::bind(&(rt.getTexture(2)));
-			shader2d_deferred_light.setUniform1i("uAlbedo", 2);
+			rt.getTexture(2).bind();
+			shader2d_deferred_light->setUniform1i("uAlbedo", 2);
 
 			eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
 			bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
-			shader2d_deferred_light.setUniform1i("uUseDirectionalLight", use_directional_light);
+			shader2d_deferred_light->setUniform1i("uUseDirectionalLight", use_directional_light);
 			if (use_directional_light)
 			{
-				shader2d_deferred_light.setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
-				shader2d_deferred_light.setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
+				shader2d_deferred_light->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
+				shader2d_deferred_light->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
 			}
 
 		window.draw(light_shape, states);
