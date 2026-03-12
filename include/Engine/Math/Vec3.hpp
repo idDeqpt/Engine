@@ -1,7 +1,7 @@
 #ifndef VECTOR_3_HEADER
 #define VECTOR_3_HEADER
 
-namespace mth
+namespace eng::mth
 {
 	class Vec3
 	{

@@ -9,6 +9,9 @@
 #include <iostream>
 
 
+namespace eng
+{
+
 gfx::Text2D::Text2D() : m_font(nullptr), m_text_need_update(false), m_last_font_characters(0), CanvasItem()
 {
 	setPrimitiveType(PrimitiveType::TRIANGLES);
@@ -114,3 +117,5 @@ void gfx::Text2D::updateString()
 
 	m_text_need_update = false;
 }
+
+} //namespace eng

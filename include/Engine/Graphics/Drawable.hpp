@@ -1,7 +1,7 @@
 #ifndef DRAWABLE_CLASS_HEADER
 #define DRAWABLE_CLASS_HEADER
 
-namespace gfx
+namespace eng::gfx
 {
 	class RenderTarget;
 	class RenderStates;

@@ -7,7 +7,7 @@
 
 typedef unsigned int GLuint;
 
-namespace gfx
+namespace eng::gfx
 {
 	class Texture
 	{

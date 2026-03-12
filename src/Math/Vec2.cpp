@@ -1,6 +1,9 @@
 #include <Engine/Math/Vec2.hpp>
 
 
+namespace eng
+{
+
 mth::Vec2::Vec2():
 	x(0), y(0) {}
 
@@ -44,3 +47,5 @@ mth::Vec2 mth::operator-(const Vec2& left, const Vec2& right)
 {
 	return Vec2(left.x - right.x, left.y - right.y);
 }
+
+} //namespace eng

@@ -10,6 +10,9 @@
 #include <stb/stb_image.h>
 
 
+namespace eng
+{
+
 static constexpr GLenum OPENGL_TEXTURE_FORMATS[][3] = { //{internal_format, format, type}
 	{GL_RED,   GL_RED,   GL_UNSIGNED_BYTE},
 	{GL_BLUE,  GL_BLUE,  GL_UNSIGNED_BYTE},
@@ -243,3 +246,5 @@ void gfx::Texture::bind(Texture* texture_ptr)
 	if (texture_ptr) glBindTexture(GL_TEXTURE_2D, texture_ptr->m_native_handle);
 	else             glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+} //namespace eng

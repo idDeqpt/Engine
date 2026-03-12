@@ -4,6 +4,9 @@
 #include <stdexcept>
 
 
+namespace eng
+{
+
 mth::Vec4::Vec4():
 	x(0), y(0), z(0), w(0) {}
 
@@ -41,3 +44,5 @@ mth::Vec4 mth::operator*(const Mat4& left, const Vec4& right)
 			result[i] += left[i][j]*right[j];
 	return result;
 }
+
+} //namespace eng

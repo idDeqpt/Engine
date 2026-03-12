@@ -4,7 +4,7 @@
 #include <Engine/Math/Mat3.hpp>
 #include <Engine/Math/Vec2.hpp>
 
-namespace mth
+namespace eng::mth
 {
 	class Transform2
 	{

@@ -7,6 +7,9 @@
 #include <GLFW/glfw3.h>
 
 
+namespace eng
+{
+
 gfx::Window::Window() : Window(800, 600, "Window"){}
 
 gfx::Window::Window(int width, int height, std::string title) : RenderTarget()
@@ -66,3 +69,5 @@ void gfx::Window::destroy()
 {
 	glfwTerminate();
 }
+
+} //namespace eng

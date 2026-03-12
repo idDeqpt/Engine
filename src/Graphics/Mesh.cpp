@@ -38,6 +38,8 @@ struct std::hash<VertexKey> {
 	}
 };
 
+namespace eng
+{
 
 gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
 {
@@ -252,3 +254,5 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 	glDrawElementsInstanced(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0, m_instances_count);
 	glBindVertexArray(0);
 }
+
+} //namespace eng

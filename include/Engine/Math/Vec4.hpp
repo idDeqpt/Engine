@@ -3,7 +3,7 @@
 
 #include <Engine/Math/Mat4.hpp>
 
-namespace mth
+namespace eng::mth
 {
 	class Vec4
 	{

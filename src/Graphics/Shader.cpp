@@ -8,6 +8,9 @@
 #include <string>
 
 
+namespace eng
+{
+
 gfx::Shader* gfx::Shader::active = nullptr;
 
 
@@ -213,3 +216,5 @@ gfx::Shader* gfx::Shader::getActive()
 {
 	return active;
 }
+
+} //namespace eng

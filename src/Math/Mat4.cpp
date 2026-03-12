@@ -5,6 +5,9 @@
 #include <stdexcept>
 
 
+namespace eng
+{
+
 mth::Mat4 mth::Mat4::getIdentity()
 {
 	return Mat4(
@@ -153,3 +156,5 @@ mth::Mat4 mth::operator*(const Mat4& left, const Mat4& right)
 				result[i][j] += left[i][k]*right[k][j];
 	return result;
 }
+
+} //namespace eng

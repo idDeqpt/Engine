@@ -11,7 +11,7 @@
 #include <Engine/Math/Transformable3.hpp>
 
 
-namespace gfx
+namespace eng::gfx
 {
 	class RenderTarget;
 

@@ -5,7 +5,7 @@
 #include <Engine/Math/Mat4.hpp>
 #include <Engine/Math/Transformable3.hpp>
 
-namespace gfx
+namespace eng::gfx
 {
 	class View : public mth::Transformable3
 	{

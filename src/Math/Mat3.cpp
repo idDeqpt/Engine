@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+namespace eng
+{
 
 mth::Mat3 mth::Mat3::getIdentity()
 {
@@ -94,3 +96,5 @@ mth::Mat3 mth::operator*(const Mat3& left, const Mat3& right)
 				result[i][j] += left[i][k]*right[k][j];
 	return result;
 }
+
+} //namespace eng

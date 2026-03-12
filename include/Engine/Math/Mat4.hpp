@@ -1,7 +1,7 @@
 #ifndef MATRIX_4X4_CLASS_HEADER
 #define MATRIX_4X4_CLASS_HEADER
 
-namespace mth
+namespace eng::mth
 {
 	class Mat4
 	{

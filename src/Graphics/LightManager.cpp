@@ -6,6 +6,9 @@
 #include <iostream>
 
 
+namespace eng
+{
+
 gfx::LightManager::DirectionalLight gfx::LightManager::s_directional_light;
 
 
@@ -31,3 +34,5 @@ gfx::LightManager::DirectionalLight gfx::LightManager::getDirectionalLight()
 {
 	return s_directional_light;
 }
+
+} //namespace eng

@@ -5,7 +5,7 @@
 #include <Engine/Graphics/Font.hpp>
 #include <string>
 
-namespace gfx
+namespace eng::gfx
 {
 	class Text2D : public CanvasItem
 	{

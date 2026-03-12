@@ -5,7 +5,7 @@
 #include <Engine/Math/Transform3.hpp>
 
 
-namespace gfx
+namespace eng::gfx
 {
 	class Shader;
 

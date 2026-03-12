@@ -7,6 +7,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 mth::Transform3::Transform3()
 {
 	m_matrix = Mat4::getIdentity();
@@ -108,3 +111,5 @@ mth::Mat4 mth::Transform3::getIdentity()
 		0, 0, 0, 1
 	);
 }
+
+} //namespace eng

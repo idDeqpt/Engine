@@ -7,6 +7,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 gfx::View* gfx::View::m_active = nullptr;
 
 
@@ -83,3 +86,5 @@ gfx::View* gfx::View::getActive()
 {
 	return m_active;
 }
+
+} //namespace eng

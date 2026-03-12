@@ -1,7 +1,7 @@
 #ifndef VECTOR_2_HEADER
 #define VECTOR_2_HEADER
 
-namespace mth
+namespace eng::mth
 {
 	class Vec2
 	{

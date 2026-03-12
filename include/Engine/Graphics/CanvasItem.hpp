@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace gfx
+namespace eng::gfx
 {
 	class RenderTarget;
 

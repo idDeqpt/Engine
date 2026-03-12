@@ -4,6 +4,9 @@
 #include <Engine/Math/Vec3.hpp>
 
 
+namespace eng
+{
+
 mth::Transformable3::Transformable3() : mth::Transformable3::Transformable3(nullptr) {}
 
 mth::Transformable3::Transformable3(Transformable3* parent)
@@ -132,3 +135,5 @@ void mth::Transformable3::computeTransform()
 		m_transform_need_update = false;
 	}
 }
+
+} //namespace eng

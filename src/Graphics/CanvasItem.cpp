@@ -10,6 +10,9 @@
 #include <vector>
 
 
+namespace eng
+{
+
 gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_primitive_type(PrimitiveType::TRIANGLE_FAN), m_visible(true), m_texture(nullptr), Drawable(), mth::Transformable2()
 {
 	glGenVertexArrays(1, &m_VAO);
@@ -108,3 +111,5 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 	glDrawArrays(primitive_type, 0, m_vertices_count);
 	glBindVertexArray(0);
 }
+
+} //namespace eng

@@ -8,7 +8,7 @@
 
 struct GLFWwindow;
 
-namespace gfx
+namespace eng::gfx
 {
 	class Window : public RenderTarget
 	{

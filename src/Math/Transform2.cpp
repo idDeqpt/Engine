@@ -6,6 +6,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 mth::Transform2::Transform2()
 {
 	m_matrix = Mat3::getIdentity();
@@ -56,3 +59,5 @@ mth::Mat3 mth::Transform2::getMatrix()
 {
 	return m_matrix;
 }
+
+} //namespace eng

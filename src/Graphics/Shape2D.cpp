@@ -5,6 +5,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 void (*gfx::Shape2D::generators[])(gfx::Shape2D*) = {
 	rectangleGenerator,
 	circleGenerator
@@ -107,3 +110,5 @@ void gfx::Shape2D::circleGenerator(Shape2D* shape)
 	shape->loadData(vertices, n);
 	delete[] vertices;
 }
+
+} //namespace eng

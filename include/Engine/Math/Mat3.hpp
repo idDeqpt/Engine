@@ -1,7 +1,7 @@
 #ifndef MATRIX_3X3_CLASS_HEADER
 #define MATRIX_3X3_CLASS_HEADER
 
-namespace mth
+namespace eng::mth
 {
 	class Mat3
 	{

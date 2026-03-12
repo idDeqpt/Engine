@@ -8,7 +8,7 @@
 typedef unsigned int uint;
 struct GLFWwindow;
 
-namespace gfx
+namespace eng::gfx
 {
 	class EventManager
 	{

@@ -7,6 +7,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 void (*gfx::GeometricMesh::generators[])(gfx::GeometricMesh*) = {
 	parallelepipedGenerator,
 	ellipsoidGenerator
@@ -214,3 +217,5 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 	delete[] tex_coords;
 	delete[] indexes;
 }
+
+} //namespace eng

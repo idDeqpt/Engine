@@ -3,6 +3,9 @@
 #include <Engine/Graphics/Texture.hpp>
 
 
+namespace eng
+{
+
 gfx::Material::Material():
 	albedo(nullptr),
 	normal(nullptr),
@@ -20,3 +23,5 @@ gfx::Material::Material(Texture* albedo, Texture* normal, Texture* metallic, Tex
 	height(height),
 	ao(ao),
 	emission(emission) {}
+
+} //namespace eng

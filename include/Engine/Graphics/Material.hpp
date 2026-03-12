@@ -3,7 +3,7 @@
 
 #include <Engine/Graphics/Texture.hpp>
 
-namespace gfx
+namespace eng::gfx
 {
 	struct Material
 	{

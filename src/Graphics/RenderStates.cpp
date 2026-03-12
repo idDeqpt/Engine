@@ -3,6 +3,11 @@
 #include <Engine/Math/Transform3.hpp>
 
 
+namespace eng
+{
+
 gfx::RenderStates::RenderStates():
 	m_transform(mth::Transform3::getIdentity()),
 	m_shader(nullptr) {}
+
+} //namespace eng

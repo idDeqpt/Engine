@@ -3,7 +3,7 @@
 
 #include <Engine/Math/Vec3.hpp>
 
-namespace gfx
+namespace eng::gfx
 {
 	typedef unsigned int LightId;
 

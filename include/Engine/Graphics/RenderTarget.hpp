@@ -8,7 +8,7 @@
 #include <Engine/Graphics/Drawable.hpp>
 
 
-namespace gfx
+namespace eng::gfx
 {
 	class RenderTarget
 	{

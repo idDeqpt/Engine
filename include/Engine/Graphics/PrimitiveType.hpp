@@ -1,7 +1,7 @@
 #ifndef PRIMITIVE_TYPE_ENUM_HEADER
 #define PRIMITIVE_TYPE_ENUM_HEADER
 
-namespace gfx
+namespace eng::gfx
 {
 	enum class PrimitiveType
 	{

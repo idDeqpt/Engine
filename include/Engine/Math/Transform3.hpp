@@ -5,7 +5,7 @@
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
-namespace mth
+namespace eng::mth
 {
 	class Transform3
 	{

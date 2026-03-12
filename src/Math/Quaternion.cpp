@@ -5,6 +5,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 mth::Quaternion::Quaternion():
 	w(1), x(0), y(0), z(0) {}
 
@@ -58,3 +61,5 @@ mth::Quaternion mth::operator*(const Quaternion& left, const Quaternion& right)
 		left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w
 	);
 }
+
+} //namespace eng

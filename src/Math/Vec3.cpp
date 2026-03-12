@@ -4,6 +4,9 @@
 #include <cmath>
 
 
+namespace eng
+{
+
 mth::Vec3::Vec3():
 	x(0), y(0), z(0) {}
 
@@ -95,3 +98,5 @@ mth::Vec3 mth::operator/(const Vec3& vec, float coef)
 	float ratio = 1.0/coef;
 	return Vec3(vec.x*ratio, vec.y*ratio, vec.z*ratio);
 }
+
+} //namespace eng

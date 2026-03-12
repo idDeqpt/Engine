@@ -10,6 +10,9 @@
 #include <string>
 
 
+namespace eng
+{
+
 bool gfx::Font::s_inited = false;
 unsigned int gfx::Font::s_fonts_count = 0;
 FT_Library gfx::Font::s_lib;
@@ -153,3 +156,5 @@ gfx::Font::Character::Character():
 	height(0),
 	advance(0),
 	shift_into_tex(0) {}
+
+} //namespace eng

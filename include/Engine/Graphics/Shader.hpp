@@ -8,7 +8,7 @@
 typedef unsigned int GLuint;
 typedef char GLchar;
 
-namespace gfx
+namespace eng::gfx
 {
 	class Shader
 	{

@@ -5,6 +5,9 @@
 #include <string.h>
 
 
+namespace eng
+{
+
 GLFWwindow* gfx::EventManager::m_active_window_ptr;
 bool gfx::EventManager::m_key_pressed[1032];
 uint gfx::EventManager::m_key_change_frames[1032];
@@ -138,3 +141,5 @@ mth::Vec2 gfx::EventManager::Mouse::getDelta()
 {
 	return m_delta;
 }
+
+} //namespace eng

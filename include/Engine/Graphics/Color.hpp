@@ -6,7 +6,7 @@
 
 typedef unsigned char color_t;
 
-namespace gfx
+namespace eng::gfx
 {
 	class Color
 	{

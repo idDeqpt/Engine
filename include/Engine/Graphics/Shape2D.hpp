@@ -4,7 +4,7 @@
 #include <Engine/Graphics/CanvasItem.hpp>
 #include <Engine/Math/Vec2.hpp>
 
-namespace gfx
+namespace eng::gfx
 {
 	class Shape2D : public CanvasItem
 	{

@@ -7,7 +7,7 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec3.hpp>
 
-namespace gfx
+namespace eng::gfx
 {
 	class GeometricMesh : public Mesh
 	{

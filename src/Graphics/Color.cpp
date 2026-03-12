@@ -3,6 +3,9 @@
 #include <stdexcept>
 
 
+namespace eng
+{
+
 gfx::Color::Color(): Color(COLOR_MAX_VALUE) {}
 
 gfx::Color::Color(color_t common_value):
@@ -24,3 +27,5 @@ color_t& gfx::Color::operator[](unsigned int index)
 		throw std::out_of_range("Color size");
 	return *(&r + index);
 }
+
+} //namespace eng
