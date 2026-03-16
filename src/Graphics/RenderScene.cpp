@@ -1,14 +1,12 @@
 #include <Engine/Graphics/RenderScene.hpp>
 
-#include <Engine/Graphics/LightManager.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
+#include <Engine/Graphics/CanvasItem.hpp>
+#include <Engine/Graphics/Shape2D.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/View.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Math/Vec3.hpp>
-#include <Engine/Math/Vec4.hpp>
-#include <Engine/Math/Mat4.hpp>
 
 #include <glad/glad.h>
 #include <iostream>
@@ -98,9 +96,9 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 			m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	// deferred render
-	View* original_view = View::getActive2d();
 	for (unsigned int i = 1; i < m_pipeline2d.size(); i++)
 	{
+		m_framebuffers2d[i]->clear(m_clear_color);
 		auto& pass = m_pipeline2d[i];
 		Shader::setActive(pass.shader);
 
@@ -118,15 +116,13 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		View::setActive2d(&m_quad_view);
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
 
 		pass.shader->setUniformMatrix4fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
 		pass.shader->setUniformMatrix4fv("uView", m_quad_view.getViewMatrix().getValuesPtr());
 
-		m_framebuffers2d[i]->draw(m_quad_shape, RenderStates());
+		m_framebuffers2d[i]->draw(light_shape, RenderStates());
 	}
-	View::setActive2d(original_view);
 }
 
 void gfx::RenderScene::draw3d(RenderTarget& target)
@@ -153,9 +149,9 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 			m_framebuffers3d[0]->draw(*obj, RenderStates());
 
 	// deferred render
-	View* original_view = View::getActive2d();
 	for (unsigned int i = 1; i < m_pipeline3d.size(); i++)
 	{
+		m_framebuffers3d[i]->clear(m_clear_color);
 		auto& pass = m_pipeline3d[i];
 		Shader::setActive(pass.shader);
 
@@ -173,7 +169,6 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		View::setActive2d(&m_quad_view);
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
 
 		pass.shader->setUniformMatrix4fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
@@ -181,7 +176,6 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 
 		m_framebuffers3d[i]->draw(light_shape, RenderStates());
 	}
-	View::setActive2d(original_view);
 }
 
 void gfx::RenderScene::render(RenderTarget& target)

@@ -2,7 +2,7 @@
 #define RENDER_SCENE_CLASS_HEADER
 
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Graphics/Shape2D.hpp>
+#include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/View.hpp>
 
 #include <functional>

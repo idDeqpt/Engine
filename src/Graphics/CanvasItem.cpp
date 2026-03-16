@@ -4,7 +4,6 @@
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
-//#include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Math/Transformable2.hpp>
 
 #include <glad/glad.h>
@@ -21,14 +20,12 @@ gfx::CanvasItem::CanvasItem():
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
-	//RenderManager::addObject(this);
 }
 
 gfx::CanvasItem::~CanvasItem()
 {
 	glDeleteVertexArrays(1, &m_VAO);
 	glDeleteBuffers(1, &m_VBO);
-	//RenderManager::removeObject(this);
 }
 
 
