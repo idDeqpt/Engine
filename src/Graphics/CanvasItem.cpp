@@ -4,6 +4,7 @@
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
+//#include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Math/Transformable2.hpp>
 
 #include <glad/glad.h>
@@ -13,16 +14,21 @@
 namespace eng
 {
 
-gfx::CanvasItem::CanvasItem() : m_vertices_count(false), m_primitive_type(PrimitiveType::TRIANGLE_FAN), m_visible(true), m_texture(nullptr), Drawable(), mth::Transformable2()
+gfx::CanvasItem::CanvasItem():
+	m_vertices_count(false),
+	m_primitive_type(PrimitiveType::TRIANGLE_FAN),
+	m_texture(nullptr), Drawable(), mth::Transformable2()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
+	//RenderManager::addObject(this);
 }
 
 gfx::CanvasItem::~CanvasItem()
 {
 	glDeleteVertexArrays(1, &m_VAO);
 	glDeleteBuffers(1, &m_VBO);
+	//RenderManager::removeObject(this);
 }
 
 
@@ -84,13 +90,9 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 	};
 	const GLenum primitive_type = OPENGL_PRIMITIVE_TYPES[int(m_primitive_type)];
 
-	View* active_view = gfx::View::getActive();
 	Shader* active_shader = gfx::Shader::getActive();
-	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
 
 	active_shader->use();
-	active_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	active_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
 	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	float color[4];

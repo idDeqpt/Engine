@@ -41,7 +41,6 @@ namespace eng::gfx
 		unsigned int m_VBO;
 		PrimitiveType m_primitive_type;
 		Color m_color;
-		bool m_visible;
 		Texture* m_texture;
 	};
 }

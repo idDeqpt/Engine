@@ -3,7 +3,6 @@
 #include <Engine/Math/Transform3.hpp>
 
 #include <iostream>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -29,12 +28,8 @@ sys::Window::Window(int width, int height, std::string title) : gfx::RenderTarge
 		return;
 	}
 	glfwMakeContextCurrent(window_ptr);
-	gladLoadGL();
 
 	setViewport(0, 0, width, height);
-	glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 sys::Window::~Window()

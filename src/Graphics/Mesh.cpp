@@ -188,15 +188,9 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 {
 	if (!m_inited) return;
 
-	View* active_view = gfx::View::getActive();
 	Shader* active_shader = gfx::Shader::getActive();
-	mth::Vec3 view_loc_pos = active_view->getPosition();
-	mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
-	mth::Vec4 view_glob_pos = view_transform_mat*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 
 	active_shader->use();
-	active_shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	active_shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
@@ -256,8 +250,6 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 		m_material.emission->bind();
 		active_shader->setUniform1i("uMaterial.emission", 6);
 	}
-
-	active_shader->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 	LightManager::DirectionalLight light = LightManager::getDirectionalLight();
 	bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;

@@ -10,7 +10,8 @@
 namespace eng
 {
 
-gfx::View* gfx::View::m_active = nullptr;
+gfx::View* gfx::View::m_active2d = nullptr;
+gfx::View* gfx::View::m_active3d = nullptr;
 
 
 gfx::View::View() : mth::Transformable3()
@@ -77,14 +78,25 @@ mth::Mat4 gfx::View::getViewMatrix()
 
 
 
-void gfx::View::setActive(View* target)
+void gfx::View::setActive2d(View* target)
 {
-	m_active = target;
+	m_active2d = target;
 }
 
-gfx::View* gfx::View::getActive()
+gfx::View* gfx::View::getActive2d()
 {
-	return m_active;
+	return m_active2d;
+}
+
+
+void gfx::View::setActive3d(View* target)
+{
+	m_active3d = target;
+}
+
+gfx::View* gfx::View::getActive3d()
+{
+	return m_active3d;
 }
 
 } //namespace eng

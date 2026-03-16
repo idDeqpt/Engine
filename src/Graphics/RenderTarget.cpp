@@ -1,13 +1,12 @@
 #include <Engine/Graphics/RenderTarget.hpp>
 
-#include <glad/glad.h>
-
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 
+#include <glad/glad.h>
 
 namespace eng
 {

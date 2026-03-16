@@ -9,7 +9,15 @@ namespace eng::gfx
 	class Drawable
 	{
 	public:
+		Drawable() {m_visible = true;}
+
+		void setVisible(bool flag) {m_visible = flag;}
+		bool isVisible() {return m_visible;}
+
 		virtual void draw(RenderTarget* target, RenderStates& states) = 0;
+
+	protected:
+		bool m_visible;
 	};
 }
 

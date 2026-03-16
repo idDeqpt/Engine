@@ -14,6 +14,7 @@
 #include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/Mesh.hpp>
 #include <Engine/Graphics/GeometricMesh.hpp>
+#include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
@@ -97,8 +98,10 @@ int main()
 	unsigned int height = 600;
 	srand(0);
 	eng::sys::Window window(width, height, "LearnOpenGL");
+	gladLoadGL();
 	
 	glCullFace(GL_FRONT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 
@@ -239,8 +242,10 @@ int main()
 	//view3d.setOrtho(0, 10, 10, 0, -30, 30);
 	view3d.setPerspective(3.14*0.25, float(width)/height, 1, 100);
 	view3d.setPosition(eng::mth::Vec3(0, 1, 2));
+	eng::gfx::View::setActive3d(&view3d);
 	eng::gfx::View view2d;
 	view2d.setOrtho(0, width, height, 0, -10, 10);
+	eng::gfx::View::setActive2d(&view2d);
 
 	std::vector<eng::mth::Mat4> translations;
 	for (unsigned int i = 0; i < floor_points_count; i+=10)
@@ -260,66 +265,81 @@ int main()
 	}
 
 	eng::gfx::Shape2D shape(eng::gfx::Shape2D::Type::RECTANGLE);
-	//eng::gfx::Shape2D shape(eng::gfx::Shape2D::Type::CIRCLE);
 	shape.setPosition(eng::mth::Vec2(700, 400));
 	shape.setSize(eng::mth::Vec2(100, 100));
 	//shape.setTexture(*font.getTexture());
 	shape.setTexture(*tex[2]);
 
-	eng::gfx::Texture::PixelFormat formats[] = {
-		eng::gfx::Texture::PixelFormat::RGBA32F, //position
-		eng::gfx::Texture::PixelFormat::RGBA32F, //normal
-		eng::gfx::Texture::PixelFormat::RGBA, //albedo
-		eng::gfx::Texture::PixelFormat::RGBA, //met rog hei ao
-		eng::gfx::Texture::PixelFormat::RGBA //emission
-	};
-	eng::gfx::RenderTarget rt(5, formats);
-
-	eng::gfx::Shape2D render_shape0(eng::gfx::Shape2D::Type::RECTANGLE);
-	render_shape0.setPosition(eng::mth::Vec2(0, 180));
-	render_shape0.setSize(eng::mth::Vec2(240, 180));
-	render_shape0.setScale(eng::mth::Vec2(1, -1));
-	render_shape0.setTexture(rt.getTexture(0));
-
-	eng::gfx::Shape2D render_shape1(eng::gfx::Shape2D::Type::RECTANGLE);
-	render_shape1.setPosition(eng::mth::Vec2(240, 180));
-	render_shape1.setSize(eng::mth::Vec2(240, 180));
-	render_shape1.setScale(eng::mth::Vec2(1, -1));
-	render_shape1.setTexture(rt.getTexture(1));
-
-	eng::gfx::Shape2D render_shape2(eng::gfx::Shape2D::Type::RECTANGLE);
-	render_shape2.setPosition(eng::mth::Vec2(480, 180));
-	render_shape2.setSize(eng::mth::Vec2(240, 180));
-	render_shape2.setScale(eng::mth::Vec2(1, -1));
-	render_shape2.setTexture(rt.getTexture(2));
-
-	eng::gfx::Shape2D render_shape3(eng::gfx::Shape2D::Type::RECTANGLE);
-	render_shape3.setPosition(eng::mth::Vec2(0, 360));
-	render_shape3.setSize(eng::mth::Vec2(240, 180));
-	render_shape3.setScale(eng::mth::Vec2(1, -1));
-	render_shape3.setTexture(rt.getTexture(3));
-
-	eng::gfx::Shape2D render_shape4(eng::gfx::Shape2D::Type::RECTANGLE);
-	render_shape4.setPosition(eng::mth::Vec2(240, 360));
-	render_shape4.setSize(eng::mth::Vec2(240, 180));
-	render_shape4.setScale(eng::mth::Vec2(1, -1));
-	render_shape4.setTexture(rt.getTexture(4));
-
-	eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
-	light_shape.setPosition(eng::mth::Vec2(0, 1));
-	light_shape.setSize(eng::mth::Vec2(1));
-	light_shape.setScale(eng::mth::Vec2(1, -1));
-
-	eng::gfx::View light_view;
-	light_view.setOrtho(0, 1, 1, 0, -10, 10);
-
 	eng::mth::Transformable3 parent;
 	obj.setParent(parent);
+
+	std::vector<eng::gfx::RenderScene::RenderPass> pipeline2d = {
+		{
+			shader2d,
+			{eng::gfx::Texture::PixelFormat::RGBA},
+			{},
+			nullptr
+		}
+	};
+
+	std::vector<eng::gfx::RenderScene::RenderPass> pipeline3d = {
+		{
+			shader3d_deferred,
+			{
+				eng::gfx::Texture::PixelFormat::RGBA32F, //position
+				eng::gfx::Texture::PixelFormat::RGBA32F, //normal
+				eng::gfx::Texture::PixelFormat::RGBA, //albedo
+				eng::gfx::Texture::PixelFormat::RGBA, //met rog hei ao
+				eng::gfx::Texture::PixelFormat::RGBA //emission
+			},
+			{},
+			nullptr
+		},
+		{
+			shader2d_deferred_light,
+			{},
+			{
+				"uPosition",
+				"uNormal",
+				"uAlbedo"
+			},
+			[&](eng::gfx::Shader* sh){
+				eng::gfx::View* active_view = &view3d;
+				eng::mth::Vec3 view_loc_pos = active_view->getPosition();
+				eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+
+				eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
+				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
+				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
+				if (use_directional_light)
+				{
+					sh->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
+					sh->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
+				}
+			}
+		}
+	};
+	eng::gfx::RenderScene rs;
+	rs.setClearColor(eng::gfx::Color(0));
+
+	rs.setRenderPipeline2d(pipeline2d);
+	rs.setRenderPipeline3d(pipeline3d);
+
+	rs.addObject(shape);
+	rs.addObject(info_texts[0]);
+	rs.addObject(info_texts[1]);
+
+	rs.addObject3d(floor);
+	rs.addObject3d(obj);
 
 	float speed = 0.1;
 	eng::mth::Vec2 rot_angles;
 	float delta_time = 0;
 	float light_rot = 0;
+
+	eng::gfx::View::setActive3d(&view3d);
+	eng::gfx::View::setActive2d(&view2d);
 
 	std::cout << "START" << std::endl;
 	while(window.isOpen())
@@ -366,64 +386,8 @@ int main()
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
 		info_texts[1].setString("Posi\ntion: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
-		window.clear(eng::gfx::Color(160));
-		rt.clear(eng::gfx::Color(0));
 
-		glEnable(GL_CULL_FACE);
-		eng::gfx::View::setActive(&view3d);
-		eng::gfx::Shader::setActive(shader3d_deferred);
-
-		rt.draw(obj, states);
-		rt.draw(floor, states);
-
-		glDisable(GL_CULL_FACE);
-		//glClear(GL_DEPTH_BUFFER_BIT);
-		eng::gfx::View::setActive(&view2d);
-		eng::gfx::Shader::setActive(shader2d);
-
-		//window.draw(ci, states);
-		for (unsigned int i = 0; i < 0; i++)
-		{
-			info_texts[i].setColor(eng::gfx::Color(255, (sin(start_time) + 1)*0.5*255, 255, 255));
-			window.draw(info_texts[i], states);
-		}
-		window.draw(shape, states);
-		/*window.draw(render_shape0, states);
-		window.draw(render_shape1, states);
-		window.draw(render_shape2, states);
-		window.draw(render_shape3, states);
-		window.draw(render_shape4, states);*/
-
-		eng::gfx::View::setActive(&light_view);
-		eng::gfx::Shader::setActive(shader2d_deferred_light);
-
-			shader2d_deferred_light->use();
-			eng::gfx::View* active_view = &view3d;
-			eng::mth::Vec3 view_loc_pos = active_view->getPosition();
-			eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
-			shader2d_deferred_light->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
-
-			glActiveTexture(GL_TEXTURE0);
-			rt.getTexture(0).bind();
-			shader2d_deferred_light->setUniform1i("uPosition", 0);
-			glActiveTexture(GL_TEXTURE1);
-			rt.getTexture(1).bind();
-			shader2d_deferred_light->setUniform1i("uNormal", 1);
-			glActiveTexture(GL_TEXTURE2);
-			rt.getTexture(2).bind();
-			shader2d_deferred_light->setUniform1i("uAlbedo", 2);
-
-			eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
-			bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
-			shader2d_deferred_light->setUniform1i("uUseDirectionalLight", use_directional_light);
-			if (use_directional_light)
-			{
-				shader2d_deferred_light->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
-				shader2d_deferred_light->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
-			}
-
-		window.draw(light_shape, states);
-
+		rs.render(window);
 		window.display();
 
 		delta_time = glfwGetTime() - start_time;
