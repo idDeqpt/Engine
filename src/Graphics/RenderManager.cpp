@@ -1,97 +1,56 @@
 #include <Engine/Graphics/RenderManager.hpp>
 
-#include <Engine/Graphics/RenderTarget.hpp>
-#include <Engine/Graphics/RenderTarget.hpp>
+#include <Engine/Graphics/RenderScene.hpp>
+#include <glad/glad.h>
+#include <vector>
 
 
 namespace eng
 {
 
-gfx::RenderManager::initialize()
+std::vector<gfx::RenderScene*> gfx::RenderManager::s_scenes;
+
+
+void gfx::RenderManager::initialize()
 {
+	finalize();
+
 	gladLoadGL();
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	s_objects2d.clear();
-
-	s_quad_view.setOrtho(0, 1, 1, 0, -10, 10);
-	s_quad_shape.setPosition(eng::mth::Vec2(0, 1));
-	s_quad_shape.setSize(eng::mth::Vec2(1));
-	s_quad_shape.setScale(eng::mth::Vec2(1, -1));
-
+	s_scenes.push_back(new RenderScene());
 }
 
-gfx::RenderManager::finalize() {}
-
-
-void gfx::RenderManager::addObject(CanvasItem* object)
+void gfx::RenderManager::finalize()
 {
-	addObject(object, s_objects2d);
-}
-
-void gfx::RenderManager::removeObject(CanvasItem* object)
-{
-	removeObject(object, s_objects2d);
-}
-
-bool gfx::RenderManager::setRenderPipeline2d(const std::vector<RenderPass>& new_pipeline)
-{
-	s_pipeline2d = new_pipeline;
-
-	for (const auto& pass : pipeline)
-		if (!pass.shader) return false;
-
-	
-	return true;
+	for (auto& scene: s_scenes)
+		if (scene) delete scene;
+	s_scenes.clear();
 }
 
 
-void gfx::RenderManager::draw2d()
+gfx::RenderScene& gfx::RenderManager::createScene()
 {
-	if (s_objects2d.empty() || s_pipeline2d.empty())
-        return;
+	RenderScene* scene = new RenderScene();
+	s_scenes.push_back(scene);
+	return *scene;
+}
 
-	for (const auto& pass : pipeline)
-	{
-        Shader::setActive(pass.shader);
-
-		View* active_view = gfx::View::getActive();
-		mth::Mat4 view_transform_mat = active_view->getGlobalTransform().getMatrix();
-
-		pass.shader->use();
-		pass.shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-		pass.shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
-        
-        for (CanvasItem* obj : s_objects2d)
-        {
-            if (obj && obj->isVisible())
-                obj->draw();
-        }
-    }
+void gfx::RenderManager::removeScene(RenderScene& scene)
+{
+	for (unsigned int i = 1; i < s_scenes.size(); i++) // 1 for main scene saving
+		if (&scene == s_scenes[i])
+		{
+			delete s_scenes[i];
+			s_scenes.erase(s_scenes.begin() + i);
+			return;
+		}
 }
 
 
-
-void gfx::RenderManager::addObject(Drawable* object, std::vector<Drawable*> vector)
+gfx::RenderScene* gfx::RenderManager::getMainScene()
 {
-	if (object)
-	{
-		for (unsigned int i = 0; i < vector.size(); i++)
-			if (vector[i] == object)
-				return;
-		vector.push_back(object);
-	}
-}
-
-void gfx::RenderManager::removeObject(Drawable* object, std::vector<Drawable*> vector)
-{
-	if (object)
-		for (unsigned int i = 0; i < vector.size(); i++)
-			if (vector[i] == object)
-				vector.erase(vector.begin() + i--);
+	if (s_scenes.size()) return s_scenes[0];
+	return nullptr;
 }
 
 } // namespace eng

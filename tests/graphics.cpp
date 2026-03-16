@@ -14,6 +14,7 @@
 #include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/Mesh.hpp>
 #include <Engine/Graphics/GeometricMesh.hpp>
+#include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
@@ -97,11 +98,13 @@ int main()
 	unsigned int width  = 900;
 	unsigned int height = 600;
 	srand(0);
+
+
 	eng::sys::Window window(width, height, "LearnOpenGL");
-	gladLoadGL();
-	
-	glCullFace(GL_FRONT);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	eng::gfx::RenderManager::initialize();
+
+	eng::gfx::LightManager::initialize();
+	eng::sys::EventManager::initialize(window.getHandler());
 
 	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 
@@ -288,9 +291,9 @@ int main()
 			{
 				eng::gfx::Texture::PixelFormat::RGBA32F, //position
 				eng::gfx::Texture::PixelFormat::RGBA32F, //normal
-				eng::gfx::Texture::PixelFormat::RGBA, //albedo
-				eng::gfx::Texture::PixelFormat::RGBA, //met rog hei ao
-				eng::gfx::Texture::PixelFormat::RGBA //emission
+				eng::gfx::Texture::PixelFormat::RGBA,    //albedo
+				eng::gfx::Texture::PixelFormat::RGBA,    //met rog hei ao
+				eng::gfx::Texture::PixelFormat::RGBA     //emission
 			},
 			{},
 			nullptr
@@ -320,18 +323,18 @@ int main()
 			}
 		}
 	};
-	eng::gfx::RenderScene rs;
-	rs.setClearColor(eng::gfx::Color(0));
+	eng::gfx::RenderScene* rs = eng::gfx::RenderManager::getMainScene();
+	rs->setClearColor(eng::gfx::Color(120));
 
-	rs.setRenderPipeline2d(pipeline2d);
-	rs.setRenderPipeline3d(pipeline3d);
+	rs->setRenderPipeline2d(pipeline2d);
+	rs->setRenderPipeline3d(pipeline3d);
 
-	rs.addObject(shape);
-	rs.addObject(info_texts[0]);
-	rs.addObject(info_texts[1]);
+	rs->addObject(shape);
+	rs->addObject(info_texts[0]);
+	rs->addObject(info_texts[1]);
 
-	rs.addObject3d(floor);
-	rs.addObject3d(obj);
+	rs->addObject3d(floor);
+	rs->addObject3d(obj);
 
 	float speed = 0.1;
 	eng::mth::Vec2 rot_angles;
@@ -387,7 +390,7 @@ int main()
 		info_texts[1].setString("Posi\ntion: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
 
 
-		rs.render(window);
+		rs->render(window);
 		window.display();
 
 		delta_time = glfwGetTime() - start_time;
@@ -395,6 +398,7 @@ int main()
 	}
 
 	eng::gfx::LightManager::finalize();
+	eng::gfx::RenderManager::finalize();
 
 	window.destroy();
 	system("pause");
