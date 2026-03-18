@@ -1,13 +1,13 @@
 #ifndef VIEW_CLASS_HEADER
 #define VIEW_CLASS_HEADER
 
+#include <Engine/Core/Node3D.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Mat4.hpp>
-#include <Engine/Math/Transformable3.hpp>
 
 namespace eng::gfx
 {
-	class View : public mth::Transformable3
+	class View : public core::Node3D
 	{
 	public:
 		View();

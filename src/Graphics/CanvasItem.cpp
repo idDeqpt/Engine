@@ -4,7 +4,6 @@
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
-#include <Engine/Math/Transformable2.hpp>
 
 #include <glad/glad.h>
 #include <vector>
@@ -16,7 +15,7 @@ namespace eng
 gfx::CanvasItem::CanvasItem():
 	m_vertices_count(false),
 	m_primitive_type(PrimitiveType::TRIANGLE_FAN),
-	m_texture(nullptr), Drawable(), mth::Transformable2()
+	m_texture(nullptr), Drawable(), core::Node2D()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -90,7 +89,7 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 	Shader* active_shader = gfx::Shader::getActive();
 
 	active_shader->use();
-	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
+	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform2D().value().getMatrix().getValuesPtr());
 
 	float color[4];
 	for (unsigned int i = 0; i < 4; i++)

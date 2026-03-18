@@ -1,6 +1,7 @@
 #ifndef MESH_CLASS_HEADER
 #define MESH_CLASS_HEADER
 
+#include <Engine/Core/Node3D.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Drawable.hpp>
@@ -8,14 +9,13 @@
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Mat4.hpp>
-#include <Engine/Math/Transformable3.hpp>
 
 
 namespace eng::gfx
 {
 	class RenderTarget;
 
-	class Mesh : public Drawable, public mth::Transformable3
+	class Mesh : public Drawable, public core::Node3D
 	{
 	public:
 		struct Vertex

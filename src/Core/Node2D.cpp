@@ -1,4 +1,4 @@
-#include <Engine/Math/Transformable2.hpp>
+#include <Engine/Core/Node2D.hpp>
 
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -7,33 +7,28 @@
 namespace eng
 {
 
-mth::Transformable2::Transformable2() : mth::Transformable2::Transformable2(nullptr) {}
-
-mth::Transformable2::Transformable2(Transformable2* parent)
-{
-	m_parent = parent;
-	m_rotation = 0;
-	m_scale = Vec2(1);
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
-}
+core::Node2D::Node2D():
+	m_rotation(0),
+	m_scale(mth::Vec2(1)),
+	m_transform_need_update(true),
+	m_invert_transform_need_update(true), core::Node() {}
 
 
-void mth::Transformable2::move(const Vec2& offset)
+void core::Node2D::move(const mth::Vec2& offset)
 {
 	m_position += offset;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::scale(const Vec2& scale_v)
+void core::Node2D::scale(const mth::Vec2& scale_v)
 {
 	m_scale += scale_v;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::rotate(float angle)
+void core::Node2D::rotate(float angle)
 {
 	m_rotation += angle;
 	m_transform_need_update = true;
@@ -41,79 +36,69 @@ void mth::Transformable2::rotate(float angle)
 }
 
 
-void mth::Transformable2::setOrigin(const Vec2& new_origin)
+void core::Node2D::setOrigin(const mth::Vec2& new_origin)
 {
 	m_origin = new_origin;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::setPosition(const Vec2& new_position)
+void core::Node2D::setPosition(const mth::Vec2& new_position)
 {
 	m_position = new_position;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::setScale(const Vec2& new_scale)
+void core::Node2D::setScale(const mth::Vec2& new_scale)
 {
 	m_scale = new_scale;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::setRotation(float new_angle)
+void core::Node2D::setRotation(float new_angle)
 {
 	m_rotation = new_angle;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void mth::Transformable2::setParent(Transformable2& parent)
-{
-	m_parent = &parent;
-}
 
-
-mth::Vec2 mth::Transformable2::getPosition()
+mth::Vec2 core::Node2D::getPosition()
 {
 	return m_position;
 }
 
 
-mth::Transformable2* mth::Transformable2::getParent()
-{
-	return m_parent;
-}
-
-mth::Transform2 mth::Transformable2::getLocalTransform()
+mth::Transform2 core::Node2D::getLocalTransform()
 {
 	computeTransform();
 	return m_transform;
 }
 
-mth::Transform2 mth::Transformable2::getGlobalTransform()
-{
-	if (m_parent == nullptr)
-		return getLocalTransform();
-	return m_parent->getGlobalTransform().getMatrix()*getLocalTransform().getMatrix();
-}
-
-mth::Transform2 mth::Transformable2::getInvertLocalTransform()
+mth::Transform2 core::Node2D::getInvertLocalTransform()
 {
 	if (m_invert_transform_need_update)
 	{
 		computeTransform();
-		
-
 		m_invert_transform_need_update = false;
 	}
 	return m_invert_transform;
 }
 
+std::optional<mth::Transform2> core::Node2D::getGlobalTransform2D()
+{
+	auto parentOpt = m_parent ? m_parent->getGlobalTransform2D() : std::nullopt;
+	if (parentOpt)
+		return parentOpt.value().getMatrix()*getLocalTransform().getMatrix();
+	else
+		return getLocalTransform();
+}
 
 
-void mth::Transformable2::computeTransform()
+
+void core::Node2D::computeTransform()
 {
 	if (m_transform_need_update)
 	{

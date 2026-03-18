@@ -19,7 +19,7 @@ mth::Transform2::Transform2(const Mat3& mat)
 	m_matrix = mat;
 }
 
-mth::Transform2::Transform2(Transform2& transform) : Transform2(transform.getMatrix()) {}
+mth::Transform2::Transform2(const Transform2& transform) : Transform2(transform.getMatrix()) {}
 
 
 void mth::Transform2::translate(const Vec2& vec)
@@ -55,7 +55,7 @@ void mth::Transform2::rotate(float angle)
 }
 
 
-mth::Mat3 mth::Transform2::getMatrix()
+mth::Mat3 mth::Transform2::getMatrix() const
 {
 	return m_matrix;
 }

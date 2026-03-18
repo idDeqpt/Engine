@@ -1,12 +1,12 @@
 #ifndef CANVAS_ITEM_CLASS_HEADER
 #define CANVAS_ITEM_CLASS_HEADER
 
+#include <Engine/Core/Node2D.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Math/Transformable2.hpp>
 #include <vector>
 
 
@@ -14,7 +14,7 @@ namespace eng::gfx
 {
 	class RenderTarget;
 
-	class CanvasItem : public Drawable, public mth::Transformable2
+	class CanvasItem : public Drawable, public core::Node2D
 	{
 	public:
 		struct Vertex

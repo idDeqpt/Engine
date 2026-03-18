@@ -6,6 +6,9 @@ set(BUILD_SHARED_LIBS FALSE)
 project(${PROJECT_NAME} CXX)
 
 set(CORE_SOURCE_FILES
+    src/Core/Node.cpp
+    src/Core/Node2D.cpp
+    src/Core/Node3D.cpp
     src/Core/ResourceManager.cpp)
 
 set(GRAPHICS_SOURCE_FILES
@@ -34,9 +37,7 @@ set(MATH_SOURCE_FILES
     src/Math/Mat4.cpp
     src/Math/Quaternion.cpp
     src/Math/Transform2.cpp
-    src/Math/Transform3.cpp
-    src/Math/Transformable2.cpp
-    src/Math/Transformable3.cpp)
+    src/Math/Transform3.cpp)
 
 set(SYSTEM_SOURCE_FILES
     src/System/EventManager.cpp

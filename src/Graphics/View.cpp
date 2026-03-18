@@ -1,8 +1,8 @@
 #include <Engine/Graphics/View.hpp>
 
+#include <Engine/Core/Node3D.hpp>
 #include <Engine/Math/Mat4.hpp>
 #include <Engine/Math/Transform3.hpp>
-#include <Engine/Math/Transformable3.hpp>
 
 #include <cmath>
 
@@ -14,12 +14,12 @@ gfx::View* gfx::View::m_active2d = nullptr;
 gfx::View* gfx::View::m_active3d = nullptr;
 
 
-gfx::View::View() : mth::Transformable3()
+gfx::View::View() : core::Node3D()
 {
 	setOrtho(-1, 1, -1, 1, -1, 1);
 }
 
-gfx::View::View(View& view) : mth::Transformable3()
+gfx::View::View(View& view) : core::Node3D()
 {
 	m_projection = view.getProjectionMatrix();
 	setOrigin(view.m_origin);
@@ -72,7 +72,7 @@ mth::Mat4 gfx::View::getProjectionMatrix()
 mth::Mat4 gfx::View::getViewMatrix()
 {
 	mth::Mat4 view_mat;
-	getGlobalTransform().getMatrix().invert(view_mat);
+	getGlobalTransform3D().value().getMatrix().invert(view_mat);
 	return view_mat;
 }
 

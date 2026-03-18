@@ -11,13 +11,13 @@ namespace eng::mth
 	public:
 		Transform2();
 		Transform2(const Mat3& mat);
-		Transform2(Transform2& transform);
+		Transform2(const Transform2& transform);
 
 		void translate(const Vec2& vec);
 		void scale(const Vec2& vec);
 		void rotate(float angle); //radians
 
-		Mat3 getMatrix();
+		Mat3 getMatrix() const;
 
 	protected:
 		Mat3 m_matrix;

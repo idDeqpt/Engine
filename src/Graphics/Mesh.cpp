@@ -1,5 +1,6 @@
 #include <Engine/Graphics/Mesh.hpp>
 
+#include <Engine/Core/Node3D.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Texture.hpp>
@@ -10,7 +11,6 @@
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
 #include <Engine/Math/Mat4.hpp>
-#include <Engine/Math/Transformable3.hpp>
 
 #include <glad/glad.h>
 #include <string>
@@ -41,7 +41,7 @@ struct std::hash<VertexKey> {
 namespace eng
 {
 
-gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), mth::Transformable3()
+gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), core::Node3D()
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -191,7 +191,7 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 	Shader* active_shader = gfx::Shader::getActive();
 
 	active_shader->use();
-	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
+	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform3D().value().getMatrix().getValuesPtr());
 
 	glActiveTexture(GL_TEXTURE0);
 		m_material.albedo->bind();

@@ -2,7 +2,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/Node3D.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/System/Window.hpp>
 #include <Engine/Graphics/Shader.hpp>
@@ -25,7 +27,7 @@
 #include <Engine/Math/Vec4.hpp>
 #include <Engine/Math/Quaternion.hpp>
 #include <Engine/Math/Transform3.hpp>
-#include <Engine/Math/Transformable3.hpp>
+
 #include <cmath>
 #include <vector>
 #include <random>
@@ -273,8 +275,8 @@ int main()
 	//shape.setTexture(*font.getTexture());
 	shape.setTexture(*tex[2]);
 
-	eng::mth::Transformable3 parent;
-	obj.setParent(parent);
+	eng::core::Node3D parent;
+	obj.setParent(&parent);
 
 	std::vector<eng::gfx::RenderScene::RenderPass> pipeline2d = {
 		{
@@ -309,7 +311,7 @@ int main()
 			[&](eng::gfx::Shader* sh){
 				eng::gfx::View* active_view = &view3d;
 				eng::mth::Vec3 view_loc_pos = active_view->getPosition();
-				eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+				eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 				eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
@@ -351,8 +353,8 @@ int main()
 		eng::mth::Vec3 vel;
 		eng::sys::EventManager::pull();
 		if (eng::sys::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
-		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_R)) tex[5]->setSmooth(false);
-		if (eng::sys::EventManager::isJustReleased(GLFW_KEY_R)) tex[5]->setSmooth(true);
+		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_R)) tex[6]->setSmooth(false);
+		if (eng::sys::EventManager::isJustReleased(GLFW_KEY_R)) tex[6]->setSmooth(true);
 		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_L)) eng::sys::EventManager::setCursorLock(!eng::sys::EventManager::getCursorLock());
 		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;

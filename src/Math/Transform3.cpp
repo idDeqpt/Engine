@@ -20,7 +20,7 @@ mth::Transform3::Transform3(const Mat4& mat)
 	m_matrix = mat;
 }
 
-mth::Transform3::Transform3(Transform3& transform) : Transform3(transform.getMatrix()) {}
+mth::Transform3::Transform3(const Transform3& transform) : Transform3(transform.getMatrix()) {}
 
 
 void mth::Transform3::translate(const Vec3& vec)
@@ -95,7 +95,7 @@ void mth::Transform3::rotate(const Quaternion& quat)
 }
 
 
-mth::Mat4 mth::Transform3::getMatrix()
+mth::Mat4 mth::Transform3::getMatrix() const
 {
 	return m_matrix;
 }
