@@ -1,4 +1,4 @@
-#include <Engine/Graphics/GeometricMesh.hpp>
+#include <Engine/Graphics/3D/GeometricMesh.hpp>
 
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Color.hpp>

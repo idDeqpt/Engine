@@ -1,4 +1,4 @@
-#include <Engine/Graphics/Mesh.hpp>
+#include <Engine/Graphics/3D/Mesh.hpp>
 
 #include <Engine/Core/Node3D.hpp>
 #include <Engine/Graphics/RenderStates.hpp>

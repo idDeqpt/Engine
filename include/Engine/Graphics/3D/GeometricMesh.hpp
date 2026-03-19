@@ -1,9 +1,8 @@
 #ifndef GEAOMETRIC_MESH_CLASS_HEADER
 #define GEAOMETRIC_MESH_CLASS_HEADER
 
-#include <Engine/Graphics/GeometricMesh.hpp>
 #include <Engine/Graphics/Material.hpp>
-#include <Engine/Graphics/Mesh.hpp>
+#include <Engine/Graphics/3D/Mesh.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec3.hpp>
 

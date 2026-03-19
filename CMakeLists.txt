@@ -12,20 +12,20 @@ set(CORE_SOURCE_FILES
     src/Core/ResourceManager.cpp)
 
 set(GRAPHICS_SOURCE_FILES
-    src/Graphics/CanvasItem.cpp
+    src/Graphics/2D/CanvasItem.cpp
+    src/Graphics/2D/Shape2D.cpp
+    src/Graphics/2D/Text2D.cpp
+    src/Graphics/3D/GeometricMesh.cpp
+    src/Graphics/3D/Mesh.cpp
     src/Graphics/Color.cpp
     src/Graphics/Font.cpp
-    src/Graphics/GeometricMesh.cpp
     src/Graphics/LightManager.cpp
     src/Graphics/Material.cpp
-    src/Graphics/Mesh.cpp
     src/Graphics/RenderManager.cpp
     src/Graphics/RenderScene.cpp
     src/Graphics/RenderStates.cpp
     src/Graphics/RenderTarget.cpp
     src/Graphics/Shader.cpp
-    src/Graphics/Shape2D.cpp
-    src/Graphics/Text2D.cpp
     src/Graphics/Texture.cpp
     src/Graphics/View.cpp)
 

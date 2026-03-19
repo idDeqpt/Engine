@@ -1,7 +1,7 @@
 #ifndef SHAPE_2D_CLASS_HEADER
 #define SHAPE_2D_CLASS_HEADER
 
-#include <Engine/Graphics/CanvasItem.hpp>
+#include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 namespace eng::gfx

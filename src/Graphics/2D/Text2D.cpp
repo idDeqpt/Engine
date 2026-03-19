@@ -1,6 +1,6 @@
-#include <Engine/Graphics/Text2D.hpp>
+#include <Engine/Graphics/2D/Text2D.hpp>
 
-#include <Engine/Graphics/CanvasItem.hpp>
+#include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/Font.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Math/Vec2.hpp>

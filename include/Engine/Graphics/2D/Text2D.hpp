@@ -1,7 +1,7 @@
 #ifndef TEXT_2D_CLASS_HEADER
 #define TEXT_2D_CLASS_HEADER
 
-#include <Engine/Graphics/CanvasItem.hpp>
+#include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/Font.hpp>
 #include <string>
 

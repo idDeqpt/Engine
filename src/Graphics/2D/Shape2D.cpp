@@ -1,4 +1,4 @@
-#include <Engine/Graphics/Shape2D.hpp>
+#include <Engine/Graphics/2D/Shape2D.hpp>
 
 #include <Engine/Math/Vec2.hpp>
 

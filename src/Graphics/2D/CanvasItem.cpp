@@ -1,4 +1,4 @@
-#include <Engine/Graphics/CanvasItem.hpp>
+#include <Engine/Graphics/2D/CanvasItem.hpp>
 
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Shader.hpp>
