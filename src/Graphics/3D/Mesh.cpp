@@ -1,10 +1,9 @@
 #include <Engine/Graphics/3D/Mesh.hpp>
 
 #include <Engine/Core/Node3D.hpp>
-#include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Graphics/LightManager.hpp>
+#include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -249,15 +248,6 @@ void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
 		active_shader->setUniform1i("uMaterial.useEmission", use_emission_map);
 		m_material.emission->bind();
 		active_shader->setUniform1i("uMaterial.emission", 6);
-	}
-
-	LightManager::DirectionalLight light = LightManager::getDirectionalLight();
-	bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
-	active_shader->setUniform1i("uUseDirectionalLight", use_directional_light);
-	if (use_directional_light)
-	{
-		active_shader->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
-		active_shader->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
 	}
 
 	glBindVertexArray(m_VAO);
