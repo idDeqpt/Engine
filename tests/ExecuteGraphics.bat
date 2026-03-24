@@ -1,1 +1,1 @@
-start "Engine Test" ".\bin\Debug\graphics_tests.exe"
+start "Engine Test" ".\build\Debug\graphics_tests.exe"

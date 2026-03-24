@@ -1,9 +1,9 @@
 #include <Engine/Graphics/RenderScene.hpp>
 
+#include <Engine/Graphics/2D/CanvasItem.hpp>
+#include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
-#include <Engine/Graphics/CanvasItem.hpp>
-#include <Engine/Graphics/Shape2D.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/View.hpp>
 #include <Engine/Graphics/Color.hpp>

@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.27)
 
 set(PROJECT_NAME Engine)
 set(BUILD_SHARED_LIBS FALSE)
 
-project(${PROJECT_NAME} CXX)
+project(${PROJECT_NAME}
+    VERSION 1.0.0
+    LANGUAGES CXX)
 
 set(CORE_SOURCE_FILES
     src/Core/Node.cpp
@@ -46,29 +48,41 @@ set(SYSTEM_SOURCE_FILES
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
+set(GLAD_ROOT     "${CMAKE_CURRENT_SOURCE_DIR}/deps/glad"     CACHE PATH "Path to glad")
+set(GLFW3_ROOT    "${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw-3.4" CACHE PATH "Path to GLFW3")
+set(FREETYPE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype" CACHE PATH "Path to FreeType")
+
 find_package(stb REQUIRED)
-find_package(freetype REQUIRED)
 find_package(glad REQUIRED)
-find_package(glfw REQUIRED)
+find_package(GLFW3 REQUIRED)
+find_package(freetype REQUIRED)
 
-if (BUILD_SHARED_LIBS)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    add_library(${PROJECT_NAME} SHARED ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES} ${SYSTEM_SOURCE_FILES})
-else()
-    add_library(${PROJECT_NAME} STATIC ${CORE_SOURCE_FILES} ${GRAPHICS_SOURCE_FILES} ${MATH_SOURCE_FILES} ${SYSTEM_SOURCE_FILES})
-endif()
+add_library(${PROJECT_NAME})
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE
+    ${CORE_SOURCE_FILES}
+    ${GRAPHICS_SOURCE_FILES}
+    ${MATH_SOURCE_FILES}
+    ${SYSTEM_SOURCE_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "./include")
-target_include_directories(${PROJECT_NAME} PRIVATE ${STB_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLAD_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${STB_INCLUDE_DIR})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIB_FILE})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${GLAD_LIB_FILE})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIB_FILE})
+set(ENGINE_DEPENDENCIES
+    glad::glad
+    FreeType::FreeType
+    GLFW3::GLFW3)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_DEPENDENCIES})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+
+
+include(GNUInstallDirs)
 
 #Установка целевого продукта
 install(TARGETS ${PROJECT_NAME}
@@ -77,8 +91,6 @@ install(TARGETS ${PROJECT_NAME}
     ARCHIVE DESTINATION bin/lib              #То же самое для архивированных версий (.lib)
     RUNTIME DESTINATION bin                  #Исполняемые файлы (*.exe)
     PUBLIC_HEADER DESTINATION include)       #Заголовочные файлы
-
-install(FILES cmake/MathConfig.cmake DESTINATION lib/cmake/${PROJECT_NAME})
 
 #Экспорт целевой спецификации
 install(EXPORT ${PROJECT_NAME}Targets
@@ -89,9 +101,6 @@ install(EXPORT ${PROJECT_NAME}Targets
 export(EXPORT ${PROJECT_NAME}Targets
     NAMESPACE Engine::
     FILE ${PROJECT_NAME}Config.cmake)
-
-#Определение версии пакета
-set(PACKAGE_VERSION "1.0.0")
 
 #Генерация файла конфигурации с версией
 configure_file(

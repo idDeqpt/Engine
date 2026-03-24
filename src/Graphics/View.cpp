@@ -10,8 +10,8 @@
 namespace eng
 {
 
-gfx::View* gfx::View::m_active2d = nullptr;
-gfx::View* gfx::View::m_active3d = nullptr;
+gfx::View* gfx::View::m_active2d = new gfx::View(); //xd
+gfx::View* gfx::View::m_active3d = new gfx::View(); //xd
 
 
 gfx::View::View() : core::Node3D()

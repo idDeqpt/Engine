@@ -1,1 +1,1 @@
-set(STB_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../deps/includes/stb")
+set(STB_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../deps/stb/include")
