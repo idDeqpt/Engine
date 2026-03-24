@@ -7,7 +7,7 @@
 
 namespace eng::core
 {
-	class Node2D : Node
+	class Node2D : public Node
 	{
 	public:
 		Node2D();
