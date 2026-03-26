@@ -19,6 +19,7 @@ set(GRAPHICS_SOURCE_FILES
     src/Graphics/2D/CanvasItem.cpp
     src/Graphics/2D/Shape2D.cpp
     src/Graphics/2D/Text2D.cpp
+    src/Graphics/3D/Camera3D.cpp
     src/Graphics/3D/GeometricMesh.cpp
     src/Graphics/3D/Mesh.cpp
     src/Graphics/Color.cpp

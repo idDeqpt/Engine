@@ -5,8 +5,8 @@
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/3D/Mesh.hpp>
-#include <Engine/Graphics/View.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -115,11 +115,11 @@ class Root : public eng::core::Node
 public:
 	void onSetup()
 	{
-		auto view3d = addChild<eng::gfx::View>("view3");
-		view3d->setPerspective(3.14*0.25, float(900)/600, 1, 100);
-		view3d->setPosition(eng::mth::Vec3(25, 20, 50));
-		view3d->setRotation(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -0.8));
-		eng::gfx::View::setActive3d(view3d);
+		auto camera3d = addChild<eng::gfx::Camera3D>("Camera3d");
+		camera3d->setPerspective(3.14*0.25, float(900)/600, 1, 100);
+		camera3d->setPosition(eng::mth::Vec3(25, 20, 50));
+		camera3d->setRotation(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -0.8));
+		camera3d->setActive();
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));

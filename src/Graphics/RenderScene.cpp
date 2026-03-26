@@ -3,10 +3,10 @@
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Shader.hpp>
-#include <Engine/Graphics/View.hpp>
 #include <Engine/Graphics/Color.hpp>
 
 #include <glad/glad.h>
@@ -140,9 +140,9 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 	first_pass.shader->use();
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 
-	View* active_view = gfx::View::getActive3d();
-	first_pass.shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	first_pass.shader->setUniformMatrix4fv("uView",       active_view->getViewMatrix().getValuesPtr());
+	Camera3D& active_camera = gfx::Camera3D::getActive();
+	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
+	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
 	m_framebuffers3d[0]->clear(m_clear_color);
 	for (Drawable* obj : m_objects3d)
