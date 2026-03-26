@@ -8,6 +8,7 @@ project(${PROJECT_NAME}
     LANGUAGES CXX)
 
 set(CORE_SOURCE_FILES
+    src/Core/Engine.cpp
     src/Core/Node.cpp
     src/Core/Node2D.cpp
     src/Core/Node3D.cpp

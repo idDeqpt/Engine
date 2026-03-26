@@ -1,12 +1,11 @@
 #ifndef RENDER_MANAGER_STATIC_CLASS_HEADER
 #define RENDER_MANAGER_STATIC_CLASS_HEADER
 
+#include <Engine/Graphics/RenderScene.hpp>
 #include <vector>
 
 namespace eng::gfx
 {
-	class RenderScene;
-
 	class RenderManager
 	{
 	public:

@@ -1,0 +1,121 @@
+#include <iostream>
+
+#include <Engine/Core/Engine.hpp>
+#include <Engine/Core/Node.hpp>
+#include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Graphics/3D/Mesh.hpp>
+#include <Engine/Graphics/Color.hpp>
+#include <Engine/Graphics/RenderManager.hpp>
+
+
+class UM : public eng::gfx::Mesh
+{
+public:
+	void onSetup()
+	{
+		eng::gfx::RenderManager::getMainScene()->addObject3d(*this);
+
+		std::string resources_dir = "E:/Programming/Projects/C++/Engine/tests/resources";
+		eng::gfx::Texture* tex[2];
+		std::vector<std::string>images = {
+			"/bricks.jpg",
+			"/bricks-normal.jpg",
+		};
+
+		std::cout << "TEXTURES\n";
+		for (unsigned int i = 0; i < images.size(); i++)
+		{
+			auto load_result = eng::core::ResourceManager::load<eng::gfx::Texture>({resources_dir + images[i]});
+			tex[i] = load_result.second;
+			std::cout << "Tex" << i << ": " << tex[i]->getLastError() << std::endl;
+		}
+
+		const unsigned int floor_size     = 50;
+		const unsigned int floor_accuracy = 30;
+		const unsigned int floor_points_count  = floor_accuracy*floor_accuracy;
+		const unsigned int floor_normals_count = (floor_accuracy - 1)*(floor_accuracy - 1)*2;
+		const unsigned int floor_indexes_count = floor_normals_count*3;
+
+		eng::mth::Vec3 floor_points    [floor_points_count];
+		eng::mth::Vec2 floor_tex_coords[floor_points_count];
+		eng::mth::Vec3 floor_normals   [floor_normals_count];
+		eng::mth::Vec3 floor_tangents  [floor_normals_count];
+		unsigned int floor_indexes[floor_indexes_count];
+		unsigned int floor_normal_indexes[floor_indexes_count];
+
+		unsigned int index = 0;
+		for (unsigned int i = 0; i < floor_accuracy; i++)
+			for (unsigned int j = 0; j < floor_accuracy; j++)
+			{
+				floor_points[index]       = eng::mth::Vec3(floor_size*float(i)/(floor_accuracy-1), (rand()%10)*0.0,           floor_size*float(j)/(floor_accuracy-1));
+				floor_tex_coords[index++] = eng::mth::Vec2(float(i)/(floor_accuracy-1),            float(j)/(floor_accuracy-1));
+			}
+		index = 0;
+		for (unsigned int i = 0; i < (floor_accuracy - 1); i++)
+			for (unsigned int j = 0; j < (floor_accuracy - 1); j++)
+			{
+				unsigned int first  = i*floor_accuracy + j;
+				unsigned int second = first + floor_accuracy;
+
+				floor_normals[index/3]  = -(floor_points[second] - floor_points[first]).cross(floor_points[first + 1] - floor_points[first]).norm();
+				floor_tangents[index/3] = eng::mth::Vec3(1, 0, 0);
+				floor_normal_indexes[index] = index/3;
+				floor_indexes[index++] = first;
+				floor_normal_indexes[index] = index/3 + 1;
+				floor_indexes[index++] = second;
+				floor_normal_indexes[index] = index/3 + 2;
+				floor_indexes[index++] = first + 1;
+
+				floor_normals[index/3]  = -(floor_points[second] - floor_points[first + 1]).cross(floor_points[second + 1] - floor_points[second]).norm();
+				floor_tangents[index/3] = eng::mth::Vec3(1, 0, 0);
+				floor_normal_indexes[index] = index/3;
+				floor_indexes[index++] = second;
+				floor_normal_indexes[index] = index/3 + 1;
+				floor_indexes[index++] = second + 1;
+				floor_normal_indexes[index] = index/3 + 2;
+				floor_indexes[index++] = first + 1;
+			}
+
+		std::cout << "SUCCESS: " << this->loadData({floor_points,     floor_points_count,  floor_indexes,
+													floor_tex_coords, floor_points_count,  floor_indexes,
+													floor_normals,    floor_normals_count, floor_indexes,
+													floor_tangents,   floor_normals_count, floor_indexes, floor_indexes_count}) << std::endl;
+		this->setMaterial({
+			tex[0],
+			tex[1],
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr
+		});
+	}
+};
+
+
+class Root : public eng::core::Node
+{
+public:
+	void onSetup()
+	{
+		auto view3d = addChild<eng::gfx::View>("view");
+		view3d->setPerspective(3.14*0.25, float(900)/600, 1, 100);
+		view3d->setPosition(eng::mth::Vec3(25, 20, 50));
+		view3d->setRotation(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -0.8));
+		eng::gfx::View::setActive3d(view3d);
+
+		addChild<UM>("floor");
+	}
+};
+
+
+int main()
+{
+	Root r;
+	eng::core::Engine engine(r);
+	engine.setup();
+	engine.mainLoop();
+
+	system("pause");
+	return 0;
+}
