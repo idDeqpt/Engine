@@ -46,6 +46,39 @@ float mth::Mat3::det() const
 		   self[0][2] * (self[1][0] * self[2][1] - self[1][1] * self[2][0]);
 }
 
+bool mth::Mat3::invert(Mat3& out) const
+{
+	Mat3 self(*this);
+	Mat3 I = getIdentity();
+
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		float pivot = self[i][i];
+		if (pivot == 0)
+			return false;
+		float pivot_inv = 1.0/pivot;
+
+		for (unsigned int j = 0; j < 3; j++)
+		{
+			self[i][j] *= pivot_inv;
+			I[i][j] *= pivot_inv;
+		}
+
+		for (unsigned int k = 0; k < 3; k++)
+			if (k != i)
+			{
+				float factor = self[k][i];
+				for (unsigned int j = 0; j < 3; j++)
+				{
+					self[k][j] -= factor * self[i][j];
+					I[k][j] -= factor * I[i][j];
+				}
+			}
+	}
+	out = I;
+	return true;
+}
+
 
 float* mth::Mat3::getValuesPtr()
 {

@@ -26,6 +26,7 @@ namespace eng::mth
 			 float v20, float v21, float v22);
 
 		float det() const;
+		bool invert(Mat3& out) const;
 
 		float* getValuesPtr();
 
