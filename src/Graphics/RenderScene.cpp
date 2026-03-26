@@ -2,6 +2,7 @@
 
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Shader.hpp>
@@ -22,7 +23,7 @@ gfx::RenderScene::RenderScene():
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	m_quad_view.setOrtho(0, 1, 0, 1, -10, 10);
+	m_quad_view.setRect(0, 1, 0, 1);
 
 	m_objects2d.clear();
 	m_objects3d.clear();
@@ -86,9 +87,9 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 	first_pass.shader->use();
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 	
-	View* active_view = gfx::View::getActive2d();
-	first_pass.shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	first_pass.shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
+	Camera2D& active_camera = gfx::Camera2D::getActive();
+	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
+	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
 	if (m_framebuffers2d.size() > 1) m_framebuffers2d[0]->clear(m_clear_color);
 	for (Drawable* obj : m_objects2d)
@@ -118,8 +119,8 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 		// draw computed quad
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
 
-		pass.shader->setUniformMatrix4fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
-		pass.shader->setUniformMatrix4fv("uView", m_quad_view.getViewMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
 
 		m_framebuffers2d[i]->draw(light_shape, RenderStates());
 	}
@@ -141,7 +142,7 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 
 	View* active_view = gfx::View::getActive3d();
 	first_pass.shader->setUniformMatrix4fv("uProjection", active_view->getProjectionMatrix().getValuesPtr());
-	first_pass.shader->setUniformMatrix4fv("uView", active_view->getViewMatrix().getValuesPtr());
+	first_pass.shader->setUniformMatrix4fv("uView",       active_view->getViewMatrix().getValuesPtr());
 
 	m_framebuffers3d[0]->clear(m_clear_color);
 	for (Drawable* obj : m_objects3d)
@@ -171,8 +172,8 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 		// draw computed quad
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
 
-		pass.shader->setUniformMatrix4fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
-		pass.shader->setUniformMatrix4fv("uView", m_quad_view.getViewMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
 
 		m_framebuffers3d[i]->draw(light_shape, RenderStates());
 	}

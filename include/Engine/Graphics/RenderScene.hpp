@@ -1,9 +1,9 @@
 #ifndef RENDER_SCENE_CLASS_HEADER
 #define RENDER_SCENE_CLASS_HEADER
 
+#include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Graphics/View.hpp>
 
 #include <functional>
 #include <vector>
@@ -48,8 +48,8 @@ namespace eng::gfx
 		std::vector<Drawable*>     m_objects2d,      m_objects3d;
 		std::vector<RenderPass>    m_pipeline2d,     m_pipeline3d;
 		std::vector<RenderTarget*> m_framebuffers2d, m_framebuffers3d;
-		View    m_quad_view;
-		Color m_clear_color;
+		Camera2D m_quad_view;
+		Color    m_clear_color;
 
 		void addObject(   Drawable& object, std::vector<Drawable*>& vector);
 		void removeObject(Drawable& object, std::vector<Drawable*>& vector);

@@ -15,6 +15,7 @@ set(CORE_SOURCE_FILES
     src/Core/ResourceManager.cpp)
 
 set(GRAPHICS_SOURCE_FILES
+    src/Graphics/2D/Camera2D.cpp
     src/Graphics/2D/CanvasItem.cpp
     src/Graphics/2D/Shape2D.cpp
     src/Graphics/2D/Text2D.cpp
