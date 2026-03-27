@@ -129,7 +129,7 @@ public:
 	void onUpdate(float delta)
 	{
 		eng::mth::Vec3 vel;
-		constexpr float speed = 1;
+		constexpr float speed = 30;
 		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
 			vel.z -= speed;
 		if (eng::sys::EventManager::isPressed(GLFW_KEY_S))
@@ -144,7 +144,7 @@ public:
 			vel.y += speed;
 
 		if (eng::sys::EventManager::Mouse::moved())
-			m_rot_angles = m_rot_angles + eng::sys::EventManager::Mouse::getDelta()*delta;
+			m_rot_angles = m_rot_angles + eng::sys::EventManager::Mouse::getDelta();
 
 		this->setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
 		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -m_rot_angles.x*0.01));

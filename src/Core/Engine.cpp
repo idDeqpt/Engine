@@ -131,7 +131,7 @@ void core::Engine::mainLoop()
 
 		sys::EventManager::pull();
 
-		m_root_node->update(0.5);
+		m_root_node->update(delta_time);
 
 		eng::gfx::RenderManager::getMainScene()->render(*m_window);
 		m_window->display();

@@ -28,6 +28,7 @@ sys::Window::Window(int width, int height, std::string title) : gfx::RenderTarge
 		return;
 	}
 	glfwMakeContextCurrent(window_ptr);
+	glfwSwapInterval(0);
 
 	setViewport(0, 0, width, height);
 }
