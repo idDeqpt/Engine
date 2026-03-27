@@ -4,6 +4,7 @@
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Graphics/LightManager.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
@@ -97,9 +98,9 @@ void core::Engine::setup()
 				"uAlbedo"
 			},
 			[&](eng::gfx::Shader* sh){
-				eng::gfx::View* active_view = eng::gfx::View::getActive3d();
-				eng::mth::Vec3 view_loc_pos = active_view->getPosition();
-				eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+				eng::gfx::Camera3D& active_view = eng::gfx::Camera3D::getActive();
+				eng::mth::Vec3 view_loc_pos = active_view.getPosition();
+				eng::mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 				eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();

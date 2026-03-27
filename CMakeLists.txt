@@ -31,8 +31,7 @@ set(GRAPHICS_SOURCE_FILES
     src/Graphics/RenderStates.cpp
     src/Graphics/RenderTarget.cpp
     src/Graphics/Shader.cpp
-    src/Graphics/Texture.cpp
-    src/Graphics/View.cpp)
+    src/Graphics/Texture.cpp)
 
 set(MATH_SOURCE_FILES
     src/Math/Vec2.cpp

@@ -7,13 +7,16 @@
 #include <Engine/Core/Node3D.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/System/Window.hpp>
+#include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
+#include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Font.hpp>
 #include <Engine/Graphics/LightManager.hpp>
-#include <Engine/System/EventManager.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/3D/Mesh.hpp>
 #include <Engine/Graphics/3D/GeometricMesh.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
@@ -21,7 +24,6 @@
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
-#include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
@@ -31,68 +33,6 @@
 #include <cmath>
 #include <vector>
 #include <random>
-
-void print(const eng::mth::Mat4& mat)
-{
-	for (unsigned int i = 0; i < 4; i++)
-	{
-		for (unsigned int j = 0; j < 4; j++)
-			std::cout << mat[i][j] << " ";
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-}
-
-void print(const eng::mth::Mat3& mat)
-{
-	for (unsigned int i = 0; i < 3; i++)
-	{
-		for (unsigned int j = 0; j < 3; j++)
-			std::cout << mat[i][j] << " ";
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-}
-
-
-void print(const eng::mth::Quaternion& q)
-{
-	std::cout << q.w << " ";
-	std::cout << q.x << " ";
-	std::cout << q.y << " ";
-	std::cout << q.z << " ";
-	std::cout << std::endl;
-}
-
-void print(const eng::mth::Vec4& vec)
-{
-	std::cout << vec.x << " ";
-	std::cout << vec.y << " ";
-	std::cout << vec.z << " ";
-	std::cout << vec.w << " ";
-	std::cout << std::endl;
-}
-
-void print(const eng::mth::Vec3& vec)
-{
-	std::cout << vec.x << " ";
-	std::cout << vec.y << " ";
-	std::cout << vec.z << " ";
-	std::cout << std::endl;
-}
-
-eng::mth::Vec4 mult(const eng::mth::Mat4& mat, const eng::mth::Vec4& vec)
-{
-	eng::mth::Vec4 result;
-	for (int i = 0; i < 4; i++)
-	{
-		result.x += mat[i][0]*vec.x;
-		result.y += mat[i][1]*vec.y;
-		result.z += mat[i][2]*vec.z;
-		result.w += mat[i][3]*vec.w;
-	}
-	return result;
-}
 
 
 int main()
@@ -242,15 +182,14 @@ int main()
 		nullptr
 	});
 
-	eng::gfx::RenderStates states;
-	eng::gfx::View view3d;
+	eng::gfx::Camera3D camera3d;
 	//view3d.setOrtho(0, 10, 10, 0, -30, 30);
-	view3d.setPerspective(3.14*0.25, float(width)/height, 1, 100);
-	view3d.setPosition(eng::mth::Vec3(0, 1, 2));
-	eng::gfx::View::setActive3d(&view3d);
-	eng::gfx::View view2d;
-	view2d.setOrtho(0, width, height, 0, -10, 10);
-	eng::gfx::View::setActive2d(&view2d);
+	camera3d.setPerspective(3.14*0.25, float(width)/height, 1, 100);
+	camera3d.setPosition(eng::mth::Vec3(0, 1, 2));
+	camera3d.setActive();
+	eng::gfx::Camera2D camera2d;
+	camera2d.setSize(eng::mth::Vec2(width, height));
+	camera2d.setActive();
 
 	std::vector<eng::mth::Mat4> translations;
 	for (unsigned int i = 0; i < floor_points_count; i+=10)
@@ -309,9 +248,9 @@ int main()
 				"uAlbedo"
 			},
 			[&](eng::gfx::Shader* sh){
-				eng::gfx::View* active_view = &view3d;
-				eng::mth::Vec3 view_loc_pos = active_view->getPosition();
-				eng::mth::Vec4 view_glob_pos = active_view->getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+				eng::gfx::Camera3D& active_view = camera3d;
+				eng::mth::Vec3 view_loc_pos = active_view.getPosition();
+				eng::mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
 				eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
@@ -342,9 +281,6 @@ int main()
 	eng::mth::Vec2 rot_angles;
 	float delta_time = 0;
 	float light_rot = 0;
-
-	eng::gfx::View::setActive3d(&view3d);
-	eng::gfx::View::setActive2d(&view2d);
 
 	std::cout << "START" << std::endl;
 	while(window.isOpen())
@@ -377,19 +313,19 @@ int main()
 			rot_angles = rot_angles + eng::sys::EventManager::Mouse::getDelta();
 		eng::gfx::LightManager::enableDirectionalLight({eng::mth::Quaternion(eng::mth::Vec3(0, 0, 1), light_rot).rotateVec(eng::mth::Vec3(0, -1, 0)), eng::mth::Vec3(1, 1, 1)});
 		
-		view3d.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
-		view3d.rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
-		view3d.rotate(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
+		camera3d.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
+		camera3d.rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -rot_angles.x*0.01));
+		camera3d.rotate(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -rot_angles.y*0.01));
 
 		if (vel.x || vel.y || vel.z)
-			view3d.relativeMove(vel);
+			camera3d.relativeMove(vel);
 
 		float time = (GLfloat)glfwGetTime();
 		//obj.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0.1, 1, 0), time*0.5));
 		parent.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), time*0.5));
 
 		info_texts[0].setString("Frame time: " + std::to_string(delta_time) + "s");
-		info_texts[1].setString("Posi\ntion: " + std::to_string(view3d.getPosition().x) + " " + std::to_string(view3d.getPosition().y) + " " + std::to_string(view3d.getPosition().z));
+		info_texts[1].setString("Posi\ntion: " + std::to_string(camera3d.getPosition().x) + " " + std::to_string(camera3d.getPosition().y) + " " + std::to_string(camera3d.getPosition().z));
 
 
 		rs->render(window);

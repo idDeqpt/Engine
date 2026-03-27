@@ -1,9 +1,7 @@
 #ifndef RENDER_STATES_CLASS_HEADER
 #define RENDER_STATES_CLASS_HEADER
 
-#include <Engine/Graphics/View.hpp>
 #include <Engine/Math/Transform3.hpp>
-
 
 namespace eng::gfx
 {
