@@ -12,7 +12,9 @@ set(CORE_SOURCE_FILES
     src/Core/Node.cpp
     src/Core/Node2D.cpp
     src/Core/Node3D.cpp
-    src/Core/ResourceManager.cpp)
+    src/Core/ResourceManager.cpp
+    src/Core/Timer.cpp
+    src/Core/TimeManager.cpp)
 
 set(GRAPHICS_SOURCE_FILES
     src/Graphics/2D/Camera2D.cpp

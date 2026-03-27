@@ -2,6 +2,8 @@
 
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/Timer.hpp>
+#include <Engine/Core/TimeManager.hpp>
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
@@ -9,9 +11,8 @@
 #include <Engine/Graphics/LightManager.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
-
-#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <string>
@@ -21,10 +22,12 @@ namespace eng
 {
 
 core::Engine::Engine(Node& root):
-	m_root_node(&root)
+	m_root_node(&root),
+	m_framerate(60)
 {
 	m_window = new sys::Window(900, 600, "LearnOpenGL");
 
+	eng::core::TimeManager::initialize();
 	eng::gfx::RenderManager::initialize();
 	eng::sys::EventManager::initialize(m_window->getHandler());
 	eng::gfx::LightManager::initialize();
@@ -124,20 +127,25 @@ void core::Engine::setup()
 
 void core::Engine::mainLoop()
 {
-	float delta_time = 0;
+	float real_frame_delta = 0;
+	float full_frame_delta = 0;
+	Timer timer;
 	while(m_window->isOpen())
 	{
-		float start_time = glfwGetTime();
+		timer.restart();
 
 		sys::EventManager::pull();
 
-		m_root_node->update(delta_time);
+		m_root_node->update(full_frame_delta);
 
 		eng::gfx::RenderManager::getMainScene()->render(*m_window);
 		m_window->display();
 
-		delta_time = glfwGetTime() - start_time;
-		std::cout << delta_time << std::endl;
+		real_frame_delta = timer.getElapsedSeconds();
+		float target_frame_delta = 1.0/m_framerate;
+		if (real_frame_delta < target_frame_delta)
+			TimeManager::sleepSeconds(target_frame_delta - real_frame_delta);
+		full_frame_delta = timer.getElapsedSeconds();
 	}
 }
 
