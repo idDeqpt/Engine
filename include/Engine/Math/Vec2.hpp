@@ -21,6 +21,8 @@ namespace eng::mth
 
 	Vec2 operator+(const Vec2& left, const Vec2& right);
 	Vec2 operator-(const Vec2& left, const Vec2& right);
+	Vec2 operator*(const Vec2& vec, float coef);
+	Vec2 operator*(float coef, const Vec2& vec);
 }
 
 #endif //VECTOR_2_HEADER

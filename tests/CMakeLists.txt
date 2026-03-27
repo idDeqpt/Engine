@@ -18,6 +18,9 @@ target_link_libraries(engine_tests PRIVATE Engine::Engine)
 target_include_directories(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/glad/include) #for tests
 target_include_directories(graphics_tests PRIVATE ${PATH_TO_LIB}/deps/glfw-3.4/include) #for tests
 
+target_include_directories(engine_tests PRIVATE ${PATH_TO_LIB}/deps/glad/include) #for tests
+target_include_directories(engine_tests PRIVATE ${PATH_TO_LIB}/deps/glfw-3.4/include) #for tests
+
 target_compile_features(math_tests PRIVATE cxx_std_17)
 target_compile_features(graphics_tests PRIVATE cxx_std_17)
 target_compile_features(engine_tests PRIVATE cxx_std_17)

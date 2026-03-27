@@ -3,6 +3,7 @@
 #include <Engine/Core/Engine.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
@@ -10,6 +11,10 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
 #include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Quaternion.hpp>
+
+#include <GLFW/glfw3.h>
 
 
 class UM : public eng::gfx::Mesh
@@ -110,16 +115,56 @@ public:
 };
 
 
+class Camera : public eng::gfx::Camera3D
+{
+public:
+	void onSetup()
+	{
+		this->setPerspective(3.14*0.25, float(900)/600, 1, 100);
+		this->setPosition(eng::mth::Vec3(25, 20, 50));
+		this->setRotation(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -0.8));
+		this->setActive();
+	}
+
+	void onUpdate(float delta)
+	{
+		eng::mth::Vec3 vel;
+		constexpr float speed = 1;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
+			vel.z -= speed;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_S))
+			vel.z += speed;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_A))
+			vel.x -= speed;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_D))
+			vel.x += speed;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT_CONTROL))
+			vel.y -= speed;
+		if (eng::sys::EventManager::isPressed(GLFW_KEY_SPACE))
+			vel.y += speed;
+
+		if (eng::sys::EventManager::Mouse::moved())
+			m_rot_angles = m_rot_angles + eng::sys::EventManager::Mouse::getDelta()*delta;
+
+		this->setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
+		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -m_rot_angles.x*0.01));
+		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -m_rot_angles.y*0.01));
+
+		if (vel.x || vel.y || vel.z)
+			this->relativeMove(vel*delta);
+	}
+
+protected:
+	eng::mth::Vec2 m_rot_angles;
+};
+
+
 class Root : public eng::core::Node
 {
 public:
 	void onSetup()
 	{
-		auto camera3d = addChild<eng::gfx::Camera3D>("Camera3d");
-		camera3d->setPerspective(3.14*0.25, float(900)/600, 1, 100);
-		camera3d->setPosition(eng::mth::Vec3(25, 20, 50));
-		camera3d->setRotation(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -0.8));
-		camera3d->setActive();
+		addChild<Camera>("Camera3d");
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
