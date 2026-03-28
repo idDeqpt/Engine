@@ -4,6 +4,7 @@
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/System/EventManager.hpp>
+#include <Engine/System/Keyboard.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
@@ -130,17 +131,17 @@ public:
 	{
 		eng::mth::Vec3 vel;
 		constexpr float speed = 30;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::W))
 			vel.z -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_S))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::S))
 			vel.z += speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_A))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::A))
 			vel.x -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_D))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::D))
 			vel.x += speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT_CONTROL))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::LEFT_CONTROL))
 			vel.y -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_SPACE))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::SPACE))
 			vel.y += speed;
 
 		if (eng::sys::EventManager::Mouse::moved())

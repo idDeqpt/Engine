@@ -2,8 +2,12 @@
 #define EVENT_MANAGER_STATIC_CLASS_HEADER
 
 #include <Engine/Math/Vec2.hpp>
+#include <Engine/System/Keyboard.hpp>
 
-#define GFX_MOUSE_BUTTONS_START 1024
+#include <memory>
+
+
+#define GFX_MOUSE_BUTTONS_START 0
 
 typedef unsigned int uint;
 struct GLFWwindow;
@@ -26,8 +30,8 @@ namespace eng::sys
 				BUTTON_6 = GFX_MOUSE_BUTTONS_START + 5,
 				BUTTON_7 = GFX_MOUSE_BUTTONS_START + 6,
 				BUTTON_8 = GFX_MOUSE_BUTTONS_START + 7,
-				LEFT = BUTTON_1,
-				RIGTH = BUTTON_2,
+				LEFT   = BUTTON_1,
+				RIGTH  = BUTTON_2,
 				MIDDLE = BUTTON_3
 			};
 
@@ -52,17 +56,25 @@ namespace eng::sys
 		static bool isReleased(int key_code);
 		static bool isJustReleased(int key_code);
 
+		static bool isPressed(Mouse::Button key_code);
+		static bool isJustPressed(Mouse::Button key_code);
+		static bool isReleased(Mouse::Button key_code);
+		static bool isJustReleased(Mouse::Button key_code);
+
 		static void lockCursor();
 		static void unlockCursor();
 		static void setCursorLock(bool state);
 		static bool getCursorLock();
 
+		static Keyboard& getKeyboard();
+
 	protected:
 		static GLFWwindow* m_active_window_ptr;
-		static bool m_key_pressed[1032];
-		static uint m_key_change_frames[1032];
+		static bool m_key_pressed[10];
+		static uint m_key_change_frames[10];
 		static uint m_current_frame;
 		static bool m_cursor_locked;
+		static std::unique_ptr<Keyboard> s_keyboard;
 
 		static void key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode);
 		static void mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode);
