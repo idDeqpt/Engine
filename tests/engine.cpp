@@ -5,6 +5,7 @@
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/System/EventManager.hpp>
 #include <Engine/System/Keyboard.hpp>
+#include <Engine/System/Mouse.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
@@ -143,9 +144,14 @@ public:
 			vel.y -= speed;
 		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::SPACE))
 			vel.y += speed;
+		
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::L))
+			eng::sys::EventManager::setCursorMode(eng::sys::Mouse::CursorMode::DISABLE);
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::K))
+			eng::sys::EventManager::setCursorMode(eng::sys::Mouse::CursorMode::NORMAL);
 
-		if (eng::sys::EventManager::Mouse::moved())
-			m_rot_angles = m_rot_angles + eng::sys::EventManager::Mouse::getDelta();
+		if (eng::sys::EventManager::getMouse().moved())
+			m_rot_angles = m_rot_angles + eng::sys::EventManager::getMouse().getDelta();
 
 		this->setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
 		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -m_rot_angles.x*0.01));

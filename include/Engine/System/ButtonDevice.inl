@@ -34,16 +34,6 @@ bool sys::ButtonDevice<BUTTONS_COUNT>::isJustReleased(int key_code)
 	return !m_buttons_states[key_code].is_pressed && (m_buttons_states[key_code].last_change_frame == m_current_frame);
 }
 
-
-template<unsigned int BUTTONS_COUNT>
-void sys::ButtonDevice<BUTTONS_COUNT>::action_handler(int key, int scancode, int action, int mode)
-{
-	if (action == Action::PRESSED)
-		m_buttons_states[key] = {true,  m_current_frame};
-	else if (action == Action::RELEASED)
-		m_buttons_states[key] = {false, m_current_frame};
-}
-
 } //namespace eng
 
 #endif //BUTTON_DEVICE_CLASS_INLINE

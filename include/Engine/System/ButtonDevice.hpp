@@ -6,7 +6,7 @@
 namespace eng::sys
 {
 	template<unsigned int BUTTONS_COUNT>
-	class ButtonDevice : public InputDevice
+	class ButtonDevice : public virtual InputDevice
 	{
 	public:
 		enum Action
@@ -28,8 +28,6 @@ namespace eng::sys
 		bool isJustPressed(int key_code);
 		bool isReleased(int key_code);
 		bool isJustReleased(int key_code);
-
-		void action_handler(int key, int scancode, int action, int mode);
 
 	protected:
 		ButtonState m_buttons_states[BUTTONS_COUNT];

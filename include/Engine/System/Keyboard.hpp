@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_CLASS_HEADER
 #define KEYBOARD_CLASS_HEADER
 
- #include <Engine/System/ButtonDevice.hpp>
+#include <Engine/System/ButtonDevice.hpp>
 
 namespace eng::sys
 {
@@ -149,12 +149,17 @@ namespace eng::sys
 			MENU          = 348,
 		};
 
-		Keyboard();
+		static Keyboard& getInstance();
 
 		bool isPressed(Keyboard::Key key);
 		bool isJustPressed(Keyboard::Key key);
 		bool isReleased(Keyboard::Key key);
 		bool isJustReleased(Keyboard::Key key);
+		
+		void action_handler(int key, int scancode, int action, int mode);
+
+	private:
+		Keyboard();
 	};
 }
 

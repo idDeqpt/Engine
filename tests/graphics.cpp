@@ -288,29 +288,32 @@ int main()
 		float start_time = glfwGetTime();
 		eng::mth::Vec3 vel;
 		eng::sys::EventManager::pull();
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_ESCAPE)) window.close();
-		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_R)) tex[6]->setSmooth(false);
-		if (eng::sys::EventManager::isJustReleased(GLFW_KEY_R)) tex[6]->setSmooth(true);
-		if (eng::sys::EventManager::isJustPressed(GLFW_KEY_L)) eng::sys::EventManager::setCursorLock(!eng::sys::EventManager::getCursorLock());
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_W))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::ESCAPE)) window.close();
+		if (eng::sys::EventManager::getKeyboard().isJustPressed(eng::sys::Keyboard::Key::R)) tex[6]->setSmooth(false);
+		if (eng::sys::EventManager::getKeyboard().isJustReleased(eng::sys::Keyboard::Key::R)) tex[6]->setSmooth(true);
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::L))
+			eng::sys::EventManager::setCursorMode(eng::sys::Mouse::CursorMode::DISABLE);
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::K))
+			eng::sys::EventManager::setCursorMode(eng::sys::Mouse::CursorMode::NORMAL);
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::W))
 			vel.z -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_S))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::S))
 			vel.z += speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_A))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::A))
 			vel.x -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_D))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::D))
 			vel.x += speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT_CONTROL))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::LEFT_CONTROL))
 			vel.y -= speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_SPACE))
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::SPACE))
 			vel.y += speed;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_RIGHT))
+		if (eng::sys::EventManager::getMouse().isPressed(eng::sys::Mouse::Button::RIGHT))
 			light_rot += 0.05;
-		if (eng::sys::EventManager::isPressed(GLFW_KEY_LEFT))
+		if (eng::sys::EventManager::getMouse().isPressed(eng::sys::Mouse::Button::LEFT))
 			light_rot -= 0.05;
 
-		if (eng::sys::EventManager::Mouse::moved())
-			rot_angles = rot_angles + eng::sys::EventManager::Mouse::getDelta();
+		if (eng::sys::EventManager::getMouse().moved())
+			rot_angles = rot_angles + eng::sys::EventManager::getMouse().getDelta();
 		eng::gfx::LightManager::enableDirectionalLight({eng::mth::Quaternion(eng::mth::Vec3(0, 0, 1), light_rot).rotateVec(eng::mth::Vec3(0, -1, 0)), eng::mth::Vec3(1, 1, 1)});
 		
 		camera3d.setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));

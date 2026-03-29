@@ -48,6 +48,7 @@ set(MATH_SOURCE_FILES
 set(SYSTEM_SOURCE_FILES
     src/System/EventManager.cpp
     src/System/Keyboard.cpp
+    src/System/Mouse.cpp
     src/System/Window.cpp)
 
 
