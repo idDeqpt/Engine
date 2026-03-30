@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <Engine/Core/Engine.hpp>
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/System/EventManager.hpp>
@@ -178,6 +179,10 @@ public:
 
 	void onUpdate(float delta)
 	{
+		eng::core::Logger::debug(std::to_string(delta + 1 + 1 + 1 + 1));
+		eng::core::Logger::info(std::to_string(delta + 1 + 1 + 1));
+		eng::core::Logger::warning(std::to_string(delta + 1 + 1));
+		eng::core::Logger::error(std::to_string(delta + 1));
 		this->setString(std::to_string(delta));
 	}
 };
