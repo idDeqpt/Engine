@@ -102,8 +102,7 @@ int main()
 		std::cout << "Tex" << i << ": " << tex[i]->getLastError() << std::endl;
 	}
 
-	eng::gfx::Font font;
-	font.loadFromFile(resources_dir + "/GameFont.ttf");
+	auto font = *(eng::core::ResourceManager::load<eng::gfx::Font>({resources_dir + "/GameFont.ttf"}).second);
 
 	const unsigned int floor_size     = 50;
 	const unsigned int floor_accuracy = 30;

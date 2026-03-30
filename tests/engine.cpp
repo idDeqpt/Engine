@@ -8,6 +8,7 @@
 #include <Engine/System/Mouse.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/3D/Mesh.hpp>
 #include <Engine/Graphics/Color.hpp>
@@ -166,6 +167,22 @@ protected:
 };
 
 
+class UText : public eng::gfx::Text2D
+{
+public:
+	void onSetup()
+	{
+		eng::gfx::RenderManager::getMainScene()->addObject(*this);
+		this->setFont(*eng::core::ResourceManager::load<eng::gfx::Font>({"E:/Programming/Projects/C++/Engine/tests/resources/GameFont.ttf"}).second);
+	}
+
+	void onUpdate(float delta)
+	{
+		this->setString(std::to_string(delta));
+	}
+};
+
+
 class Root : public eng::core::Node
 {
 public:
@@ -179,6 +196,7 @@ public:
 
 		addChild<UT>("shape");
 		addChild<UM>("floor");
+		addChild<UText>("text");
 	}
 };
 

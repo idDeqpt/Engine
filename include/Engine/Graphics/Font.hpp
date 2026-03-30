@@ -1,6 +1,7 @@
 #ifndef FONT_CLASS_HEADER
 #define FONT_CLASS_HEADER
 
+#include <Engine/Core/Resource.hpp>
 #include <Engine/Graphics/Texture.hpp>
 
 #include <string>
@@ -16,7 +17,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 namespace eng::gfx
 {
 
-	class Font
+	class Font : public core::Resource
 	{
 	public:
 		struct Character
@@ -43,7 +44,8 @@ namespace eng::gfx
 
 		void remove();
 
-		bool loadFromFile(std::string path);
+		bool loadFromFile(std::initializer_list<std::string> paths);
+		bool loadFromFile(const std::string& path);
 
 		Texture* getTexture(unsigned int size);
 		Font::Character getCharacter(unsigned char character, unsigned int size);

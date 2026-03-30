@@ -57,7 +57,12 @@ void gfx::Font::remove()
 }
 
 
-bool gfx::Font::loadFromFile(std::string path)
+bool gfx::Font::loadFromFile(std::initializer_list<std::string> paths)
+{
+	return loadFromFile(*paths.begin());
+}
+
+bool gfx::Font::loadFromFile(const std::string& path)
 {
 	remove();
 
