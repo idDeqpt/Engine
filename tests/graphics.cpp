@@ -103,7 +103,7 @@ int main()
 	}
 
 	eng::gfx::Font font;
-	font.loadFromFile(resources_dir + "/GameFont.ttf", 24);
+	font.loadFromFile(resources_dir + "/GameFont.ttf");
 
 	const unsigned int floor_size     = 50;
 	const unsigned int floor_accuracy = 30;
@@ -202,10 +202,11 @@ int main()
 	eng::gfx::LightManager::enableDirectionalLight({eng::mth::Vec3(0, -1, 0), eng::mth::Vec3(1, 1, 1)});
 
 	eng::gfx::Text2D info_texts[2];
+	info_texts[0].setCharacterSize(32);
 	for (unsigned int i = 0; i < 2; i++)
 	{
 		info_texts[i].setFont(font);
-		info_texts[i].setPosition(eng::mth::Vec2(0, font.getSize()*i));
+		info_texts[i].setPosition(eng::mth::Vec2(0, info_texts[i].getCharacterSize()*i));
 	}
 
 	eng::gfx::Shape2D shape(eng::gfx::Shape2D::Type::RECTANGLE);

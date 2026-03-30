@@ -6,8 +6,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <vector>
 #include <string>
+#include <vector>
+#include <map>
 
 
 namespace eng
@@ -32,9 +33,7 @@ void gfx::Font::finalize()
 
 
 gfx::Font::Font():
-	m_face(nullptr),
-	m_texture(nullptr),
-	m_size(0)
+	m_face(nullptr)
 {
 	s_fonts_count++;
 	Font::initialize();
@@ -50,68 +49,71 @@ gfx::Font::~Font()
 
 void gfx::Font::remove()
 {
-	if (m_texture != nullptr) {delete m_texture;     m_texture = nullptr;}
-	if (m_face    != nullptr) {FT_Done_Face(m_face); m_face    = nullptr;}
+	if (m_face != nullptr)
+	{
+		FT_Done_Face(m_face);
+		m_face = nullptr;
+	}
 }
 
 
-bool gfx::Font::loadFromFile(std::string path, unsigned int size)
+bool gfx::Font::loadFromFile(std::string path)
 {
 	remove();
 
 	FT_Face face;
 	if (FT_New_Face(s_lib, path.c_str(), 0, &face))
 		return false;
-
-	FT_Set_Pixel_Sizes(face, 0, size);
-
 	m_face = face;
-	m_texture = new Texture();
-	m_size = size;
-
-	m_texture->create(Texture::PixelFormat::RGBA);
-	unsigned char* data = new unsigned char[0];
-	m_texture->loadFromBuffer(data, 0, size);
-	delete[] data;
 
 	return true;
 }
 
 
-gfx::Texture* gfx::Font::getTexture()
+gfx::Texture* gfx::Font::getTexture(unsigned int size)
 {
-	return m_texture;
+	createFrame(size);
+	return &(m_frames[size].texture);
 }
 
-gfx::Font::Character gfx::Font::getCharacter(unsigned char character)
+gfx::Font::Character gfx::Font::getCharacter(unsigned char character, unsigned int size)
 {
-	for (unsigned int i = 0; i < m_characters.size(); i++)
-		if (m_characters[i].value == character)
-			return m_characters[i];
+	createFrame(size);
+	for (unsigned int i = 0; i < m_frames[size].characters.size(); i++)
+		if (m_frames[size].characters[i].value == character)
+			return m_frames[size].characters[i];
 
-	if (loadChar(character))
-		return m_characters.back();
+	if (loadChar(character, size))
+		return m_frames[size].characters.back();
 
 	return Font::Character();
 }
 
-unsigned int gfx::Font::getLoadedCharactersCount()
+unsigned int gfx::Font::getLoadedCharactersCount(unsigned int size)
 {
-	return m_characters.size();
-}
-
-unsigned int gfx::Font::getSize()
-{
-	return m_size;
+	createFrame(size);
+	return m_frames[size].characters.size();
 }
 
 
 
-bool gfx::Font::loadChar(unsigned char character)
+void gfx::Font::createFrame(unsigned int size)
 {
+	auto it = m_frames.find(size);
+	if (it != m_frames.end())
+		return;
+
+	m_frames[size].texture.create(Texture::PixelFormat::RGBA);
+}
+
+
+bool gfx::Font::loadChar(unsigned char character, unsigned int size)
+{
+	createFrame(size);
+	FT_Set_Pixel_Sizes(m_face, 0, size);
 	if (FT_Load_Char(m_face, character, FT_LOAD_RENDER)) return false;
 
-	unsigned int right_pos = m_texture->getSize().x;
+	unsigned int right_pos = m_frames[size].texture.getSize().x;
 	unsigned int new_size = right_pos + m_face->glyph->bitmap.width;
 
 	unsigned int pixels_count = m_face->glyph->bitmap.width*m_face->glyph->bitmap.rows;
@@ -125,8 +127,8 @@ bool gfx::Font::loadChar(unsigned char character)
 		pixels_rgba[pix_i + 3] = m_face->glyph->bitmap.buffer[i];
 	}
 
-	m_texture->resize(mth::Vec2(new_size, m_size));
-	m_texture->loadSubTexture(
+	m_frames[size].texture.resize(mth::Vec2(new_size, size));
+	m_frames[size].texture.loadSubTexture(
 		pixels_rgba,
 		mth::Vec2(right_pos, 0),
 		m_face->glyph->bitmap.width,
@@ -135,14 +137,14 @@ bool gfx::Font::loadChar(unsigned char character)
 
 	delete[] pixels_rgba;
 
-	m_characters.emplace_back();
-	m_characters.back().value          = character;
-	m_characters.back().bearingX       = m_face->glyph->bitmap_left;
-	m_characters.back().bearingY       = m_face->glyph->bitmap_top;
-	m_characters.back().width          = m_face->glyph->bitmap.width;
-	m_characters.back().height         = m_face->glyph->bitmap.rows;
-	m_characters.back().advance        = m_face->glyph->advance.x  >> 6;
-	m_characters.back().shift_into_tex = right_pos;
+	m_frames[size].characters.emplace_back();
+	m_frames[size].characters.back().value          = character;
+	m_frames[size].characters.back().bearingX       = m_face->glyph->bitmap_left;
+	m_frames[size].characters.back().bearingY       = m_face->glyph->bitmap_top;
+	m_frames[size].characters.back().width          = m_face->glyph->bitmap.width;
+	m_frames[size].characters.back().height         = m_face->glyph->bitmap.rows;
+	m_frames[size].characters.back().advance        = m_face->glyph->advance.x  >> 6;
+	m_frames[size].characters.back().shift_into_tex = right_pos;
 
 	return true;
 }

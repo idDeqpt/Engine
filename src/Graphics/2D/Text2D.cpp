@@ -12,7 +12,12 @@
 namespace eng
 {
 
-gfx::Text2D::Text2D() : m_font(nullptr), m_text_need_update(false), m_last_font_characters(0), CanvasItem()
+gfx::Text2D::Text2D():
+	m_font(nullptr),
+	m_text_need_update(false),
+	m_last_font_characters(0),
+	m_character_size(14),
+	CanvasItem()
 {
 	setPrimitiveType(PrimitiveType::TRIANGLES);
 }
@@ -30,10 +35,21 @@ void gfx::Text2D::setString(const std::string& new_text)
 	m_text_need_update = true;
 }
 
+void gfx::Text2D::setCharacterSize(unsigned int new_size)
+{
+	m_character_size = new_size;
+	m_text_need_update = true;
+}
+
 
 std::string gfx::Text2D::getString()
 {
 	return m_text;
+}
+
+unsigned int gfx::Text2D::getCharacterSize()
+{
+	return m_character_size;
 }
 
 
@@ -48,23 +64,23 @@ void gfx::Text2D::updateString()
 {
 	if (!m_font) return;
 
-	unsigned int relevant_characters_count = m_font->getLoadedCharactersCount();
+	unsigned int relevant_characters_count = m_font->getLoadedCharactersCount(m_character_size);
 	if (m_last_font_characters != relevant_characters_count)
 		m_text_need_update = true;
 
 	if (!m_text_need_update) return;
 
-	if (m_text.size() && m_font->getTexture())
+	if (m_text.size() && m_font->getTexture(m_character_size))
 	{
 		Font::Character* characters = new Font::Character[m_text.size()];
 		for (unsigned int i = 0; i < m_text.size(); i++)
-			characters[i] = m_font->getCharacter(m_text[i]);
+			characters[i] = m_font->getCharacter(m_text[i], m_character_size);
 
 		unsigned int vertices_count = m_text.size()*6;
 		CanvasItem::Vertex* total_vertices = new CanvasItem::Vertex[vertices_count];
 		CanvasItem::Vertex symbol_vertices[4];
 
-		Texture* font_tex = m_font->getTexture();
+		Texture* font_tex = m_font->getTexture(m_character_size);
 		mth::Vec2 tex_size = font_tex->getSize();
 
 		float last_char_x = 0;
@@ -74,7 +90,7 @@ void gfx::Text2D::updateString()
 			if (m_text[i] == '\n')
 			{
 				last_char_x = 0;
-				last_char_y += m_font->getSize();
+				last_char_y += m_character_size;
 				continue;
 			}
 			unsigned int vert_i = i*6;
@@ -89,7 +105,7 @@ void gfx::Text2D::updateString()
 
 			mth::Vec2 char_pos = {
 				last_char_x + characters[i].bearingX,
-				last_char_y + m_font->getSize() - float(characters[i].bearingY)
+				last_char_y + m_character_size - float(characters[i].bearingY)
 			};
 
 			symbol_vertices[0] = {{char_pos.x,                       char_pos.y},                        {tex_lt.x, tex_lt.y}};

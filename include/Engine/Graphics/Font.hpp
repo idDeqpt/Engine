@@ -2,8 +2,11 @@
 #define FONT_CLASS_HEADER
 
 #include <Engine/Graphics/Texture.hpp>
-#include <vector>
+
 #include <string>
+#include <vector>
+#include <map>
+
 
 struct FT_LibraryRec_;
 struct FT_FaceRec_;
@@ -29,25 +32,29 @@ namespace eng::gfx
 			Character();
 		};
 
+		struct Frame
+		{
+			Texture texture;
+			std::vector<Character> characters;
+		};
+
 		Font();
 		~Font();
 
 		void remove();
 
-		bool loadFromFile(std::string path, unsigned int size);
+		bool loadFromFile(std::string path);
 
-		Texture* getTexture();
-		Font::Character getCharacter(unsigned char character);
-		unsigned int getLoadedCharactersCount();
-		unsigned int getSize();
+		Texture* getTexture(unsigned int size);
+		Font::Character getCharacter(unsigned char character, unsigned int size);
+		unsigned int getLoadedCharactersCount(unsigned int size);
 
 	protected:
 		FT_Face m_face;
-		Texture* m_texture;
-		unsigned int m_size;
-		std::vector<Character> m_characters;
+		std::map<unsigned int, Frame> m_frames;
 
-		bool loadChar(unsigned char character);
+		void createFrame(unsigned int size);
+		bool loadChar(unsigned char character, unsigned int size);
 
 		static bool s_inited;
 		static unsigned int s_fonts_count;
