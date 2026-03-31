@@ -27,13 +27,13 @@ core::Node::~Node()
 
 void core::Node::setup()
 {
-	Logger::debug("Init START of \"" + getNamePath() + "\"");
+	Logger::debug("START setup of node \"" + getNamePath() + "\" START");
 
 	onSetup();
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->setup();
 
-	Logger::debug("Init END   of \"" + getNamePath() + "\"");
+	Logger::debug("END   setup of node \"" + getNamePath() + "\" END");
 }
 
 void core::Node::update(float delta)

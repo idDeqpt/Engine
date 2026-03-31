@@ -14,6 +14,11 @@
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
+#include "shaders/default2d-vert.hpp"
+#include "shaders/default2d-frag.hpp"
+#include "shaders/default3d-vert.hpp"
+#include "shaders/default3d-deferred-frag.hpp"
+#include "shaders/default3d-deferred-light-frag.hpp"
 
 #include <iostream>
 #include <string>
@@ -48,35 +53,26 @@ core::Engine::~Engine()
 void core::Engine::setup()
 {
 	Logger::debug("Start setup");
-	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 
-	eng::gfx::Shader* shader3d_deferred = eng::core::ResourceManager::load<eng::gfx::Shader>({
-		shaders_dir + "/default3d.vert",
-		shaders_dir + "/default3d-deferred.frag"
-	}).second;
-	std::cout << "Shader 3d-deferred error: " << shader3d_deferred->getLastError() << std::endl;
-	if (shader3d_deferred->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 3d-deferred error log: " << shader3d_deferred->getLastErrorLog() << std::endl;
+	static gfx::Shader shader2d = gfx::Shader(shader::default2d_vert, shader::default2d_frag);
+	Logger::debug("Default shader 2D loaded with error code: " + std::to_string(shader2d.getLastError()));
+	if (shader2d.getLastError())
+		Logger::error("Info: \n" + shader2d.getLastErrorLog());
 
-	eng::gfx::Shader* shader2d_deferred_light = eng::core::ResourceManager::load<eng::gfx::Shader>({
-		shaders_dir + "/default2d.vert",
-		shaders_dir + "/default3d-deferred-light.frag"
-	}).second;
-	std::cout << "Shader 2d-deferred-light error: " << shader2d_deferred_light->getLastError() << std::endl;
-	if (shader2d_deferred_light->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 2d-deferred-light error log: " << shader2d_deferred_light->getLastErrorLog() << std::endl;
+	static gfx::Shader shader3d_deferred = gfx::Shader(shader::default3d_vert, shader::default3d_deferred_frag);
+	Logger::debug("Default shader 3D deferred loaded with error code: " + std::to_string(shader3d_deferred.getLastError()));
+	if (shader3d_deferred.getLastError())
+		Logger::error("Info: \n" + shader3d_deferred.getLastErrorLog());
 
-	eng::gfx::Shader* shader2d = eng::core::ResourceManager::load<eng::gfx::Shader>({
-		shaders_dir + "/default2d.vert",
-		shaders_dir + "/default2d.frag"
-	}).second;
-	std::cout << "Shader 2d error: " << shader2d->getLastError() << std::endl;
-	if (shader2d->getLastError() != eng::gfx::Shader::Error::NO_ERROR)
-		std::cout << "Shader 2d error log: " << shader2d->getLastErrorLog() << std::endl;
+	static gfx::Shader shader2d_deferred_light = gfx::Shader(shader::default2d_vert, shader::default3d_deferred_light_frag);
+	Logger::debug("Default shader 2D deferred light loaded with error code: " + std::to_string(shader2d_deferred_light.getLastError()));
+	if (shader2d_deferred_light.getLastError())
+		Logger::error("Info: \n" + shader2d_deferred_light.getLastErrorLog());
+
 
 	std::vector<eng::gfx::RenderScene::RenderPass> pipeline2d = {
 		{
-			shader2d,
+			&shader2d,
 			{eng::gfx::Texture::PixelFormat::RGBA},
 			{},
 			nullptr
@@ -85,7 +81,7 @@ void core::Engine::setup()
 
 	std::vector<eng::gfx::RenderScene::RenderPass> pipeline3d = {
 		{
-			shader3d_deferred,
+			&shader3d_deferred,
 			{
 				eng::gfx::Texture::PixelFormat::RGBA32F, //position
 				eng::gfx::Texture::PixelFormat::RGBA32F, //normal
@@ -97,20 +93,20 @@ void core::Engine::setup()
 			nullptr
 		},
 		{
-			shader2d_deferred_light,
+			&shader2d_deferred_light,
 			{},
 			{
 				"uPosition",
 				"uNormal",
 				"uAlbedo"
 			},
-			[&](eng::gfx::Shader* sh){
-				eng::gfx::Camera3D& active_view = eng::gfx::Camera3D::getActive();
-				eng::mth::Vec3 view_loc_pos = active_view.getPosition();
-				eng::mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*eng::mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+			[&](gfx::Shader* sh){
+				gfx::Camera3D& active_view = gfx::Camera3D::getActive();
+				mth::Vec3 view_loc_pos = active_view.getPosition();
+				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
-				eng::gfx::LightManager::DirectionalLight light = eng::gfx::LightManager::getDirectionalLight();
+				gfx::LightManager::DirectionalLight light = gfx::LightManager::getDirectionalLight();
 				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
 				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
 				if (use_directional_light)
@@ -122,9 +118,9 @@ void core::Engine::setup()
 		}
 	};
 
-	eng::gfx::RenderManager::getMainScene()->setClearColor(eng::gfx::Color(120));
-	eng::gfx::RenderManager::getMainScene()->setRenderPipeline2d(pipeline2d);
-	eng::gfx::RenderManager::getMainScene()->setRenderPipeline3d(pipeline3d);
+	gfx::RenderManager::getMainScene()->setClearColor(gfx::Color(120));
+	gfx::RenderManager::getMainScene()->setRenderPipeline2d(pipeline2d);
+	gfx::RenderManager::getMainScene()->setRenderPipeline3d(pipeline3d);
 
 	m_root_node->setName("root");
 	m_root_node->setup();
@@ -144,7 +140,7 @@ void core::Engine::mainLoop()
 
 		m_root_node->update(full_frame_delta);
 
-		eng::gfx::RenderManager::getMainScene()->render(*m_window);
+		gfx::RenderManager::getMainScene()->render(*m_window);
 		m_window->display();
 
 		real_frame_delta = timer.getElapsedSeconds();

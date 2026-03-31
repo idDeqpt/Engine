@@ -1,3 +1,9 @@
+#ifndef DEFAULT_2D_VERTEX_SHADER_STRING_HPP
+#define DEFAULT_2D_VERTEX_SHADER_STRING_HPP
+
+namespace eng::core::shader
+{
+	static const char* default2d_vert =R"(
 #version 330 core
 
 layout (location = 0) in vec2 aPosition;
@@ -19,3 +25,7 @@ void main()
 
     gl_Position = vec4(clip_pos.xy, 0.0f, 1.0f);
 }
+)";
+}
+
+#endif //DEFAULT_2D_VERTEX_SHADER_STRING_HPP

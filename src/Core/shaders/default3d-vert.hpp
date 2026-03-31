@@ -1,3 +1,9 @@
+#ifndef DEFAULT_3D_VERTEX_SHADER_STRING_HPP
+#define DEFAULT_3D_VERTEX_SHADER_STRING_HPP
+
+namespace eng::core::shader
+{
+	static const char* default3d_vert =R"(
 #version 330 core
 
 layout (location = 0) in vec3 aPosition;
@@ -30,3 +36,7 @@ void main()
     
     gl_Position = uProjection*uView*vec4(fFragPos, 1.0f);
 }
+)";
+}
+
+#endif //DEFAULT_3D_VERTEX_SHADER_STRING_HPP
