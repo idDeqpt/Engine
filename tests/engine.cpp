@@ -18,8 +18,6 @@
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
-#include <GLFW/glfw3.h>
-
 
 class UM : public eng::gfx::Mesh
 {
@@ -35,12 +33,10 @@ public:
 			"/bricks-normal.jpg",
 		};
 
-		std::cout << "TEXTURES\n";
 		for (unsigned int i = 0; i < images.size(); i++)
 		{
 			auto load_result = eng::core::ResourceManager::load<eng::gfx::Texture>({resources_dir + images[i]});
 			tex[i] = load_result.second;
-			std::cout << "Tex" << i << ": " << tex[i]->getLastError() << std::endl;
 		}
 
 		const unsigned int floor_size     = 50;

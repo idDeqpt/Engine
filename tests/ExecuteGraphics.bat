@@ -1,1 +1,0 @@
-start "Engine Test" ".\build\Debug\graphics_tests.exe"
