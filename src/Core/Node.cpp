@@ -1,5 +1,6 @@
 #include <Engine/Core/Node.hpp>
 
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
 
@@ -26,9 +27,13 @@ core::Node::~Node()
 
 void core::Node::setup()
 {
+	Logger::debug("Init START of \"" + getNamePath() + "\"");
+
 	onSetup();
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->setup();
+
+	Logger::debug("Init END   of \"" + getNamePath() + "\"");
 }
 
 void core::Node::update(float delta)
@@ -62,14 +67,28 @@ void core::Node::setName(std::string new_name)
 }
 
 
- core::Node* core::Node::getParent()
+core::Node* core::Node::getParent()
 {
 	return m_parent;
+}
+
+core::Node* core::Node::getChildByName(const std::string& name)
+{
+	for (unsigned int i = 0; i < m_children.size(); i++)
+		if (m_children[i]->getName() == name)
+			return m_children[i].get();
+	return nullptr;
 }
 
 std::string core::Node::getName()
 {
 	return m_name;
+}
+
+std::string core::Node::getNamePath()
+{
+
+	return (m_parent ? m_parent->getNamePath() : "") + ("/" + m_name);
 }
 
 

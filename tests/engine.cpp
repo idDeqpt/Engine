@@ -168,31 +168,13 @@ protected:
 };
 
 
-class UText : public eng::gfx::Text2D
-{
-public:
-	void onSetup()
-	{
-		eng::gfx::RenderManager::getMainScene()->addObject(*this);
-		this->setFont(*eng::core::ResourceManager::load<eng::gfx::Font>({"E:/Programming/Projects/C++/Engine/tests/resources/GameFont.ttf"}).second);
-	}
-
-	void onUpdate(float delta)
-	{
-		eng::core::Logger::debug(std::to_string(delta + 1 + 1 + 1 + 1));
-		eng::core::Logger::info(std::to_string(delta + 1 + 1 + 1));
-		eng::core::Logger::warning(std::to_string(delta + 1 + 1));
-		eng::core::Logger::error(std::to_string(delta + 1));
-		this->setString(std::to_string(delta));
-	}
-};
-
-
 class Root : public eng::core::Node
 {
 public:
 	void onSetup()
 	{
+		eng::gfx::Font& font = *eng::core::ResourceManager::load<eng::gfx::Font>({"E:/Programming/Projects/C++/Engine/tests/resources/GameFont.ttf"}).second;
+
 		addChild<Camera>("Camera3d");
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("Camera2d");
@@ -201,7 +183,28 @@ public:
 
 		addChild<UT>("shape");
 		addChild<UM>("floor");
-		addChild<UText>("text");
+		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
+		eng::gfx::RenderManager::getMainScene()->addObject(*t_ft);
+		t_ft->setFont(font);
+		t_ft->setCharacterSize(24);
+		auto t_p = addChild<eng::gfx::Text2D>("text_position");
+		eng::gfx::RenderManager::getMainScene()->addObject(*t_p);
+		t_p->setFont(font);
+		t_p->setCharacterSize(24);
+		t_p->setPosition(eng::mth::Vec2(0, 26));
+	}
+
+	void onUpdate(float delta)
+	{
+		auto t_ft = static_cast<eng::gfx::Text2D*>(getChildByName("text_frametime"));
+		auto t_p = static_cast<eng::gfx::Text2D*>(getChildByName("text_position"));
+		auto cam = static_cast<eng::gfx::Camera3D*>(getChildByName("Camera3d"));
+
+		if (t_ft) t_ft->setString(std::to_string(delta));
+		if (t_p && cam) t_p->setString(
+			std::to_string(cam->getPosition().x) + " " +
+			std::to_string(cam->getPosition().y) + " " +
+			std::to_string(cam->getPosition().z));
 	}
 };
 
@@ -213,6 +216,5 @@ int main()
 	engine.setup();
 	engine.mainLoop();
 
-	system("pause");
 	return 0;
 }

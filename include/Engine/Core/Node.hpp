@@ -30,7 +30,10 @@ namespace eng::core
 		void setName(std::string new_name);
 
 		Node* getParent();
+		Node* getChildByName(const std::string& name);
 		std::string getName();
+		std::string getNamePath();
+
 
 		virtual std::optional<mth::Transform2> getGlobalTransform2D();
 		virtual std::optional<mth::Transform3> getGlobalTransform3D();

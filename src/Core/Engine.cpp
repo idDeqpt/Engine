@@ -1,5 +1,6 @@
 #include <Engine/Core/Engine.hpp>
 
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/Timer.hpp>
@@ -25,6 +26,7 @@ core::Engine::Engine(Node& root):
 	m_root_node(&root),
 	m_framerate(60)
 {
+	Logger::debug("Start app");
 	m_window = new sys::Window(900, 600, "LearnOpenGL");
 
 	eng::core::TimeManager::initialize();
@@ -39,11 +41,13 @@ core::Engine::~Engine()
 	eng::gfx::LightManager::finalize();
 
 	m_window->destroy();
+	Logger::debug("End app");
 }
 
 
 void core::Engine::setup()
 {
+	Logger::debug("Start setup");
 	std::string shaders_dir = "E:/Programming/Projects/C++/Engine/include/Engine/Graphics/shaders";
 
 	eng::gfx::Shader* shader3d_deferred = eng::core::ResourceManager::load<eng::gfx::Shader>({
@@ -122,7 +126,9 @@ void core::Engine::setup()
 	eng::gfx::RenderManager::getMainScene()->setRenderPipeline2d(pipeline2d);
 	eng::gfx::RenderManager::getMainScene()->setRenderPipeline3d(pipeline3d);
 
+	m_root_node->setName("root");
 	m_root_node->setup();
+	Logger::debug("End setup");
 }
 
 void core::Engine::mainLoop()
