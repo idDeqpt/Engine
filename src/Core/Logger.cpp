@@ -79,9 +79,11 @@ std::string core::Logger::getCurrentTime()
 {
 	auto now = std::chrono::system_clock::now();
 	auto time = std::chrono::system_clock::to_time_t(now);
+    auto ms = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 10'000;
 	
 	std::stringstream ss;
 	ss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
+	ss << '.' << std::setfill('0') << std::setw(4) << ms.count();
 
 	return ss.str();
 }
