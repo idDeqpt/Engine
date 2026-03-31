@@ -2,6 +2,7 @@
 #define RESOURCE_MANAGER_STATIC_CLASS_HEADER
 
 #include <Engine/Core/Resource.hpp>
+#include <Engine/Core/Logger.hpp>
 
 #include <initializer_list>
 #include <unordered_map>
@@ -49,8 +50,11 @@ static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initiali
 	else
 		res = dynamic_cast<T*>(it->second);
 
-	res->loadFromFile(paths);
-		return std::make_pair(key, dynamic_cast<T*>(res));
+	bool loaded = res->loadFromFile(paths);
+	for (std::string path : paths)
+		Logger::debug(std::string(loaded ? "Success" : "Failure") + " loading from path \"" + path + "\"");
+
+	return std::make_pair(key, dynamic_cast<T*>(res));
 }
 
 #endif //RESOURCE_MANAGER_STATIC_CLASS_HEADER
