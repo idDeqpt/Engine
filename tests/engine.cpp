@@ -101,16 +101,42 @@ public:
 	}
 };
 
-class UT : public eng::gfx::Shape2D
+class StaticRect : public eng::gfx::Shape2D
+{
+	void onSetup()
+	{
+		eng::gfx::RenderManager::getMainScene()->addObject(*this);
+		setPosition(eng::mth::Vec2(300, 200));
+		setSize(eng::mth::Vec2(100, 100));
+		setColor(eng::gfx::Color(0, 0, 255));
+	}
+};
+
+class DynamicRect : public eng::gfx::Shape2D
 {
 public:
 	void onSetup()
 	{
 		eng::gfx::RenderManager::getMainScene()->addObject(*this);
-		this->setPosition(eng::mth::Vec2(700, 400));
-		this->setSize(eng::mth::Vec2(100, 100));
-		auto t = eng::core::ResourceManager::load<eng::gfx::Texture>({"E:/Programming/Projects/C++/Engine/tests/resources/bricks.jpg"});
-		this->setTexture(*t.second);
+		setSize(eng::mth::Vec2(100, 100));
+		setColor(eng::gfx::Color(0, 255, 0));
+	}
+
+	void onUpdate(float delta)
+	{
+		eng::mth::Vec2 vel;
+		constexpr float speed = 300;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::UP))
+			vel.y -= speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::DOWN))
+			vel.y += speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::LEFT))
+			vel.x -= speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::RIGHT))
+			vel.x += speed;
+
+		if (vel.x || vel.y)
+			move(vel.norm(speed)*delta);
 	}
 };
 
@@ -177,7 +203,9 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<UT>("shape");
+		addChild<StaticRect>("static_rect");
+		addChild<DynamicRect>("dynamic_rect");
+
 		addChild<UM>("floor");
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
 		eng::gfx::RenderManager::getMainScene()->addObject(*t_ft);

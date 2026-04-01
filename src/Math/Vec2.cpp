@@ -1,5 +1,7 @@
 #include <Engine/Math/Vec2.hpp>
 
+#include <cmath>
+
 
 namespace eng
 {
@@ -15,6 +17,18 @@ mth::Vec2::Vec2(float v1, float v2) :
 
 mth::Vec2::Vec2(const Vec2& vec):
 	x(vec.x), y(vec.y) {}
+
+
+float mth::Vec2::len() const
+{
+	return sqrt(x*x + y*y);
+}
+
+mth::Vec2 mth::Vec2::norm(float new_len) const
+{
+	float coef = new_len/len();
+	return Vec2(x*coef, y*coef);
+}
 
 
 mth::Vec2& mth::Vec2::operator=(const Vec2& vec)
