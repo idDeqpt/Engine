@@ -72,4 +72,9 @@ mth::Vec2 mth::operator*(float coef, const Vec2& vec)
 	return Vec2(vec.x*coef, vec.y*coef);
 }
 
+mth::Vec2 mth::operator/(const Vec2& vec, float coef)
+{
+	return Vec2(vec.x/coef, vec.y/coef);
+}
+
 } //namespace eng

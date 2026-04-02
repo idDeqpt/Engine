@@ -1,5 +1,7 @@
 #include <Engine/Math/Vec3.hpp>
 
+#include <Engine/Math/Mat4.hpp>
+
 #include <stdexcept>
 #include <cmath>
 
@@ -91,6 +93,15 @@ mth::Vec3 mth::operator*(const Vec3& vec, float coef)
 mth::Vec3 mth::operator*(float coef, const Vec3& vec)
 {
 	return Vec3(vec.x*coef, vec.y*coef, vec.z*coef);
+}
+
+mth::Vec3 mth::operator*(const Mat3& left, const Vec3& right)
+{
+	Vec3 result;
+	for (unsigned int i = 0; i < 3; i++)
+		for (unsigned int j = 0; j < 3; j++)
+			result[i] += left[i][j]*right[j];
+	return result;
 }
 
 mth::Vec3 mth::operator/(const Vec3& vec, float coef)
