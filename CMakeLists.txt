@@ -46,6 +46,13 @@ set(MATH_SOURCE_FILES
     src/Math/Transform2.cpp
     src/Math/Transform3.cpp)
 
+set(PHYSICS_SOURCE_FILES
+    src/Physics/2D/CircleCollider2D.cpp
+    src/Physics/2D/CollisionData.cpp
+    src/Physics/2D/RectangleCollider2D.cpp
+    src/Physics/2D/RigidBody2D.cpp
+    src/Physics/PhysicsManager.cpp)
+
 set(SYSTEM_SOURCE_FILES
     src/System/EventManager.cpp
     src/System/Keyboard.cpp
@@ -70,6 +77,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     ${CORE_SOURCE_FILES}
     ${GRAPHICS_SOURCE_FILES}
     ${MATH_SOURCE_FILES}
+    ${PHYSICS_SOURCE_FILES}
     ${SYSTEM_SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME}

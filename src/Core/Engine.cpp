@@ -12,6 +12,7 @@
 #include <Engine/Graphics/LightManager.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Physics/PhysicsManager.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
 #include "shaders/default2d-vert.hpp"
@@ -38,6 +39,7 @@ core::Engine::Engine(Node& root):
 	eng::gfx::RenderManager::initialize();
 	eng::sys::EventManager::initialize(m_window->getHandler());
 	eng::gfx::LightManager::initialize();
+	eng::phy::PhysicsManager::initialize();
 }
 
 core::Engine::~Engine()
@@ -139,6 +141,8 @@ void core::Engine::mainLoop()
 		sys::EventManager::pull();
 
 		m_root_node->update(full_frame_delta);
+
+		phy::PhysicsManager::update(full_frame_delta);
 
 		gfx::RenderManager::getMainScene()->render(*m_window);
 		m_window->display();

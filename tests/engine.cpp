@@ -4,9 +4,11 @@
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+
 #include <Engine/System/EventManager.hpp>
 #include <Engine/System/Keyboard.hpp>
 #include <Engine/System/Mouse.hpp>
+
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
@@ -14,6 +16,11 @@
 #include <Engine/Graphics/3D/Mesh.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
+
+#include <Engine/Physics/2D/RigidBody2D.hpp>
+#include <Engine/Physics/2D/CircleCollider2D.hpp>
+#include <Engine/Physics/PhysicsManager.hpp>
+
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Quaternion.hpp>
@@ -101,31 +108,44 @@ public:
 	}
 };
 
-class StaticRect : public eng::gfx::Shape2D
-{
-	void onSetup()
-	{
-		eng::gfx::RenderManager::getMainScene()->addObject(*this);
-		setPosition(eng::mth::Vec2(300, 200));
-		setSize(eng::mth::Vec2(100, 100));
-		setColor(eng::gfx::Color(0, 0, 255));
-	}
-};
-
-class DynamicRect : public eng::gfx::Shape2D
+class StaticRect : public eng::phy::RigidBody2D
 {
 public:
 	void onSetup()
 	{
-		eng::gfx::RenderManager::getMainScene()->addObject(*this);
-		setSize(eng::mth::Vec2(100, 100));
-		setColor(eng::gfx::Color(0, 255, 0));
+		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
+		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
+		sh->setSize(eng::mth::Vec2(100, 100));
+		sh->setColor(eng::gfx::Color(0, 0, 255));
+
+		auto col = setCollider<eng::phy::CircleCollider2D>();
+		col->setRadius(50);
+
+		setPosition(eng::mth::Vec2(300, 200));
+		eng::phy::PhysicsManager::addBody(*this);
+	}
+};
+
+class DynamicRect : public eng::phy::RigidBody2D
+{
+public:
+	void onSetup()
+	{
+		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
+		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
+		sh->setSize(eng::mth::Vec2(100, 100));
+		sh->setColor(eng::gfx::Color(0, 255, 0));
+
+		auto col = setCollider<eng::phy::CircleCollider2D>();
+		col->setRadius(50);
+		eng::phy::PhysicsManager::addBody(*this);
+		setMass(100);
 	}
 
 	void onUpdate(float delta)
 	{
 		eng::mth::Vec2 vel;
-		constexpr float speed = 300;
+		constexpr float speed = 100000;
 		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::UP))
 			vel.y -= speed;
 		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::DOWN))
@@ -136,7 +156,7 @@ public:
 			vel.x += speed;
 
 		if (vel.x || vel.y)
-			move(vel.norm(speed)*delta);
+			addForce(vel.norm(speed)*delta);
 	}
 };
 
