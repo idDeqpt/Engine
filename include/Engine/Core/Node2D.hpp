@@ -23,6 +23,8 @@ namespace eng::core
 
 		mth::Vec2 getPosition();
 
+		mth::Vec2 getGlobalPosition();
+
 		mth::Transform2 getLocalTransform();
 		mth::Transform2 getInvertLocalTransform();
 		std::optional<mth::Transform2> getGlobalTransform2D();

@@ -2,6 +2,7 @@
 
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec3.hpp>
 
 
 namespace eng
@@ -68,6 +69,15 @@ void core::Node2D::setRotation(float new_angle)
 mth::Vec2 core::Node2D::getPosition()
 {
 	return m_position;
+}
+
+
+mth::Vec2 core::Node2D::getGlobalPosition()
+{
+	if (!m_parent) return m_position;
+
+	mth::Vec3 pos = getGlobalTransform2D().value().getMatrix()*mth::Vec3(m_position.x, m_position.y, 1);
+	return mth::Vec2(pos.x, pos.y);
 }
 
 
