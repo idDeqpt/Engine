@@ -21,9 +21,11 @@ namespace eng::core
 		void setScale(const mth::Vec2& new_scale);
 		void setRotation(float new_angle); //radians
 
+		mth::Vec2 getOrigin();
 		mth::Vec2 getPosition();
 
 		mth::Vec2 getGlobalPosition();
+		float getGlobalRotation();
 
 		mth::Transform2 getLocalTransform();
 		mth::Transform2 getInvertLocalTransform();

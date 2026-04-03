@@ -66,6 +66,11 @@ void core::Node2D::setRotation(float new_angle)
 }
 
 
+mth::Vec2 core::Node2D::getOrigin()
+{
+	return m_origin;
+}
+
 mth::Vec2 core::Node2D::getPosition()
 {
 	return m_position;
@@ -78,6 +83,19 @@ mth::Vec2 core::Node2D::getGlobalPosition()
 
 	mth::Vec3 pos = getGlobalTransform2D().value().getMatrix()*mth::Vec3(m_position.x, m_position.y, 1);
 	return mth::Vec2(pos.x, pos.y);
+}
+
+float core::Node2D::getGlobalRotation()
+{
+	if (!m_parent) 
+		return m_rotation;
+	
+	Node2D* parent_2d = dynamic_cast<Node2D*>(m_parent);
+	
+	if (parent_2d)
+		return parent_2d->getGlobalRotation() + m_rotation;
+	
+	return m_rotation;
 }
 
 
