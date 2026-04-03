@@ -17,10 +17,11 @@ namespace eng::phy
 
 		Collider2D*    colliders[2] = {nullptr, nullptr};
 		PhysicsBody2D* bodies[2]    = {nullptr, nullptr};
+		mth::Vec2 bodies_velocities[2] = {mth::Vec2(), mth::Vec2()};
 
 		CollisionData() = default;
 		CollisionData(const CollisionData& cd);
-		CollisionData swap();
+		CollisionData swapped();
 	};
 }
 

@@ -40,6 +40,8 @@ void phy::PhysicsManager::update(float delta)
 			{
 				data.bodies[0] = s_bodies2d[i];
 				data.bodies[1] = s_bodies2d[j];
+				data.bodies_velocities[0] = s_bodies2d[i]->getLinearVelocity();
+				data.bodies_velocities[1] = s_bodies2d[j]->getLinearVelocity();
 				collisions.push_back(data);
 			}
 		}
@@ -47,7 +49,7 @@ void phy::PhysicsManager::update(float delta)
 	for (unsigned int i = 0; i < collisions.size(); i++)
 	{
 		collisions[i].bodies[0]->onCollision(collisions[i]);
-		collisions[i].bodies[1]->onCollision(collisions[i].swap());
+		collisions[i].bodies[1]->onCollision(collisions[i].swapped());
 	}
 
 	for (unsigned int i = 0; i < s_bodies2d.size(); i++)

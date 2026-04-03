@@ -62,18 +62,21 @@ void phy::RigidBody2D::onCollision(const CollisionData& data)
 	if (!data.has_collision) return;
 
 	core::Logger::info(getNamePath() + " collided with " + data.bodies[1]->getNamePath());
+
+	mth::Vec2 neg_normal = -data.normal;
 	
 	float mass_coef = 1;
 	if (data.bodies[1]->getMass())
 		mass_coef = data.bodies[1]->getMass()/(m_mass + data.bodies[1]->getMass());
+	
 	if (data.penetration_depth)
     {
-        mth::Vec2 position_correction = data.normal*(data.penetration_depth*mass_coef);
+        mth::Vec2 position_correction = neg_normal*(data.penetration_depth*mass_coef);
         move(position_correction);
     }
 
-	mth::Vec2 relative_velocity = getLinearVelocity() - data.bodies[1]->getLinearVelocity();
-	float velocity_along_normal = relative_velocity.x*data.normal.x + relative_velocity.y*data.normal.y; //dot
+	mth::Vec2 relative_velocity = getLinearVelocity() - data.bodies_velocities[1];
+	float velocity_along_normal = relative_velocity.x*neg_normal.x + relative_velocity.y*neg_normal.y; //dot
 	if (velocity_along_normal > 0) return;
 
 	float restitution = 0.6f;
@@ -81,7 +84,7 @@ void phy::RigidBody2D::onCollision(const CollisionData& data)
 
 	float self_impulse_share = impulse_magnitude * (mass_coef);
 	
-	impulse(data.normal*self_impulse_share);
+	impulse(neg_normal*self_impulse_share);
 }
 
 } //namespace eng
