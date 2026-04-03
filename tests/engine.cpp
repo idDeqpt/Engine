@@ -19,6 +19,7 @@
 
 #include <Engine/Physics/2D/RigidBody2D.hpp>
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
+#include <Engine/Physics/2D/RectangleCollider2D.hpp>
 #include <Engine/Physics/PhysicsManager.hpp>
 
 #include <Engine/Math/Vec2.hpp>
@@ -113,15 +114,18 @@ class StaticRect : public eng::phy::RigidBody2D
 public:
 	void onSetup()
 	{
-		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
+		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 100));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 
-		auto col = setCollider<eng::phy::CircleCollider2D>();
-		col->setRadius(50);
+		auto col = setCollider<eng::phy::RectangleCollider2D>();
+		col->setSize(eng::mth::Vec2(100, 100));
 
+		rotate(45);
 		setPosition(eng::mth::Vec2(300, 200));
+		setOrigin(eng::mth::Vec2(50, 50));
+		setMass(100);
 		eng::phy::PhysicsManager::addBody(*this);
 	}
 };
@@ -139,7 +143,6 @@ public:
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		col->setRadius(50);
 		eng::phy::PhysicsManager::addBody(*this);
-		setMass(100);
 	}
 
 	void onUpdate(float delta)
@@ -223,8 +226,8 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<StaticRect>("static_rect");
 		addChild<DynamicRect>("dynamic_rect");
+		addChild<StaticRect>("static_rect");
 
 		addChild<UM>("floor");
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

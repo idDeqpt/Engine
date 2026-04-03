@@ -8,23 +8,16 @@
 namespace eng::phy
 {
 	class CircleCollider2D;
+	class RectangleCollider2D;
 
 	class Collider2D : public core::Node2D
 	{
 	public:
-		enum class Type
-		{
-			CIRCLE,
-			RECTANGLE,
-			CUSTOM,
-		};
-
 		Collider2D() : core::Node2D() {}
-
-		virtual Type getType() {return Type::CUSTOM;}
 
 		virtual CollisionData collideWith(Collider2D& other) = 0;
 		virtual CollisionData collideWithCircle(CircleCollider2D& other) = 0;
+		virtual CollisionData collideWithRectangle(RectangleCollider2D& other) = 0;
 	};
 }
 
