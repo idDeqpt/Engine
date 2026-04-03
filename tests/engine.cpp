@@ -114,17 +114,18 @@ class StaticRect : public eng::phy::RigidBody2D
 public:
 	void onSetup()
 	{
-		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 100));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 
-		auto col = setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(100, 100));
+		auto col = setCollider<eng::phy::CircleCollider2D>();
+		col->setRadius(50);
+		//col->setSize(eng::mth::Vec2(100, 100));
 
-		rotate(45);
+		//rotate(45);
 		setPosition(eng::mth::Vec2(300, 200));
-		setOrigin(eng::mth::Vec2(50, 50));
+		//setOrigin(eng::mth::Vec2(50, 50));
 		setMass(100);
 		eng::phy::PhysicsManager::addBody(*this);
 	}
@@ -226,8 +227,8 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<DynamicRect>("dynamic_rect");
 		addChild<StaticRect>("static_rect");
+		addChild<DynamicRect>("dynamic_rect");
 
 		addChild<UM>("floor");
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

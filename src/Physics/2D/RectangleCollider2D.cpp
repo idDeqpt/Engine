@@ -29,7 +29,10 @@ mth::Vec2 phy::RectangleCollider2D::getSize()
 
 phy::CollisionData phy::RectangleCollider2D::collideWith(Collider2D& other)
 {
-	return other.collideWithRectangle(*this);
+	CollisionData data = other.collideWithRectangle(*this);
+	if (data.colliders[0] == this) 
+		return data;
+	return data.swapped();
 }
 
 phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D& other)
@@ -71,13 +74,13 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
     }
     
     result.has_collision = true;
-    result.colliders[0] = &other;
-    result.colliders[1] = this;
+    result.colliders[0] = this;
+    result.colliders[1] = &other;
 
     float distance = std::sqrt(distance_squared);
     if (distance < 0.0001f)
     {
-        result.normal = mth::Vec2(1.0f, 0.0f);
+        result.normal = diff.norm();
         result.penetration_depth = circle_radius;
         result.contact_point = closest_world;
         return result;

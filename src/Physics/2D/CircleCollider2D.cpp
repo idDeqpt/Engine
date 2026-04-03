@@ -29,7 +29,10 @@ float phy::CircleCollider2D::getRadius()
 
 phy::CollisionData phy::CircleCollider2D::collideWith(Collider2D& other)
 {
-	return other.collideWithCircle(*this);
+	CollisionData data = other.collideWithCircle(*this);
+	if (data.colliders[0] == this) 
+		return data;
+	return data.swapped();
 }
 
 phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& other)
@@ -53,8 +56,8 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 	}
 	
 	result.has_collision = true;
-	result.colliders[0] = &other;
-	result.colliders[1] = this;
+	result.colliders[0] = this;
+	result.colliders[1] = &other;
 	
 	float distance = std::sqrt(distance_squared);
 	
@@ -75,8 +78,7 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 
 phy::CollisionData phy::CircleCollider2D::collideWithRectangle(RectangleCollider2D& other)
 {
-	CollisionData result;
-	return result;
+	return other.collideWithCircle(*this);
 }
 
 } //namespace eng
