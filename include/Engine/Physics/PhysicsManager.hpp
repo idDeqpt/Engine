@@ -19,9 +19,10 @@ namespace eng::phy
 
 	protected:
 		static std::vector<PhysicsBody2D*> s_bodies2d;
+		static std::vector<CollisionData> s_collisions_buffer;
 
 		static bool checkCollisionAABB(Collider2D& first, Collider2D& second);
-		static void getCollisions(std::vector<CollisionData>& buffer);
+		static void updateCollisions();
 	};
 }
 

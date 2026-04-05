@@ -11,6 +11,7 @@ namespace eng
 {
 
 std::vector<phy::PhysicsBody2D*> phy::PhysicsManager::s_bodies2d;
+std::vector<phy::CollisionData> phy::PhysicsManager::s_collisions_buffer;
 
 
 void phy::PhysicsManager::initialize()
@@ -29,14 +30,12 @@ void phy::PhysicsManager::addBody(PhysicsBody2D& body)
 
 void phy::PhysicsManager::update(float delta)
 {
-	std::vector<CollisionData> collisions;
+	updateCollisions();
 
-	getCollisions(collisions);
-
-	unsigned int VELOCITY_ITERATIONS = 1;
+	unsigned int VELOCITY_ITERATIONS = 4;
 	for (unsigned int i = 0; i < VELOCITY_ITERATIONS; i++)
-		for (unsigned int j = 0; j < collisions.size(); j++)
-			collisions[j].bodies[0]->resolveCollisionVelWith(collisions[j], *collisions[j].bodies[1]);
+		for (unsigned int j = 0; j < s_collisions_buffer.size(); j++)
+			s_collisions_buffer[j].bodies[0]->resolveCollisionVelWith(s_collisions_buffer[j], *s_collisions_buffer[j].bodies[1]);
 
 	for (unsigned int i = 0; i < s_bodies2d.size(); i++)
 		s_bodies2d[i]->updateState(delta);
@@ -44,13 +43,13 @@ void phy::PhysicsManager::update(float delta)
 	unsigned int POSITION_ITERATIONS = 4;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
-		getCollisions(collisions);
+		updateCollisions();
 		
-		if (collisions.empty()) break;
+		if (s_collisions_buffer.empty()) break;
 		
 		float iter_ratio = 1.0 - (float(p)/POSITION_ITERATIONS);
-		for (unsigned int i = 0; i < collisions.size(); i++)
-			collisions[i].bodies[0]->resolveCollisionPosWith(collisions[i], iter_ratio, *collisions[i].bodies[1]);
+		for (unsigned int i = 0; i < s_collisions_buffer.size(); i++)
+			s_collisions_buffer[i].bodies[0]->resolveCollisionPosWith(s_collisions_buffer[i], iter_ratio, *s_collisions_buffer[i].bodies[1]);
 	}
 }
 
@@ -70,20 +69,23 @@ bool phy::PhysicsManager::checkCollisionAABB(Collider2D& first, Collider2D& seco
 }
 
 
-void phy::PhysicsManager::getCollisions(std::vector<phy::CollisionData>& buffer)
+void phy::PhysicsManager::updateCollisions()
 {
-	buffer.clear();
-	buffer.reserve(s_bodies2d.size());
+	s_collisions_buffer.clear();
+	s_collisions_buffer.reserve(s_bodies2d.size());
 
 	for (unsigned int i = 0; i < (s_bodies2d.size() - 1); i++)
 		for (unsigned int j = i + 1; j < s_bodies2d.size(); j++)
 		{
+			if (checkCollisionAABB(*s_bodies2d[i]->getCollider(), *s_bodies2d[j]->getCollider()))
+				continue;
+
 			CollisionData data = s_bodies2d[i]->getCollider()->collideWith(*s_bodies2d[j]->getCollider());
 			if (data.has_collision)
 			{
 				data.bodies[0] = s_bodies2d[i];
 				data.bodies[1] = s_bodies2d[j];
-				buffer.push_back(data);
+				s_collisions_buffer.push_back(data);
 			}
 		}
 }

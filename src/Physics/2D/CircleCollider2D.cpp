@@ -54,10 +54,10 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 	mth::Vec2 center2 = other.getGlobalPosition() + radius2;
 	
 	mth::Vec2 delta = center2 - center1;
-	float distance_squared = delta.x * delta.x + delta.y * delta.y;
+	float distance_squared = delta.x*delta.x + delta.y*delta.y;
 	float radius_sum = radius1 + radius2;
 	
-	if (distance_squared > (radius_sum * radius_sum))
+	if (distance_squared > (radius_sum*radius_sum))
 	{
 		result.has_collision = false;
 		return result;
@@ -79,7 +79,7 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 	result.normal = delta / distance;
 	result.penetration_depth = radius_sum - distance;
 	
-	result.contact_point = center1 + result.normal * radius1;
+	result.contact_point = center1 + result.normal*radius1;
 	
 	return result;
 }

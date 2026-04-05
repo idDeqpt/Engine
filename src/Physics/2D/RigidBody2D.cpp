@@ -83,7 +83,9 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	else
 		return;
 
-	float inv_mass_sum = getMassInv() + other.getMassInv();
+	float inv_mass_a = getMassInv();
+	float inv_mass_b = other.getMassInv();
+	float inv_mass_sum = inv_mass_a + inv_mass_b;
 	
 	if (inv_mass_sum == 0) return;
 
@@ -93,7 +95,7 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	if (velocity_along_normal > 0) return;
 
 	float restitution = 0.9f;
-	float impulse_magnitude = -(1 + restitution) * velocity_along_normal;
+	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
 	impulse_magnitude /= inv_mass_sum;
 	
 	constexpr float MAX_IMPULSE = 100.0f;
@@ -102,10 +104,10 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
-	if (getMassInv() > 0)
-		impulse(-impulse_v*getMassInv());
-	if (other.getMassInv() > 0)
-		other.impulse(impulse_v*other.getMassInv());
+	if (inv_mass_a > 0)
+		impulse(-impulse_v*inv_mass_a);
+	if (inv_mass_b > 0)
+		other.impulse(impulse_v*inv_mass_b);
 }
 
 void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, StaticBody2D& other)
@@ -120,7 +122,8 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 	else
 		return;
 	
-	if (getMassInv() == 0) return;
+	float inv_mass_a = getMassInv();
+	if (inv_mass_a == 0) return;
 
 	mth::Vec2 relative_velocity = -getLinearVelocity();
 	float velocity_along_normal = relative_velocity.dot(data.normal);
@@ -128,8 +131,8 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 	if (velocity_along_normal > 0) return;
 
 	float restitution = 0.9f;
-	float impulse_magnitude = -(1 + restitution) * velocity_along_normal;
-	impulse_magnitude /= getMassInv();
+	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
+	impulse_magnitude /= inv_mass_a;
 	
 	constexpr float MAX_IMPULSE = 100.0f;
 	impulse_magnitude = (impulse_magnitude < MAX_IMPULSE) ? impulse_magnitude : MAX_IMPULSE;
@@ -137,8 +140,8 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
-	if (getMassInv() > 0)
-		impulse(-impulse_v*getMassInv());
+	if (inv_mass_a > 0)
+		impulse(-impulse_v*inv_mass_a);
 }
 
 

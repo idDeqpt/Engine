@@ -69,8 +69,8 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 	cos_a = std::cos(rect_angle);
 	sin_a = std::sin(rect_angle);
 	mth::Vec2 closest_world;
-	closest_world.x = closest_local.x * cos_a - closest_local.y * sin_a;
-	closest_world.y = closest_local.x * sin_a + closest_local.y * cos_a;
+	closest_world.x = closest_local.x*cos_a - closest_local.y*sin_a;
+	closest_world.y = closest_local.x*sin_a + closest_local.y*cos_a;
 	closest_world   = closest_world + rect_center;
 
 	mth::Vec2 diff = circle_center - closest_world;
@@ -103,9 +103,6 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 			local_normal = mth::Vec2(0, -1);
 		else
 			local_normal = mth::Vec2(0, 1);
-		
-		cos_a = std::cos(rect_angle);
-		sin_a = std::sin(rect_angle);
 		
 		result.normal.x = local_normal.x*cos_a - local_normal.y*sin_a;
 		result.normal.y = local_normal.x*sin_a + local_normal.y*cos_a;
