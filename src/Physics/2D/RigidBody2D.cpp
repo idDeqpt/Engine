@@ -17,12 +17,12 @@ phy::RigidBody2D::RigidBody2D():
 	phy::PhysicsBody2D() {}
 
 
-void phy::RigidBody2D::impulse(const mth::Vec2 impulse)
+void phy::RigidBody2D::applyImpulse(const mth::Vec2 impulse)
 {
-	m_linear_velocity += impulse;
+	m_linear_velocity += impulse*m_mass_inv;
 }
 
-void phy::RigidBody2D::addForce(const mth::Vec2 force)
+void phy::RigidBody2D::applyForce(const mth::Vec2 force)
 {
 	m_accumulated_force += force;
 }
@@ -89,25 +89,21 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	
 	if (inv_mass_sum == 0) return;
 
-	mth::Vec2 relative_velocity = other.getLinearVelocity() - getLinearVelocity();
+	mth::Vec2 relative_velocity = getLinearVelocity() - other.getLinearVelocity();
 	float velocity_along_normal = relative_velocity.dot(data.normal);
 	
-	if (velocity_along_normal > 0) return;
+	if (velocity_along_normal < 0) return;
 
 	float restitution = 0.9f;
 	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
 	impulse_magnitude /= inv_mass_sum;
-	
-	constexpr float MAX_IMPULSE = 100.0f;
-	impulse_magnitude = (impulse_magnitude < MAX_IMPULSE) ? impulse_magnitude : MAX_IMPULSE;
-	impulse_magnitude = (impulse_magnitude > -MAX_IMPULSE) ? impulse_magnitude : -MAX_IMPULSE;
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
 	if (inv_mass_a > 0)
-		impulse(-impulse_v*inv_mass_a);
+		applyImpulse(impulse_v);
 	if (inv_mass_b > 0)
-		other.impulse(impulse_v*inv_mass_b);
+		other.applyImpulse(-impulse_v);
 }
 
 void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, StaticBody2D& other)
@@ -125,23 +121,19 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 	float inv_mass_a = getMassInv();
 	if (inv_mass_a == 0) return;
 
-	mth::Vec2 relative_velocity = -getLinearVelocity();
+	mth::Vec2 relative_velocity = getLinearVelocity();
 	float velocity_along_normal = relative_velocity.dot(data.normal);
 	
-	if (velocity_along_normal > 0) return;
+	if (velocity_along_normal < 0) return;
 
 	float restitution = 0.9f;
 	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
 	impulse_magnitude /= inv_mass_a;
-	
-	constexpr float MAX_IMPULSE = 100.0f;
-	impulse_magnitude = (impulse_magnitude < MAX_IMPULSE) ? impulse_magnitude : MAX_IMPULSE;
-	impulse_magnitude = (impulse_magnitude > -MAX_IMPULSE) ? impulse_magnitude : -MAX_IMPULSE;
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
 	if (inv_mass_a > 0)
-		impulse(-impulse_v*inv_mass_a);
+		applyImpulse(impulse_v);
 }
 
 

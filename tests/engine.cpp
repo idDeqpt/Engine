@@ -84,7 +84,7 @@ public:
 
 	void onUpdate(float delta)
 	{
-		addForce(eng::mth::Vec2(0, 10000*delta));
+		applyForce(eng::mth::Vec2(0, 10000*delta));
 	}
 };
 
@@ -106,7 +106,7 @@ public:
 
 	void onUpdate(float delta)
 	{
-		addForce(eng::mth::Vec2(0, 1000000*delta));
+		applyForce(eng::mth::Vec2(0, 100000*delta));
 	}
 };
 

@@ -15,8 +15,8 @@ namespace eng::phy
 	public:
 		RigidBody2D();
 
-		void impulse(const mth::Vec2 impulse);
-		void addForce(const mth::Vec2 force);
+		void applyImpulse(const mth::Vec2 impulse);
+		void applyForce(const mth::Vec2 force);
 
 		void setMass(float mass);
 
