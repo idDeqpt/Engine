@@ -152,6 +152,7 @@ void core::Engine::mainLoop()
 		if (real_frame_delta < target_frame_delta)
 			TimeManager::sleepSeconds(target_frame_delta - real_frame_delta);
 		full_frame_delta = timer.getElapsedSeconds();
+		if (full_frame_delta > 0.1) full_frame_delta = 0.1;
 	}
 }
 
