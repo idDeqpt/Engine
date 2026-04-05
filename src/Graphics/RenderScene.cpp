@@ -91,7 +91,7 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
 	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
-	if (m_framebuffers2d.size() > 1) m_framebuffers2d[0]->clear(m_clear_color);
+	if ((m_framebuffers2d.size() > 1) && (m_framebuffers3d.empty())) m_framebuffers2d[0]->clear(m_clear_color);
 	for (Drawable* obj : m_objects2d)
 		if (obj && obj->isVisible())
 			m_framebuffers2d.front()->draw(*obj, RenderStates());
@@ -181,6 +181,8 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 
 void gfx::RenderScene::render(RenderTarget& target)
 {
+	target.clear(m_clear_color);
+	
 	draw3d(target);
 
 	glDepthFunc(GL_ALWAYS);
