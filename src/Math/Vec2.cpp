@@ -19,6 +19,11 @@ mth::Vec2::Vec2(const Vec2& vec):
 	x(vec.x), y(vec.y) {}
 
 
+float mth::Vec2::dot(const Vec2& vec) const
+{
+	return x*vec.x + y*vec.y;
+}
+
 float mth::Vec2::len() const
 {
 	return sqrt(x*x + y*y);

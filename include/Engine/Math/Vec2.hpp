@@ -15,6 +15,7 @@ namespace eng::mth
 		Vec2(const Vec2& vec);
 
 		float len() const;
+		float dot(const Vec2& vec) const;
 		Vec2 norm(float new_len = 1) const;
 
 		Vec2& operator=(const Vec2& vec);
