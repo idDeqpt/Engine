@@ -17,12 +17,16 @@ namespace eng::phy
 		void setRadius(float radius);
 		float getRadius();
 
+		AABB getAABB() override;
+
 		CollisionData collideWith(Collider2D& other) override;
 		CollisionData collideWithCircle(CircleCollider2D& other) override;
 		CollisionData collideWithRectangle(RectangleCollider2D& other) override;
 
 	protected:
 		float m_radius;
+
+		void updateAABB() override;
 	};
 }
 

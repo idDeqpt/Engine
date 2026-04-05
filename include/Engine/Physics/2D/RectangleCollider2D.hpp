@@ -20,12 +20,16 @@ namespace eng::phy
 		void setSize(const mth::Vec2& size);
 		mth::Vec2 getSize();
 
+		AABB getAABB() override;
+
 		CollisionData collideWith(Collider2D& other) override;
 		CollisionData collideWithCircle(CircleCollider2D& other) override;
 		CollisionData collideWithRectangle(RectangleCollider2D& other) override;
 
 	protected:
 		mth::Vec2 m_size;
+
+		void updateAABB() override;
 	};
 }
 

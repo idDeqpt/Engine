@@ -19,11 +19,19 @@ phy::CircleCollider2D::CircleCollider2D():
 void phy::CircleCollider2D::setRadius(float radius)
 {
 	m_radius = radius;
+	m_aabb_need_update = true;
 }
 
 float phy::CircleCollider2D::getRadius()
 {
 	return m_radius;
+}
+
+
+phy::Collider2D::AABB phy::CircleCollider2D::getAABB()
+{
+	updateAABB();
+	return m_cached_aabb;
 }
 
 
@@ -79,6 +87,16 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 phy::CollisionData phy::CircleCollider2D::collideWithRectangle(RectangleCollider2D& other)
 {
 	return other.collideWithCircle(*this);
+}
+
+
+void phy::CircleCollider2D::updateAABB()
+{
+	if (m_aabb_need_update)
+	{
+		m_cached_aabb = {getGlobalPosition(), getGlobalPosition() + m_radius};
+		m_aabb_need_update = false;
+	}
 }
 
 } //namespace eng
