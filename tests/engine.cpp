@@ -33,10 +33,9 @@ class Box2D : public eng::core::Node2D
 public:
 	void onSetup()
 	{
-		auto b = addChild<eng::phy::RigidBody2D>("floor");
+		auto b = addChild<eng::phy::StaticBody2D>("floor");
 		eng::phy::PhysicsManager::addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 100));
-		b->setMass(10000);
 		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 10));
@@ -44,10 +43,9 @@ public:
 		auto col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(100, 10));
 
-		b = addChild<eng::phy::RigidBody2D>("left_side");
+		b = addChild<eng::phy::StaticBody2D>("left_side");
 		eng::phy::PhysicsManager::addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
-		b->setMass(10000);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 100));
@@ -55,10 +53,9 @@ public:
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 100));
 
-		b = addChild<eng::phy::RigidBody2D>("right_side");
+		b = addChild<eng::phy::StaticBody2D>("right_side");
 		eng::phy::PhysicsManager::addBody(*b);
 		b->setPosition(eng::mth::Vec2(90, 0));
-		b->setMass(10000);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 100));

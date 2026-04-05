@@ -1,6 +1,7 @@
 #include <Engine/Physics/2D/RigidBody2D.hpp>
 
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
+#include <Engine/Physics/2D/StaticBody2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Core/Logger.hpp>
@@ -34,15 +35,19 @@ void phy::RigidBody2D::setMass(float mass)
 }
 
 
-mth::Vec2 phy::RigidBody2D::getLinearVelocity()
-{
-	return m_linear_velocity;
-}
-
-
 float phy::RigidBody2D::getMass()
 {
 	return m_mass;
+}
+
+float phy::RigidBody2D::getMassInv()
+{
+	return m_mass_inv;
+}
+
+mth::Vec2 phy::RigidBody2D::getLinearVelocity()
+{
+	return m_linear_velocity;
 }
 
 
@@ -78,7 +83,7 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	else
 		return;
 
-	float inv_mass_sum = m_mass_inv + other.m_mass_inv;
+	float inv_mass_sum = getMassInv() + other.getMassInv();
 	
 	if (inv_mass_sum == 0) return;
 
@@ -97,10 +102,43 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
-	if (m_mass_inv > 0)
-		impulse(-impulse_v*m_mass_inv);
-	if (other.m_mass_inv > 0)
-		other.impulse(impulse_v*other.m_mass_inv);
+	if (getMassInv() > 0)
+		impulse(-impulse_v*getMassInv());
+	if (other.getMassInv() > 0)
+		other.impulse(impulse_v*other.getMassInv());
+}
+
+void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, StaticBody2D& other)
+{
+	if (!d.has_collision) return;
+
+	CollisionData data;
+	if (d.bodies[0] == this)
+		data = d;
+	else if (d.bodies[1] == this)
+		data = d.swapped();
+	else
+		return;
+	
+	if (getMassInv() == 0) return;
+
+	mth::Vec2 relative_velocity = -getLinearVelocity();
+	float velocity_along_normal = relative_velocity.dot(data.normal);
+	
+	if (velocity_along_normal > 0) return;
+
+	float restitution = 0.9f;
+	float impulse_magnitude = -(1 + restitution) * velocity_along_normal;
+	impulse_magnitude /= getMassInv();
+	
+	constexpr float MAX_IMPULSE = 100.0f;
+	impulse_magnitude = (impulse_magnitude < MAX_IMPULSE) ? impulse_magnitude : MAX_IMPULSE;
+	impulse_magnitude = (impulse_magnitude > -MAX_IMPULSE) ? impulse_magnitude : -MAX_IMPULSE;
+
+	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
+	
+	if (getMassInv() > 0)
+		impulse(-impulse_v*getMassInv());
 }
 
 
@@ -122,7 +160,7 @@ void phy::RigidBody2D::resolveCollisionPosWithRigid(const CollisionData& d, floa
 	else
 		return;
 
-	float inv_mass_sum = m_mass_inv + other.m_mass_inv;
+	float inv_mass_sum = getMassInv() + other.getMassInv();
 	
 	if (inv_mass_sum == 0) return;
 
@@ -132,10 +170,35 @@ void phy::RigidBody2D::resolveCollisionPosWithRigid(const CollisionData& d, floa
 		float penetration = data.penetration_depth - ALLOWED_PENETRATION;
 		mth::Vec2 correction = data.normal*(penetration*iter_ratio/inv_mass_sum);
 		
-		if (m_mass_inv > 0)
-			move(-correction*m_mass_inv);
-		if (other.m_mass_inv > 0)
-			other.move(correction*other.m_mass_inv);
+		if (getMassInv() > 0)
+			move(-correction*getMassInv());
+		if (other.getMassInv() > 0)
+			other.move(correction*other.getMassInv());
+	}
+}
+
+void phy::RigidBody2D::resolveCollisionPosWithStatic(const CollisionData& d, float iter_ratio, StaticBody2D& other)
+{
+	if (!d.has_collision) return;
+
+	CollisionData data;
+	if (d.bodies[0] == this)
+		data = d;
+	else if (d.bodies[1] == this)
+		data = d.swapped();
+	else
+		return;
+	
+	if (getMassInv() == 0) return;
+
+	const float ALLOWED_PENETRATION = 0.001f;
+	if (data.penetration_depth > ALLOWED_PENETRATION)
+	{
+		float penetration = data.penetration_depth - ALLOWED_PENETRATION;
+		mth::Vec2 correction = data.normal*(penetration*iter_ratio/getMassInv());
+		
+		if (getMassInv() > 0)
+			move(-correction*getMassInv());
 	}
 }
 

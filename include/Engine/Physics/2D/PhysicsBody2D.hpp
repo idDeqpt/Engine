@@ -10,6 +10,7 @@
 namespace eng::phy
 {
 	class RigidBody2D;
+	class StaticBody2D;
 	
 	class PhysicsBody2D : public core::Node2D
 	{
@@ -20,6 +21,7 @@ namespace eng::phy
 		bool isEnable() {return m_enabled;}
 
 		virtual float getMass() {return 0;}
+		virtual float getMassInv() {return 0;}
 		virtual mth::Vec2 getLinearVelocity() {return 0;}
 
 		template<typename T, typename... Args>
@@ -32,9 +34,11 @@ namespace eng::phy
 
 		virtual void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) {};
 		virtual void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) {};
+		virtual void resolveCollisionVelWithStatic(const CollisionData& data, StaticBody2D& other) {};
 
 		virtual void resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other) {};
 		virtual void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other) {};
+		virtual void resolveCollisionPosWithStatic(const CollisionData& data, float iter_ratio, StaticBody2D& other) {};
 
 	protected:
 		bool m_enabled = true;

@@ -8,6 +8,8 @@
 
 namespace eng::phy
 {
+	class StaticBody2D;
+	
 	class RigidBody2D : public PhysicsBody2D
 	{
 	public:
@@ -18,16 +20,20 @@ namespace eng::phy
 
 		void setMass(float mass);
 
-		mth::Vec2 getLinearVelocity() override;
 		float getMass() override;
+		float getMassInv() override;
+		mth::Vec2 getLinearVelocity() override;
 
 		void updateState(float delta) override;
 
 		void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) override;
 		void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) override;
+		void resolveCollisionVelWithStatic(const CollisionData& data, StaticBody2D& other) override;
+
 
 		void resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other) override;
 		void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other) override;
+		void resolveCollisionPosWithStatic(const CollisionData& data, float iter_ratio, StaticBody2D& other) override;
 
 	protected:
 		float m_mass, m_mass_inv;
