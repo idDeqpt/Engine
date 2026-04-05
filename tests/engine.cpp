@@ -105,11 +105,11 @@ public:
 
 		addChild<Box2D>("box");
 
-		for (unsigned int i = 0; i < 4; i++)
+		for (unsigned int i = 0; i < 8; i++)
 			for (unsigned int j = 0; j < 5; j++)
 			{
 				auto ball = addChild<Ball>("ball_" + std::to_string(i) + "_" + std::to_string(j));
-				ball->setPosition(eng::mth::Vec2(320 + i*(j + 20), 100 + j*(15 - i)));
+				ball->setPosition(eng::mth::Vec2(311 + i*11, 100 + j*11));
 			}
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

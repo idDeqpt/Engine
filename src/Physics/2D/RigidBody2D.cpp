@@ -11,6 +11,7 @@ namespace eng
 
 phy::RigidBody2D::RigidBody2D():
 	m_mass(1),
+	m_mass_inv(1),
 	m_damping(0.99),
 	phy::PhysicsBody2D() {}
 
@@ -29,6 +30,7 @@ void phy::RigidBody2D::addForce(const mth::Vec2 force)
 void phy::RigidBody2D::setMass(float mass)
 {
 	m_mass = mass;
+	m_mass_inv = (mass > 0) ? 1.0/mass : 0;
 }
 
 
@@ -76,17 +78,12 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	else
 		return;
 
-	float mass_a = m_mass;
-	float mass_b = other.getMass();
-	float inv_mass_a = (mass_a == 0) ? 0 : 1.0f/mass_a;
-	float inv_mass_b = (mass_b == 0) ? 0 : 1.0f/mass_b;
-	float inv_mass_sum = inv_mass_a + inv_mass_b;
+	float inv_mass_sum = m_mass_inv + other.m_mass_inv;
 	
 	if (inv_mass_sum == 0) return;
 
 	mth::Vec2 relative_velocity = other.getLinearVelocity() - getLinearVelocity();
 	float velocity_along_normal = relative_velocity.dot(data.normal);
-
 	
 	if (velocity_along_normal > 0) return;
 
@@ -100,10 +97,10 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 
 	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
 	
-	if (inv_mass_a > 0)
-		impulse(-impulse_v*inv_mass_a);
-	if (inv_mass_b > 0)
-		other.impulse(impulse_v*inv_mass_b);
+	if (m_mass_inv > 0)
+		impulse(-impulse_v*m_mass_inv);
+	if (other.m_mass_inv > 0)
+		other.impulse(impulse_v*other.m_mass_inv);
 }
 
 
@@ -125,11 +122,7 @@ void phy::RigidBody2D::resolveCollisionPosWithRigid(const CollisionData& d, floa
 	else
 		return;
 
-	float mass_a = m_mass;
-	float mass_b = other.getMass();
-	float inv_mass_a = (mass_a == 0) ? 0 : 1.0f/mass_a;
-	float inv_mass_b = (mass_b == 0) ? 0 : 1.0f/mass_b;
-	float inv_mass_sum = inv_mass_a + inv_mass_b;
+	float inv_mass_sum = m_mass_inv + other.m_mass_inv;
 	
 	if (inv_mass_sum == 0) return;
 
@@ -139,10 +132,10 @@ void phy::RigidBody2D::resolveCollisionPosWithRigid(const CollisionData& d, floa
 		float penetration = data.penetration_depth - ALLOWED_PENETRATION;
 		mth::Vec2 correction = data.normal*(penetration*iter_ratio/inv_mass_sum);
 		
-		if (inv_mass_a > 0)
-			move(-correction*inv_mass_a);
-		if (inv_mass_b > 0)
-			other.move(correction*inv_mass_b);
+		if (m_mass_inv > 0)
+			move(-correction*m_mass_inv);
+		if (other.m_mass_inv > 0)
+			other.move(correction*other.m_mass_inv);
 	}
 }
 

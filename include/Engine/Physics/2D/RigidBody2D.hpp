@@ -30,7 +30,7 @@ namespace eng::phy
 		void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other) override;
 
 	protected:
-		float m_mass;
+		float m_mass, m_mass_inv;
 		float m_damping;
 		mth::Vec2 m_linear_velocity;
 		mth::Vec2 m_accumulated_force;
