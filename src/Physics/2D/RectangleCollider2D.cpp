@@ -80,7 +80,27 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
     float distance = std::sqrt(distance_squared);
     if (distance < 0.0001f)
     {
-        result.normal = diff.norm();
+        float left_dist   = std::abs(closest_local.x + rect_origin.x);
+        float right_dist  = std::abs(closest_local.x - (m_size.x - rect_origin.x));
+        float top_dist    = std::abs(closest_local.y + rect_origin.y);
+        float bottom_dist = std::abs(closest_local.y - (m_size.y - rect_origin.y));
+        float min_dist = std::min({left_dist, right_dist, top_dist, bottom_dist});
+        
+        mth::Vec2 local_normal;
+        if (min_dist == left_dist)
+            local_normal = mth::Vec2(-1, 0);
+        else if (min_dist == right_dist)
+            local_normal = mth::Vec2(1, 0);
+        else if (min_dist == top_dist)
+            local_normal = mth::Vec2(0, -1);
+        else
+            local_normal = mth::Vec2(0, 1);
+        
+        cos_a = std::cos(rect_angle);
+        sin_a = std::sin(rect_angle);
+        
+        result.normal.x = local_normal.x*cos_a - local_normal.y*sin_a;
+        result.normal.y = local_normal.x*sin_a + local_normal.y*cos_a;
         result.penetration_depth = circle_radius;
         result.contact_point = closest_world;
         return result;

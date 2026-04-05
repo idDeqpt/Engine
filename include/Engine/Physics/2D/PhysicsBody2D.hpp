@@ -9,6 +9,8 @@
 
 namespace eng::phy
 {
+	class RigidBody2D;
+	
 	class PhysicsBody2D : public core::Node2D
 	{
 	public:
@@ -25,8 +27,14 @@ namespace eng::phy
 
 		Collider2D* getCollider() {return m_collider.get();}
 
-		virtual void update(float delta) {};
+		virtual void updateState(float delta) {};
 		virtual void onCollision(const CollisionData& data) {};
+
+		virtual void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) {};
+		virtual void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) {};
+
+		virtual void resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other) {};
+		virtual void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other) {};
 
 	protected:
 		bool m_enabled = true;

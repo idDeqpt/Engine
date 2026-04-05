@@ -40,20 +40,42 @@ void phy::PhysicsManager::update(float delta)
 			{
 				data.bodies[0] = s_bodies2d[i];
 				data.bodies[1] = s_bodies2d[j];
-				data.bodies_velocities[0] = s_bodies2d[i]->getLinearVelocity();
-				data.bodies_velocities[1] = s_bodies2d[j]->getLinearVelocity();
 				collisions.push_back(data);
 			}
 		}
 
-	for (unsigned int i = 0; i < collisions.size(); i++)
-	{
-		collisions[i].bodies[0]->onCollision(collisions[i]);
-		collisions[i].bodies[1]->onCollision(collisions[i].swapped());
-	}
+	unsigned int VELOCITY_ITERATIONS = 1;
+	for (unsigned int i = 0; i < VELOCITY_ITERATIONS; i++)
+		for (unsigned int j = 0; j < collisions.size(); j++)
+			collisions[j].bodies[0]->resolveCollisionVelWith(collisions[j], *collisions[j].bodies[1]);
 
 	for (unsigned int i = 0; i < s_bodies2d.size(); i++)
-		s_bodies2d[i]->update(delta);
+		s_bodies2d[i]->updateState(delta);
+
+	unsigned int POSITION_ITERATIONS = 4;
+	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
+	{
+		collisions.clear();
+		collisions.reserve(s_bodies2d.size());
+	
+		for (unsigned int i = 0; i < (s_bodies2d.size() - 1); i++)
+			for (unsigned int j = i + 1; j < s_bodies2d.size(); j++)
+			{
+				CollisionData data = s_bodies2d[i]->getCollider()->collideWith(*s_bodies2d[j]->getCollider());
+				if (data.has_collision)
+				{
+					data.bodies[0] = s_bodies2d[i];
+					data.bodies[1] = s_bodies2d[j];
+					collisions.push_back(data);
+				}
+			}
+		
+		if (collisions.empty()) break;
+		
+		float iter_ratio = 1.0 - (float(p)/POSITION_ITERATIONS);
+		for (unsigned int i = 0; i < collisions.size(); i++)
+			collisions[i].bodies[0]->resolveCollisionPosWith(collisions[i], iter_ratio, *collisions[i].bodies[1]);
+	}
 }
 
 } //namespace eng

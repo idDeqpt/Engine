@@ -21,8 +21,13 @@ namespace eng::phy
 		mth::Vec2 getLinearVelocity() override;
 		float getMass() override;
 
-		void update(float delta) override;
-		void onCollision(const CollisionData& data) override;
+		void updateState(float delta) override;
+
+		void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) override;
+		void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) override;
+
+		void resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other) override;
+		void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other) override;
 
 	protected:
 		float m_mass;

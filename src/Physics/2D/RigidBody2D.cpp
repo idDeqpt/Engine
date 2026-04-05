@@ -11,7 +11,7 @@ namespace eng
 
 phy::RigidBody2D::RigidBody2D():
 	m_mass(1),
-	m_damping(1),
+	m_damping(0.99),
 	phy::PhysicsBody2D() {}
 
 
@@ -44,7 +44,7 @@ float phy::RigidBody2D::getMass()
 }
 
 
-void phy::RigidBody2D::update(float delta)
+void phy::RigidBody2D::updateState(float delta)
 {
 	if ((delta <= 0) || (m_mass == 0)) return;
 
@@ -57,34 +57,93 @@ void phy::RigidBody2D::update(float delta)
 	m_accumulated_force = mth::Vec2(0);
 }
 
-void phy::RigidBody2D::onCollision(const CollisionData& data)
+
+void phy::RigidBody2D::resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other)
 {
 	if (!data.has_collision) return;
+	other.resolveCollisionVelWithRigid(data, *this);
+}
 
-	core::Logger::info(getNamePath() + " collided with " + data.bodies[1]->getNamePath());
+void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, RigidBody2D& other)
+{
+	if (!d.has_collision) return;
 
-	mth::Vec2 neg_normal = -data.normal;
+	CollisionData data;
+	if (d.bodies[0] == this)
+		data = d;
+	else if (d.bodies[1] == this)
+		data = d.swapped();
+	else
+		return;
+
+	float mass_a = m_mass;
+	float mass_b = other.getMass();
+	float inv_mass_a = (mass_a == 0) ? 0 : 1.0f/mass_a;
+	float inv_mass_b = (mass_b == 0) ? 0 : 1.0f/mass_b;
+	float inv_mass_sum = inv_mass_a + inv_mass_b;
 	
-	float mass_coef = 1;
-	if (data.bodies[1]->getMass())
-		mass_coef = data.bodies[1]->getMass()/(m_mass + data.bodies[1]->getMass());
-	
-	if (data.penetration_depth)
-    {
-        mth::Vec2 position_correction = neg_normal*(data.penetration_depth*mass_coef);
-        move(position_correction);
-    }
+	if (inv_mass_sum == 0) return;
 
-	mth::Vec2 relative_velocity = getLinearVelocity() - data.bodies_velocities[1];
-	float velocity_along_normal = relative_velocity.x*neg_normal.x + relative_velocity.y*neg_normal.y; //dot
+	mth::Vec2 relative_velocity = other.getLinearVelocity() - getLinearVelocity();
+	float velocity_along_normal = relative_velocity.dot(data.normal);
+
+	
 	if (velocity_along_normal > 0) return;
 
-	float restitution = 0.6f;
-	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
-
-	float self_impulse_share = impulse_magnitude * (mass_coef);
+	float restitution = 0.9f;
+	float impulse_magnitude = -(1 + restitution) * velocity_along_normal;
+	impulse_magnitude /= inv_mass_sum;
 	
-	impulse(neg_normal*self_impulse_share);
+	constexpr float MAX_IMPULSE = 100.0f;
+	impulse_magnitude = (impulse_magnitude < MAX_IMPULSE) ? impulse_magnitude : MAX_IMPULSE;
+	impulse_magnitude = (impulse_magnitude > -MAX_IMPULSE) ? impulse_magnitude : -MAX_IMPULSE;
+
+	mth::Vec2 impulse_v = data.normal*impulse_magnitude;
+	
+	if (inv_mass_a > 0)
+		impulse(-impulse_v*inv_mass_a);
+	if (inv_mass_b > 0)
+		other.impulse(impulse_v*inv_mass_b);
+}
+
+
+void phy::RigidBody2D::resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other)
+{
+	if (!data.has_collision) return;
+	other.resolveCollisionPosWithRigid(data, iter_ratio, *this);
+}
+
+void phy::RigidBody2D::resolveCollisionPosWithRigid(const CollisionData& d, float iter_ratio, RigidBody2D& other)
+{
+	if (!d.has_collision) return;
+
+	CollisionData data;
+	if (d.bodies[0] == this)
+		data = d;
+	else if (d.bodies[1] == this)
+		data = d.swapped();
+	else
+		return;
+
+	float mass_a = m_mass;
+	float mass_b = other.getMass();
+	float inv_mass_a = (mass_a == 0) ? 0 : 1.0f/mass_a;
+	float inv_mass_b = (mass_b == 0) ? 0 : 1.0f/mass_b;
+	float inv_mass_sum = inv_mass_a + inv_mass_b;
+	
+	if (inv_mass_sum == 0) return;
+
+	const float ALLOWED_PENETRATION = 0.001f;
+	if (data.penetration_depth > ALLOWED_PENETRATION)
+	{
+		float penetration = data.penetration_depth - ALLOWED_PENETRATION;
+		mth::Vec2 correction = data.normal*(penetration*iter_ratio/inv_mass_sum);
+		
+		if (inv_mass_a > 0)
+			move(-correction*inv_mass_a);
+		if (inv_mass_b > 0)
+			other.move(correction*inv_mass_b);
+	}
 }
 
 } //namespace eng
