@@ -70,7 +70,7 @@ class Ball : public eng::phy::RigidBody2D
 public:
 	void onSetup()
 	{
-		int rad = rand() % 5 + 5;
+		int rad = rand()%5 + 5;
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(rad*2, rad*2));
@@ -80,6 +80,7 @@ public:
 		col->setRadius(rad);
 		eng::phy::PhysicsManager::addBody(*this);
 		setMass(rad);
+		setRestitution(0.8);
 	}
 
 	void onUpdate(float delta)
@@ -144,6 +145,14 @@ public:
 	{
 		auto t_ft = static_cast<eng::gfx::Text2D*>(getChildByName("text_frametime"));
 		if (t_ft) t_ft->setString(std::to_string(delta));
+
+		if (eng::sys::EventManager::getMouse().isJustPressed(eng::sys::Mouse::LEFT))
+		{
+			auto ball = addChild<Ball>("ball");
+			ball->setPosition(eng::sys::EventManager::getMouse().getPosition());
+			ball->setup();
+			eng::core::Logger::info(" spawn " + std::to_string(eng::sys::EventManager::getMouse().getPosition().x) + " " + std::to_string(eng::sys::EventManager::getMouse().getPosition().y));
+		}
 	}
 };
 

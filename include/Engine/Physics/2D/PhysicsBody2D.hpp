@@ -20,9 +20,12 @@ namespace eng::phy
 		void setEnable(bool flag) {m_enabled = flag;}
 		bool isEnable() {return m_enabled;}
 
+		void setRestitution(float r) {m_restitution = r;}
+
 		virtual float getMass() {return 0;}
 		virtual float getMassInv() {return 0;}
 		virtual mth::Vec2 getLinearVelocity() {return 0;}
+		float getRestitution() {return m_restitution;}
 
 		template<typename T, typename... Args>
 		T* setCollider(Args&&... args);
@@ -42,6 +45,7 @@ namespace eng::phy
 
 	protected:
 		bool m_enabled = true;
+		float m_restitution = 0.9;
 		std::unique_ptr<Collider2D> m_collider;
 	};
 

@@ -4,7 +4,6 @@
 #include <Engine/Physics/2D/StaticBody2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Math/Vec2.hpp>
-#include <Engine/Core/Logger.hpp>
 
 
 namespace eng
@@ -94,7 +93,9 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	
 	if (velocity_along_normal < 0) return;
 
-	float restitution = 0.9f;
+	float rest_a = getRestitution();
+	float rest_b = other.getRestitution();
+	float restitution = (rest_a < rest_b) ? rest_a : rest_b;
 	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
 	impulse_magnitude /= inv_mass_sum;
 
@@ -126,7 +127,9 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 	
 	if (velocity_along_normal < 0) return;
 
-	float restitution = 0.9f;
+	float rest_a = getRestitution();
+	float rest_b = other.getRestitution();
+	float restitution = (rest_a < rest_b) ? rest_a : rest_b;
 	float impulse_magnitude = -(1 + restitution)*velocity_along_normal;
 	impulse_magnitude /= inv_mass_a;
 
