@@ -14,6 +14,7 @@ namespace eng::core
 		String(int v);
 		String(unsigned int v);
 		String(float v);
+		String(const void* v);
 
 		const std::string& getString() const;
 
@@ -22,6 +23,7 @@ namespace eng::core
 		String& operator<<(int v);
 		String& operator<<(unsigned int v);
 		String& operator<<(float v);
+		String& operator<<(const void* v);
 
 	protected:
 		std::string m_str;
