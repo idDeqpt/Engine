@@ -31,6 +31,7 @@ core::Logger::Logger():
 core::Logger::~Logger()
 {
 	m_process = false;
+	m_cv.notify_one();
 	m_thread.join();
 }
 
@@ -77,9 +78,9 @@ void core::Logger::setOutFile(const std::string& file_path)
 
 std::string core::Logger::getCurrentTime()
 {
-	auto now = std::chrono::system_clock::now();
+	auto now  = std::chrono::system_clock::now();
 	auto time = std::chrono::system_clock::to_time_t(now);
-    auto ms = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1'000'000;
+    auto ms   = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1'000'000;
 	
 	std::stringstream ss;
 	ss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
@@ -93,24 +94,20 @@ std::string core::Logger::formatString(Logger::LogLevel level, std::string text)
 	constexpr char* levelStr[] = {"DEBUG", "INFO", "WARNING", "ERROR"};
 
 	std::stringstream ss;
-	ss << "[" << getCurrentTime() << "] ";
+	ss << "[" << getCurrentTime()                  << "] ";
 	ss << "[" << levelStr[static_cast<int>(level)] << "] ";
 	ss << text;
 
 	return ss.str();
 }
 
-void core::Logger::writeData()
+void core::Logger::writeData(const std::string& msg)
 {
-	while (!m_write_queue.empty())
-	{
-		std::cout << m_write_queue.front() << std::endl;
-		std::ofstream file(m_out_file_path, std::ios::app);
-		if (file.is_open())
-			file << m_write_queue.front() << std::endl;
-		file.close();
-		m_write_queue.pop();
-	}
+	std::cout << msg << std::endl;
+	std::ofstream file(m_out_file_path, std::ios::app);
+	if (file.is_open())
+		file << msg << std::endl;
+	file.close();
 }
 
 
@@ -118,10 +115,18 @@ void core::Logger::processThread()
 {
 	while (m_process)
 	{
-		std::unique_lock<std::mutex> lock(m_mutex);
-		m_cv.wait(lock, [this] {return !m_write_queue.empty() || !m_process;});
+		std::string msg;
+		{
+			std::unique_lock<std::mutex> lock(m_mutex);
+			m_cv.wait(lock, [this] {return !m_write_queue.empty() || !m_process;});
+			if (!m_write_queue.empty())
+			{
+				msg = m_write_queue.front();
+				m_write_queue.pop();
+			}
+		}
 		
-		writeData();
+		writeData(msg);
 	}
 }
 

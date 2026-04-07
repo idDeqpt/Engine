@@ -46,7 +46,7 @@ namespace eng::core
 
 		std::string getCurrentTime();
 		std::string formatString(LogLevel level, std::string text);
-		void writeData();
+		void writeData(const std::string& msg);
 
 		void processThread();
 	};
