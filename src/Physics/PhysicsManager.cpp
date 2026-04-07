@@ -3,8 +3,11 @@
 #include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
+#include <Engine/Core/Timer.hpp>
+#include <Engine/Core/Logger.hpp>
 
 #include <vector>
+#include <thread>
 
 
 namespace eng
@@ -12,11 +15,41 @@ namespace eng
 
 std::vector<phy::PhysicsBody2D*> phy::PhysicsManager::s_bodies2d;
 std::vector<phy::CollisionData> phy::PhysicsManager::s_collisions_buffer;
+unsigned int phy::PhysicsManager::s_threads_count;
+std::vector<std::thread> phy::PhysicsManager::s_threads;
+void (*phy::PhysicsManager::s_update_collisions_handler)();
 
 
 void phy::PhysicsManager::initialize()
 {
 	s_bodies2d.clear();
+	setThreadsCount(0);
+}
+
+
+void phy::PhysicsManager::setThreadsCount(unsigned int count)
+{
+	if (count == 0)
+	{
+		unsigned int c = std::thread::hardware_concurrency();
+		setThreadsCount((c == 0) ? 1 : c);
+		return;
+	}
+	
+	for (unsigned int i = 0; i < s_threads.size(); i++)
+		if (s_threads[i].joinable())
+			s_threads[i].join();
+
+	if (count == 1)
+	{
+		s_threads.clear();
+		s_update_collisions_handler = updateCollisionsSingleThread;
+	}
+	else
+	{
+		s_threads.resize(count);
+		s_update_collisions_handler = updateCollisionsMultiThread;
+	}
 }
 
 
@@ -30,20 +63,27 @@ void phy::PhysicsManager::addBody(PhysicsBody2D& body)
 
 void phy::PhysicsManager::update(float delta)
 {
-	updateCollisions();
+	core::Timer t, tl;
+	s_update_collisions_handler();
+	core::Logger::info(core::String("Collisions: ") << tl.getElapsedSeconds());
 
+	tl.restart();
 	unsigned int VELOCITY_ITERATIONS = 4;
 	for (unsigned int i = 0; i < VELOCITY_ITERATIONS; i++)
 		for (unsigned int j = 0; j < s_collisions_buffer.size(); j++)
 			s_collisions_buffer[j].bodies[0]->resolveCollisionVelWith(s_collisions_buffer[j], *s_collisions_buffer[j].bodies[1]);
+	core::Logger::info(core::String("Velocity: ") << tl.getElapsedSeconds());
 
+	tl.restart();
 	for (unsigned int i = 0; i < s_bodies2d.size(); i++)
 		s_bodies2d[i]->updateState(delta);
+	core::Logger::info(core::String("Update: ") << tl.getElapsedSeconds());
 
+	tl.restart();
 	unsigned int POSITION_ITERATIONS = 4;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
-		updateCollisions();
+		s_update_collisions_handler();
 		
 		if (s_collisions_buffer.empty()) break;
 		
@@ -51,43 +91,97 @@ void phy::PhysicsManager::update(float delta)
 		for (unsigned int i = 0; i < s_collisions_buffer.size(); i++)
 			s_collisions_buffer[i].bodies[0]->resolveCollisionPosWith(s_collisions_buffer[i], iter_ratio, *s_collisions_buffer[i].bodies[1]);
 	}
+	core::Logger::info(core::String("Position: ") << tl.getElapsedSeconds());
+
+	core::Logger::info(core::String("Total: ") << t.getElapsedSeconds());
 }
 
 
 bool phy::PhysicsManager::checkCollisionAABB(Collider2D& first, Collider2D& second)
 {
-    Collider2D::AABB aabb1 = first.getAABB();
-    Collider2D::AABB aabb2 = second.getAABB();
-    
-    if (aabb1.max.x < aabb2.min.x || aabb2.max.x < aabb1.min.x)
-        return false;
-    
-    if (aabb1.max.y < aabb2.min.y || aabb2.max.y < aabb1.min.y)
-        return false;
-    
-    return true;
+	Collider2D::AABB aabb1 = first.getAABB();
+	Collider2D::AABB aabb2 = second.getAABB();
+	
+	if (aabb1.max.x < aabb2.min.x || aabb2.max.x < aabb1.min.x)
+		return true;
+	
+	if (aabb1.max.y < aabb2.min.y || aabb2.max.y < aabb1.min.y)
+		return true;
+	
+	return false;
 }
 
 
-void phy::PhysicsManager::updateCollisions()
+void phy::PhysicsManager::updateCollisionsSingleThread()
 {
 	s_collisions_buffer.clear();
 	s_collisions_buffer.reserve(s_bodies2d.size());
 
 	for (unsigned int i = 0; i < (s_bodies2d.size() - 1); i++)
 		for (unsigned int j = i + 1; j < s_bodies2d.size(); j++)
-		{
 			if (checkCollisionAABB(*s_bodies2d[i]->getCollider(), *s_bodies2d[j]->getCollider()))
-				continue;
-
-			CollisionData data = s_bodies2d[i]->getCollider()->collideWith(*s_bodies2d[j]->getCollider());
-			if (data.has_collision)
 			{
-				data.bodies[0] = s_bodies2d[i];
-				data.bodies[1] = s_bodies2d[j];
-				s_collisions_buffer.push_back(data);
+				CollisionData data = s_bodies2d[i]->getCollider()->collideWith(*s_bodies2d[j]->getCollider());
+				if (data.has_collision)
+				{
+					data.bodies[0] = s_bodies2d[i];
+					data.bodies[1] = s_bodies2d[j];
+					s_collisions_buffer.push_back(data);
+				}
 			}
-		}
+}
+
+
+void phy::PhysicsManager::updateCollisionsMultiThread()
+{
+	s_collisions_buffer.clear();
+	s_collisions_buffer.reserve(s_bodies2d.size());
+	
+	if (s_bodies2d.size() <= 1) return;
+	
+	std::vector<std::vector<CollisionData>> thread_results(s_threads.size());
+	
+	auto process_range = [&](unsigned int thread_id, unsigned int start_pair, unsigned int end_pair)
+	{
+		for (unsigned int i = start_pair; i < end_pair; i++)
+			for (unsigned int j = i + 1; j < s_bodies2d.size(); j++)
+				if (checkCollisionAABB(*s_bodies2d[i]->getCollider(), *s_bodies2d[j]->getCollider()))
+				{
+					CollisionData data = s_bodies2d[i]->getCollider()->collideWith(*s_bodies2d[j]->getCollider());
+					if (data.has_collision)
+					{
+						data.bodies[0] = s_bodies2d[i];
+						data.bodies[1] = s_bodies2d[j];
+						thread_results[thread_id].push_back(data);
+					}
+				}
+	};
+	
+	unsigned int pairs_per_thread = s_bodies2d.size()/s_threads.size();
+	unsigned int remainder = s_bodies2d.size()%s_threads.size();
+	unsigned int current_start = 0;
+	
+	for (unsigned int t = 0; t < s_threads.size(); t++)
+	{
+		unsigned int pairs_for_this_thread = pairs_per_thread + (t < remainder ? 1 : 0);
+		unsigned int current_end = current_start + pairs_for_this_thread;
+		
+		if (pairs_for_this_thread > 0)
+			s_threads[t] = std::thread(process_range, t, current_start, current_end);
+
+		current_start = current_end;
+	}
+	
+	for (unsigned int t = 0; t < s_threads.size(); t++)
+		if (s_threads[t].joinable())
+			s_threads[t].join();
+	
+	for (unsigned int t = 0; t < thread_results.size(); t++)
+		s_collisions_buffer.insert(
+			s_collisions_buffer.end(),
+			thread_results[t].begin(),
+			thread_results[t].end()
+		);
 }
 
 } //namespace eng

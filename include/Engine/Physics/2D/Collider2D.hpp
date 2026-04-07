@@ -4,6 +4,7 @@
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Math/Vec2.hpp>
+#include <mutex>
 
 namespace eng::phy
 {
@@ -20,6 +21,8 @@ namespace eng::phy
 
 		Collider2D() : core::Node2D() {}
 
+		std::mutex& getMutex() {return m_aabb_mutex;}
+
 		virtual AABB getAABB() = 0;
 
 		virtual CollisionData collideWith(Collider2D& other) = 0;
@@ -29,6 +32,7 @@ namespace eng::phy
 	protected:
 		bool m_aabb_need_update = true;
 		AABB m_cached_aabb;
+		std::mutex m_aabb_mutex;
 
 		virtual void updateAABB() = 0;
 

@@ -37,6 +37,10 @@ phy::Collider2D::AABB phy::RectangleCollider2D::getAABB()
 
 phy::CollisionData phy::RectangleCollider2D::collideWith(Collider2D& other)
 {
+	std::unique_lock<std::mutex> lock1(m_aabb_mutex, std::defer_lock);
+    std::unique_lock<std::mutex> lock2(other.getMutex(), std::defer_lock);
+    std::lock(lock1, lock2);
+
 	CollisionData data = other.collideWithRectangle(*this);
 	if (data.colliders[0] == this) 
 		return data;
@@ -129,6 +133,7 @@ void phy::RectangleCollider2D::updateAABB()
 {
 	if (m_aabb_need_update)
 	{
+		std::lock_guard<std::mutex> lock(m_aabb_mutex);
 		mth::Vec2 local_points[4] = {
 			mth::Vec2(0,        0),
 			mth::Vec2(m_size.x, 0),

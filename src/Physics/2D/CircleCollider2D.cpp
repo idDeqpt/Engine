@@ -37,6 +37,10 @@ phy::Collider2D::AABB phy::CircleCollider2D::getAABB()
 
 phy::CollisionData phy::CircleCollider2D::collideWith(Collider2D& other)
 {
+	std::unique_lock<std::mutex> lock1(m_aabb_mutex, std::defer_lock);
+    std::unique_lock<std::mutex> lock2(other.getMutex(), std::defer_lock);
+    std::lock(lock1, lock2);
+    
 	CollisionData data = other.collideWithCircle(*this);
 	if (data.colliders[0] == this) 
 		return data;
@@ -94,6 +98,7 @@ void phy::CircleCollider2D::updateAABB()
 {
 	if (m_aabb_need_update)
 	{
+		std::lock_guard<std::mutex> lock(m_aabb_mutex);
 		m_cached_aabb = {getGlobalPosition(), getGlobalPosition() + m_radius};
 		m_aabb_need_update = false;
 	}
