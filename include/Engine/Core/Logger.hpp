@@ -1,6 +1,8 @@
 #ifndef LOGGER_STATIC_CLASS_HEADER
 #define LOGGER_STATIC_CLASS_HEADER
 
+#include <Engine/Core/String.hpp>
+
 #include <condition_variable>
 #include <string>
 #include <thread>
@@ -23,12 +25,12 @@ namespace eng::core
 
 		static Logger& getInstance();
 
-		static void debug(std::string text);
-		static void info(std::string text);
-		static void warning(std::string text);
-		static void error(std::string text);
+		static void debug(const String& str);
+		static void info(const String& str);
+		static void warning(const String& str);
+		static void error(const String& str);
 
-		void log(LogLevel level, std::string text);
+		void log(LogLevel level, const std::string& text);
 		void setOutFile(const std::string& file_path);
 
 	protected:

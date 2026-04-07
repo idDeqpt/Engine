@@ -33,17 +33,18 @@ public:
 	{
 		auto b = addChild<eng::phy::StaticBody2D>("floor");
 		eng::phy::PhysicsManager::addBody(*b);
-		b->setPosition(eng::mth::Vec2(0, 100));
+		b->setPosition(eng::mth::Vec2(0, 0));
 		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(100, 100));
+		sh->setSize(eng::mth::Vec2(100, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		auto col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(100, 100));
+		col->setSize(eng::mth::Vec2(100, 10));
 
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		eng::phy::PhysicsManager::addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
+		b->setRotation(3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 100));
@@ -53,15 +54,15 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		eng::phy::PhysicsManager::addBody(*b);
-		b->setPosition(eng::mth::Vec2(90, 0));
+		b->setPosition(eng::mth::Vec2(100, 0));
+		b->setOrigin(eng::mth::Vec2(10, 0));
+		b->setRotation(-3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 100));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 100));
-
-		setPosition(eng::mth::Vec2(300, 200));
 	}
 };
 
@@ -89,28 +90,6 @@ public:
 	}
 };
 
-class BigBall : public eng::phy::RigidBody2D
-{
-public:
-	void onSetup()
-	{
-		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
-		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(30, 30));
-		sh->setColor(eng::gfx::Color(0, 255, 0));
-
-		auto col = setCollider<eng::phy::CircleCollider2D>();
-		col->setRadius(15);
-		setMass(100);
-		eng::phy::PhysicsManager::addBody(*this);
-	}
-
-	void onUpdate(float delta)
-	{
-		applyForce(eng::mth::Vec2(0, 100000*delta));
-	}
-};
-
 
 class Root : public eng::core::Node
 {
@@ -124,7 +103,7 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<Box2D>("box");
+		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(400, 500));
 
 		for (unsigned int i = 0; i < 6; i++)
 			for (unsigned int j = 0; j < 5; j++)
@@ -132,8 +111,6 @@ public:
 				auto ball = addChild<Ball>("ball_" + std::to_string(i) + "_" + std::to_string(j));
 				ball->setPosition(eng::mth::Vec2(311 + i*15, 100 + j*15));
 			}
-		auto ball = addChild<BigBall>("big_ball");
-		ball->setPosition(eng::mth::Vec2(350, 0));
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
 		eng::gfx::RenderManager::getMainScene()->addObject(*t_ft);
@@ -151,7 +128,7 @@ public:
 			auto ball = addChild<Ball>("ball");
 			ball->setPosition(eng::sys::EventManager::getMouse().getPosition());
 			ball->setup();
-			eng::core::Logger::info(" spawn " + std::to_string(eng::sys::EventManager::getMouse().getPosition().x) + " " + std::to_string(eng::sys::EventManager::getMouse().getPosition().y));
+			eng::core::Logger::info(eng::core::String("Spawn ") << eng::sys::EventManager::getMouse().getPosition().x << " " << eng::sys::EventManager::getMouse().getPosition().y);
 		}
 	}
 };

@@ -14,6 +14,7 @@ set(CORE_SOURCE_FILES
     src/Core/Node2D.cpp
     src/Core/Node3D.cpp
     src/Core/ResourceManager.cpp
+    src/Core/String.cpp
     src/Core/Timer.cpp
     src/Core/TimeManager.cpp)
 

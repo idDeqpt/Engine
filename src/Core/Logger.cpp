@@ -35,28 +35,28 @@ core::Logger::~Logger()
 }
 
 
-void core::Logger::debug(std::string text)
+void core::Logger::debug(const String& str)
 {
-	getInstance().log(Logger::LogLevel::DEBUG, text);
+	getInstance().log(Logger::LogLevel::DEBUG, str.getString());
 }
 
-void core::Logger::info(std::string text)
+void core::Logger::info(const String& str)
 {
-	getInstance().log(Logger::LogLevel::INFO, text);
+	getInstance().log(Logger::LogLevel::INFO, str.getString());
 }
 
-void core::Logger::warning(std::string text)
+void core::Logger::warning(const String& str)
 {
-	getInstance().log(Logger::LogLevel::WARNING, text);
+	getInstance().log(Logger::LogLevel::WARNING, str.getString());
 }
 
-void core::Logger::error(std::string text)
+void core::Logger::error(const String& str)
 {
-	getInstance().log(Logger::LogLevel::ERROR, text);
+	getInstance().log(Logger::LogLevel::ERROR, str.getString());
 }
 
 
-void core::Logger::log(LogLevel level, std::string text)
+void core::Logger::log(LogLevel level, const std::string& text)
 {
 	std::string formatted = formatString(level, text);
 	

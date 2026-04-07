@@ -57,17 +57,17 @@ void core::Engine::setup()
 	Logger::debug("Start setup");
 
 	static gfx::Shader shader2d = gfx::Shader(shader::default2d_vert, shader::default2d_frag);
-	Logger::debug("Default shader 2D loaded with error code: " + std::to_string(shader2d.getLastError()));
+	Logger::debug(String("Default shader 2D loaded with error code: ") << shader2d.getLastError());
 	if (shader2d.getLastError())
 		Logger::error("Info: \n" + shader2d.getLastErrorLog());
 
 	static gfx::Shader shader3d_deferred = gfx::Shader(shader::default3d_vert, shader::default3d_deferred_frag);
-	Logger::debug("Default shader 3D deferred loaded with error code: " + std::to_string(shader3d_deferred.getLastError()));
+	Logger::debug(String("Default shader 3D deferred loaded with error code: ") << shader3d_deferred.getLastError());
 	if (shader3d_deferred.getLastError())
 		Logger::error("Info: \n" + shader3d_deferred.getLastErrorLog());
 
 	static gfx::Shader shader2d_deferred_light = gfx::Shader(shader::default2d_vert, shader::default3d_deferred_light_frag);
-	Logger::debug("Default shader 2D deferred light loaded with error code: " + std::to_string(shader2d_deferred_light.getLastError()));
+	Logger::debug(String("Default shader 2D deferred light loaded with error code: ") << shader2d_deferred_light.getLastError());
 	if (shader2d_deferred_light.getLastError())
 		Logger::error("Info: \n" + shader2d_deferred_light.getLastErrorLog());
 
