@@ -31,11 +31,11 @@ ____
 ### Windows
 ```bash
 # Вариант 1: Использовать готовый скрипт
-Generate.bat
+GenerateRelease.bat
 # Вариант 2: Вручную
 mkdir build && cd build
 cmake ..
-cmake --build .
+cmake --build . --config Release
 ```
 ____
 # Использование
