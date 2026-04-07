@@ -36,10 +36,10 @@ public:
 		b->setPosition(eng::mth::Vec2(0, 0));
 		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(100, 10));
+		sh->setSize(eng::mth::Vec2(300, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		auto col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(100, 10));
+		col->setSize(eng::mth::Vec2(300, 10));
 
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		eng::phy::PhysicsManager::addBody(*b);
@@ -54,7 +54,7 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		eng::phy::PhysicsManager::addBody(*b);
-		b->setPosition(eng::mth::Vec2(100, 0));
+		b->setPosition(eng::mth::Vec2(300, 0));
 		b->setOrigin(eng::mth::Vec2(10, 0));
 		b->setRotation(-3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
@@ -63,6 +63,16 @@ public:
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 100));
+
+		b = addChild<eng::phy::StaticBody2D>("horizontal");
+		eng::phy::PhysicsManager::addBody(*b);
+		b->setPosition(eng::mth::Vec2(100, -100));
+		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
+		sh->setSize(eng::mth::Vec2(100, 10));
+		sh->setColor(eng::gfx::Color(0, 0, 255));
+		col = b->setCollider<eng::phy::RectangleCollider2D>();
+		col->setSize(eng::mth::Vec2(100, 10));
 	}
 };
 
@@ -96,6 +106,7 @@ class Root : public eng::core::Node
 public:
 	void onSetup()
 	{
+		eng::phy::PhysicsManager::setThreadsCount(0);
 		srand(0);
 		eng::gfx::Font& font = *eng::core::ResourceManager::load<eng::gfx::Font>({"E:/Programming/Projects/C++/Engine/tests/resources/GameFont.ttf"}).second;
 
@@ -103,13 +114,13 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(400, 500));
+		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
 
-		for (unsigned int i = 0; i < 6; i++)
-			for (unsigned int j = 0; j < 5; j++)
+		for (unsigned int i = 0; i < 20; i++)
+			for (unsigned int j = 0; j < 9; j++)
 			{
 				auto ball = addChild<Ball>("ball_" + std::to_string(i) + "_" + std::to_string(j));
-				ball->setPosition(eng::mth::Vec2(400 + i*15, 100 + j*15));
+				ball->setPosition(eng::mth::Vec2(200 + i*15, 100 + j*15));
 			}
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

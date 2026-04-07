@@ -25,11 +25,13 @@ namespace eng::phy
 		static std::vector<CollisionData> s_collisions_buffer;
 		static unsigned int s_threads_count;
 		static std::vector<std::thread> s_threads;
+		static std::vector<unsigned int> s_threads_last_indexes;
 		static void (*s_update_collisions_handler)();
 
 		static bool checkCollisionAABB(Collider2D& first, Collider2D& second);
 		static void updateCollisionsSingleThread();
 		static void updateCollisionsMultiThread();
+		static void updateThreadsIndexes();
 	};
 }
 
