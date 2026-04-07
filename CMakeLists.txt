@@ -13,6 +13,7 @@ set(CORE_SOURCE_FILES
     src/Core/Node.cpp
     src/Core/Node2D.cpp
     src/Core/Node3D.cpp
+    src/Core/NodeNameTag.cpp
     src/Core/ResourceManager.cpp
     src/Core/String.cpp
     src/Core/Timer.cpp

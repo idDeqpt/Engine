@@ -116,12 +116,19 @@ public:
 
 		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
 
-		for (unsigned int i = 0; i < 20; i++)
+		/*for (unsigned int i = 0; i < 20; i++)
 			for (unsigned int j = 0; j < 9; j++)
 			{
-				auto ball = addChild<Ball>("ball_" + std::to_string(i) + "_" + std::to_string(j));
+				auto ball = addChild<Ball>("ball");
 				ball->setPosition(eng::mth::Vec2(200 + i*15, 100 + j*15));
-			}
+			}*/
+
+		eng::core::Logger::info("Start");
+		for (unsigned int i = 0; i < 10000; i++)
+		{
+			addChild<eng::core::Node>("NAMENAMENAMENAME");
+		}
+		eng::core::Logger::info("End");
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
 		eng::gfx::RenderManager::getMainScene()->addObject(*t_ft);

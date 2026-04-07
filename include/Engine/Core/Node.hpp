@@ -3,6 +3,7 @@
 
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
+#include <Engine/Core/NodeNameTag.hpp>
 
 #include <optional>
 #include <string>
@@ -27,12 +28,11 @@ namespace eng::core
 		virtual void onDestroy();
 
 		void setParent(Node* new_parent);
-		void setName(std::string new_name);
+		void setName(const std::string& new_name);
 
 		Node* getParent();
 		Node* getChildByName(const std::string& name);
-		std::string getName();
-		std::string getNamePath();
+		const NodeNameTag& getTag();
 
 
 		virtual std::optional<mth::Transform2> getGlobalTransform2D();
@@ -42,7 +42,7 @@ namespace eng::core
 		T* addChild(std::string name, Args&&... args);
 
 	protected:
-		std::string m_name;
+		NodeNameTag m_tag;
 		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;
 	};
@@ -56,13 +56,13 @@ T* eng::core::Node::addChild(std::string name, Args&&... args)
 
 	auto child = std::make_unique<T>(std::forward<Args>(args)...);
 	child->setParent(this);
-	child->setName(name);
 
+	NodeNameTag tag(name, 0, "");
 	unsigned int count = 0;
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		if (m_children[i]->getName() == name) count++;
-	if (count > 0)
-		name += "_" + std::to_string(++count);
+		if (m_children[i]->getTag().getNameHash() == tag.getNameHash()) count++;
+
+	child->m_tag = NodeNameTag(name, count, m_tag.getPath());
 	
 	T* ptr = child.get();
 	m_children.push_back(std::move(child));

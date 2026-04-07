@@ -3,6 +3,7 @@
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
+#include <Engine/Core/NodeNameTag.hpp>
 
 #include <optional>
 #include <string>
@@ -13,7 +14,6 @@ namespace eng
 {
 
 core::Node::Node():
-	m_name(""),
 	m_parent(nullptr)
 {
 	m_children.clear();
@@ -27,13 +27,13 @@ core::Node::~Node()
 
 void core::Node::setup()
 {
-	Logger::debug("START setup of node \"" + getNamePath() + "\" START");
+	Logger::debug("START setup of node \"" + m_tag.getPath() + "\" START");
 
 	onSetup();
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->setup();
 
-	Logger::debug("END   setup of node \"" + getNamePath() + "\" END");
+	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
 
 void core::Node::update(float delta)
@@ -61,9 +61,9 @@ void core::Node::setParent(Node* new_parent)
 	m_parent = new_parent;
 }
 
-void core::Node::setName(std::string new_name)
+void core::Node::setName(const std::string& new_name)
 {
-	m_name = new_name;
+	m_tag = NodeNameTag(new_name, m_tag.getIndex(), m_parent ? m_parent->getTag().getPath() : "");
 }
 
 
@@ -74,21 +74,16 @@ core::Node* core::Node::getParent()
 
 core::Node* core::Node::getChildByName(const std::string& name)
 {
+	NodeNameTag tag(name, 0, "");
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		if (m_children[i]->getName() == name)
+		if (m_children[i]->getTag().getNameHash() == tag.getNameHash())
 			return m_children[i].get();
 	return nullptr;
 }
 
-std::string core::Node::getName()
+const core::NodeNameTag& core::Node::getTag()
 {
-	return m_name;
-}
-
-std::string core::Node::getNamePath()
-{
-
-	return (m_parent ? m_parent->getNamePath() : "") + ("/" + m_name);
+	return m_tag;
 }
 
 
