@@ -20,7 +20,12 @@ if(NOT TARGET Engine::Engine)
     
     #Установка целевого файла библиотеки
     set_target_properties(Engine::Engine PROPERTIES
-        IMPORTED_LOCATION "${CMAKE_CURRENT_LIST_DIR}/../build/Debug/Engine.lib")
+        IMPORTED_LOCATION_DEBUG   "${ENGINE_ROOT}/build/Debug/Engine.lib"
+        IMPORTED_LOCATION_RELEASE "${ENGINE_ROOT}/build/Release/Engine.lib"
+        IMPORTED_LOCATION_RELWITHDEBINFO "${ENGINE_ROOT}/build/Release/Engine.lib"
+        IMPORTED_LOCATION_MINSIZEREL     "${ENGINE_ROOT}/build/Release/Engine.lib"
+        MAP_IMPORTED_CONFIG_RELWITHDEBINFO "RELEASE"
+        MAP_IMPORTED_CONFIG_MINSIZEREL     "RELEASE")
 
     #Передача зависимостей на экспорт
     set_target_properties(Engine::Engine PROPERTIES

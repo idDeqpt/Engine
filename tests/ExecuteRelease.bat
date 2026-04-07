@@ -1,0 +1,1 @@
+start "Engine Test" ".\build\Release\engine_tests.exe"
