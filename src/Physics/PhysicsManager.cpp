@@ -23,7 +23,7 @@ void (*phy::PhysicsManager::s_update_collisions_handler)();
 void phy::PhysicsManager::initialize()
 {
 	s_bodies2d.clear();
-	setThreadsCount(0);
+	setThreadsCount(1);
 }
 
 
@@ -63,23 +63,23 @@ void phy::PhysicsManager::addBody(PhysicsBody2D& body)
 
 void phy::PhysicsManager::update(float delta)
 {
-	core::Timer t, tl;
+	//core::Timer t, tl;
 	s_update_collisions_handler();
-	core::Logger::info(core::String("Collisions: ") << tl.getElapsedSeconds());
+	//core::Logger::info(core::String("Collisions: ") << tl.getElapsedSeconds());
 
-	tl.restart();
+	//tl.restart();
 	unsigned int VELOCITY_ITERATIONS = 4;
 	for (unsigned int i = 0; i < VELOCITY_ITERATIONS; i++)
 		for (unsigned int j = 0; j < s_collisions_buffer.size(); j++)
 			s_collisions_buffer[j].bodies[0]->resolveCollisionVelWith(s_collisions_buffer[j], *s_collisions_buffer[j].bodies[1]);
-	core::Logger::info(core::String("Velocity: ") << tl.getElapsedSeconds());
+	//core::Logger::info(core::String("Velocity: ") << tl.getElapsedSeconds());
 
-	tl.restart();
+	//tl.restart();
 	for (unsigned int i = 0; i < s_bodies2d.size(); i++)
 		s_bodies2d[i]->updateState(delta);
-	core::Logger::info(core::String("Update: ") << tl.getElapsedSeconds());
+	//core::Logger::info(core::String("Update: ") << tl.getElapsedSeconds());
 
-	tl.restart();
+	//tl.restart();
 	unsigned int POSITION_ITERATIONS = 4;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
@@ -91,9 +91,9 @@ void phy::PhysicsManager::update(float delta)
 		for (unsigned int i = 0; i < s_collisions_buffer.size(); i++)
 			s_collisions_buffer[i].bodies[0]->resolveCollisionPosWith(s_collisions_buffer[i], iter_ratio, *s_collisions_buffer[i].bodies[1]);
 	}
-	core::Logger::info(core::String("Position: ") << tl.getElapsedSeconds());
+	//core::Logger::info(core::String("Position: ") << tl.getElapsedSeconds());
 
-	core::Logger::info(core::String("Total: ") << t.getElapsedSeconds());
+	//core::Logger::info(core::String("Total: ") << t.getElapsedSeconds());
 }
 
 

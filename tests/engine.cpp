@@ -109,7 +109,7 @@ public:
 			for (unsigned int j = 0; j < 5; j++)
 			{
 				auto ball = addChild<Ball>("ball_" + std::to_string(i) + "_" + std::to_string(j));
-				ball->setPosition(eng::mth::Vec2(311 + i*15, 100 + j*15));
+				ball->setPosition(eng::mth::Vec2(400 + i*15, 100 + j*15));
 			}
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
