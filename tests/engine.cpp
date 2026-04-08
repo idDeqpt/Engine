@@ -36,10 +36,10 @@ public:
 		b->setPosition(eng::mth::Vec2(0, 0));
 		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(300, 10));
+		sh->setSize(eng::mth::Vec2(400, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		auto col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(300, 10));
+		col->setSize(eng::mth::Vec2(400, 10));
 
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		eng::phy::PhysicsManager::addBody(*b);
@@ -47,26 +47,26 @@ public:
 		b->setRotation(3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(10, 100));
+		sh->setSize(eng::mth::Vec2(10, 200));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(10, 100));
+		col->setSize(eng::mth::Vec2(10, 200));
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		eng::phy::PhysicsManager::addBody(*b);
-		b->setPosition(eng::mth::Vec2(300, 0));
+		b->setPosition(eng::mth::Vec2(400, 0));
 		b->setOrigin(eng::mth::Vec2(10, 0));
 		b->setRotation(-3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
-		sh->setSize(eng::mth::Vec2(10, 100));
+		sh->setSize(eng::mth::Vec2(10, 200));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(10, 100));
+		col->setSize(eng::mth::Vec2(10, 200));
 
 		b = addChild<eng::phy::StaticBody2D>("horizontal");
 		eng::phy::PhysicsManager::addBody(*b);
-		b->setPosition(eng::mth::Vec2(100, -100));
+		b->setPosition(eng::mth::Vec2(150, -100));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 10));
@@ -81,11 +81,12 @@ class Ball : public eng::phy::RigidBody2D
 public:
 	void onSetup()
 	{
+		auto tex = eng::core::ResourceManager::load<eng::gfx::Texture>({"resources/image1.png"}).second;
 		int rad = rand()%5 + 5;
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		eng::gfx::RenderManager::getMainScene()->addObject(*sh);
 		sh->setSize(eng::mth::Vec2(rad*2, rad*2));
-		sh->setColor(eng::gfx::Color(0, 255, 0));
+		sh->setTexture(*tex);
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		col->setRadius(rad);
@@ -106,9 +107,9 @@ class Root : public eng::core::Node
 public:
 	void onSetup()
 	{
-		eng::phy::PhysicsManager::setThreadsCount(0);
+		//eng::phy::PhysicsManager::setThreadsCount(1);
 		srand(0);
-		eng::gfx::Font& font = *eng::core::ResourceManager::load<eng::gfx::Font>({"E:/Programming/Projects/C++/Engine/tests/resources/GameFont.ttf"}).second;
+		eng::gfx::Font* font = eng::core::ResourceManager::load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
@@ -116,23 +117,16 @@ public:
 
 		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
 
-		/*for (unsigned int i = 0; i < 20; i++)
-			for (unsigned int j = 0; j < 9; j++)
+		for (unsigned int i = 0; i < 20; i++)
+			for (unsigned int j = 0; j < 25; j++)
 			{
 				auto ball = addChild<Ball>("ball");
-				ball->setPosition(eng::mth::Vec2(200 + i*15, 100 + j*15));
-			}*/
-
-		eng::core::Logger::info("Start");
-		for (unsigned int i = 0; i < 10000; i++)
-		{
-			addChild<eng::core::Node>("NAMENAMENAMENAME");
-		}
-		eng::core::Logger::info("End");
+				ball->setPosition(eng::mth::Vec2(200 + i*20, 100 + j*15));
+			}
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
 		eng::gfx::RenderManager::getMainScene()->addObject(*t_ft);
-		t_ft->setFont(font);
+		t_ft->setFont(*font);
 		t_ft->setCharacterSize(24);
 	}
 

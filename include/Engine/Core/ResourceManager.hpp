@@ -45,16 +45,31 @@ static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initiali
 	if (it == s_resources.end())
 	{
 		res = new T();
+		bool loaded = res->loadFromFile(paths);
+		if (!loaded)
+		{
+			for (std::string path : paths)
+				Logger::error(String("Failure loading from path \"" + path + "\""));
+			return std::make_pair(key, nullptr);
+		}
+		for (std::string path : paths)
+			Logger::debug(String("Success loading from path \"" + path + "\""));
 		s_resources[key] = res;
 	}
 	else
+	{
 		res = dynamic_cast<T*>(it->second);
+		if (!res)
+		{
+			for (std::string path : paths)
+				Logger::error("Type mismatch for Resource from path \"" + path + "\"");
+			return std::make_pair(key, nullptr);
+		}
+		for (std::string path : paths)
+			Logger::debug("Resource have been loaded early from path \"" + path + "\"");
+	}
 
-	bool loaded = res->loadFromFile(paths);
-	for (std::string path : paths)
-		Logger::debug(std::string(loaded ? "Success" : "Failure") + " loading from path \"" + path + "\"");
-
-	return std::make_pair(key, dynamic_cast<T*>(res));
+	return std::make_pair(key, res);
 }
 
 #endif //RESOURCE_MANAGER_STATIC_CLASS_HEADER
