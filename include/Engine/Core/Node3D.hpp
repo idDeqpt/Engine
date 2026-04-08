@@ -40,7 +40,7 @@ namespace eng::core
 		bool m_transform_need_update;
 		bool m_invert_transform_need_update;
 
-		void computeTransform();
+		virtual void computeTransform();
 	};
 }
 
