@@ -33,6 +33,8 @@ core::Logger::~Logger()
 	m_process = false;
 	m_cv.notify_one();
 	m_thread.join();
+	if (m_out_file.is_open())
+		m_out_file.close();
 }
 
 
@@ -62,7 +64,7 @@ void core::Logger::log(LogLevel level, const std::string& text)
 	std::string formatted = formatString(level, text);
 	
 	{
-		std::lock_guard<std::mutex> lock(m_mutex);
+		std::lock_guard<std::mutex> lock(m_queue_mutex);
 		m_write_queue.push(formatted);
 	}
 	m_cv.notify_one();
@@ -70,8 +72,10 @@ void core::Logger::log(LogLevel level, const std::string& text)
 
 void core::Logger::setOutFile(const std::string& file_path)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
-	m_out_file_path = file_path;
+	std::lock_guard<std::mutex> lock(m_file_mutex);
+	if (m_out_file.is_open())
+		m_out_file.close();
+	m_out_file.open(file_path, std::ios::app);
 }
 
 
@@ -104,10 +108,8 @@ std::string core::Logger::formatString(Logger::LogLevel level, std::string text)
 void core::Logger::writeData(const std::string& msg)
 {
 	std::cout << msg << std::endl;
-	std::ofstream file(m_out_file_path, std::ios::app);
-	if (file.is_open())
-		file << msg << std::endl;
-	file.close();
+	if (m_out_file.is_open())
+		m_out_file << msg << "\n";
 }
 
 
@@ -117,7 +119,7 @@ void core::Logger::processThread()
 	{
 		std::string msg;
 		{
-			std::unique_lock<std::mutex> lock(m_mutex);
+			std::unique_lock<std::mutex> lock(m_queue_mutex);
 			m_cv.wait(lock, [this] {return !m_write_queue.empty() || !m_process;});
 			if (!m_write_queue.empty())
 			{
@@ -126,6 +128,7 @@ void core::Logger::processThread()
 			}
 		}
 		
+		std::unique_lock<std::mutex> lock(m_file_mutex);
 		writeData(msg);
 	}
 }

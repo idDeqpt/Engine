@@ -4,6 +4,7 @@
 #include <Engine/Core/String.hpp>
 
 #include <condition_variable>
+#include <fstream>
 #include <string>
 #include <thread>
 #include <queue>
@@ -36,10 +37,11 @@ namespace eng::core
 	protected:
 		bool m_process;
 		std::thread m_thread;
-		std::mutex m_mutex;
+		std::mutex m_queue_mutex;
+		std::mutex m_file_mutex;
 		std::condition_variable m_cv;
 		std::queue<std::string> m_write_queue;
-		std::string m_out_file_path;
+		std::ofstream m_out_file;
 
 		Logger();
 		~Logger();
