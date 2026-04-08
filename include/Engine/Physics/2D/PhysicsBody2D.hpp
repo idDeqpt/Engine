@@ -47,6 +47,12 @@ namespace eng::phy
 		bool m_enabled = true;
 		float m_restitution = 0.9;
 		std::unique_ptr<Collider2D> m_collider;
+
+		void computeTransform() override
+		{
+			core::Node2D::computeTransform();
+			m_collider->getLocalTransform();
+		}
 	};
 
 	template<typename T, typename... Args>

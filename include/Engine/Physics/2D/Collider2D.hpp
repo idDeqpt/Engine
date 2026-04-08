@@ -1,9 +1,12 @@
 #ifndef COLLIDER_2D_CLASS_HEADER
 #define COLLIDER_2D_CLASS_HEADER
 
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Math/Vec2.hpp>
+
+#include <atomic>
 #include <mutex>
 
 namespace eng::phy
@@ -30,17 +33,16 @@ namespace eng::phy
 		virtual CollisionData collideWithRectangle(RectangleCollider2D& other) = 0;
 
 	protected:
-		bool m_aabb_need_update = true;
+		std::atomic<bool> m_aabb_need_update = true;
 		AABB m_cached_aabb;
 		std::mutex m_aabb_mutex;
 
 		virtual void updateAABB() = 0;
 
-		void computeTransform()
+		void computeTransform() override
 		{
 			core::Node2D::computeTransform();
 			m_aabb_need_update = true;
-			updateAABB();
 		}
 	};
 }

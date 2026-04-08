@@ -4,6 +4,7 @@
 #include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/RectangleCollider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
+#include <Engine/Core/Logger.hpp>
 
 #include <cmath>
 
@@ -96,11 +97,14 @@ phy::CollisionData phy::CircleCollider2D::collideWithRectangle(RectangleCollider
 
 void phy::CircleCollider2D::updateAABB()
 {
-	if (m_aabb_need_update)
+	if (m_aabb_need_update.load())
 	{
 		std::lock_guard<std::mutex> lock(m_aabb_mutex);
-		m_cached_aabb = {getGlobalPosition(), getGlobalPosition() + m_radius};
-		m_aabb_need_update = false;
+		if (m_aabb_need_update.load())
+		{
+			m_cached_aabb = {getGlobalPosition(), getGlobalPosition() + m_radius*2};
+			m_aabb_need_update = false;
+		}
 	}
 }
 

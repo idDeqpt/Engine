@@ -131,37 +131,40 @@ phy::CollisionData phy::RectangleCollider2D::collideWithRectangle(RectangleColli
 
 void phy::RectangleCollider2D::updateAABB()
 {
-	if (m_aabb_need_update)
+	if (m_aabb_need_update.load())
 	{
 		std::lock_guard<std::mutex> lock(m_aabb_mutex);
-		mth::Vec2 local_points[4] = {
-			mth::Vec2(0,        0),
-			mth::Vec2(m_size.x, 0),
-			mth::Vec2(m_size.x, m_size.y),
-			mth::Vec2(0,        m_size.y)
-		};
-		
-		mth::Vec2 global_points[4];
-		for (int i = 0; i < 4; ++i)
+		if (m_aabb_need_update.load())
 		{
-			mth::Vec3 point(local_points[i].x, local_points[i].y, 1.0f);
-			mth::Vec3 transformed = getGlobalTransform2D()->getMatrix()*point;
-			global_points[i] = mth::Vec2(transformed.x, transformed.y);
+			mth::Vec2 local_points[4] = {
+				mth::Vec2(0,        0),
+				mth::Vec2(m_size.x, 0),
+				mth::Vec2(m_size.x, m_size.y),
+				mth::Vec2(0,        m_size.y)
+			};
+			
+			mth::Vec2 global_points[4];
+			for (int i = 0; i < 4; ++i)
+			{
+				mth::Vec3 point(local_points[i].x, local_points[i].y, 1.0f);
+				mth::Vec3 transformed = getGlobalTransform2D()->getMatrix()*point;
+				global_points[i] = mth::Vec2(transformed.x, transformed.y);
+			}
+			
+			mth::Vec2 min = global_points[0];
+			mth::Vec2 max = global_points[0];
+			
+			for (int i = 1; i < 4; ++i)
+			{
+				min.x = std::min(min.x, global_points[i].x);
+				min.y = std::min(min.y, global_points[i].y);
+				max.x = std::max(max.x, global_points[i].x);
+				max.y = std::max(max.y, global_points[i].y);
+			}
+			
+			m_cached_aabb =  {min, max};
+			m_aabb_need_update = false;
 		}
-		
-		mth::Vec2 min = global_points[0];
-		mth::Vec2 max = global_points[0];
-		
-		for (int i = 1; i < 4; ++i)
-		{
-			min.x = std::min(min.x, global_points[i].x);
-			min.y = std::min(min.y, global_points[i].y);
-			max.x = std::max(max.x, global_points[i].x);
-			max.y = std::max(max.y, global_points[i].y);
-		}
-		
-		m_cached_aabb =  {min, max};
-		m_aabb_need_update = false;
 	}
 }
 

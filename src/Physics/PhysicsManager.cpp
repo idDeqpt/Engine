@@ -24,7 +24,7 @@ void (*phy::PhysicsManager::s_update_collisions_handler)();
 void phy::PhysicsManager::initialize()
 {
 	s_bodies2d.clear();
-	setThreadsCount(1);
+	setThreadsCount(0);
 }
 
 
@@ -109,12 +109,12 @@ bool phy::PhysicsManager::checkCollisionAABB(Collider2D& first, Collider2D& seco
 	Collider2D::AABB aabb2 = second.getAABB();
 	
 	if (aabb1.max.x < aabb2.min.x || aabb2.max.x < aabb1.min.x)
-		return true;
+		return false;
 	
 	if (aabb1.max.y < aabb2.min.y || aabb2.max.y < aabb1.min.y)
-		return true;
+		return false;
 	
-	return false;
+	return true;
 }
 
 
