@@ -26,6 +26,33 @@
 #include <random>
 
 
+
+class Camera : public eng::gfx::Camera2D
+{
+public:
+	void onUpdate(float delta)
+	{
+		eng::mth::Vec2 vel;
+		constexpr float speed = 500;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::UP))
+			vel.y -= speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::DOWN))
+			vel.y += speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::LEFT))
+			vel.x -= speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::RIGHT))
+			vel.x += speed;
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::Q))
+			scale(1.1);
+		if (eng::sys::EventManager::getKeyboard().isPressed(eng::sys::Keyboard::Key::E))
+			scale(0.9);
+
+		if (vel.x || vel.y)
+			move(vel.norm(speed)*delta);
+	}
+};
+
+
 class Box2D : public eng::core::Node2D
 {
 public:
@@ -111,7 +138,7 @@ public:
 		srand(0);
 		eng::gfx::Font* font = eng::core::ResourceManager::load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
 
-		auto camera2d = addChild<eng::gfx::Camera2D>("Camera2d");
+		auto camera2d = addChild<Camera>("Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 

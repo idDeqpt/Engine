@@ -27,7 +27,9 @@ void core::Node3D::relativeMove(const mth::Vec3& offset)
 
 void core::Node3D::scale(const mth::Vec3& scale_v)
 {
-	m_scale += scale_v;
+	m_scale.x *= scale_v.x;
+	m_scale.y *= scale_v.y;
+	m_scale.z *= scale_v.z;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }

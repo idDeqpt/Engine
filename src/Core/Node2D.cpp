@@ -24,7 +24,8 @@ void core::Node2D::move(const mth::Vec2& offset)
 
 void core::Node2D::scale(const mth::Vec2& scale_v)
 {
-	m_scale += scale_v;
+	m_scale.x *= scale_v.x;
+	m_scale.y *= scale_v.y;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
