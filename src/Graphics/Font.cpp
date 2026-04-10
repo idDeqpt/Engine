@@ -109,6 +109,7 @@ void gfx::Font::createFrame(unsigned int size)
 		return;
 
 	m_frames[size].texture.create(Texture::PixelFormat::RGBA);
+	m_frames[size].texture.setSmooth(false);
 }
 
 
