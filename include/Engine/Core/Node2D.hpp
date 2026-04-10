@@ -23,6 +23,7 @@ namespace eng::core
 
 		mth::Vec2 getOrigin();
 		mth::Vec2 getPosition();
+		mth::Vec2 getScale();
 
 		mth::Vec2 getGlobalPosition();
 		float getGlobalRotation();

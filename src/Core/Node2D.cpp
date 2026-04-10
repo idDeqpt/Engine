@@ -77,6 +77,11 @@ mth::Vec2 core::Node2D::getPosition()
 	return m_position;
 }
 
+mth::Vec2 core::Node2D::getScale()
+{
+	return m_scale;
+}
+
 
 mth::Vec2 core::Node2D::getGlobalPosition()
 {

@@ -48,7 +48,7 @@ public:
 			scale(0.9);
 
 		if (vel.x || vel.y)
-			move(vel.norm(speed)*delta);
+			move(vel.norm(speed)*getScale().x*delta);
 	}
 };
 
