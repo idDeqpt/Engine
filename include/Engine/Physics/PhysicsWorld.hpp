@@ -1,5 +1,5 @@
-#ifndef PHYSICS_MANAGER_CLASS_HEADER
-#define PHYSICS_MANAGER_CLASS_HEADER
+#ifndef PHYSICS_WORLD_CLASS_HEADER
+#define PHYSICS_WORLD_CLASS_HEADER
 
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Physics/2D/Collider2D.hpp>
@@ -9,10 +9,10 @@
 
 namespace eng::phy
 {
-	class PhysicsManager
+	class PhysicsWorld
 	{
 	public:
-		PhysicsManager();
+		PhysicsWorld();
 
 		void setThreadsCount(unsigned int count);
 
@@ -26,7 +26,7 @@ namespace eng::phy
 		unsigned int m_threads_count;
 		std::vector<std::thread>  m_threads;
 		std::vector<unsigned int> m_threads_last_indexes;
-		void (PhysicsManager::*m_update_collisions_handler)();
+		void (PhysicsWorld::*m_update_collisions_handler)();
 
 		bool checkCollisionAABB(Collider2D& first, Collider2D& second);
 		void updateCollisionsSingleThread();
@@ -35,4 +35,4 @@ namespace eng::phy
 	};
 }
 
-#endif //PHYSICS_MANAGER_CLASS_HEADER
+#endif //PHYSICS_WORLD_CLASS_HEADER

@@ -10,13 +10,13 @@
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
 
-#include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
+#include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/LightManager.hpp>
 #include <Engine/Graphics/RenderManager.hpp>
 
-#include <Engine/Physics/PhysicsManager.hpp>
+#include <Engine/Physics/PhysicsWorld.hpp>
 
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
@@ -139,7 +139,7 @@ void core::Engine::mainLoop()
 {
 	sys::EventManager&   Event_Manager   = m_context->getEventManager();
 	gfx::RenderScene&    Render_Scene    = m_context->getRenderScene();
-	phy::PhysicsManager& Physics_Manager = m_context->getPhysicsManager();
+	phy::PhysicsWorld&   Physics_World   = m_context->getPhysicsWorld();
 	TimeManager&         Time_Manager    = m_context->getTimeManager();
 
 	float real_frame_delta = 0;
@@ -153,7 +153,7 @@ void core::Engine::mainLoop()
 
 		m_root_node->update(*m_context, full_frame_delta);
 
-		Physics_Manager.update(full_frame_delta);
+		Physics_World.update(full_frame_delta);
 
 		Render_Scene.render(*m_window);
 		m_window->display();

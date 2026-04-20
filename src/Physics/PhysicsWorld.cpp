@@ -1,4 +1,4 @@
-#include <Engine/Physics/PhysicsManager.hpp>
+#include <Engine/Physics/PhysicsWorld.hpp>
 
 #include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
@@ -13,14 +13,14 @@
 namespace eng
 {
 
-phy::PhysicsManager::PhysicsManager()
+phy::PhysicsWorld::PhysicsWorld()
 {
 	m_bodies2d.clear();
 	setThreadsCount(0);
 }
 
 
-void phy::PhysicsManager::setThreadsCount(unsigned int count)
+void phy::PhysicsWorld::setThreadsCount(unsigned int count)
 {
 	if (count == 0)
 	{
@@ -38,18 +38,18 @@ void phy::PhysicsManager::setThreadsCount(unsigned int count)
 	if (count == 1)
 	{
 		m_threads.clear();
-		m_update_collisions_handler = &PhysicsManager::updateCollisionsSingleThread;
+		m_update_collisions_handler = &PhysicsWorld::updateCollisionsSingleThread;
 	}
 	else
 	{
 		m_threads.resize(count);
-		m_update_collisions_handler = &PhysicsManager::updateCollisionsMultiThread;
+		m_update_collisions_handler = &PhysicsWorld::updateCollisionsMultiThread;
 		updateThreadsIndexes();
 	}
 }
 
 
-void phy::PhysicsManager::addBody(PhysicsBody2D& body)
+void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 {
 	auto it = std::find(m_bodies2d.begin(), m_bodies2d.end(), &body);
 	if (it == m_bodies2d.end())
@@ -59,7 +59,7 @@ void phy::PhysicsManager::addBody(PhysicsBody2D& body)
 }
 
 
-void phy::PhysicsManager::update(float delta)
+void phy::PhysicsWorld::update(float delta)
 {
 	//core::Timer t, tl;
 	(this->*m_update_collisions_handler)();
@@ -95,7 +95,7 @@ void phy::PhysicsManager::update(float delta)
 }
 
 
-bool phy::PhysicsManager::checkCollisionAABB(Collider2D& first, Collider2D& second)
+bool phy::PhysicsWorld::checkCollisionAABB(Collider2D& first, Collider2D& second)
 {
 	Collider2D::AABB aabb1 = first.getAABB();
 	Collider2D::AABB aabb2 = second.getAABB();
@@ -110,7 +110,7 @@ bool phy::PhysicsManager::checkCollisionAABB(Collider2D& first, Collider2D& seco
 }
 
 
-void phy::PhysicsManager::updateCollisionsSingleThread()
+void phy::PhysicsWorld::updateCollisionsSingleThread()
 {
 	m_collisions_buffer.clear();
 	m_collisions_buffer.reserve(m_bodies2d.size());
@@ -130,7 +130,7 @@ void phy::PhysicsManager::updateCollisionsSingleThread()
 }
 
 
-void phy::PhysicsManager::updateCollisionsMultiThread()
+void phy::PhysicsWorld::updateCollisionsMultiThread()
 {
 	m_collisions_buffer.clear();
 	m_collisions_buffer.reserve(m_bodies2d.size());
@@ -170,7 +170,7 @@ void phy::PhysicsManager::updateCollisionsMultiThread()
 		);
 }
 
-void phy::PhysicsManager::updateThreadsIndexes()
+void phy::PhysicsWorld::updateThreadsIndexes()
 {
 	m_threads_last_indexes.resize(m_threads.size() + 1);
 	m_threads_last_indexes[0] = 0;

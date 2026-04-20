@@ -53,7 +53,7 @@ set(PHYSICS_SOURCE_FILES
     src/Physics/2D/CollisionData.cpp
     src/Physics/2D/RectangleCollider2D.cpp
     src/Physics/2D/RigidBody2D.cpp
-    src/Physics/PhysicsManager.cpp)
+    src/Physics/PhysicsWorld.cpp)
 
 set(SYSTEM_SOURCE_FILES
     src/System/EventManager.cpp

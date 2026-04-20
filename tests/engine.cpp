@@ -20,7 +20,7 @@
 #include <Engine/Physics/2D/StaticBody2D.hpp>
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
 #include <Engine/Physics/2D/RectangleCollider2D.hpp>
-#include <Engine/Physics/PhysicsManager.hpp>
+#include <Engine/Physics/PhysicsWorld.hpp>
 
 #include <Engine/Math/Vec2.hpp>
 
@@ -60,7 +60,7 @@ public:
 	void onSetup(eng::Context& context)
 	{
 		auto b = addChild<eng::phy::StaticBody2D>(context, "floor");
-		context.getPhysicsManager().addBody(*b);
+		context.getPhysicsWorld().addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
 		auto sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
@@ -70,7 +70,7 @@ public:
 		col->setSize(eng::mth::Vec2(400, 10));
 
 		b = addChild<eng::phy::StaticBody2D>(context, "left_side");
-		context.getPhysicsManager().addBody(*b);
+		context.getPhysicsWorld().addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
 		b->setRotation(3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
@@ -81,7 +81,7 @@ public:
 		col->setSize(eng::mth::Vec2(10, 200));
 
 		b = addChild<eng::phy::StaticBody2D>(context, "right_side");
-		context.getPhysicsManager().addBody(*b);
+		context.getPhysicsWorld().addBody(*b);
 		b->setPosition(eng::mth::Vec2(400, 0));
 		b->setOrigin(eng::mth::Vec2(10, 0));
 		b->setRotation(-3.1415*0.75);
@@ -93,7 +93,7 @@ public:
 		col->setSize(eng::mth::Vec2(10, 200));
 
 		b = addChild<eng::phy::StaticBody2D>(context, "horizontal");
-		context.getPhysicsManager().addBody(*b);
+		context.getPhysicsWorld().addBody(*b);
 		b->setPosition(eng::mth::Vec2(150, -100));
 		sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
@@ -118,7 +118,7 @@ public:
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		col->setRadius(rad);
-		context.getPhysicsManager().addBody(*this);
+		context.getPhysicsWorld().addBody(*this);
 		setMass(rad);
 		setRestitution(0.8);
 	}
