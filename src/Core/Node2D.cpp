@@ -82,6 +82,11 @@ mth::Vec2 core::Node2D::getScale()
 	return m_scale;
 }
 
+float core::Node2D::getRotation()
+{
+	return m_rotation;
+}
+
 
 mth::Vec2 core::Node2D::getGlobalPosition()
 {
