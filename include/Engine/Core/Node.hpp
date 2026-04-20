@@ -43,9 +43,10 @@ namespace core
 		virtual std::optional<mth::Transform3> getGlobalTransform3D();
 
 		template <class T, typename... Args>
-		T* addChild(std::string name, Args&&... args);
+		T* addChild(Context& context, std::string name, Args&&... args);
 
 	protected:
+		bool m_setuped;
 		NodeNameTag m_tag;
 		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;
@@ -55,7 +56,7 @@ namespace core
 
 
 template <class T, typename... Args>
-T* eng::core::Node::addChild(std::string name, Args&&... args)
+T* eng::core::Node::addChild(Context& context, std::string name, Args&&... args)
 {
 	static_assert(std::is_base_of_v<Node, T>, "T must be derived from Node");
 
@@ -68,6 +69,7 @@ T* eng::core::Node::addChild(std::string name, Args&&... args)
 		if (m_children[i]->getTag().getNameHash() == tag.getNameHash()) count++;
 
 	child->m_tag = NodeNameTag(name, count, m_tag.getPath());
+	if (m_setuped) child->setup(context);
 	
 	T* ptr = child.get();
 	m_children.push_back(std::move(child));

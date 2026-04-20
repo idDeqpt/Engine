@@ -15,6 +15,7 @@ namespace eng
 {
 
 core::Node::Node():
+	m_setuped(false),
 	m_parent(nullptr)
 {
 	m_children.clear();
@@ -31,6 +32,7 @@ void core::Node::setup(Context& context)
 	onSetup(context);
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->setup(context);
+	m_setuped = true;
 
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
@@ -47,6 +49,7 @@ void core::Node::destroy(Context& context)
 	onDestroy(context);
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->destroy(context);
+	m_children.clear();
 }
 
 

@@ -59,43 +59,43 @@ class Box2D : public eng::core::Node2D
 public:
 	void onSetup(eng::Context& context)
 	{
-		auto b = addChild<eng::phy::StaticBody2D>("floor");
+		auto b = addChild<eng::phy::StaticBody2D>(context, "floor");
 		context.getPhysicsManager().addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
-		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		auto sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(400, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		auto col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(400, 10));
 
-		b = addChild<eng::phy::StaticBody2D>("left_side");
+		b = addChild<eng::phy::StaticBody2D>(context, "left_side");
 		context.getPhysicsManager().addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 0));
 		b->setRotation(3.1415*0.75);
-		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 200));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 200));
 
-		b = addChild<eng::phy::StaticBody2D>("right_side");
+		b = addChild<eng::phy::StaticBody2D>(context, "right_side");
 		context.getPhysicsManager().addBody(*b);
 		b->setPosition(eng::mth::Vec2(400, 0));
 		b->setOrigin(eng::mth::Vec2(10, 0));
 		b->setRotation(-3.1415*0.75);
-		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 200));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 200));
 
-		b = addChild<eng::phy::StaticBody2D>("horizontal");
+		b = addChild<eng::phy::StaticBody2D>(context, "horizontal");
 		context.getPhysicsManager().addBody(*b);
 		b->setPosition(eng::mth::Vec2(150, -100));
-		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
+		sh = b->addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		context.getRenderScene().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
@@ -111,7 +111,7 @@ public:
 	{
 		auto tex = context.getResourceManager().load<eng::gfx::Texture>({"resources/image1.png"}).second;
 		int rad = rand()%5 + 5;
-		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
+		auto sh = addChild<eng::gfx::Shape2D>(context, "shape", eng::gfx::Shape2D::Type::CIRCLE);
 		context.getRenderScene().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(rad*2, rad*2));
 		sh->setTexture(*tex);
@@ -139,20 +139,20 @@ public:
 		srand(0);
 		eng::gfx::Font* font = context.getResourceManager().load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
 
-		auto camera2d = addChild<Camera>("Camera2d");
+		auto camera2d = addChild<Camera>(context, "Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		camera2d->setActive();
 
-		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
+		addChild<Box2D>(context, "box")->setPosition(eng::mth::Vec2(200, 500));
 
 		for (unsigned int i = 0; i < 20; i++)
 			for (unsigned int j = 0; j < 25; j++)
 			{
-				auto ball = addChild<Ball>("ball");
+				auto ball = addChild<Ball>(context, "ball");
 				ball->setPosition(eng::mth::Vec2(200 + i*20, 100 + j*15));
 			}
 
-		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");
+		auto t_ft = addChild<eng::gfx::Text2D>(context, "text_frametime");
 		context.getRenderScene().addObject(*t_ft);
 		t_ft->setFont(*font);
 		t_ft->setCharacterSize(24);
@@ -165,9 +165,8 @@ public:
 
 		if (context.getEventManager().getMouse().isJustPressed(eng::sys::Mouse::LEFT))
 		{
-			auto ball = addChild<Ball>("ball");
+			auto ball = addChild<Ball>(context, "ball");
 			ball->setPosition(context.getEventManager().getMouse().getPosition());
-			ball->setup(context);
 			eng::core::Logger::info(eng::core::String("Spawn ") << context.getEventManager().getMouse().getPosition().x << " " << context.getEventManager().getMouse().getPosition().y);
 		}
 	}
