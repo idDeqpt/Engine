@@ -57,7 +57,12 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 	mth::Vec2 rect_center   = rect_top_left + rect_origin;
 
 	float     circle_radius = other.getRadius();
-	mth::Vec2 circle_center = other.getGlobalPosition() + mth::Vec2(circle_radius);
+	float     circle_angle  = other.getGlobalRotation();
+	float     cos_c  = std::cos(circle_angle);
+	float     sin_c  = std::sin(circle_angle);
+	mth::Vec2 circle_local_center   = circle_radius - other.getOrigin();
+	mth::Vec2 circle_rotated_center = mth::Vec2(circle_local_center.x*cos_c - circle_local_center.y*sin_c, circle_local_center.x*sin_c + circle_local_center.y*cos_c);
+	mth::Vec2 circle_center = other.getGlobalPosition() + circle_rotated_center;
 
 	mth::Vec2 delta = circle_center - rect_center;
 	float cos_a = std::cos(-rect_angle);
@@ -110,7 +115,7 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 		
 		result.normal.x = local_normal.x*cos_a - local_normal.y*sin_a;
 		result.normal.y = local_normal.x*sin_a + local_normal.y*cos_a;
-		result.penetration_depth = circle_radius;
+		result.penetration_depth = circle_radius - min_dist;
 		result.contact_point = closest_world;
 		return result;
 	}
