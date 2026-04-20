@@ -29,7 +29,7 @@ float mth::Vec2::dot(const Vec2& vec) const
 	return x*vec.x + y*vec.y;
 }
 
-float mth::Vec2::cros(const Vec2& vec) const
+float mth::Vec2::cross(const Vec2& vec) const
 {
 	return x*vec.y - y*vec.x;
 }
@@ -38,6 +38,14 @@ mth::Vec2 mth::Vec2::norm(float new_len) const
 {
 	float coef = new_len/len();
 	return Vec2(x*coef, y*coef);
+}
+
+mth::Vec2 mth::Vec2::rotate(float angle) const
+{
+	float cos = std::cos(angle);
+	float sin = std::sin(angle);
+
+	return Vec2(x*cos - y*sin, x*sin + y*cos);
 }
 
 

@@ -18,6 +18,7 @@ namespace eng::mth
 		float dot(const Vec2& vec) const;
 		float cross(const Vec2& vec) const;
 		Vec2 norm(float new_len = 1) const;
+		Vec2 rotate(float angle) const;
 
 		Vec2& operator=(const Vec2& vec);
 		Vec2& operator+=(const Vec2& vec);
