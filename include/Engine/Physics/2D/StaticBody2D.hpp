@@ -15,10 +15,6 @@ namespace eng::phy
 	public:
 		StaticBody2D() : phy::PhysicsBody2D() {}
 
-		float getMass()    override {return 3.402823466e+38;}
-		float getMassInv() override {return 0;}
-		mth::Vec2 getLinearVelocity() override {return 0;}
-
 		void updateState(float delta) override {};
 
 		void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) override {other.resolveCollisionVelWithStatic(data, *this);};

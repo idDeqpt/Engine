@@ -16,12 +16,12 @@ phy::RigidBody2D::RigidBody2D():
 	phy::PhysicsBody2D() {}
 
 
-void phy::RigidBody2D::applyImpulse(const mth::Vec2 impulse)
+void phy::RigidBody2D::applyImpulse(const mth::Vec2& impulse)
 {
 	m_linear_velocity += impulse*m_mass_inv;
 }
 
-void phy::RigidBody2D::applyForce(const mth::Vec2 force)
+void phy::RigidBody2D::applyForce(const mth::Vec2& force)
 {
 	m_accumulated_force += force;
 }

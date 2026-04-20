@@ -21,10 +21,6 @@ namespace eng::phy
 		bool isEnable() {return m_enabled;}
 
 		void setRestitution(float r) {m_restitution = r;}
-
-		virtual float getMass() {return 0;}
-		virtual float getMassInv() {return 0;}
-		virtual mth::Vec2 getLinearVelocity() {return 0;}
 		float getRestitution() {return m_restitution;}
 
 		template<typename T, typename... Args>
