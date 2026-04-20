@@ -1,25 +1,13 @@
-#ifndef RENDER_MANAGER_STATIC_CLASS_HEADER
-#define RENDER_MANAGER_STATIC_CLASS_HEADER
-
-#include <Engine/Graphics/RenderScene.hpp>
-#include <vector>
+#ifndef RENDER_MANAGER_CLASS_HEADER
+#define RENDER_MANAGER_CLASS_HEADER
 
 namespace eng::gfx
 {
 	class RenderManager
 	{
 	public:
-		static void initialize();
-		static void finalize();
-
-		static RenderScene& createScene();
-		static void removeScene(RenderScene& scene);
-
-		static RenderScene* getMainScene();
-
-	protected:
-		static std::vector<RenderScene*> s_scenes;
+		RenderManager();
 	};
 }
 
-#endif //RENDER_MANAGER_STATIC_CLASS_HEADER
+#endif //RENDER_MANAGER_CLASS_HEADER

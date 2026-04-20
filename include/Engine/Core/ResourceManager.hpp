@@ -1,5 +1,5 @@
-#ifndef RESOURCE_MANAGER_STATIC_CLASS_HEADER
-#define RESOURCE_MANAGER_STATIC_CLASS_HEADER
+#ifndef RESOURCE_MANAGER_CLASS_HEADER
+#define RESOURCE_MANAGER_CLASS_HEADER
 
 #include <Engine/Core/Resource.hpp>
 #include <Engine/Core/Logger.hpp>
@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <utility>
 #include <string>
-#include <iostream>
 
 
 namespace eng::core
@@ -16,22 +15,22 @@ namespace eng::core
 	class ResourceManager
 	{
 	public:
-		static void initialize();
-		static void finalize();
+		ResourceManager();
+		~ResourceManager();
 
 		template<typename T>
-		static std::pair<std::string, T*> load(std::initializer_list<std::string> paths);
+		std::pair<std::string, T*> load(std::initializer_list<std::string> paths);
 
-		static void unload(const std::string& key);
+		void unload(const std::string& key);
 
 	protected:
-		static std::unordered_map<std::string, Resource*> s_resources;
+		std::unordered_map<std::string, Resource*> m_resources;
 	};
 }
 
 
 template<typename T>
-static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initializer_list<std::string> paths)
+std::pair<std::string, T*> eng::core::ResourceManager::load(std::initializer_list<std::string> paths)
 {
 	static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");
 
@@ -39,10 +38,10 @@ static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initiali
 	for (std::string path : paths)
 		key += path;
 
-	auto it = s_resources.find(key);
+	auto it = m_resources.find(key);
 
 	T* res = nullptr;
-	if (it == s_resources.end())
+	if (it == m_resources.end())
 	{
 		res = new T();
 		bool loaded = res->loadFromFile(paths);
@@ -54,7 +53,7 @@ static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initiali
 		}
 		for (std::string path : paths)
 			Logger::debug(String("Success loading from path \"" + path + "\""));
-		s_resources[key] = res;
+		m_resources[key] = res;
 	}
 	else
 	{
@@ -72,4 +71,4 @@ static std::pair<std::string, T*> eng::core::ResourceManager::load(std::initiali
 	return std::make_pair(key, res);
 }
 
-#endif //RESOURCE_MANAGER_STATIC_CLASS_HEADER
+#endif //RESOURCE_MANAGER_CLASS_HEADER

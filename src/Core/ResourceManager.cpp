@@ -9,30 +9,24 @@
 namespace eng
 {
 
-std::unordered_map<std::string, eng::core::Resource*> core::ResourceManager::s_resources;
+core::ResourceManager::ResourceManager() {}
 
-
-void core::ResourceManager::initialize()
+core::ResourceManager::~ResourceManager()
 {
-	finalize();
-}
-
-void core::ResourceManager::finalize()
-{
-	for (auto& [key, value] : s_resources)
+	for (auto& [key, value] : m_resources)
 		if (value)
 				delete value;
-	s_resources.clear();
+	m_resources.clear();
 }
 
 
 void core::ResourceManager::unload(const std::string& key)
 {
-	auto it = s_resources.find(key);
-	if (it != s_resources.end())
+	auto it = m_resources.find(key);
+	if (it != m_resources.end())
 	{
 		delete it->second;
-		s_resources.erase(it);
+		m_resources.erase(it);
 	}
 }
 

@@ -1,33 +1,37 @@
-#ifndef EVENT_MANAGER_STATIC_CLASS_HEADER
-#define EVENT_MANAGER_STATIC_CLASS_HEADER
+#ifndef EVENT_MANAGER_CLASS_HEADER
+#define EVENT_MANAGER_CLASS_HEADER
 
 #include <Engine/System/Keyboard.hpp>
 #include <Engine/System/Mouse.hpp>
-
-#include <memory>
 
 
 struct GLFWwindow;
 
 namespace eng::sys
 {
+	class Window;
+	class Keyboard;
+	class Mouse;
+
 	class EventManager
 	{
 	public:
-		static void initialize(GLFWwindow* window_ptr);
-		static void pull();
+		EventManager();
 
-		static Keyboard& getKeyboard();
-		static Mouse&    getMouse();
+		void setActiveWindow(Window& window);
+		void pull();
 
-		static void setCursorMode(Mouse::CursorMode mode);
-		static Mouse::CursorMode getCursorMode();
+		Keyboard& getKeyboard();
+		Mouse&    getMouse();
+
+		void setCursorMode(Mouse::CursorMode mode);
+		Mouse::CursorMode getCursorMode();
 
 	protected:
-		static GLFWwindow* s_active_window_ptr;
-		static Keyboard&   s_keyboard;
-		static Mouse&      s_mouse;
-		static Mouse::CursorMode s_cursor_mode;
+		Window*     m_active_window;
+		Keyboard&   m_keyboard;
+		Mouse&      m_mouse;
+		Mouse::CursorMode m_cursor_mode;
 
 		static void key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode);
 		static void mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode);
@@ -35,4 +39,4 @@ namespace eng::sys
 	};
 }
 
-#endif //EVENT_MANAGER_STATIC_CLASS_HEADER
+#endif //EVENT_MANAGER_CLASS_HEADER

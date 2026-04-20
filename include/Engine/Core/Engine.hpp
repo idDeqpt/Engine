@@ -1,6 +1,7 @@
 #ifndef ENGINE_CLASS_HEADER
 #define ENGINE_CLASS_HEADER
 
+#include <Engine/Context.hpp>
 #include <Engine/Core/Node.hpp>
 
 
@@ -24,6 +25,7 @@ namespace eng::core
 		float m_framerate;
 		Node* m_root_node;
 		sys::Window* m_window;
+		Context* m_context;
 	};
 }
 

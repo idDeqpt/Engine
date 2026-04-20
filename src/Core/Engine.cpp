@@ -1,20 +1,26 @@
 #include <Engine/Core/Engine.hpp>
 
-#include <Engine/Core/Logger.hpp>
+#include <Engine/Context.hpp>
 #include <Engine/Core/Node.hpp>
-#include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/Timer.hpp>
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/TimeManager.hpp>
+#include <Engine/Core/ResourceManager.hpp>
+
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
-#include <Engine/Graphics/3D/Camera3D.hpp>
-#include <Engine/Graphics/RenderManager.hpp>
-#include <Engine/Graphics/LightManager.hpp>
-#include <Engine/Graphics/RenderScene.hpp>
+
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
+#include <Engine/Graphics/RenderScene.hpp>
+#include <Engine/Graphics/LightManager.hpp>
+#include <Engine/Graphics/RenderManager.hpp>
+
 #include <Engine/Physics/PhysicsManager.hpp>
+
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Vec4.hpp>
+
 #include "shaders/default2d-vert.hpp"
 #include "shaders/default2d-frag.hpp"
 #include "shaders/default3d-vert.hpp"
@@ -35,17 +41,17 @@ core::Engine::Engine(Node& root):
 	Logger::debug("Start app");
 	m_window = new sys::Window(900, 600, "LearnOpenGL");
 
-	eng::core::TimeManager::initialize();
-	eng::gfx::RenderManager::initialize();
-	eng::sys::EventManager::initialize(m_window->getHandler());
-	eng::gfx::LightManager::initialize();
-	eng::phy::PhysicsManager::initialize();
+	Logger::debug("Start initialization");
+	m_context = new Context;
+	m_context->getEventManager().setActiveWindow(*m_window);
+	Logger::debug("End initialization");
 }
 
 core::Engine::~Engine()
 {
-	eng::gfx::RenderManager::finalize();
-	eng::gfx::LightManager::finalize();
+	Logger::debug("Start finalization");
+	delete m_context;
+	Logger::debug("End finalization");
 
 	m_window->destroy();
 	Logger::debug("End app");
@@ -108,7 +114,7 @@ void core::Engine::setup()
 				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
-				gfx::LightManager::DirectionalLight light = gfx::LightManager::getDirectionalLight();
+				gfx::LightManager::DirectionalLight light = m_context->getLightManager().getDirectionalLight();
 				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
 				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
 				if (use_directional_light)
@@ -120,17 +126,22 @@ void core::Engine::setup()
 		}
 	};
 
-	gfx::RenderManager::getMainScene()->setClearColor(gfx::Color(120));
-	gfx::RenderManager::getMainScene()->setRenderPipeline2d(pipeline2d);
-	gfx::RenderManager::getMainScene()->setRenderPipeline3d(pipeline3d);
+	m_context->getRenderScene().setClearColor(gfx::Color(120));
+	m_context->getRenderScene().setRenderPipeline2d(pipeline2d);
+	m_context->getRenderScene().setRenderPipeline3d(pipeline3d);
 
 	m_root_node->setName("root");
-	m_root_node->setup();
+	m_root_node->setup(*m_context);
 	Logger::debug("End setup");
 }
 
 void core::Engine::mainLoop()
 {
+	sys::EventManager&   Event_Manager   = m_context->getEventManager();
+	gfx::RenderScene&    Render_Scene    = m_context->getRenderScene();
+	phy::PhysicsManager& Physics_Manager = m_context->getPhysicsManager();
+	TimeManager&         Time_Manager    = m_context->getTimeManager();
+
 	float real_frame_delta = 0;
 	float full_frame_delta = 0;
 	Timer timer;
@@ -138,19 +149,19 @@ void core::Engine::mainLoop()
 	{
 		timer.restart();
 
-		sys::EventManager::pull();
+		Event_Manager.pull();
 
-		m_root_node->update(full_frame_delta);
+		m_root_node->update(*m_context, full_frame_delta);
 
-		phy::PhysicsManager::update(full_frame_delta);
+		Physics_Manager.update(full_frame_delta);
 
-		gfx::RenderManager::getMainScene()->render(*m_window);
+		Render_Scene.render(*m_window);
 		m_window->display();
 
 		real_frame_delta = timer.getElapsedSeconds();
 		float target_frame_delta = 1.0/m_framerate;
 		if (real_frame_delta < target_frame_delta)
-			TimeManager::sleepSeconds(target_frame_delta - real_frame_delta);
+			Time_Manager.sleepSeconds(target_frame_delta - real_frame_delta);
 		full_frame_delta = timer.getElapsedSeconds();
 		if (full_frame_delta > 0.1) full_frame_delta = 0.1;
 	}

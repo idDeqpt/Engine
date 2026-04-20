@@ -38,15 +38,10 @@ void busyWait(std::chrono::microseconds ms)
 namespace eng
 {
 
-std::chrono::steady_clock::time_point core::TimeManager::s_app_start_time;
-
-
-void core::TimeManager::initialize()
+core::TimeManager::TimeManager()
 {
-	s_app_start_time = std::chrono::steady_clock::now();
+	m_app_start_time = std::chrono::steady_clock::now();
 }
-
-void core::TimeManager::finalize() {}
 
 
 void core::TimeManager::sleepSeconds(float seconds)
@@ -105,7 +100,7 @@ void core::TimeManager::sleepSeconds(float seconds)
 
 float core::TimeManager::getAppSeconds()
 {
-	return std::chrono::duration<float>(std::chrono::steady_clock::now() - s_app_start_time).count();
+	return std::chrono::duration<float>(std::chrono::steady_clock::now() - m_app_start_time).count();
 }
 
 } //namespace eng

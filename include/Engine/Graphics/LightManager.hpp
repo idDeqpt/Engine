@@ -1,12 +1,10 @@
-#ifndef LIGHT_MANAGER_STATIC_CLASS_HEADER
-#define LIGHT_MANAGER_STATIC_CLASS_HEADER
+#ifndef LIGHT_MANAGER_CLASS_HEADER
+#define LIGHT_MANAGER_CLASS_HEADER
 
 #include <Engine/Math/Vec3.hpp>
 
 namespace eng::gfx
 {
-	typedef unsigned int LightId;
-
 	class LightManager
 	{
 	public:
@@ -15,18 +13,15 @@ namespace eng::gfx
 			mth::Vec3 direction;
 			mth::Vec3 color;
 		};
-		
-		static void initialize();
-		static void finalize();
 
-		static void enableDirectionalLight(DirectionalLight light);
-		static void disableDirectionalLight();
+		void enableDirectionalLight(DirectionalLight light);
+		void disableDirectionalLight();
 
-		static DirectionalLight getDirectionalLight();
+		DirectionalLight getDirectionalLight();
 
 	protected:
-		static DirectionalLight s_directional_light;
+		DirectionalLight m_directional_light;
 	};
 }
 
-#endif //LIGHT_MANAGER_STATIC_CLASS_HEADER
+#endif //LIGHT_MANAGER_CLASS_HEADER

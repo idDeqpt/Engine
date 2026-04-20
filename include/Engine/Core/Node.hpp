@@ -11,7 +11,11 @@
 #include <memory>
 
 
-namespace eng::core
+namespace eng
+{
+	class Context;
+
+namespace core
 {
 	class Node
 	{
@@ -19,13 +23,13 @@ namespace eng::core
 		Node();
 		virtual ~Node();
 
-		void setup();
-		void update(float delta);
-		void destroy();
+		void setup(Context& context);
+		void update(Context& context, float delta);
+		void destroy(Context& context);
 
-		virtual void onSetup();
-		virtual void onUpdate(float delta);
-		virtual void onDestroy();
+		virtual void onSetup(Context& context);
+		virtual void onUpdate(Context& context, float delta);
+		virtual void onDestroy(Context& context);
 
 		void setParent(Node* new_parent);
 		void setName(const std::string& new_name);
@@ -46,7 +50,8 @@ namespace eng::core
 		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;
 	};
-}
+} //core
+} //eng
 
 
 template <class T, typename... Args>

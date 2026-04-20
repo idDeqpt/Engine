@@ -1,5 +1,6 @@
 #include <Engine/Core/Node.hpp>
 
+#include <Engine/Context.hpp>
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
@@ -20,40 +21,38 @@ core::Node::Node():
 }
 
 core::Node::~Node()
-{
-	destroy();
-}
+{}
 
 
-void core::Node::setup()
+void core::Node::setup(Context& context)
 {
 	Logger::debug("START setup of node \"" + m_tag.getPath() + "\" START");
 
-	onSetup();
+	onSetup(context);
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->setup();
+		m_children[i]->setup(context);
 
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
 
-void core::Node::update(float delta)
+void core::Node::update(Context& context, float delta)
 {
-	onUpdate(delta);
+	onUpdate(context, delta);
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->update(delta);
+		m_children[i]->update(context, delta);
 }
 
-void core::Node::destroy()
+void core::Node::destroy(Context& context)
 {
-	onDestroy();
+	onDestroy(context);
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->destroy();
+		m_children[i]->destroy(context);
 }
 
 
-void core::Node::onSetup() {}
-void core::Node::onUpdate(float delta) {}
-void core::Node::onDestroy() {}
+void core::Node::onSetup(Context& context) {}
+void core::Node::onUpdate(Context& context, float delta) {}
+void core::Node::onDestroy(Context& context) {}
 
 
 void core::Node::setParent(Node* new_parent)

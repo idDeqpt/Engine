@@ -1,36 +1,37 @@
 #include <Engine/System/EventManager.hpp>
 
-#include <Engine/Math/Vec2.hpp>
 #include <Engine/System/Keyboard.hpp>
 #include <Engine/System/Mouse.hpp>
+#include <Engine/System/Window.hpp>
 
 #include <GLFW/glfw3.h>
-#include <string.h>
-#include <memory>
 
 
 namespace eng
 {
 
-GLFWwindow* sys::EventManager::s_active_window_ptr = nullptr;
-sys::Keyboard& sys::EventManager::s_keyboard = sys::Keyboard::getInstance();
-sys::Mouse&    sys::EventManager::s_mouse    = sys::Mouse::getInstance();
-sys::Mouse::CursorMode sys::EventManager::s_cursor_mode = sys::Mouse::CursorMode::NORMAL;
+sys::EventManager::EventManager():
+	m_keyboard(   sys::Keyboard::getInstance()),
+	m_mouse(      sys::Mouse::getInstance()),
+	m_cursor_mode(sys::Mouse::CursorMode::NORMAL),
+	m_active_window(nullptr) {};
 
-
-void sys::EventManager::initialize(GLFWwindow* window_ptr)
+void sys::EventManager::setActiveWindow(sys::Window& window)
 {
-	s_active_window_ptr = window_ptr;
+	m_active_window = &window;
 
-	glfwSetKeyCallback(s_active_window_ptr,         key_callback);
-	glfwSetMouseButtonCallback(s_active_window_ptr, mouse_button_callback);
-	glfwSetCursorPosCallback(s_active_window_ptr,   cursor_position_callback);
+    GLFWwindow* handle = window.getHandler();
+    glfwSetWindowUserPointer(handle, this);
+
+	glfwSetKeyCallback(        handle, key_callback);
+	glfwSetMouseButtonCallback(handle, mouse_button_callback);
+	glfwSetCursorPosCallback(  handle, cursor_position_callback);
 }
 
 void sys::EventManager::pull()
 {
-	s_keyboard.nextFrame();
-	s_mouse.nextFrame();
+	m_keyboard.nextFrame();
+	m_mouse.nextFrame();
 
 	glfwPollEvents();
 }
@@ -38,41 +39,47 @@ void sys::EventManager::pull()
 
 sys::Keyboard& sys::EventManager::getKeyboard()
 {
-	return s_keyboard;
+	return m_keyboard;
 }
 
 sys::Mouse& sys::EventManager::getMouse()
 {
-	return s_mouse;
+	return m_mouse;
 }
 
 
 void sys::EventManager::setCursorMode(Mouse::CursorMode mode)
 {
-	s_cursor_mode = mode;
-	glfwSetInputMode(s_active_window_ptr, GLFW_CURSOR, mode);
+	m_cursor_mode = mode;
+	glfwSetInputMode(m_active_window->getHandler(), GLFW_CURSOR, mode);
 }
 
 sys::Mouse::CursorMode sys::EventManager::getCursorMode()
 {
-	return s_cursor_mode;
+	return m_cursor_mode;
 }
 
 
 
 void sys::EventManager::key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode)
 {
-	s_keyboard.action_handler(key, scancode, action, mode);
+    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+    if (self)
+        self->m_keyboard.action_handler(key, scancode, action, mode);
 }
 
 void sys::EventManager::mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode)
 {
-	s_mouse.click_handler(button, action, mode);
+    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+    if (self)
+        self->m_mouse.click_handler(button, action, mode);
 }
 
 void sys::EventManager::cursor_position_callback(GLFWwindow* window_ptr, double xpos, double ypos)
 {
-	s_mouse.move_handler(xpos, ypos);
+    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+    if (self)
+        self->m_mouse.move_handler(xpos, ypos);
 }
 
 } //namespace eng

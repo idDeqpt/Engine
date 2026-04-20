@@ -110,6 +110,7 @@ void core::Logger::writeData(const std::string& msg)
 	std::cout << msg << std::endl;
 	if (m_out_file.is_open())
 		m_out_file << msg << "\n";
+	m_out_file.flush();
 }
 
 
