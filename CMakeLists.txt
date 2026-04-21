@@ -51,8 +51,10 @@ set(MATH_SOURCE_FILES
 set(PHYSICS_SOURCE_FILES
     src/Physics/2D/CircleCollider2D.cpp
     src/Physics/2D/CollisionData.cpp
+    src/Physics/2D/CollisionDetector2D.cpp
     src/Physics/2D/RectangleCollider2D.cpp
     src/Physics/2D/RigidBody2D.cpp
+    src/Physics/2D/SimpleCollisionDetectors2D.cpp
     src/Physics/PhysicsWorld.cpp)
 
 set(SYSTEM_SOURCE_FILES
