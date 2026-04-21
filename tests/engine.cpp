@@ -141,7 +141,7 @@ public:
 
 		auto camera2d = addChild<Camera>(context, "Camera2d");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
-		camera2d->setActive();
+		context.getRenderScene().setActiveCamera(*camera2d);
 
 		addChild<Box2D>(context, "box")->setPosition(eng::mth::Vec2(200, 500));
 

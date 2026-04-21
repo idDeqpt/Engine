@@ -9,9 +9,6 @@
 namespace eng
 {
 
-gfx::Camera3D* gfx::Camera3D::m_active = new gfx::Camera3D(); //xd
-
-
 gfx::Camera3D::Camera3D() : core::Node3D()
 {
 	setOrtho(-1, 1, -1, 1, -1, 1);
@@ -61,18 +58,6 @@ mth::Mat4 gfx::Camera3D::getViewMatrix()
 mth::Mat4 gfx::Camera3D::getProjViewMatrix()
 {
 	return getProjectionMatrix()*getViewMatrix();
-}
-
-
-void gfx::Camera3D::setActive()
-{
-	m_active = this;
-}
-
-
-gfx::Camera3D& gfx::Camera3D::getActive()
-{
-	return *m_active;
 }
 
 } //namespace eng

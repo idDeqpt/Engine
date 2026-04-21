@@ -17,7 +17,9 @@ namespace eng
 {
 
 gfx::RenderScene::RenderScene():
-	m_clear_color(Color(0))
+	m_clear_color(Color(0)),
+	m_active_camera_2d(&m_default_camera_2d),
+	m_active_camera_3d(&m_default_camera_3d)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -36,40 +38,75 @@ gfx::RenderScene::RenderScene():
 gfx::RenderScene::~RenderScene() {}
 
 
-void gfx::RenderScene::setClearColor(Color color)
-{
-	m_clear_color = color;
-}
-
 void gfx::RenderScene::addObject(CanvasItem& object)
 {
 	addObject(object, m_objects2d);
 }
+
+void gfx::RenderScene::addObject3D(Drawable& object)
+{
+	addObject(object, m_objects3d);
+}
+
 
 void gfx::RenderScene::removeObject(CanvasItem& object)
 {
 	removeObject(object, m_objects2d);
 }
 
-bool gfx::RenderScene::setRenderPipeline2d(const std::vector<RenderPass>& new_pipeline)
-{
-	return setRenderPipeline(new_pipeline, m_pipeline2d, m_framebuffers2d);
-}
-
-
-void gfx::RenderScene::addObject3d(Drawable& object)
-{
-	addObject(object, m_objects3d);
-}
-
-void gfx::RenderScene::removeObject3d(Drawable& object)
+void gfx::RenderScene::removeObject3D(Drawable& object)
 {
 	removeObject(object, m_objects3d);
 }
 
-bool gfx::RenderScene::setRenderPipeline3d(const std::vector<RenderPass>& new_pipeline)
+
+void gfx::RenderScene::setClearColor(Color color)
+{
+	m_clear_color = color;
+}
+
+
+void gfx::RenderScene::setActiveCamera(Camera2D& camera)
+{
+	m_active_camera_2d = &camera;
+}
+
+void gfx::RenderScene::setActiveCamera(Camera3D& camera)
+{
+	m_active_camera_3d = &camera;
+}
+
+
+bool gfx::RenderScene::setRenderPipeline2D(const std::vector<RenderPass>& new_pipeline)
+{
+	return setRenderPipeline(new_pipeline, m_pipeline2d, m_framebuffers2d);
+}
+
+bool gfx::RenderScene::setRenderPipeline3D(const std::vector<RenderPass>& new_pipeline)
 {
 	return setRenderPipeline(new_pipeline, m_pipeline3d, m_framebuffers3d);
+}
+
+
+gfx::Camera2D& gfx::RenderScene::getActiveCamera2D()
+{
+	return *m_active_camera_2d;
+}
+
+gfx::Camera3D& gfx::RenderScene::getActiveCamera3D()
+{
+	return *m_active_camera_3d;
+}
+
+
+std::vector<gfx::RenderScene::RenderPass>& gfx::RenderScene::getRenderPipeline2D()
+{
+	return m_pipeline2d;
+}
+
+std::vector<gfx::RenderScene::RenderPass>& gfx::RenderScene::getRenderPipeline3D()
+{
+	return m_pipeline3d;
 }
 
 
@@ -87,7 +124,7 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 	first_pass.shader->use();
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 	
-	Camera2D& active_camera = gfx::Camera2D::getActive();
+	Camera2D& active_camera = *m_active_camera_2d;
 	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
 	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
@@ -140,7 +177,7 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 	first_pass.shader->use();
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 
-	Camera3D& active_camera = gfx::Camera3D::getActive();
+	Camera3D& active_camera = *m_active_camera_3d;
 	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
 	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
@@ -223,10 +260,14 @@ bool gfx::RenderScene::setRenderPipeline(const std::vector<RenderPass>& new_pipe
 
 	framebuffers.reserve(old_pipeline.size());
 	for (unsigned int i = 0; i < (old_pipeline.size() - 1); i++)
+	{
 		framebuffers.push_back(new RenderTarget(
 			old_pipeline[i].color_attachments.size(),
 			old_pipeline[i].color_attachments.data()
 		));
+		framebuffers.back()->setViewport(old_pipeline[i].viewport_position.x, old_pipeline[i].viewport_position.y,
+										 old_pipeline[i].viewport_size.x,     old_pipeline[i].viewport_size.y);
+	}
 	framebuffers.push_back(nullptr); //for final target in .render(RenderTarget)
 	
 	return true;

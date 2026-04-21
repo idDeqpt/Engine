@@ -83,7 +83,9 @@ void core::Engine::setup()
 			&shader2d,
 			{eng::gfx::Texture::PixelFormat::RGBA},
 			{},
-			nullptr
+			nullptr,
+			{0, 0},
+			{900, 600}
 		}
 	};
 
@@ -98,7 +100,9 @@ void core::Engine::setup()
 				eng::gfx::Texture::PixelFormat::RGBA     //emission
 			},
 			{},
-			nullptr
+			nullptr,
+			{0, 0},
+			{900, 600}
 		},
 		{
 			&shader2d_deferred_light,
@@ -109,7 +113,7 @@ void core::Engine::setup()
 				"uAlbedo"
 			},
 			[&](gfx::Shader* sh){
-				gfx::Camera3D& active_view = gfx::Camera3D::getActive();
+				gfx::Camera3D& active_view = m_context->getRenderScene().getActiveCamera3D();
 				mth::Vec3 view_loc_pos = active_view.getPosition();
 				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
@@ -122,13 +126,15 @@ void core::Engine::setup()
 					sh->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
 					sh->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
 				}
-			}
+			},
+			{0, 0},
+			{900, 600}
 		}
 	};
 
 	m_context->getRenderScene().setClearColor(gfx::Color(120));
-	m_context->getRenderScene().setRenderPipeline2d(pipeline2d);
-	m_context->getRenderScene().setRenderPipeline3d(pipeline3d);
+	m_context->getRenderScene().setRenderPipeline2D(pipeline2d);
+	m_context->getRenderScene().setRenderPipeline3D(pipeline3d);
 
 	m_root_node->setName("root");
 	m_root_node->setup(*m_context);

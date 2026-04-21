@@ -19,13 +19,8 @@ namespace eng::gfx
 		mth::Mat4 getViewMatrix();
 		mth::Mat4 getProjViewMatrix();
 
-		void setActive();
-
-		static Camera3D& getActive();
-
 	protected:
 		mth::Mat4 m_projection;
-		static Camera3D* m_active;
 	};
 }
 

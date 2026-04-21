@@ -8,8 +8,6 @@
 namespace eng
 {
 
-gfx::Camera2D* gfx::Camera2D::m_active = new gfx::Camera2D(); //xd
-
 gfx::Camera2D::Camera2D() : core::Node2D()
 {
 	setSize(mth::Vec2(1));
@@ -60,18 +58,6 @@ mth::Mat3 gfx::Camera2D::getViewMatrix()
 mth::Mat3 gfx::Camera2D::getProjViewMatrix()
 {
 	return getProjectionMatrix()*getViewMatrix();
-}
-
-
-void gfx::Camera2D::setActive()
-{
-	m_active = this;
-}
-
-
-gfx::Camera2D& gfx::Camera2D::getActive()
-{
-	return *m_active;
 }
 
 } //namespace eng
