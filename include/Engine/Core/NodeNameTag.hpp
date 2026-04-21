@@ -1,6 +1,7 @@
 #ifndef NODE_NAME_TAG_CLASS_HEADER
 #define NODE_NAME_TAG_CLASS_HEADER
 
+#include <Engine/Core/NameTag.hpp>
 #include <string>
 
 namespace eng::core
@@ -19,13 +20,9 @@ namespace eng::core
 		unsigned int getPathHash() const;
 
 	protected:
-		std::string m_name;
+		NameTag m_name;
 		unsigned int m_index;
-		std::string m_path;
-		unsigned int m_name_hash;
-		unsigned int m_path_hash;
-
-		void updateHashes();
+		NameTag m_path;
 	};
 }
 

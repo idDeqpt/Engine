@@ -7,29 +7,22 @@
 namespace eng
 {
 
-core::NodeNameTag::NodeNameTag():
-	m_index(0)
-{
-	updateHashes();
-}
+core::NodeNameTag::NodeNameTag(): NodeNameTag("", 0, "") {}
 
 core::NodeNameTag::NodeNameTag(const std::string& name, unsigned int index, const std::string& parent_path):
 	m_name(name),
 	m_index(index),
-	m_path(parent_path + "/" + name + (index ? ("_" + std::to_string(index)) : ""))
-{
-	updateHashes();
-}
+	m_path(parent_path + "/" + name + (index ? ("_" + std::to_string(index)) : "")) {}
 
 
 const std::string& core::NodeNameTag::getName() const
 {
-	return m_name;
+	return m_name.getString();
 }
 
 const std::string& core::NodeNameTag::getPath() const
 {
-	return m_path;
+	return m_path.getString();
 }
 
 unsigned int core::NodeNameTag::getIndex() const
@@ -40,20 +33,12 @@ unsigned int core::NodeNameTag::getIndex() const
 
 unsigned int core::NodeNameTag::getNameHash() const
 {
-	return m_name_hash;
+	return m_name.getHash();
 }
 
 unsigned int core::NodeNameTag::getPathHash() const
 {
-	return m_path_hash;
-}
-
-
-
-void core::NodeNameTag::updateHashes()
-{
-	m_name_hash = std::hash<std::string>{}(m_name);
-	m_path_hash = std::hash<std::string>{}(m_path);
+	return m_path.getHash();
 }
 
 } //namespace eng

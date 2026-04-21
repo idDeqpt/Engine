@@ -2,9 +2,11 @@
 
 #include <Engine/Context.hpp>
 #include <Engine/Core/Logger.hpp>
+#include <Engine/Core/NameTag.hpp>
+#include <Engine/Core/NodeNameTag.hpp>
+
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
-#include <Engine/Core/NodeNameTag.hpp>
 
 #include <optional>
 #include <string>
@@ -76,9 +78,9 @@ core::Node* core::Node::getParent()
 
 core::Node* core::Node::getChildByName(const std::string& name)
 {
-	NodeNameTag tag(name, 0, "");
+	NameTag tag(name);
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		if (m_children[i]->getTag().getNameHash() == tag.getNameHash())
+		if (m_children[i]->getTag().getNameHash() == tag.getHash())
 			return m_children[i].get();
 	return nullptr;
 }

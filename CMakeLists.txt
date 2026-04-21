@@ -10,6 +10,7 @@ project(${PROJECT_NAME}
 set(CORE_SOURCE_FILES
     src/Core/Engine.cpp
     src/Core/Logger.cpp
+    src/Core/NameTag.cpp
     src/Core/Node.cpp
     src/Core/Node2D.cpp
     src/Core/Node3D.cpp
