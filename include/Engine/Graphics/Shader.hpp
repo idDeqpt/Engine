@@ -37,6 +37,7 @@ namespace eng::gfx
 		std::string getLastErrorLog();
 
 		bool setUniform1i(std::string name, int value);
+		bool setUniform1ui(std::string name, unsigned int value);
 		bool setUniform1f(std::string name, float value);
 		bool setUniformVec3(std::string name, const mth::Vec3& vec);
 		bool setUniform3fv(std::string name, int count, float* values_ptr);

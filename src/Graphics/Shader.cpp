@@ -140,6 +140,16 @@ bool gfx::Shader::setUniform1i(std::string name, int value)
 	return true;
 }
 
+bool gfx::Shader::setUniform1ui(std::string name, unsigned int value)
+{
+	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	if (location == -1)
+		return false;
+
+	glUniform1ui(location, value);
+	return true;
+}
+
 bool gfx::Shader::setUniform1f(std::string name, float value)
 {
 	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
