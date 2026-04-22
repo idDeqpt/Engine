@@ -11,13 +11,21 @@ in vec2 fTexCoord;
 out vec4 oColor;
 
 uniform bool uUseTexture;
+uniform bool uTextureFlipX;
+uniform bool uTextureFlipY;
 uniform sampler2D uTexture;
 uniform vec4 uColor;
 
 void main()
 {
     if (uUseTexture)
-        oColor = texture(uTexture, fTexCoord)*uColor;
+    {
+        vec2 tex_coords = vec2(
+            uTextureFlipX ? (1.0f - fTexCoord.x) : fTexCoord.x,
+            uTextureFlipY ? (1.0f - fTexCoord.y) : fTexCoord.y
+        );
+        oColor = texture(uTexture, tex_coords)*uColor;
+    }
     else
         oColor = uColor;
 }

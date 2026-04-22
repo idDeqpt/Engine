@@ -30,6 +30,8 @@ namespace eng::gfx
 		void setTexture(Texture& new_texture);
 		void setPrimitiveType(const PrimitiveType& new_primitive_type);
 
+		Texture* getTexture();
+
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
 		void unloadData();
 

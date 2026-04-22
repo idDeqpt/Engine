@@ -43,6 +43,7 @@ namespace eng::gfx
 		void remove();
 
 		bool setSmooth(bool flag);
+		void setFlip(bool flip_x, bool flip_y);
 
 		bool loadFromFile(std::initializer_list<std::string> paths);
 		bool loadFromFile(const std::string& path);
@@ -51,6 +52,8 @@ namespace eng::gfx
 
 		bool resize(const mth::Vec2& new_size);
 
+		bool getFlipX();
+		bool getFlipY();
 		mth::Vec2 getSize();
 		PixelFormat getPixelFormat();
 		GLuint getNativeHandle();
@@ -61,6 +64,7 @@ namespace eng::gfx
 
 	protected:
 		GLuint m_native_handle;
+		bool m_flip_x, m_flip_y;
 		unsigned int m_width;
 		unsigned int m_height;
 		PixelFormat m_format;

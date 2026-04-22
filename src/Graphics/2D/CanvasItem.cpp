@@ -44,6 +44,12 @@ void gfx::CanvasItem::setPrimitiveType(const gfx::PrimitiveType& new_primitive_t
 }
 
 
+gfx::Texture* gfx::CanvasItem::getTexture()
+{
+	return m_texture;
+}
+
+
 bool gfx::CanvasItem::loadData(gfx::CanvasItem::Vertex* vertices, unsigned int vertices_count)
 {
 	if (!vertices || !vertices_count) return false;
@@ -100,6 +106,8 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 	active_shader->setUniform1i("uUseTexture", use_texture);
 	if (use_texture)
 	{
+		active_shader->setUniform1i("uTextureFlipX", m_texture->getFlipX());
+		active_shader->setUniform1i("uTextureFlipY", m_texture->getFlipY());
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->bind();
 		active_shader->setUniform1i("uTexture", 0);

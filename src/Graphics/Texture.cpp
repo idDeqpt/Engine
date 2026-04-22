@@ -69,6 +69,8 @@ unsigned int ChannelEnumToChannelCount(gfx::Texture::PixelFormat channel)
 
 gfx::Texture::Texture():
 	m_native_handle(0),
+	m_flip_x(false),
+	m_flip_y(false),
 	m_width(0),
 	m_height(0),
 	m_format(PixelFormat::RED),
@@ -118,6 +120,12 @@ bool gfx::Texture::setSmooth(bool flag)
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
+}
+
+void gfx::Texture::setFlip(bool flip_x, bool flip_y)
+{
+	m_flip_x = flip_x;
+	m_flip_y = flip_y;
 }
 
 
@@ -233,6 +241,16 @@ bool gfx::Texture::resize(const mth::Vec2& new_size)
 	return result;
 }
 
+
+bool gfx::Texture::getFlipX()
+{
+	return m_flip_x;
+}
+
+bool gfx::Texture::getFlipY()
+{
+	return m_flip_y;
+}
 
 mth::Vec2 gfx::Texture::getSize()
 {
