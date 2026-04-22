@@ -11,6 +11,7 @@ namespace eng::core
 		String();
 		String(const char* v);
 		String(const std::string& v);
+		String(bool v);
 		String(int v);
 		String(unsigned int v);
 		String(float v);
@@ -20,6 +21,7 @@ namespace eng::core
 
 		String& operator<<(const char* v);
 		String& operator<<(const std::string& v);
+		String& operator<<(bool v);
 		String& operator<<(int v);
 		String& operator<<(unsigned int v);
 		String& operator<<(float v);
