@@ -10,7 +10,7 @@
 #include <Engine/Graphics/Color.hpp>
 
 #include <glad/glad.h>
-#include <iostream>
+#include <algorithm>
 
 
 namespace eng
@@ -129,11 +129,43 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
 	if ((m_framebuffers2d.size() > 1) && (m_framebuffers3d.empty())) m_framebuffers2d[0]->clear(m_clear_color);
+
+	std::vector<CanvasItem*> opaque, transparent;
+	opaque.reserve(m_objects2d.size());
+	transparent.reserve(m_objects2d.size());
+
+	//check transparency
 	for (Drawable* obj : m_objects2d)
 		if (obj && obj->isVisible())
-			m_framebuffers2d.front()->draw(*obj, RenderStates());
+		{
+			CanvasItem* item = static_cast<CanvasItem*>(obj);
+			Texture* texture = item->getTexture();
+			if (texture && texture->isTransparent())
+				transparent.push_back(item);
+			else
+				opaque.push_back(item);
+		}
+	std::sort(transparent.begin(), transparent.end(), [](CanvasItem* a, CanvasItem* b){
+		return a->getLayer() < b->getLayer();
+	});
+
+	//draw transparent
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	for (CanvasItem* obj : opaque)
+		m_framebuffers2d.front()->draw(*obj, RenderStates());
+
+	//draw opaque
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	for (CanvasItem* obj : transparent)
+		m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	// deferred render
+	glDisable(GL_BLEND);
+	glDepthMask(GL_FALSE);
 	for (unsigned int i = 1; i < m_pipeline2d.size(); i++)
 	{
 		m_framebuffers2d[i]->clear(m_clear_color);
@@ -220,15 +252,13 @@ void gfx::RenderScene::render(RenderTarget& target)
 {
 	target.clear(m_clear_color);
 	
+	glDepthFunc(GL_LESS);
 	draw3d(target);
 
 	glDepthFunc(GL_ALWAYS);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    draw2d(target);
-    
-    glDepthFunc(GL_LESS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	draw2d(target);
 }
 
 

@@ -14,6 +14,7 @@ namespace eng
 
 gfx::CanvasItem::CanvasItem():
 	m_vertices_count(false),
+	m_layer(0),
 	m_primitive_type(PrimitiveType::TRIANGLE_FAN),
 	m_texture(nullptr), Drawable(), core::Node2D()
 {
@@ -33,6 +34,11 @@ void gfx::CanvasItem::setColor(const gfx::Color& new_color)
 	m_color = new_color;
 }
 
+void gfx::CanvasItem::setLayer(unsigned int new_layer)
+{
+	m_layer = new_layer;
+}
+
 void gfx::CanvasItem::setTexture(gfx::Texture& new_texture)
 {
 	m_texture = &new_texture;
@@ -43,6 +49,11 @@ void gfx::CanvasItem::setPrimitiveType(const gfx::PrimitiveType& new_primitive_t
 	m_primitive_type = new_primitive_type;
 }
 
+
+unsigned int gfx::CanvasItem::getLayer() const
+{
+	return m_layer;
+}
 
 gfx::Texture* gfx::CanvasItem::getTexture()
 {
@@ -96,6 +107,7 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
 
 	active_shader->use();
 	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform2D().value().getMatrix().getValuesPtr());
+	active_shader->setUniform1ui("uLayer", m_layer);
 
 	float color[4];
 	for (unsigned int i = 0; i < 4; i++)

@@ -26,10 +26,12 @@ namespace eng::gfx
 		CanvasItem();
 		~CanvasItem();
 
+		void setLayer(unsigned int new_layer);
 		void setColor(const Color& new_color);
 		void setTexture(Texture& new_texture);
 		void setPrimitiveType(const PrimitiveType& new_primitive_type);
 
+		unsigned int getLayer() const;
 		Texture* getTexture();
 
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
@@ -41,6 +43,7 @@ namespace eng::gfx
 		unsigned int m_vertices_count;
 		unsigned int m_VAO;
 		unsigned int m_VBO;
+		unsigned int m_layer;
 		PrimitiveType m_primitive_type;
 		Color m_color;
 		Texture* m_texture;

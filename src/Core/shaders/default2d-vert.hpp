@@ -11,6 +11,7 @@ layout (location = 1) in vec2 aTexCoord;
 
 out vec2 fTexCoord;
 
+uniform uint uLayer;
 uniform mat3 uProjection;
 uniform mat3 uView;
 uniform mat3 uModel;
@@ -23,7 +24,7 @@ void main()
     vec3 view_pos = uView*model_pos;
     vec3 clip_pos = uProjection*view_pos;
 
-    gl_Position = vec4(clip_pos.xy, 0.0f, 1.0f);
+    gl_Position = vec4(clip_pos.xy, (float(uLayer)/255.0)*2.0 - 1.0, 1.0f);
 }
 )";
 }

@@ -256,9 +256,11 @@ public:
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
 		UIScene* ui = addChild<UIScene>("ui_scene", *font);
+		ui->setLayer(100);
 		m_context.get<eng::gfx::RenderScene>().addObject(*ui);
 
 		GameScene* game = addChild<GameScene>("game_scene");
+		game->setLayer(10);
 		m_context.get<eng::gfx::RenderScene>().addObject(*game);
 	}
 };
