@@ -242,6 +242,11 @@ bool gfx::Texture::resize(const mth::Vec2& new_size)
 }
 
 
+bool eng::gfx::Texture::isTransparent()
+{
+	return ChannelEnumToChannelCount(m_format) > 3;
+}
+
 bool gfx::Texture::getFlipX()
 {
 	return m_flip_x;

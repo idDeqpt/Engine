@@ -52,6 +52,7 @@ namespace eng::gfx
 
 		bool resize(const mth::Vec2& new_size);
 
+		bool isTransparent();
 		bool getFlipX();
 		bool getFlipY();
 		mth::Vec2 getSize();
