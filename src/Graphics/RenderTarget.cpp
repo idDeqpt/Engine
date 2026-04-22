@@ -52,7 +52,7 @@ gfx::RenderTarget::RenderTarget(unsigned int buffers_count, Texture::PixelFormat
 		{
 			m_buffer_textures[i].create(formats[i]);
 			m_buffer_textures[i].resize(m_viewport_size);
-			m_buffer_textures[i].setSmooth(true);
+			m_buffer_textures[i].setSmooth(false);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_buffer_textures[i].getNativeHandle(), 0);
 		}
 		glDrawBuffers(m_color_buffers_count, OPENGL_ATTACHMENTS);
