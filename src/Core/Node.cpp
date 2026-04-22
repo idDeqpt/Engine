@@ -31,33 +31,34 @@ void core::Node::setup(Context& context)
 {
 	Logger::debug("START setup of node \"" + m_tag.getPath() + "\" START");
 
-	onSetup(context);
+	m_context = context;
+	onSetup();
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->setup(context);
+		m_children[i]->setup(m_context);
 	m_setuped = true;
 
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
 
-void core::Node::update(Context& context, float delta)
+void core::Node::update(float delta)
 {
-	onUpdate(context, delta);
+	onUpdate(delta);
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->update(context, delta);
+		m_children[i]->update(delta);
 }
 
-void core::Node::destroy(Context& context)
+void core::Node::destroy()
 {
-	onDestroy(context);
+	onDestroy();
 	for (unsigned int i = 0; i < m_children.size(); i++)
-		m_children[i]->destroy(context);
+		m_children[i]->destroy();
 	m_children.clear();
 }
 
 
-void core::Node::onSetup(Context& context) {}
-void core::Node::onUpdate(Context& context, float delta) {}
-void core::Node::onDestroy(Context& context) {}
+void core::Node::onSetup() {}
+void core::Node::onUpdate(float delta) {}
+void core::Node::onDestroy() {}
 
 
 void core::Node::setParent(Node* new_parent)

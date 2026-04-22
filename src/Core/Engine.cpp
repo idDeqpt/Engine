@@ -42,15 +42,21 @@ core::Engine::Engine(Node& root):
 	m_window = new sys::Window(900, 600, "LearnOpenGL");
 
 	Logger::debug("Start initialization");
-	m_context = new Context;
-	m_context->getEventManager().setActiveWindow(*m_window);
+	m_context.create<core::TimeManager>();
+	m_context.create<gfx::RenderManager>();
+	m_context.create<sys::EventManager>();
+	m_context.create<core::ResourceManager>();
+	m_context.create<gfx::LightManager>();
+	m_context.create<gfx::RenderScene>();
+	m_context.create<phy::PhysicsWorld>();
+	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
 	Logger::debug("End initialization");
 }
 
 core::Engine::~Engine()
 {
 	Logger::debug("Start finalization");
-	delete m_context;
+	m_context.shutdown();
 	Logger::debug("End finalization");
 
 	m_window->destroy();
@@ -113,12 +119,12 @@ void core::Engine::setup()
 				"uAlbedo"
 			},
 			[&](gfx::Shader* sh){
-				gfx::Camera3D& active_view = m_context->getRenderScene().getActiveCamera3D();
+				gfx::Camera3D& active_view = m_context.get<gfx::RenderScene>().getActiveCamera3D();
 				mth::Vec3 view_loc_pos = active_view.getPosition();
 				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
 
-				gfx::LightManager::DirectionalLight light = m_context->getLightManager().getDirectionalLight();
+				gfx::LightManager::DirectionalLight light = m_context.get<gfx::LightManager>().getDirectionalLight();
 				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
 				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
 				if (use_directional_light)
@@ -132,21 +138,21 @@ void core::Engine::setup()
 		}
 	};
 
-	m_context->getRenderScene().setClearColor(gfx::Color(120));
-	m_context->getRenderScene().setRenderPipeline2D(pipeline2d);
-	m_context->getRenderScene().setRenderPipeline3D(pipeline3d);
+	m_context.get<gfx::RenderScene>().setClearColor(gfx::Color(120));
+	m_context.get<gfx::RenderScene>().setRenderPipeline2D(pipeline2d);
+	m_context.get<gfx::RenderScene>().setRenderPipeline3D(pipeline3d);
 
 	m_root_node->setName("root");
-	m_root_node->setup(*m_context);
+	m_root_node->setup(m_context);
 	Logger::debug("End setup");
 }
 
 void core::Engine::mainLoop()
 {
-	sys::EventManager&   Event_Manager   = m_context->getEventManager();
-	gfx::RenderScene&    Render_Scene    = m_context->getRenderScene();
-	phy::PhysicsWorld&   Physics_World   = m_context->getPhysicsWorld();
-	TimeManager&         Time_Manager    = m_context->getTimeManager();
+	sys::EventManager&   Event_Manager   = m_context.get<sys::EventManager>();
+	gfx::RenderScene&    Render_Scene    = m_context.get<gfx::RenderScene>();
+	phy::PhysicsWorld&   Physics_World   = m_context.get<phy::PhysicsWorld>();
+	TimeManager&         Time_Manager    = m_context.get<TimeManager>();
 
 	float real_frame_delta = 0;
 	float full_frame_delta = 0;
@@ -157,7 +163,7 @@ void core::Engine::mainLoop()
 
 		Event_Manager.pull();
 
-		m_root_node->update(*m_context, full_frame_delta);
+		m_root_node->update(full_frame_delta);
 
 		Physics_World.update(full_frame_delta);
 

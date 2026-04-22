@@ -1,9 +1,11 @@
 #ifndef BASE_NODE_CLASS_HEADER
 #define BASE_NODE_CLASS_HEADER
 
+#include <Engine/Context.hpp>
+#include <Engine/Core/NodeNameTag.hpp>
+
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
-#include <Engine/Core/NodeNameTag.hpp>
 
 #include <optional>
 #include <string>
@@ -24,12 +26,12 @@ namespace core
 		virtual ~Node();
 
 		void setup(Context& context);
-		void update(Context& context, float delta);
-		void destroy(Context& context);
+		void update(float delta);
+		void destroy();
 
-		virtual void onSetup(Context& context);
-		virtual void onUpdate(Context& context, float delta);
-		virtual void onDestroy(Context& context);
+		virtual void onSetup();
+		virtual void onUpdate(float delta);
+		virtual void onDestroy();
 
 		void setParent(Node* new_parent);
 		void setName(const std::string& new_name);
@@ -43,20 +45,21 @@ namespace core
 		virtual std::optional<mth::Transform3> getGlobalTransform3D();
 
 		template <class T, typename... Args>
-		T* addChild(Context& context, std::string name, Args&&... args);
+		T* addChild(std::string name, Args&&... args);
 
 	protected:
 		bool m_setuped;
 		NodeNameTag m_tag;
 		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;
+		Context m_context;
 	};
 } //core
 } //eng
 
 
 template <class T, typename... Args>
-T* eng::core::Node::addChild(Context& context, std::string name, Args&&... args)
+T* eng::core::Node::addChild(std::string name, Args&&... args)
 {
 	static_assert(std::is_base_of_v<Node, T>, "T must be derived from Node");
 
@@ -69,7 +72,7 @@ T* eng::core::Node::addChild(Context& context, std::string name, Args&&... args)
 		if (m_children[i]->getTag().getNameHash() == tag.getNameHash()) count++;
 
 	child->m_tag = NodeNameTag(name, count, m_tag.getPath());
-	if (m_setuped) child->setup(context);
+	if (m_setuped) child->setup(m_context);
 	
 	T* ptr = child.get();
 	m_children.push_back(std::move(child));

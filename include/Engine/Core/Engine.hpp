@@ -25,7 +25,7 @@ namespace eng::core
 		float m_framerate;
 		Node* m_root_node;
 		sys::Window* m_window;
-		Context* m_context;
+		Context m_context;
 	};
 }
 
