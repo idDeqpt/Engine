@@ -6,53 +6,54 @@ namespace eng::core::shader
 	static const char* default3d_deferred_frag =R"(
 #version 330 core
 
-struct DirectionalLight
+struct Material
 {
-    vec3 direction;
-    vec3 color;
+    bool useNormal;
+    bool useMetallic;
+    bool useRoughness;
+    bool useHeight;
+    bool useAo;
+    bool useEmission;
+    sampler2D albedo;
+    sampler2D normal;
+    sampler2D metallic;
+    sampler2D roughness;
+    sampler2D height;
+    sampler2D ao;
+    sampler2D emission;
 };
 
+in vec3 fFragPos;
 in vec2 fTexCoord;
+in mat3 fTBN;
 
-out vec4 oColor;
+layout (location = 0) out vec4 oPosition;
+layout (location = 1) out vec4 oNormal;
+layout (location = 2) out vec4 oAlbedo;
+layout (location = 3) out vec4 oMetRogHeiAo;
+layout (location = 4) out vec4 oEmission;
 
-uniform sampler2D uPosition;
-uniform sampler2D uNormal;
-uniform sampler2D uAlbedo;
-uniform sampler2D uMetRogHeiAo;
-uniform sampler2D uEmission;
-
-uniform vec3 uViewPos;
-uniform bool uUseDirectionalLight;
-uniform DirectionalLight uDirectionalLight;
+uniform Material uMaterial;
 
 void main()
 {
-    vec2 tex_coord = fTexCoord;
+    oPosition = vec4(fFragPos, 1);
 
-    vec3 position = texture(uPosition, tex_coord).rgb;
-    vec3 normal = texture(uNormal, tex_coord).rgb;
-    vec3 albedo = texture(uAlbedo, tex_coord).rgb;
+    vec3 normal = uMaterial.useNormal ? (fTBN*(texture(uMaterial.normal, fTexCoord).rgb*2.0f - 1.0f)) : fTBN[2];
+    oNormal = vec4(normalize(normal), 1);
 
-    vec3 color = albedo;
+    oAlbedo = vec4(texture(uMaterial.albedo, fTexCoord).rgb, 1);
 
-    if (!uUseDirectionalLight)
-    {
-        oColor = vec4(color, 1.0f);
-        return;
-    }
+    oMetRogHeiAo = vec4(
+        uMaterial.useMetallic  ? texture(uMaterial.metallic,  fTexCoord).r : 0.0,
+        uMaterial.useRoughness ? texture(uMaterial.roughness, fTexCoord).r : 0.5,
+        uMaterial.useHeight    ? texture(uMaterial.height,    fTexCoord).r : 0.0,
+        uMaterial.useAo        ? texture(uMaterial.ao,        fTexCoord).r : 1.0
+    );
 
-    DirectionalLight light = uDirectionalLight;
-    vec3 toViewDir  = normalize(uViewPos - position);
-    vec3 toLightDir = normalize(-light.direction);
-    vec3 halfWayDir = normalize(toLightDir + toViewDir);
-
-    vec3 ambient = color*light.color;
-
-    float diff = max(dot(normal, toLightDir), 0.0f);
-    vec3 diffuse = diff*color*light.color;
-    
-    oColor = vec4(ambient*0.2 + diffuse, 1.0f);
+    oEmission = (uMaterial.useEmission) ?
+        vec4(texture(uMaterial.emission, fTexCoord).rgb, 1.0) :
+        vec4(vec3(0.0), 1.0);
 }
 )";
 }
