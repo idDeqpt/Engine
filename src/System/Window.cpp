@@ -14,6 +14,11 @@ sys::Window::Window() : Window(800, 600, "Window"){}
 sys::Window::Window(int width, int height, std::string title) : gfx::RenderTarget()
 {
 	glfwInit();
+	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode *vidmode = glfwGetVideoMode(monitor);
+
+	glfwWindowHint(GLFW_POSITION_X, vidmode->width/2  - width/2);
+	glfwWindowHint(GLFW_POSITION_Y, vidmode->height/2 - height/2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
