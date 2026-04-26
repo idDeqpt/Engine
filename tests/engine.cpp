@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <Engine/Context.hpp>
 #include <Engine/Core/Engine.hpp>
 #include <Engine/Core/Logger.hpp>

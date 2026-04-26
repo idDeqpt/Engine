@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <utility>
 #include <memory>
+#include <vector>
 
 
 namespace eng
