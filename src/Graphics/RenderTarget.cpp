@@ -29,13 +29,13 @@ gfx::RenderTarget::RenderTarget():
 	m_color_buffers_count(0),
 	m_buffer_textures(nullptr),
 	m_viewport_pos(0, 0),
-	m_viewport_size(800, 600) {}
+	m_viewport_size(100, 100) {}
 
 gfx::RenderTarget::RenderTarget(unsigned int buffers_count, Texture::PixelFormat* formats):
 	m_color_buffers_count(buffers_count),
 	m_buffer_textures(nullptr),
 	m_viewport_pos(0, 0),
-	m_viewport_size(800, 600)
+	m_viewport_size(100, 100)
 {
 	glGenFramebuffers(1, &m_native_handle);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_native_handle);
@@ -51,12 +51,12 @@ gfx::RenderTarget::RenderTarget(unsigned int buffers_count, Texture::PixelFormat
 		for (unsigned int i = 0; i < m_color_buffers_count; i++)
 		{
 			m_buffer_textures[i].create(formats[i]);
-			m_buffer_textures[i].resize(m_viewport_size);
 			m_buffer_textures[i].setSmooth(false);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_buffer_textures[i].getNativeHandle(), 0);
 		}
 		glDrawBuffers(m_color_buffers_count, OPENGL_ATTACHMENTS);
 	}
+	setViewport(0, 0, 100, 100);
 }
 
 gfx::RenderTarget::~RenderTarget()
@@ -71,6 +71,16 @@ void gfx::RenderTarget::setViewport(int x, int y, int width, int height)
 {
 	m_viewport_pos  = mth::Vec2(x, y);
 	m_viewport_size = mth::Vec2(width, height);
+
+	if (m_native_handle)
+	{
+		bind();
+		glBindRenderbuffer(GL_RENDERBUFFER, m_depth_buffer_handle);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_viewport_size.x, m_viewport_size.y);
+	}
+
+	for (unsigned int i = 0; i < m_color_buffers_count; i++)
+		if (m_buffer_textures) m_buffer_textures[i].resize(m_viewport_size);
 }
 
 
