@@ -28,7 +28,8 @@ namespace eng::phy
 
 		Collider2D* getCollider() {return m_collider.get();}
 
-		virtual void updateState(float delta) {};
+		virtual void integrateVel(float delta) {};
+		virtual void integratePos(float delta) {};
 		virtual void onCollision(const CollisionData& data) {};
 
 		virtual void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) {};

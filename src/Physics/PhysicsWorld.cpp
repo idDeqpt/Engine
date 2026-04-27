@@ -47,22 +47,26 @@ void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 
 void phy::PhysicsWorld::update(float delta)
 {
-	m_collision_detector->updateCollisions(m_bodies2d);
-	std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
-
-	unsigned int VELOCITY_ITERATIONS = 4;
-	for (unsigned int i = 0; i < VELOCITY_ITERATIONS; i++)
-		for (unsigned int j = 0; j < collisions.size(); j++)
-			collisions[j].bodies[0]->resolveCollisionVelWith(collisions[j], *collisions[j].bodies[1]);
+	{
+		m_collision_detector->updateCollisions(m_bodies2d);
+		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
+		unsigned int VELOCITY_ITERATIONS = 8;
+		for (unsigned int v = 0; v < VELOCITY_ITERATIONS; v++)
+			for (unsigned int j = 0; j < collisions.size(); j++)
+				collisions[j].bodies[0]->resolveCollisionVelWith(collisions[j], *collisions[j].bodies[1]);
+	}
 
 	for (unsigned int i = 0; i < m_bodies2d.size(); i++)
-		m_bodies2d[i]->updateState(delta);
+		m_bodies2d[i]->integrateVel(delta);
+
+	for (unsigned int i = 0; i < m_bodies2d.size(); i++)
+		m_bodies2d[i]->integratePos(delta);
 	
-	unsigned int POSITION_ITERATIONS = 4;
+	unsigned int POSITION_ITERATIONS = 8;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
 		m_collision_detector->updateCollisions(m_bodies2d);
-		collisions = m_collision_detector->getCollisions();
+		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
 		
 		if (collisions.empty()) break;
 		

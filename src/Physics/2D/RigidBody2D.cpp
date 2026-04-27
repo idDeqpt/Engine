@@ -50,7 +50,7 @@ mth::Vec2 phy::RigidBody2D::getLinearVelocity()
 }
 
 
-void phy::RigidBody2D::updateState(float delta)
+void phy::RigidBody2D::integrateVel(float delta)
 {
 	if ((delta <= 0) || (m_mass == 0)) return;
 
@@ -58,9 +58,14 @@ void phy::RigidBody2D::updateState(float delta)
 	
 	m_linear_velocity += acceleration*delta;
 	m_linear_velocity = m_linear_velocity*m_damping;
-	
-	move(m_linear_velocity*delta);
 	m_accumulated_force = mth::Vec2(0);
+}
+
+void phy::RigidBody2D::integratePos(float delta)
+{
+	if ((delta <= 0) || (m_mass == 0)) return;
+
+	move(m_linear_velocity*delta);
 }
 
 

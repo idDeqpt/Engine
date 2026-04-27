@@ -25,7 +25,8 @@ namespace eng::phy
 
 		mth::Vec2 getLinearVelocity();
 
-		void updateState(float delta) override;
+		void integrateVel(float delta) override;
+		void integratePos(float delta) override;
 
 		void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) override;
 		void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) override;
