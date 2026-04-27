@@ -18,14 +18,19 @@ namespace eng::phy
 		PhysicsWorld();
 
 		void setThreadsCount(unsigned int count);
+		void setFixedDelta(float delta);
 
 		void addBody(PhysicsBody2D& coll);
 
 		void update(float delta);
 
 	protected:
+		float m_accumulator;
+		float m_fixed_delta;
 		std::vector<PhysicsBody2D*> m_bodies2d;
 		std::unique_ptr<CollisionDetector2D> m_collision_detector;
+
+		void step(float delta);
 	};
 }
 

@@ -14,7 +14,9 @@
 namespace eng
 {
 
-phy::PhysicsWorld::PhysicsWorld()
+phy::PhysicsWorld::PhysicsWorld():
+	m_accumulator(0),
+	m_fixed_delta(1/50.0)
 {
 	m_bodies2d.clear();
 	setThreadsCount(0);
@@ -36,6 +38,11 @@ void phy::PhysicsWorld::setThreadsCount(unsigned int count)
 		m_collision_detector = std::make_unique<MultiThreadCollisionDetector2D>(count);
 }
 
+void phy::PhysicsWorld::setFixedDelta(float delta)
+{
+	m_fixed_delta = delta;
+}
+
 
 void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 {
@@ -46,6 +53,18 @@ void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 
 
 void phy::PhysicsWorld::update(float delta)
+{
+	m_accumulator += delta;
+	while (m_accumulator >= m_fixed_delta)
+	{
+		step(m_fixed_delta);
+
+		m_accumulator -= m_fixed_delta;
+	}
+}
+
+
+void phy::PhysicsWorld::step(float delta)
 {
 	{
 		m_collision_detector->updateCollisions(m_bodies2d);
