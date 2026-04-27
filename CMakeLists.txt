@@ -56,6 +56,7 @@ set(PHYSICS_SOURCE_FILES
     src/Physics/2D/RectangleCollider2D.cpp
     src/Physics/2D/RigidBody2D.cpp
     src/Physics/2D/SimpleCollisionDetectors2D.cpp
+    src/Physics/2D/StaticBody2D.cpp
     src/Physics/PhysicsWorld.cpp)
 
 set(SYSTEM_SOURCE_FILES
