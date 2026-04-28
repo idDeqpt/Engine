@@ -43,7 +43,7 @@ public:
 
 	void onUpdate(float delta)
 	{
-		applyForce(eng::mth::Vec2(0, 50000*delta));
+		applyForce(eng::mth::Vec2(0, 100)*getMass());
 	}
 
 	void onCollision(eng::phy::PhysicsBody2D& other)
