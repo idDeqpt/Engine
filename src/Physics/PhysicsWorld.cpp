@@ -14,6 +14,37 @@
 namespace eng
 {
 
+struct BodiesCollection
+{
+	struct Pair
+	{
+		phy::PhysicsBody2D* first;
+		phy::PhysicsBody2D* second;
+
+		Pair(phy::PhysicsBody2D* f, phy::PhysicsBody2D* s): first(f), second(s) {}
+	};
+
+	std::vector<Pair> bodies;
+
+	void add(std::vector<phy::CollisionData>& collisions)
+	{
+		for (unsigned int i = 0; i < collisions.size(); i++)
+			bodies.push_back(Pair(collisions[i].bodies[0], collisions[i].bodies[1]));
+	}
+
+	void removeCopies()
+	{
+		if (bodies.size() < 2) return;
+
+		for (unsigned int i = 0; i < bodies.size() - 1; i++)
+			for (unsigned int j = i + 1; j < bodies.size(); j++)
+				if (((bodies[j].first  == bodies[i].first)  && (bodies[j].second == bodies[i].second)) ||
+					((bodies[j].first  == bodies[i].second) && (bodies[j].second == bodies[i].first)))
+						bodies.erase(bodies.begin() + j--);
+	}
+};
+
+
 phy::PhysicsWorld::PhysicsWorld():
 	m_accumulator(0),
 	m_fixed_delta(1/50.0)
@@ -73,8 +104,11 @@ void phy::PhysicsWorld::update(float delta)
 
 void phy::PhysicsWorld::step(float delta)
 {
+	BodiesCollection bodies_collection;
+
 	m_collision_detector->updateCollisions(m_bodies2d);
 	std::vector<CollisionData> first_collisions = m_collision_detector->getCollisions();
+	bodies_collection.add(first_collisions);
 
 	unsigned int VELOCITY_ITERATIONS = 8;
 	for (unsigned int v = 0; v < VELOCITY_ITERATIONS; v++)
@@ -92,6 +126,7 @@ void phy::PhysicsWorld::step(float delta)
 	{
 		m_collision_detector->updateCollisions(m_bodies2d);
 		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
+		bodies_collection.add(collisions);
 		
 		if (collisions.empty()) break;
 		
@@ -100,10 +135,11 @@ void phy::PhysicsWorld::step(float delta)
 			collisions[i].bodies[0]->resolveCollisionPosWith(collisions[i], iter_ratio, *collisions[i].bodies[1]);
 	}
 
-	for (unsigned int i = 0; i < first_collisions.size(); i++)
+	bodies_collection.removeCopies();
+	for (unsigned int i = 0; i < bodies_collection.bodies.size(); i++)
 	{
-		first_collisions[i].bodies[0]->onCollision(*first_collisions[i].bodies[1]);
-		first_collisions[i].bodies[1]->onCollision(*first_collisions[i].bodies[0]);
+		bodies_collection.bodies[i].first->onCollision(*bodies_collection.bodies[i].second);
+		bodies_collection.bodies[i].second->onCollision(*bodies_collection.bodies[i].first);
 	}
 }
 

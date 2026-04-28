@@ -2,13 +2,12 @@
 #define BALL_CLASS_HEADER
 
 #include <scenes/BallsCollection.hpp>
+
 #include <Engine/Physics/2D/RigidBody2D.hpp>
 
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
 #include <Engine/Physics/PhysicsWorld.hpp>
-
 #include <Engine/Core/ResourceManager.hpp>
-#include <Engine/Core/Logger.hpp>
 
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/Color.hpp>
@@ -51,10 +50,7 @@ public:
 	{
 		Ball* other_body = dynamic_cast<Ball*>(&other);
 		if (other_body)
-		{
 			m_collection.balls.push_back(BallsCollection::Pair(this, other_body));
-			eng::core::Logger::info(eng::core::String(getTag().getName()) << " with " << other.getTag().getName());
-		}
 	}
 
 	void setLevel(unsigned int level)
