@@ -20,6 +20,8 @@ namespace eng::gfx
 		mth::Mat3 getViewMatrix();
 		mth::Mat3 getProjViewMatrix();
 
+		mth::Vec2 convertWindowPoint(const mth::Vec2& point);
+
 	protected:
 		mth::Mat3 m_projection;
 	};

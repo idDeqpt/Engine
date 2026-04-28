@@ -32,8 +32,9 @@ public:
 
 		if (m_context.get<eng::sys::EventManager>().getMouse().isJustPressed(eng::sys::Mouse::LEFT))
 		{
+			eng::mth::Vec2 point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
 			auto ball = addChild<Ball>("ball", m_collection);
-			ball->setPosition(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
+			ball->setPosition(point);
 		}
 	}
 
