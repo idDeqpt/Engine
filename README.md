@@ -48,7 +48,7 @@ add_executable(...)
 
 target_link_libraries(... PRIVATE Engine::Engine)
 ```
-
+___
 # Примеры
 Примеры использования библиотеки можно найти в папке examples
 
@@ -56,6 +56,6 @@ target_link_libraries(... PRIVATE Engine::Engine)
 | Название   | Описание                             |
 |:-----------|:-------------------------------------|
 | FruitMerge | Двухмерная игра по объединению шаров |
-
+___
 # Лицензия
 Проект распространяется под лицензией MIT. [LICENSE](LICENSE)
