@@ -49,10 +49,14 @@ void core::Node::update(float delta)
 
 void core::Node::destroy()
 {
+	Logger::debug("START destroy of node \"" + m_tag.getPath() + "\" START");
+
 	onDestroy();
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->destroy();
 	m_children.clear();
+	
+	Logger::debug("END   destroy of node \"" + m_tag.getPath() + "\" END");
 }
 
 
@@ -102,5 +106,24 @@ std::optional<mth::Transform3> core::Node::getGlobalTransform3D()
 	return m_parent ? m_parent->getGlobalTransform3D() : std::nullopt;
 }
 
+
+bool core::Node::isChild(Node* node)
+{
+	for (unsigned int i = 0; i < m_children.size(); i++)
+		if (node == m_children[i].get())
+			return true;
+	return false;
+}
+
+void core::Node::removeChild(Node* node)
+{
+	for (unsigned int i = 0; i < m_children.size(); i++)
+		if (node == m_children[i].get())
+		{
+			node->destroy();
+			m_children.erase(m_children.begin() + i);
+			return;
+		}
+}
 
 }

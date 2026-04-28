@@ -44,6 +44,9 @@ namespace core
 		virtual std::optional<mth::Transform2> getGlobalTransform2D();
 		virtual std::optional<mth::Transform3> getGlobalTransform3D();
 
+		bool isChild(Node* node);
+		void removeChild(Node* node);
+
 		template <class T, typename... Args>
 		T* addChild(std::string name, Args&&... args);
 
