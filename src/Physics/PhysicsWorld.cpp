@@ -66,14 +66,13 @@ void phy::PhysicsWorld::update(float delta)
 
 void phy::PhysicsWorld::step(float delta)
 {
-	{
-		m_collision_detector->updateCollisions(m_bodies2d);
-		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
-		unsigned int VELOCITY_ITERATIONS = 8;
-		for (unsigned int v = 0; v < VELOCITY_ITERATIONS; v++)
-			for (unsigned int j = 0; j < collisions.size(); j++)
-				collisions[j].bodies[0]->resolveCollisionVelWith(collisions[j], *collisions[j].bodies[1]);
-	}
+	m_collision_detector->updateCollisions(m_bodies2d);
+	std::vector<CollisionData> first_collisions = m_collision_detector->getCollisions();
+
+	unsigned int VELOCITY_ITERATIONS = 8;
+	for (unsigned int v = 0; v < VELOCITY_ITERATIONS; v++)
+		for (unsigned int j = 0; j < first_collisions.size(); j++)
+			first_collisions[j].bodies[0]->resolveCollisionVelWith(first_collisions[j], *first_collisions[j].bodies[1]);
 
 	for (unsigned int i = 0; i < m_bodies2d.size(); i++)
 		m_bodies2d[i]->integrateVel(delta);
@@ -92,6 +91,12 @@ void phy::PhysicsWorld::step(float delta)
 		float iter_ratio = 1.0 - (float(p)/POSITION_ITERATIONS);
 		for (unsigned int i = 0; i < collisions.size(); i++)
 			collisions[i].bodies[0]->resolveCollisionPosWith(collisions[i], iter_ratio, *collisions[i].bodies[1]);
+	}
+
+	for (unsigned int i = 0; i < first_collisions.size(); i++)
+	{
+		first_collisions[i].bodies[0]->onCollision(*first_collisions[i].bodies[1]);
+		first_collisions[i].bodies[1]->onCollision(*first_collisions[i].bodies[0]);
 	}
 }
 
