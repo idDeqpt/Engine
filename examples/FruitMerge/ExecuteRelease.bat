@@ -1,0 +1,1 @@
+start "%~nx0" "%~dp0build\Release\app.exe"
