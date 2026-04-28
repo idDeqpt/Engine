@@ -20,7 +20,8 @@ namespace eng::phy
 		void setThreadsCount(unsigned int count);
 		void setFixedDelta(float delta);
 
-		void addBody(PhysicsBody2D& coll);
+		void addBody(PhysicsBody2D& body);
+		void removeBody(PhysicsBody2D& body);
 
 		void update(float delta);
 

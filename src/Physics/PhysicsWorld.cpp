@@ -51,6 +51,13 @@ void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 		m_bodies2d.push_back(&body);
 }
 
+void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
+{
+	auto it = std::find(m_bodies2d.begin(), m_bodies2d.end(), &body);
+	if (it != m_bodies2d.end())
+		m_bodies2d.erase(it);
+}
+
 
 void phy::PhysicsWorld::update(float delta)
 {
