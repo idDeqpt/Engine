@@ -1,6 +1,5 @@
 #include <Engine/Physics/2D/CollisionDetector2D.hpp>
 
-#include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <vector>
 

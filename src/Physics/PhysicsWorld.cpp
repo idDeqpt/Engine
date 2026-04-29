@@ -50,7 +50,7 @@ phy::PhysicsWorld::PhysicsWorld():
 	m_fixed_delta(1/50.0)
 {
 	m_bodies2d.clear();
-	setThreadsCount(0);
+	setThreadsCount(1);
 }
 
 
@@ -64,7 +64,7 @@ void phy::PhysicsWorld::setThreadsCount(unsigned int count)
 	}
 
 	if (count == 1)
-		m_collision_detector = std::make_unique<SingleThreadCollisionDetector2D>();
+		m_collision_detector = std::make_unique<BVHCollisionDetector2D>();
 	else
 		m_collision_detector = std::make_unique<MultiThreadCollisionDetector2D>(count);
 }
@@ -93,11 +93,12 @@ void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
 void phy::PhysicsWorld::update(float delta)
 {
 	m_accumulator += delta;
-	while (m_accumulator >= m_fixed_delta)
+	unsigned int steps = 0;
+	while ((steps < 1) && (m_accumulator >= m_fixed_delta))
 	{
 		step(m_fixed_delta);
-
 		m_accumulator -= m_fixed_delta;
+		steps++;
 	}
 }
 
@@ -108,6 +109,7 @@ void phy::PhysicsWorld::step(float delta)
 
 	m_collision_detector->rebuildTree(m_bodies2d);
 	m_collision_detector->updateCollisions();
+
 	std::vector<CollisionData> first_collisions = m_collision_detector->getCollisions();
 	bodies_collection.add(first_collisions);
 
@@ -125,8 +127,9 @@ void phy::PhysicsWorld::step(float delta)
 	unsigned int POSITION_ITERATIONS = 8;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
-		m_collision_detector->updateTree(m_bodies2d);
+		m_collision_detector->updateTree();
 		m_collision_detector->updateCollisions();
+		
 		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
 		bodies_collection.add(collisions);
 		

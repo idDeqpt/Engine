@@ -6,14 +6,13 @@
 
 namespace eng::phy
 {
-	class Collider2D;
 	class PhysicsBody2D;
 
 	class CollisionDetector2D
 	{
 	public:
 		virtual void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) = 0;
-		virtual void updateTree(const std::vector<PhysicsBody2D*>& bodies) = 0;
+		virtual void updateTree() = 0;
 
 		virtual void updateCollisions() = 0;
 		std::vector<CollisionData>& getCollisions();

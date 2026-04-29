@@ -50,6 +50,8 @@ set(MATH_SOURCE_FILES
     src/Math/Transform3.cpp)
 
 set(PHYSICS_SOURCE_FILES
+    src/Physics/2D/BVH.cpp
+    src/Physics/2D/BVHNode.cpp
     src/Physics/2D/CircleCollider2D.cpp
     src/Physics/2D/Collider2D.cpp
     src/Physics/2D/CollisionData.cpp

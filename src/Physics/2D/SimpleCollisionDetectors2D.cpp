@@ -3,6 +3,7 @@
 #include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
+#include <Engine/Physics/2D/BVH.hpp>
 #include <thread>
 #include <vector>
 
@@ -10,34 +11,35 @@
 namespace eng
 {
 
-void phy::SingleThreadCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
+void phy::BVHCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
 {
-	m_bodies = bodies;
+	std::vector<PhysicsBody2D*> bodies_copy = bodies;
+	m_bvh.rebuild(bodies_copy);
 }
 
-void phy::SingleThreadCollisionDetector2D::updateTree(const std::vector<PhysicsBody2D*>& bodies)
+void phy::BVHCollisionDetector2D::updateTree()
 {
-	m_bodies = bodies;
+	m_bvh.expand();
 }
 
 
-void phy::SingleThreadCollisionDetector2D::updateCollisions()
+void phy::BVHCollisionDetector2D::updateCollisions()
 {
+
 	m_collisions_buffer.clear();
-	m_collisions_buffer.reserve(m_bodies.size());
+	m_bvh.updateAABBCollisions();
 
-	for (unsigned int i = 0; i < (m_bodies.size() - 1); i++)
-		for (unsigned int j = i + 1; j < m_bodies.size(); j++)
-			if (m_bodies[i]->getAABB().checkCollision(m_bodies[j]->getAABB()))
-			{
-				CollisionData data = m_bodies[i]->getCollider()->collideWith(*m_bodies[j]->getCollider());
-				if (data.has_collision)
-				{
-					data.bodies[0] = m_bodies[i];
-					data.bodies[1] = m_bodies[j];
-					m_collisions_buffer.push_back(data);
-				}
-			}
+	std::vector<BVH::Pair> pairs = m_bvh.getLastAABBCollisions();
+	for (unsigned int i = 0; i < pairs.size(); i++)
+	{
+		CollisionData data = pairs[i].first->getCollider()->collideWith(*pairs[i].second->getCollider());
+		if (data.has_collision)
+		{
+			data.bodies[0] = pairs[i].first;
+			data.bodies[1] = pairs[i].second;
+			m_collisions_buffer.push_back(data);
+		}
+	}
 }
 
 
@@ -53,9 +55,8 @@ void phy::MultiThreadCollisionDetector2D::rebuildTree(const std::vector<PhysicsB
 	m_bodies = bodies;
 }
 
-void phy::MultiThreadCollisionDetector2D::updateTree(const std::vector<PhysicsBody2D*>& bodies)
+void phy::MultiThreadCollisionDetector2D::updateTree()
 {
-	m_bodies = bodies;
 }
 
 

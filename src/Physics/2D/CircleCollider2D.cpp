@@ -121,7 +121,7 @@ void phy::CircleCollider2D::updateAABB()
 			float sin = std::sin(getGlobalRotation());
 			mth::Vec2 rotated_center = mth::Vec2(local_center.x*cos - local_center.y*sin, local_center.x*sin + local_center.y*cos);
 			mth::Vec2 global_center = getGlobalPosition() + rotated_center;
-			m_cached_aabb = {global_center - m_radius, global_center + m_radius};
+			m_cached_aabb = AABB(global_center - m_radius, global_center + m_radius);
 			m_aabb_need_update = false;
 		}
 	}

@@ -130,7 +130,7 @@ public:
 
 	void onUpdate(float delta)
 	{
-		applyForce(eng::mth::Vec2(0, 10000*delta));
+		applyForce(eng::mth::Vec2(0, 100)*getMass());
 	}
 };
 
@@ -186,7 +186,7 @@ public:
 		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
 
 		for (unsigned int i = 0; i < 20; i++)
-			for (unsigned int j = 0; j < 25; j++)
+			for (unsigned int j = 0; j < 20; j++)
 			{
 				auto ball = addChild<Ball>("ball");
 				ball->setPosition(eng::mth::Vec2(200 + i*20, 100 + j*15));

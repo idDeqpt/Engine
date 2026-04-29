@@ -16,13 +16,25 @@ namespace eng::phy
 	class Collider2D : public core::Node2D
 	{
 	public:
-		struct AABB
+		class AABB
 		{
-			mth::Vec2 min, max;
+		public:
+			AABB() = default;
+			AABB(const mth::Vec2& min, const mth::Vec2& max);
+			
+			void expand(const AABB& other);
 
-			mth::Vec2 getCenter();
-			mth::Vec2 getSize();
-			bool checkCollision(const AABB& other);
+			void set(const mth::Vec2& new_min, const mth::Vec2& new_max);
+
+			const mth::Vec2& getMin() const;
+			const mth::Vec2& getMax() const;
+			const mth::Vec2& getCenter() const;
+
+			bool checkCollision(const AABB& other) const;
+
+		protected:
+			mth::Vec2 m_min, m_max;
+			mth::Vec2 m_center;
 		};
 
 		Collider2D() : core::Node2D() {}
