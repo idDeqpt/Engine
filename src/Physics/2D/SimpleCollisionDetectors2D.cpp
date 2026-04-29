@@ -10,20 +10,31 @@
 namespace eng
 {
 
-void phy::SingleThreadCollisionDetector2D::updateCollisions(const std::vector<PhysicsBody2D*>& bodies)
+void phy::SingleThreadCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
+{
+	m_bodies = bodies;
+}
+
+void phy::SingleThreadCollisionDetector2D::updateTree(const std::vector<PhysicsBody2D*>& bodies)
+{
+	m_bodies = bodies;
+}
+
+
+void phy::SingleThreadCollisionDetector2D::updateCollisions()
 {
 	m_collisions_buffer.clear();
-	m_collisions_buffer.reserve(bodies.size());
+	m_collisions_buffer.reserve(m_bodies.size());
 
-	for (unsigned int i = 0; i < (bodies.size() - 1); i++)
-		for (unsigned int j = i + 1; j < bodies.size(); j++)
-			if (checkCollisionAABB(*bodies[i]->getCollider(), *bodies[j]->getCollider()))
+	for (unsigned int i = 0; i < (m_bodies.size() - 1); i++)
+		for (unsigned int j = i + 1; j < m_bodies.size(); j++)
+			if (m_bodies[i]->getAABB().checkCollision(m_bodies[j]->getAABB()))
 			{
-				CollisionData data = bodies[i]->getCollider()->collideWith(*bodies[j]->getCollider());
+				CollisionData data = m_bodies[i]->getCollider()->collideWith(*m_bodies[j]->getCollider());
 				if (data.has_collision)
 				{
-					data.bodies[0] = bodies[i];
-					data.bodies[1] = bodies[j];
+					data.bodies[0] = m_bodies[i];
+					data.bodies[1] = m_bodies[j];
 					m_collisions_buffer.push_back(data);
 				}
 			}
@@ -36,32 +47,44 @@ phy::MultiThreadCollisionDetector2D::MultiThreadCollisionDetector2D(unsigned int
 	m_threads.resize(threads_count);
 }
 
-void phy::MultiThreadCollisionDetector2D::updateCollisions(const std::vector<PhysicsBody2D*>& bodies)
+
+void phy::MultiThreadCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
 {
-	if (bodies.size() != m_last_bodies_count)
+	m_bodies = bodies;
+}
+
+void phy::MultiThreadCollisionDetector2D::updateTree(const std::vector<PhysicsBody2D*>& bodies)
+{
+	m_bodies = bodies;
+}
+
+
+void phy::MultiThreadCollisionDetector2D::updateCollisions()
+{
+	if (m_bodies.size() != m_last_bodies_count)
 	{
-		m_last_bodies_count = bodies.size();
+		m_last_bodies_count = m_bodies.size();
 		updateThreadsIndexes(m_last_bodies_count);
 	}
 	
 	m_collisions_buffer.clear();
-	m_collisions_buffer.reserve(bodies.size());
+	m_collisions_buffer.reserve(m_bodies.size());
 	
-	if (bodies.size() <= 1) return;
+	if (m_bodies.size() <= 1) return;
 	
 	std::vector<std::vector<CollisionData>> thread_results(m_threads.size());
 	
 	auto process_range = [&](unsigned int thread_id, unsigned int start_pair, unsigned int end_pair)
 	{
 		for (unsigned int i = start_pair; i < end_pair; i++)
-			for (unsigned int j = i + 1; j < bodies.size(); j++)
-				if (checkCollisionAABB(*bodies[i]->getCollider(), *bodies[j]->getCollider()))
+			for (unsigned int j = i + 1; j < m_bodies.size(); j++)
+				if (m_bodies[i]->getAABB().checkCollision(m_bodies[j]->getAABB()))
 				{
-					CollisionData data = bodies[i]->getCollider()->collideWith(*bodies[j]->getCollider());
+					CollisionData data = m_bodies[i]->getCollider()->collideWith(*m_bodies[j]->getCollider());
 					if (data.has_collision)
 					{
-						data.bodies[0] = bodies[i];
-						data.bodies[1] = bodies[j];
+						data.bodies[0] = m_bodies[i];
+						data.bodies[1] = m_bodies[j];
 						thread_results[thread_id].push_back(data);
 					}
 				}

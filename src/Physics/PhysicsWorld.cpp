@@ -106,7 +106,8 @@ void phy::PhysicsWorld::step(float delta)
 {
 	BodiesCollection bodies_collection;
 
-	m_collision_detector->updateCollisions(m_bodies2d);
+	m_collision_detector->rebuildTree(m_bodies2d);
+	m_collision_detector->updateCollisions();
 	std::vector<CollisionData> first_collisions = m_collision_detector->getCollisions();
 	bodies_collection.add(first_collisions);
 
@@ -124,7 +125,8 @@ void phy::PhysicsWorld::step(float delta)
 	unsigned int POSITION_ITERATIONS = 8;
 	for (unsigned int p = 0; p < POSITION_ITERATIONS; p++)
 	{
-		m_collision_detector->updateCollisions(m_bodies2d);
+		m_collision_detector->updateTree(m_bodies2d);
+		m_collision_detector->updateCollisions();
 		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
 		bodies_collection.add(collisions);
 		

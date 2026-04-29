@@ -1,7 +1,6 @@
 #ifndef COLLIDER_2D_CLASS_HEADER
 #define COLLIDER_2D_CLASS_HEADER
 
-#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -20,6 +19,10 @@ namespace eng::phy
 		struct AABB
 		{
 			mth::Vec2 min, max;
+
+			mth::Vec2 getCenter();
+			mth::Vec2 getSize();
+			bool checkCollision(const AABB& other);
 		};
 
 		Collider2D() : core::Node2D() {}
@@ -39,11 +42,7 @@ namespace eng::phy
 
 		virtual void updateAABB() = 0;
 
-		void computeTransform() override
-		{
-			core::Node2D::computeTransform();
-			m_aabb_need_update = true;
-		}
+		void computeTransform() override;
 	};
 }
 

@@ -5,7 +5,6 @@
 #include <scenes/BallsCollection.hpp>
 
 #include <Engine/Core/Node.hpp>
-#include <Engine/Core/Logger.hpp>
 
 #include <Engine/System/EventManager.hpp>
 

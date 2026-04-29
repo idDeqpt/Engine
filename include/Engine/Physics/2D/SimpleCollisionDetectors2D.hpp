@@ -13,7 +13,13 @@ namespace eng::phy
 	class SingleThreadCollisionDetector2D : public CollisionDetector2D
 	{
 	public:
-		void updateCollisions(const std::vector<PhysicsBody2D*>& bodies) override;
+		void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		void updateTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		
+		void updateCollisions() override;
+
+	protected:
+		std::vector<PhysicsBody2D*> m_bodies;
 	};
 
 
@@ -22,9 +28,13 @@ namespace eng::phy
 	public:
 		MultiThreadCollisionDetector2D(unsigned int threads_count);
 
-		void updateCollisions(const std::vector<PhysicsBody2D*>& bodies) override;
+		void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		void updateTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		
+		void updateCollisions() override;
 
 	protected:
+		std::vector<PhysicsBody2D*> m_bodies;
 		unsigned int m_last_bodies_count;
 		std::vector<std::thread>  m_threads;
 		std::vector<unsigned int> m_threads_last_indexes;

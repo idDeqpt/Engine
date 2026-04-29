@@ -12,13 +12,14 @@ namespace eng::phy
 	class CollisionDetector2D
 	{
 	public:
-		virtual void updateCollisions(const std::vector<PhysicsBody2D*>& bodies) = 0;
+		virtual void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) = 0;
+		virtual void updateTree(const std::vector<PhysicsBody2D*>& bodies) = 0;
+
+		virtual void updateCollisions() = 0;
 		std::vector<CollisionData>& getCollisions();
 
 	protected:
 		std::vector<CollisionData> m_collisions_buffer;
-
-		static bool checkCollisionAABB(Collider2D& first, Collider2D& second);
 	};
 }
 

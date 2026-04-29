@@ -27,6 +27,7 @@ namespace eng::phy
 		T* setCollider(Args&&... args);
 
 		Collider2D* getCollider() {return m_collider.get();}
+		Collider2D::AABB getAABB() {return m_collider->getAABB();}
 
 		virtual void integrateVel(float delta) {};
 		virtual void integratePos(float delta) {};

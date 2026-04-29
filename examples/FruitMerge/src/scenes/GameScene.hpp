@@ -6,9 +6,7 @@
 #include <scenes/Box2D.hpp>
 #include <scenes/BallsController.hpp>
 
-#include <Engine/Core/Logger.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
-#include <Engine/System/EventManager.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class GameScene : public Scene

@@ -1,9 +1,8 @@
 #ifndef SCENE_CLASS_HEADER
 #define SCENE_CLASS_HEADER
 
-#include <Engine/Core/Logger.hpp>
-
 #include <Engine/Graphics/2D/Shape2D.hpp>
+
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
@@ -31,8 +30,6 @@ public:
 		setSize(eng::mth::Vec2(900, 600));
 		setTexture(m_target->getTexture(0));
 		getTexture()->setFlip(false, true);
-		eng::core::Logger::info(getTexture()->getFlipX());
-		eng::core::Logger::info(getTexture()->getFlipY());
 
 		m_scene->setRenderPipeline2D(m_context.get<eng::gfx::RenderScene>().getRenderPipeline2D());
 		m_context.replace<eng::gfx::RenderScene>(m_scene);
