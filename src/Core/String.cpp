@@ -13,6 +13,7 @@ core::String::String(bool v)               {*this << v;}
 core::String::String(int v)                {*this << v;}
 core::String::String(unsigned int v)       {*this << v;}
 core::String::String(float v)              {*this << v;}
+core::String::String(double v)             {*this << v;}
 core::String::String(const void* v)        {*this << v;}
 
 
@@ -53,6 +54,12 @@ core::String& core::String::operator<<(unsigned int v)
 }
 
 core::String& core::String::operator<<(float v)
+{
+	m_str += std::to_string(v);
+	return *this;
+}
+
+core::String& core::String::operator<<(double v)
 {
 	m_str += std::to_string(v);
 	return *this;
