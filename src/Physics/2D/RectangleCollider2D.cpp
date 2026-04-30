@@ -60,7 +60,7 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 	float     circle_angle  = other.getGlobalRotation();
 	float     cos_c  = std::cos(circle_angle);
 	float     sin_c  = std::sin(circle_angle);
-	mth::Vec2 circle_local_center   = circle_radius - other.getOrigin();
+	mth::Vec2 circle_local_center   = circle_radius;
 	mth::Vec2 circle_rotated_center = mth::Vec2(circle_local_center.x*cos_c - circle_local_center.y*sin_c, circle_local_center.x*sin_c + circle_local_center.y*cos_c);
 	mth::Vec2 circle_center = other.getGlobalPosition() + circle_rotated_center;
 
