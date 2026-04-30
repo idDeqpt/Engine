@@ -9,7 +9,7 @@
 #include <Engine/Physics/PhysicsWorld.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 
-#include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/2D/Sprite2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
@@ -23,25 +23,28 @@
 class Ball : public eng::phy::RigidBody2D
 {
 public:
-	Ball(BallsCollection& collection):
-		m_collection(collection) {}
+	Ball(BallsCollection& collection, unsigned int start_level):
+		m_collection(collection),
+		m_level(start_level) {}
 
 	void onSetup()
 	{
-		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
-		m_context.get<eng::gfx::RenderScene>().addObject(*sh);
-		sh->setLayer(1);
+		auto s = addChild<eng::gfx::Sprite2D>("sprite");
+		m_context.get<eng::gfx::RenderScene>().addObject(*s);
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
-		m_context.get<eng::phy::PhysicsWorld>().addBody(*this);
-		setRestitution(0.8);
+		if (m_level)
+		{
+			m_context.get<eng::phy::PhysicsWorld>().addBody(*this);
+			setRestitution(0.8);
+		}
 
-		setLevel(1);
+		setLevel(m_level);
 	}
 
 	void onDestroy()
 	{
-		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Shape2D*>(getChildByName("shape"))));
+		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"))));
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}
 
@@ -59,28 +62,19 @@ public:
 
 	void setLevel(unsigned int level)
 	{
+		if (!level) return;
+
 		m_level = level;
 
 		unsigned int rad = level*15;
-		auto shape = static_cast<eng::gfx::Shape2D*>(getChildByName("shape"));
-		shape->setSize(rad*2);
-		shape->setOrigin(rad);
+		auto sprite = static_cast<eng::gfx::Shape2D*>(getChildByName("sprite"));
 
 		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
 		if (tex)
 		{
-			shape->setTexture(tex);
-			shape->setColor(eng::gfx::Color(255));
-			shape->setSize(eng::mth::Vec2(rad*2, tex->getSize().y*((rad*2)/tex->getSize().x)));
-			shape->setOrigin(shape->getSize()/2);
-		}
-		else
-		{
-			shape->setTexture(nullptr);
-			srand(0);
-			for (unsigned int i = 0; i < level; i++)
-				rand();
-			shape->setColor(eng::gfx::Color(rand()%255, rand()%255, rand()%255));
+			sprite->setTexture(tex);
+			sprite->setScale((rad*2)/tex->getSize().x);
+			sprite->setOrigin(tex->getSize()/2);
 		}
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());

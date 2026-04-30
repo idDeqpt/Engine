@@ -2,8 +2,11 @@
 
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
+#include <Engine/Graphics/RenderTarget.hpp>
+#include <Engine/Graphics/RenderStates.hpp>
 
 #include <glad/glad.h>
 #include <vector>

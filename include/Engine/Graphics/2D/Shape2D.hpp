@@ -4,8 +4,12 @@
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Math/Vec2.hpp>
 
+
 namespace eng::gfx
 {
+	class RenderTarget;
+	class RenderStates;
+
 	class Shape2D : public CanvasItem
 	{
 	public:
@@ -26,7 +30,7 @@ namespace eng::gfx
 
 		mth::Vec2 getSize();
 
-		void draw(RenderTarget* target, RenderStates& states);
+		void draw(RenderTarget* target, RenderStates& states) override;
 
 	protected:
 		Type         m_type;

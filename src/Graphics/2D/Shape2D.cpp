@@ -1,5 +1,8 @@
 #include <Engine/Graphics/2D/Shape2D.hpp>
 
+#include <Engine/Graphics/2D/CanvasItem.hpp>
+#include <Engine/Graphics/RenderTarget.hpp>
+#include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 #include <cmath>
@@ -104,8 +107,8 @@ void gfx::Shape2D::circleGenerator(Shape2D* shape)
 	{
 		float points_ratio = (float(i)/n)*(3.1415926*2);
 		mth::Vec2 point_on_circle = {
-			(sin(points_ratio) + 1)*0.5f,
-			(cos(points_ratio) + 1)*0.5f,
+			(std::sin(points_ratio) + 1)*0.5f,
+			(std::cos(points_ratio) + 1)*0.5f,
 		};
 		vertices[i] = {
 			{point_on_circle.x*shape->m_size.x, point_on_circle.y*shape->m_size.y},
