@@ -116,7 +116,7 @@ void core::Logger::writeData(const std::string& msg)
 
 void core::Logger::processThread()
 {
-	while (m_process)
+	while (m_process || !m_write_queue.empty())
 	{
 		std::string msg;
 		{
