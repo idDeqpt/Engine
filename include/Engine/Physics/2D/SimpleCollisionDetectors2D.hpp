@@ -15,12 +15,15 @@ namespace eng::phy
 	class BVHCollisionDetector2D : public CollisionDetector2D
 	{
 	public:
-		void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		BVHCollisionDetector2D();
+
+		void rebuildTree(std::vector<PhysicsBody2D*>& bodies) override;
 		void updateTree() override;
 		
 		void updateCollisions() override;
 
 	protected:
+		unsigned int m_frame;
 		BVH m_bvh;
 	};
 
@@ -30,7 +33,7 @@ namespace eng::phy
 	public:
 		MultiThreadCollisionDetector2D(unsigned int threads_count);
 
-		void rebuildTree(const std::vector<PhysicsBody2D*>& bodies) override;
+		void rebuildTree(std::vector<PhysicsBody2D*>& bodies) override;
 		void updateTree() override;
 		
 		void updateCollisions() override;

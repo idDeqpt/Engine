@@ -10,12 +10,15 @@
 #include <Engine/Core/ResourceManager.hpp>
 
 #include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/Texture.hpp>
+#include <Engine/Graphics/Font.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 #include <random>
+#include <string>
 
 class Ball : public eng::phy::RigidBody2D
 {
@@ -25,8 +28,16 @@ public:
 
 	void onSetup()
 	{
+		eng::gfx::Font* font = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
+
+		auto t = addChild<eng::gfx::Text2D>("text");
+		m_context.get<eng::gfx::RenderScene>().addObject(*t);
+		t->setFont(*font);
+		t->setLayer(2);
+		
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		m_context.get<eng::gfx::RenderScene>().addObject(*sh);
+		sh->setLayer(1);
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		m_context.get<eng::phy::PhysicsWorld>().addBody(*this);
@@ -38,6 +49,7 @@ public:
 	void onDestroy()
 	{
 		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Shape2D*>(getChildByName("shape"))));
+		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Text2D*>(getChildByName("text"))));
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}
 
@@ -60,6 +72,9 @@ public:
 		unsigned int rad = level*10;
 		auto shape = static_cast<eng::gfx::Shape2D*>(getChildByName("shape"));
 		shape->setSize(eng::mth::Vec2(rad*2));
+		auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text"));
+		text->setString(std::to_string(level));
+		text->setCharacterSize(level*10);
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());
 		collider->setRadius(rad);

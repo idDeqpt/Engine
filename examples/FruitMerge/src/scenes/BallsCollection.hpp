@@ -23,8 +23,8 @@ struct BallsCollection
 
 		for (unsigned int i = 0; i < balls.size() - 1; i++)
 			for (unsigned int j = i + 1; j < balls.size(); j++)
-				if (((balls[j].first  == balls[i].first)  && (balls[j].second == balls[i].second)) ||
-					((balls[j].first  == balls[i].second) && (balls[j].second == balls[i].first)))
+				if ((balls[i].first  == balls[j].first) || (balls[i].first  == balls[j].second) ||
+					(balls[i].second == balls[j].first) || (balls[i].second == balls[j].second))
 						balls.erase(balls.begin() + j--);
 	}
 };

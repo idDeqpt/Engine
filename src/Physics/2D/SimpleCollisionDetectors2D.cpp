@@ -12,10 +12,19 @@
 namespace eng
 {
 
-void phy::BVHCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
+phy::BVHCollisionDetector2D::BVHCollisionDetector2D():
+	m_frame(0) {}
+
+
+void phy::BVHCollisionDetector2D::rebuildTree(std::vector<PhysicsBody2D*>& bodies)
 {
-	std::vector<PhysicsBody2D*> bodies_copy = bodies;
-	m_bvh.rebuild(bodies_copy);
+	if ((m_frame++ % 2) == 0)
+	{
+		updateTree();
+		return;
+	}
+
+	m_bvh.rebuild(bodies);
 }
 
 void phy::BVHCollisionDetector2D::updateTree()
@@ -50,7 +59,7 @@ phy::MultiThreadCollisionDetector2D::MultiThreadCollisionDetector2D(unsigned int
 }
 
 
-void phy::MultiThreadCollisionDetector2D::rebuildTree(const std::vector<PhysicsBody2D*>& bodies)
+void phy::MultiThreadCollisionDetector2D::rebuildTree(std::vector<PhysicsBody2D*>& bodies)
 {
 	m_bodies = bodies;
 }
