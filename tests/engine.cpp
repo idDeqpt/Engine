@@ -80,10 +80,10 @@ public:
 		b->setRotation(3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
-		sh->setSize(eng::mth::Vec2(10, 200));
+		sh->setSize(eng::mth::Vec2(10, 300));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(10, 200));
+		col->setSize(eng::mth::Vec2(10, 300));
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		PW.addBody(*b);
@@ -92,10 +92,10 @@ public:
 		b->setRotation(-3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
-		sh->setSize(eng::mth::Vec2(10, 200));
+		sh->setSize(eng::mth::Vec2(10, 300));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
-		col->setSize(eng::mth::Vec2(10, 200));
+		col->setSize(eng::mth::Vec2(10, 300));
 
 		b = addChild<eng::phy::StaticBody2D>("horizontal");
 		PW.addBody(*b);
@@ -186,7 +186,7 @@ public:
 		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
 
 		for (unsigned int i = 0; i < 20; i++)
-			for (unsigned int j = 0; j < 30; j++)
+			for (unsigned int j = 0; j < 60; j++)
 			{
 				auto ball = addChild<Ball>("ball");
 				ball->setPosition(eng::mth::Vec2(200 + i*20, 400 - j*15));

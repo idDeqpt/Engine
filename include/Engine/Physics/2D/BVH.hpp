@@ -17,7 +17,7 @@ namespace eng::phy
 			PhysicsBody2D* second;
 		};
 
-		BVH();
+		BVH() = default;
 		~BVH();
 
 		void rebuild(std::vector<PhysicsBody2D*>& bodies);
@@ -28,16 +28,14 @@ namespace eng::phy
 		std::vector<Pair>& getLastAABBCollisions();
 
 	protected:
-		BVHNode* m_root;
-		std::vector<Pair> m_last_collisions;
+		std::vector<BVHNode> m_nodes_pool;
+		std::vector<Pair>    m_last_collisions;
 
-		void clearNode(BVHNode* node);
-
-		BVHNode* buildRecursive(std::vector<PhysicsBody2D*>& bodies, unsigned int start, unsigned int end);
-		void expandRecursive(BVHNode* node);
+		int buildRecursive(std::vector<PhysicsBody2D*>& bodies, unsigned int start, unsigned int end);
+		void expandRecursive(int node_id);
 		
-		void checkSelfCollisionsRecursive(BVHNode* node);
-		void checkCollisionsRecursive(BVHNode* left, BVHNode* right);
+		void checkSelfCollisionsRecursive(int node_id);
+		void checkCollisionsRecursive(int left_id, int right_id);
 	};
 }
 

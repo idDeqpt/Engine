@@ -2,9 +2,6 @@
 #define PHYSICS_WORLD_CLASS_HEADER
 
 #include <Engine/Physics/2D/CollisionDetector2D.hpp>
-#include <Engine/Physics/2D/CollisionData.hpp>
-#include <Engine/Physics/2D/Collider2D.hpp>
-#include <Engine/Physics/2D/PhysicsBody2D.hpp>
 
 #include <vector>
 #include <memory>
@@ -12,6 +9,8 @@
 
 namespace eng::phy
 {
+	class PhysicsBody2D;
+
 	class PhysicsWorld
 	{
 	public:

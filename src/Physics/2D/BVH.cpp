@@ -12,9 +12,6 @@
 namespace eng
 {
 
-phy::BVH::BVH():
-	m_root(nullptr) {}
-
 phy::BVH::~BVH()
 {
 	clear();
@@ -24,24 +21,27 @@ phy::BVH::~BVH()
 void phy::BVH::rebuild(std::vector<PhysicsBody2D*>& bodies)
 {
 	clear();
-	m_last_collisions.reserve(bodies.size());
-	m_root = buildRecursive(bodies, 0, bodies.size());
+	m_nodes_pool.reserve(bodies.size()*3);
+	m_last_collisions.reserve(bodies.size()*5);
+
+	buildRecursive(bodies, 0, bodies.size());
 }
 
 void phy::BVH::expand()
 {
-	if (m_root) expandRecursive(m_root);
+	if (m_nodes_pool.size()) expandRecursive(0);
 }
 
 void phy::BVH::clear()
 {
-	clearNode(m_root);
+	m_nodes_pool.clear();
+	m_last_collisions.clear();
 }
 
 void phy::BVH::updateAABBCollisions()
 {
 	m_last_collisions.clear();
-	if (m_root) checkSelfCollisionsRecursive(m_root);
+	if (m_nodes_pool.size()) checkSelfCollisionsRecursive(0);
 }
 
 std::vector<phy::BVH::Pair>& phy::BVH::getLastAABBCollisions()
@@ -51,33 +51,24 @@ std::vector<phy::BVH::Pair>& phy::BVH::getLastAABBCollisions()
 
 
 
-void phy::BVH::clearNode(BVHNode* node)
+int phy::BVH::buildRecursive(std::vector<PhysicsBody2D*>& bodies, unsigned int start, unsigned int end)
 {
-	if (node)
-	{
-		clearNode(node->getLeft());
-		clearNode(node->getRight());
-		delete node;
-	}
-}
-
-
-phy::BVHNode* phy::BVH::buildRecursive(std::vector<PhysicsBody2D*>& bodies, unsigned int start, unsigned int end)
-{
-	BVHNode* node = new BVHNode();
+	m_nodes_pool.emplace_back();
+	BVHNode& node = m_nodes_pool.back();
+	unsigned int self_id = m_nodes_pool.size() - 1;
 
 	unsigned int count = end - start;
 
 	if (count == 1)
 	{
-		node->setBody(bodies[start]);
-		return node;
+		node.setBody(bodies[start]);
+		return self_id;
 	}
 
 	Collider2D::AABB group_aabb = bodies[start]->getAABB();
 	for (unsigned int i = start + 1; i < end; i++)
 		group_aabb.expand(bodies[i]->getAABB());
-	node->setAABB(group_aabb);
+	node.setAABB(group_aabb);
 
 	unsigned int middle = start + 1;
 	if (count > 2)
@@ -95,67 +86,81 @@ phy::BVHNode* phy::BVH::buildRecursive(std::vector<PhysicsBody2D*>& bodies, unsi
 		});
 	}
 
-	node->setLeft(buildRecursive(bodies, start, middle));
-	node->setRight(buildRecursive(bodies, middle, end));
+	node.setLeftId(buildRecursive(bodies, start, middle));
+	node.setRightId(buildRecursive(bodies, middle, end));
 
-	return node;
+	return self_id;
 }
 
-void phy::BVH::expandRecursive(phy::BVHNode* node)
+void phy::BVH::expandRecursive(int node_id)
 {
-	if (node->isLeaf())
+	if (node_id == -1) return;
+	BVHNode& node = m_nodes_pool[node_id];
+
+	if (node.isLeaf())
 	{
-		node->setAABB(node->getBody()->getAABB());
+		node.setAABB(node.getBody()->getAABB());
 		return;
 	}
 
-	expandRecursive(node->getLeft());
-	expandRecursive(node->getRight());
+	expandRecursive(node.getLeftId());
+	expandRecursive(node.getRightId());
 
-	node->setAABB(node->getLeft()->getAABB());
-	node->expand(node->getRight()->getAABB());
+	Collider2D::AABB aabb = m_nodes_pool[node.getLeftId()].getAABB();
+	aabb.expand(m_nodes_pool[node.getRightId()].getAABB());
+	node.setAABB(aabb);
 }
 
 
-void phy::BVH::checkSelfCollisionsRecursive(BVHNode* node)
+void phy::BVH::checkSelfCollisionsRecursive(int node_id)
 {
-	if (!node || node->isLeaf()) return;
+	if (node_id == -1) return;
+	BVHNode& node = m_nodes_pool[node_id];
 
-	checkSelfCollisionsRecursive(node->getLeft());
-	checkSelfCollisionsRecursive(node->getRight());
+	if (node.isLeaf()) return;
 
-	checkCollisionsRecursive(node->getLeft(), node->getRight());
+	checkSelfCollisionsRecursive(node.getLeftId());
+	checkSelfCollisionsRecursive(node.getRightId());
+
+	checkCollisionsRecursive(node.getLeftId(), node.getRightId());
 }
 
-void phy::BVH::checkCollisionsRecursive(BVHNode* left, BVHNode* right)
+void phy::BVH::checkCollisionsRecursive(int left_id, int right_id)
 {
-	if (!left->getAABB().checkCollision(right->getAABB()))
+	if ((left_id == -1) || (right_id == -1)) return;
+	BVHNode& left  = m_nodes_pool[left_id];
+	BVHNode& right = m_nodes_pool[right_id];
+
+	if (!left.getAABB().checkCollision(right.getAABB()))
 		return;
 
-	if (left->isLeaf() && right->isLeaf())
+	if (left.isLeaf() && right.isLeaf())
 	{
-		m_last_collisions.push_back({left->getBody(), right->getBody()});
+	    auto* a = left.getBody();
+	    auto* b = right.getBody();
+	    if (a > b) std::swap(a, b);
+	    m_last_collisions.push_back({a, b});
 		return;
 	}
 
-	if (left->isLeaf())
+	if (left.isLeaf())
 	{
-		checkCollisionsRecursive(left, right->getLeft());
-		checkCollisionsRecursive(left, right->getRight());
+		checkCollisionsRecursive(left_id, right.getLeftId());
+		checkCollisionsRecursive(left_id, right.getRightId());
 		return;
 	}
 
-	if (right->isLeaf())
+	if (right.isLeaf())
 	{
-		checkCollisionsRecursive(right, left->getLeft());
-		checkCollisionsRecursive(right, left->getRight());
+		checkCollisionsRecursive(right_id, left.getLeftId());
+		checkCollisionsRecursive(right_id, left.getRightId());
 		return;
 	}
 
-	checkCollisionsRecursive(left->getLeft(), right->getLeft());
-	checkCollisionsRecursive(left->getLeft(), right->getRight());
-	checkCollisionsRecursive(left->getRight(), right->getLeft());
-	checkCollisionsRecursive(left->getRight(), right->getRight());
+	checkCollisionsRecursive(left.getLeftId(),  right.getLeftId());
+	checkCollisionsRecursive(left.getLeftId(),  right.getRightId());
+	checkCollisionsRecursive(left.getRightId(), right.getLeftId());
+	checkCollisionsRecursive(left.getRightId(), right.getRightId());
 }
 
 } //namespace eng

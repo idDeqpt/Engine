@@ -16,19 +16,19 @@ namespace eng::phy
 
 		void expand(const Collider2D::AABB& aabb);
 
-		void setLeft(BVHNode* left);
-		void setRight(BVHNode* right);
+		void setLeftId(const int& left);
+		void setRightId(const int& right);
 		void setBody(PhysicsBody2D* body);
 		void setAABB(const Collider2D::AABB& aabb);
 
-		BVHNode* getLeft();
-		BVHNode* getRight();
+		const int& getLeftId();
+		const int& getRightId();
 		PhysicsBody2D* getBody();
 		const Collider2D::AABB& getAABB() const;
 
 	protected:
-		BVHNode* m_left;
-		BVHNode* m_right;
+		int m_left;
+		int m_right;
 		Collider2D::AABB m_aabb;
 		PhysicsBody2D* m_body;
 	};

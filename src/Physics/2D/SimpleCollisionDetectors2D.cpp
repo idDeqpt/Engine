@@ -4,6 +4,7 @@
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
 #include <Engine/Physics/2D/BVH.hpp>
+
 #include <thread>
 #include <vector>
 
@@ -25,11 +26,10 @@ void phy::BVHCollisionDetector2D::updateTree()
 
 void phy::BVHCollisionDetector2D::updateCollisions()
 {
-
 	m_collisions_buffer.clear();
 	m_bvh.updateAABBCollisions();
-
 	std::vector<BVH::Pair> pairs = m_bvh.getLastAABBCollisions();
+	
 	for (unsigned int i = 0; i < pairs.size(); i++)
 	{
 		CollisionData data = pairs[i].first->getCollider()->collideWith(*pairs[i].second->getCollider());

@@ -10,13 +10,14 @@ namespace eng
 {
 
 phy::BVHNode::BVHNode():
-	m_left(nullptr),
-	m_right(nullptr) {}
+	m_left(-1),
+	m_right(-1),
+	m_body(nullptr) {}
 
 
 bool phy::BVHNode::isLeaf()
 {
-	return !m_left && !m_right;
+	return (m_left == -1) && (m_right == -1);
 }
 
 
@@ -26,12 +27,12 @@ void phy::BVHNode::expand(const Collider2D::AABB& aabb)
 }
 
 
-void phy::BVHNode::setLeft(BVHNode* left)
+void phy::BVHNode::setLeftId(const int& left)
 {
 	m_left = left;
 }
 
-void phy::BVHNode::setRight(BVHNode* right)
+void phy::BVHNode::setRightId(const int& right)
 {
 	m_right = right;
 }
@@ -48,12 +49,12 @@ void phy::BVHNode::setAABB(const Collider2D::AABB& aabb)
 }
 
 
-phy::BVHNode* phy::BVHNode::getLeft()
+const int& phy::BVHNode::getLeftId()
 {
 	return m_left;
 }
 
-phy::BVHNode* phy::BVHNode::getRight()
+const int& phy::BVHNode::getRightId()
 {
 	return m_right;
 }
