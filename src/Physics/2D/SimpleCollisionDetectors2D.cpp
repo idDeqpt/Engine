@@ -18,12 +18,6 @@ phy::BVHCollisionDetector2D::BVHCollisionDetector2D():
 
 void phy::BVHCollisionDetector2D::rebuildTree(std::vector<PhysicsBody2D*>& bodies)
 {
-	if ((m_frame++ % 2) == 0)
-	{
-		updateTree();
-		return;
-	}
-
 	m_bvh.rebuild(bodies);
 }
 
