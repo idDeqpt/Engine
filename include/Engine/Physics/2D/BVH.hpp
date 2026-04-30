@@ -1,12 +1,12 @@
 #ifndef BVH_CLASS_HEADER
 #define BVH_CLASS_HEADER
 
+#include <Engine/Physics/2D/BVHNode.hpp>
 #include <vector>
 
 namespace eng::phy
 {
 	class PhysicsBody2D;
-	class BVHNode;
 
 	class BVH
 	{
