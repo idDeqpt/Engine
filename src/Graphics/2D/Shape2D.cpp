@@ -60,6 +60,12 @@ void gfx::Shape2D::setGenerator(void (*generator)(Shape2D*))
 }
 
 
+mth::Vec2 gfx::Shape2D::getSize()
+{
+	return m_size;
+}
+
+
 void gfx::Shape2D::draw(RenderTarget* target, RenderStates& states)
 {
 	updateShape();

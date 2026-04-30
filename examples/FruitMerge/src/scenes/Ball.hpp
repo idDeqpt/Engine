@@ -28,13 +28,6 @@ public:
 
 	void onSetup()
 	{
-		eng::gfx::Font* font = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
-
-		auto t = addChild<eng::gfx::Text2D>("text");
-		m_context.get<eng::gfx::RenderScene>().addObject(*t);
-		t->setFont(*font);
-		t->setLayer(2);
-		
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		m_context.get<eng::gfx::RenderScene>().addObject(*sh);
 		sh->setLayer(1);
@@ -49,7 +42,6 @@ public:
 	void onDestroy()
 	{
 		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Shape2D*>(getChildByName("shape"))));
-		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Text2D*>(getChildByName("text"))));
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}
 
@@ -69,18 +61,18 @@ public:
 	{
 		m_level = level;
 
-		unsigned int rad = level*10;
+		unsigned int rad = level*15;
 		auto shape = static_cast<eng::gfx::Shape2D*>(getChildByName("shape"));
 		shape->setSize(rad*2);
-		auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text"));
-		text->setString(std::to_string(level));
-		text->setCharacterSize(level*10);
+		shape->setOrigin(rad);
 
-		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/image" + std::to_string(level) + ".png"}).second;
+		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
 		if (tex)
 		{
 			shape->setTexture(tex);
 			shape->setColor(eng::gfx::Color(255));
+			shape->setSize(eng::mth::Vec2(rad*2, tex->getSize().y*((rad*2)/tex->getSize().x)));
+			shape->setOrigin(shape->getSize()/2);
 		}
 		else
 		{
@@ -93,6 +85,7 @@ public:
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());
 		collider->setRadius(rad);
+		collider->setOrigin(rad);
 		setMass(rad*3);
 	}
 
