@@ -57,16 +57,4 @@ const mth::Vec2& phy::Collider2D::AABB::getCenter() const
 	return m_center;
 }
 
-
-bool phy::Collider2D::AABB::checkCollision(const AABB& other) const
-{
-	if (m_max.x < other.m_min.x || other.m_max.x < m_min.x)
-		return false;
-	
-	if (m_max.y < other.m_min.y || other.m_max.y < m_min.y)
-		return false;
-	
-	return true;
-}
-
 } //namespace eng
