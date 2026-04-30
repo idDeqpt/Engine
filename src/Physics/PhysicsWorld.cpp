@@ -47,31 +47,23 @@ struct BodiesCollection
 
 phy::PhysicsWorld::PhysicsWorld():
 	m_accumulator(0),
-	m_fixed_delta(1/50.0)
+	m_fixed_delta(1/50.0),
+	m_max_steps_per_frame(1)
 {
 	m_bodies2d.clear();
-	setThreadsCount(1);
+	setCollisionDetector<BVHCollisionDetector2D>();
+	//setCollisionDetector<MultiThreadCollisionDetector2D>(std::thread::hardware_concurrency());
 }
 
-
-void phy::PhysicsWorld::setThreadsCount(unsigned int count)
-{
-	if (count == 0)
-	{
-		unsigned int c = std::thread::hardware_concurrency();
-		setThreadsCount((c == 0) ? 1 : c);
-		return;
-	}
-
-	if (count == 1)
-		m_collision_detector = std::make_unique<BVHCollisionDetector2D>();
-	else
-		m_collision_detector = std::make_unique<MultiThreadCollisionDetector2D>(count);
-}
 
 void phy::PhysicsWorld::setFixedDelta(float delta)
 {
 	m_fixed_delta = delta;
+}
+
+void phy::PhysicsWorld::setMaxStepsPerFrame(unsigned int steps)
+{
+	m_max_steps_per_frame = steps;
 }
 
 
@@ -93,12 +85,12 @@ void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
 void phy::PhysicsWorld::update(float delta)
 {
 	m_accumulator += delta;
-	unsigned int steps = 0;
-	while ((steps < 1) && (m_accumulator >= m_fixed_delta))
+	unsigned int steps_count = 0;
+	while ((steps_count < m_max_steps_per_frame) && (m_accumulator >= m_fixed_delta))
 	{
 		step(m_fixed_delta);
 		m_accumulator -= m_fixed_delta;
-		steps++;
+		steps_count++;
 	}
 }
 
