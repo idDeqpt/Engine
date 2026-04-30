@@ -71,19 +71,29 @@ public:
 
 		unsigned int rad = level*10;
 		auto shape = static_cast<eng::gfx::Shape2D*>(getChildByName("shape"));
-		shape->setSize(eng::mth::Vec2(rad*2));
+		shape->setSize(rad*2);
 		auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text"));
 		text->setString(std::to_string(level));
 		text->setCharacterSize(level*10);
 
+		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/image" + std::to_string(level) + ".png"}).second;
+		if (tex)
+		{
+			shape->setTexture(tex);
+			shape->setColor(eng::gfx::Color(255));
+		}
+		else
+		{
+			shape->setTexture(nullptr);
+			srand(0);
+			for (unsigned int i = 0; i < level; i++)
+				rand();
+			shape->setColor(eng::gfx::Color(rand()%255, rand()%255, rand()%255));
+		}
+
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());
 		collider->setRadius(rad);
 		setMass(rad*3);
-
-		srand(0);
-		for (unsigned int i = 0; i < level; i++)
-			rand();
-		shape->setColor(eng::gfx::Color(rand()%255, rand()%255, rand()%255));
 	}
 
 	unsigned int getLevel()

@@ -123,7 +123,7 @@ void gfx::Text2D::updateString()
 			last_char_x += characters[i].advance;
 		}
 		loadData(total_vertices, vertices_count);
-		setTexture(*font_tex);
+		setTexture(font_tex);
 
 		delete[] characters;
 		delete[] total_vertices;

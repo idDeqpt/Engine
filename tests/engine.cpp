@@ -119,7 +119,7 @@ public:
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::CIRCLE);
 		m_context.get<eng::gfx::RenderScene>().addObject(*sh);
 		sh->setSize(eng::mth::Vec2(rad*2, rad*2));
-		sh->setTexture(*tex);
+		sh->setTexture(tex);
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		col->setRadius(rad);
@@ -152,7 +152,7 @@ public:
 	{
 		setType(eng::gfx::Shape2D::Type::RECTANGLE);
 		setSize(eng::mth::Vec2(900, 600));
-		setTexture(m_target->getTexture(0));
+		setTexture(&(m_target->getTexture(0)));
 		getTexture()->setFlip(false, true);
 		eng::core::Logger::info(getTexture()->getFlipX());
 		eng::core::Logger::info(getTexture()->getFlipY());

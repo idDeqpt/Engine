@@ -39,9 +39,9 @@ void gfx::CanvasItem::setLayer(unsigned int new_layer)
 	m_layer = new_layer;
 }
 
-void gfx::CanvasItem::setTexture(gfx::Texture& new_texture)
+void gfx::CanvasItem::setTexture(gfx::Texture* new_texture)
 {
-	m_texture = &new_texture;
+	m_texture = new_texture;
 }
 
 void gfx::CanvasItem::setPrimitiveType(const gfx::PrimitiveType& new_primitive_type)

@@ -28,7 +28,7 @@ namespace eng::gfx
 
 		void setLayer(unsigned int new_layer);
 		void setColor(const Color& new_color);
-		void setTexture(Texture& new_texture);
+		void setTexture(Texture* new_texture);
 		void setPrimitiveType(const PrimitiveType& new_primitive_type);
 
 		unsigned int getLayer() const;

@@ -28,7 +28,7 @@ public:
 	{
 		setType(eng::gfx::Shape2D::Type::RECTANGLE);
 		setSize(eng::mth::Vec2(900, 600));
-		setTexture(m_target->getTexture(0));
+		setTexture(&(m_target->getTexture(0)));
 		getTexture()->setFlip(false, true);
 
 		m_scene->setRenderPipeline2D(m_context.get<eng::gfx::RenderScene>().getRenderPipeline2D());
