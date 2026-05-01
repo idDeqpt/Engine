@@ -27,11 +27,6 @@ void phy::StaticBody2D::resolveCollisionVelWithRigid(const CollisionData& data, 
 	other.resolveCollisionVelWithStatic(data, *this);
 }
 
-void phy::StaticBody2D::resolveCollisionVelWithStatic(const CollisionData& data, StaticBody2D& other)
-{
-
-}
-
 void phy::StaticBody2D::resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other)
 {
 	other.resolveCollisionPosWithStatic(data, iter_ratio, *this);
@@ -40,11 +35,6 @@ void phy::StaticBody2D::resolveCollisionPosWith(const CollisionData& data, float
 void phy::StaticBody2D::resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other)
 {
 	other.resolveCollisionPosWithStatic(data, iter_ratio, *this);
-}
-
-void phy::StaticBody2D::resolveCollisionPosWithStatic(const CollisionData& data, float iter_ratio, StaticBody2D& other)
-{
-
 }
 
 } //namespace eng

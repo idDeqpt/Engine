@@ -17,11 +17,9 @@ namespace eng::phy
 
 		void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other);
 		void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other);
-		void resolveCollisionVelWithStatic(const CollisionData& data, StaticBody2D& other);
 
 		void resolveCollisionPosWith(const CollisionData& data, float iter_ratio, PhysicsBody2D& other);
 		void resolveCollisionPosWithRigid(const CollisionData& data, float iter_ratio, RigidBody2D& other);
-		void resolveCollisionPosWithStatic(const CollisionData& data, float iter_ratio, StaticBody2D& other);
 	};
 }
 
