@@ -1,8 +1,8 @@
 #ifndef ROOT_CLASS_HEADER
 #define ROOT_CLASS_HEADER
 
-#include <scenes/UIScene.hpp>
-#include <scenes/GameScene.hpp>
+#include <scenes/game/UIScene.hpp>
+#include <scenes/game/GameScene.hpp>
 
 #include <Engine/Core/Node.hpp>
 

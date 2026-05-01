@@ -1,5 +1,5 @@
-#ifndef SCENE_CLASS_HEADER
-#define SCENE_CLASS_HEADER
+#ifndef SCENE_LAYER_CLASS_HEADER
+#define SCENE_LAYER_CLASS_HEADER
 
 #include <Engine/Graphics/2D/Shape2D.hpp>
 
@@ -11,10 +11,10 @@
 
 #include <memory>
 
-class Scene : public eng::gfx::Shape2D
+class SceneLayer : public eng::gfx::Shape2D
 {
 public:
-	Scene() : eng::gfx::Shape2D()
+	SceneLayer() : eng::gfx::Shape2D()
 	{
 		eng::gfx::Texture::PixelFormat pf = eng::gfx::Texture::PixelFormat::RGBA;
 		m_target = std::make_unique<eng::gfx::RenderTarget>(1, &pf);
@@ -45,4 +45,4 @@ protected:
 	std::unique_ptr<eng::gfx::RenderTarget> m_target;
 };
 
-#endif //SCENE_CLASS_HEADER
+#endif //SCENE_LAYER_CLASS_HEADER

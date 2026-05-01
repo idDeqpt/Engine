@@ -1,7 +1,7 @@
 #ifndef BALL_CLASS_HEADER
 #define BALL_CLASS_HEADER
 
-#include <scenes/BallsCollection.hpp>
+#include <scenes/game/BallsCollection.hpp>
 
 #include <Engine/Physics/2D/RigidBody2D.hpp>
 

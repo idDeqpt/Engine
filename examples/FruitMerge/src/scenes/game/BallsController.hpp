@@ -1,8 +1,8 @@
 #ifndef BALLS_CONTROLLER_CLASS_HEADER
 #define BALLS_CONTROLLER_CLASS_HEADER
 
-#include <scenes/Ball.hpp>
-#include <scenes/BallsCollection.hpp>
+#include <scenes/game/Ball.hpp>
+#include <scenes/game/BallsCollection.hpp>
 
 #include <Engine/Core/Node.hpp>
 
@@ -34,20 +34,27 @@ public:
 		eng::mth::Vec2 camera_point(-1);
 		if (m_context.get<eng::sys::EventManager>().getMouse().moved())
 		{
-			camera_point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
+			camera_point = computeBallPosition();
 			m_ball_image->setPosition(camera_point);
 		}
 
 		if (m_context.get<eng::sys::EventManager>().getMouse().isJustPressed(eng::sys::Mouse::LEFT))
 		{
 			if ((camera_point.x == -1) && (camera_point.y == -1))
-				camera_point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
+				camera_point = computeBallPosition();
 			auto ball = addChild<Ball>("ball", m_collection, m_next_ball_level);
 			ball->setPosition(camera_point);
 
 			computeNextBallLevel();
 		}
 	}
+
+	virtual bool isGameOver() = 0;
+
+protected:
+	BallsCollection m_collection;
+	unsigned int m_next_ball_level;
+	Ball* m_ball_image;
 
 	void mergeBalls(Ball& first, Ball& second)
 	{
@@ -65,10 +72,7 @@ public:
 		m_ball_image->setLevel(m_next_ball_level);
 	}
 
-protected:
-	BallsCollection m_collection;
-	unsigned int m_next_ball_level;
-	Ball* m_ball_image;
+	virtual eng::mth::Vec2 computeBallPosition() = 0;
 };
 
 #endif BALLS_CONTROLLER_CLASS_HEADER

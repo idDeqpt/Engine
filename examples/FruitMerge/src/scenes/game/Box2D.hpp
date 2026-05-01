@@ -52,6 +52,21 @@ public:
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(10, 410));
 	}
+
+	eng::mth::Vec2 getLeftBound()
+	{
+		return eng::mth::Vec2(0, -410);
+	}
+
+	eng::mth::Vec2 getRightBound()
+	{
+		return eng::mth::Vec2(300, -410);
+	}
+
+	float getBottomBound()
+	{
+		return 10;
+	}
 };
 
 #endif //BOX_2D_CLASS_HEADER

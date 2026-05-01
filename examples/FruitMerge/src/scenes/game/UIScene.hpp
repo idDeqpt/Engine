@@ -1,7 +1,7 @@
 #ifndef UI_SCENE_CLASS_HEADER
 #define UI_SCENE_CLASS_HEADER
 
-#include <scenes/Scene.hpp>
+#include <scenes/SceneLayer.hpp>
 
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
@@ -9,16 +9,16 @@
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Math/Vec2.hpp>
 
-class UIScene : public Scene
+class UIScene : public SceneLayer
 {
 public:
 	UIScene(eng::gfx::Font& font):
 		m_font(&font),
-		Scene() {}
+		SceneLayer() {}
 
 	void onSetup()
 	{
-		Scene::onSetup();
+		SceneLayer::onSetup();
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("UICamera");
 		camera2d->setSize(eng::mth::Vec2(900, 600));
@@ -35,7 +35,7 @@ public:
 		auto t_ft = static_cast<eng::gfx::Text2D*>(getChildByName("text_frametime"));
 		if (t_ft) t_ft->setString(std::to_string(delta));
 
-		Scene::onUpdate(delta);
+		SceneLayer::onUpdate(delta);
 	}
 
 protected:
