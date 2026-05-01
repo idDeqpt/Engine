@@ -51,13 +51,11 @@ public:
 
 	void onUpdate(float delta)
 	{
-		m_collection.removeCopies();
-		for (unsigned int i = 0; i < m_collection.balls.size(); i++)
+		if (!m_collection.balls.empty())
 		{
-			mergeBalls(*m_collection.balls[i].first, *m_collection.balls[i].second);
-			m_collection.balls.erase(m_collection.balls.begin() + i--);
+			mergeBalls(*m_collection.balls.front().first, *m_collection.balls.front().second);
+			m_collection.balls.clear();
 		}
-		m_collection.balls.clear();
 	}
 
 	virtual bool isGameOver() = 0;

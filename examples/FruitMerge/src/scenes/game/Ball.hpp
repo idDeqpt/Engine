@@ -71,7 +71,7 @@ public:
 
 		m_level = level;
 
-		unsigned int rad = level*15;
+		unsigned int rad = level*10 + 10;
 		auto sprite = static_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"));
 
 		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
@@ -85,8 +85,8 @@ public:
 
 		auto area = static_cast<eng::phy::AreaBody2D*>(getChildByName("area"));
 		auto area_collider = static_cast<eng::phy::CircleCollider2D*>(area->getCollider());
-		area_collider->setRadius(rad*1.1);
-		area_collider->setOrigin(rad*1.1);
+		area_collider->setRadius(rad*1.15);
+		area_collider->setOrigin(rad*1.15);
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());
 		collider->setRadius(rad*0.95);
@@ -107,7 +107,12 @@ void BallArea::onCollision(eng::phy::PhysicsBody2D& other)
 {
 	BallArea* other_area = dynamic_cast<BallArea*>(&other);
 	if (other_area)
-		m_context.get<eng::core::SignalBus>().emit("balls_collided", static_cast<Ball*>(getParent()), static_cast<Ball*>(other_area->getParent()));
+	{
+		Ball* self_ball = static_cast<Ball*>(getParent());
+		Ball* other_ball = static_cast<Ball*>(other_area->getParent());
+		if (self_ball->getLevel() == other_ball->getLevel())
+			m_context.get<eng::core::SignalBus>().emit("balls_collided", self_ball, other_ball);
+	}
 }
 
 #endif //BALL_CLASS_HEADER
