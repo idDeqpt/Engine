@@ -1,13 +1,12 @@
 #ifndef BALL_CLASS_HEADER
 #define BALL_CLASS_HEADER
 
-#include <scenes/game/BallsCollection.hpp>
-
 #include <Engine/Physics/2D/RigidBody2D.hpp>
 
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
 #include <Engine/Physics/PhysicsWorld.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/SignalBus.hpp>
 
 #include <Engine/Graphics/2D/Sprite2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
@@ -23,9 +22,7 @@
 class Ball : public eng::phy::RigidBody2D
 {
 public:
-	Ball(BallsCollection& collection, unsigned int start_level):
-		m_collection(collection),
-		m_level(start_level) {}
+	Ball(unsigned int start_level): m_level(start_level) {}
 
 	void onSetup()
 	{
@@ -50,14 +47,14 @@ public:
 
 	void onUpdate(float delta)
 	{
-		applyForce(eng::mth::Vec2(0, 100)*getMass());
+		applyForce(eng::mth::Vec2(0, 200)*getMass());
 	}
 
 	void onCollision(eng::phy::PhysicsBody2D& other)
 	{
 		Ball* other_body = dynamic_cast<Ball*>(&other);
 		if (other_body)
-			m_collection.balls.push_back(BallsCollection::Pair(this, other_body));
+			m_context.get<eng::core::SignalBus>().emit("balls_collided", this, other_body);
 	}
 
 	void setLevel(unsigned int level)
@@ -67,7 +64,7 @@ public:
 		m_level = level;
 
 		unsigned int rad = level*15;
-		auto sprite = static_cast<eng::gfx::Shape2D*>(getChildByName("sprite"));
+		auto sprite = static_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"));
 
 		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
 		if (tex)
@@ -89,7 +86,6 @@ public:
 	}
 
 protected:
-	BallsCollection& m_collection;
 	unsigned int m_level;
 };
 

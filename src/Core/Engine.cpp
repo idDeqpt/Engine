@@ -6,6 +6,7 @@
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Core/TimeManager.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/SignalBus.hpp>
 
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
@@ -43,6 +44,7 @@ core::Engine::Engine(Node& root):
 
 	Logger::debug("Start initialization");
 	m_context.create<core::TimeManager>();
+	m_context.create<core::SignalBus>();
 	m_context.create<gfx::RenderManager>();
 	m_context.create<sys::EventManager>();
 	m_context.create<core::ResourceManager>();

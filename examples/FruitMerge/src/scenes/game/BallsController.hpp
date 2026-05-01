@@ -5,6 +5,8 @@
 #include <scenes/game/BallsCollection.hpp>
 
 #include <Engine/Core/Node.hpp>
+#include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/Logger.hpp>
 
 #include <Engine/System/EventManager.hpp>
 
@@ -16,8 +18,12 @@ public:
 	void onSetup()
 	{
 		srand(0);
+		m_context.get<eng::core::SignalBus>().subscribe("balls_collided",
+			[this](Ball* left, Ball* right) {
+				m_collection.balls.push_back(BallsCollection::Pair(left, right));
+		});
 
-		m_ball_image = addChild<Ball>("ball_image", m_collection, 0);
+		m_ball_image = addChild<Ball>("ball_image", 0);
 		//computeNextBallLevel();
 	}
 
@@ -42,7 +48,7 @@ public:
 		{
 			if ((camera_point.x == -1) && (camera_point.y == -1))
 				camera_point = computeBallPosition();
-			auto ball = addChild<Ball>("ball", m_collection, m_next_ball_level);
+			auto ball = addChild<Ball>("ball", m_next_ball_level);
 			ball->setPosition(camera_point);
 
 			computeNextBallLevel();
@@ -60,7 +66,7 @@ protected:
 	{
 		if (first.getLevel() != second.getLevel()) return;
 
-		auto ball = addChild<Ball>("ball", m_collection, first.getLevel() + 1);
+		auto ball = addChild<Ball>("ball", first.getLevel() + 1);
 		ball->setPosition((first.getPosition() + second.getPosition())*0.5);
 		removeChild(&first);
 		removeChild(&second);
