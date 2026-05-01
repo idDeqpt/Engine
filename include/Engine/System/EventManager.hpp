@@ -7,16 +7,19 @@
 
 struct GLFWwindow;
 
+namespace eng::core
+{
+	class SignalBus;
+}
+
 namespace eng::sys
 {
 	class Window;
-	class Keyboard;
-	class Mouse;
 
 	class EventManager
 	{
 	public:
-		EventManager();
+		EventManager(core::SignalBus& sbus);
 
 		void setActiveWindow(Window& window);
 		void pull();
@@ -28,9 +31,9 @@ namespace eng::sys
 		Mouse::CursorMode getCursorMode();
 
 	protected:
-		Window*     m_active_window;
-		Keyboard&   m_keyboard;
-		Mouse&      m_mouse;
+		Window*  m_active_window;
+		Keyboard m_keyboard;
+		Mouse    m_mouse;
 		Mouse::CursorMode m_cursor_mode;
 
 		static void key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode);

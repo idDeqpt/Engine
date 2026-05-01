@@ -3,7 +3,6 @@
 
 #include <scenes/game/BallsController.hpp>
 
-#include <Engine/System/EventManager.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class SandboxBallsController : public BallsController
@@ -15,9 +14,9 @@ public:
 	}
 
 protected:
-	virtual eng::mth::Vec2 computeBallPosition() override
+	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) override
 	{
-		return m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
+		return m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(mouse_pos);
 	}
 };
 

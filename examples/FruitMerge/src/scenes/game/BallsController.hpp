@@ -18,13 +18,35 @@ public:
 	void onSetup()
 	{
 		srand(0);
-		m_context.get<eng::core::SignalBus>().subscribe("balls_collided",
+		m_ball_signal_id = m_context.get<eng::core::SignalBus>().subscribe("balls_collided",
 			[this](Ball* left, Ball* right) {
 				m_collection.balls.push_back(BallsCollection::Pair(left, right));
 		});
 
 		m_ball_image = addChild<Ball>("ball_image", 0);
 		//computeNextBallLevel();
+
+		m_mouse_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_just_clicked",
+			[this](eng::sys::Mouse::Button button) {
+				if (button == eng::sys::Mouse::LEFT)
+				{
+					auto ball = addChild<Ball>("ball", m_next_ball_level);
+					ball->setPosition(computeBallPosition(m_context.get<eng::sys::EventManager>().getMouse().getPosition()));
+					computeNextBallLevel();
+				}
+		});
+
+		m_mouse_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_moved",
+			[this](const eng::mth::Vec2& pos, const eng::mth::Vec2& delta) {
+				m_ball_image->setPosition(computeBallPosition(pos));
+		});
+	}
+
+	void onDestroy()
+	{
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_moved_signal_id);
 	}
 
 	void onUpdate(float delta)
@@ -36,23 +58,6 @@ public:
 			m_collection.balls.erase(m_collection.balls.begin() + i--);
 		}
 		m_collection.balls.clear();
-
-		eng::mth::Vec2 camera_point(-1);
-		if (m_context.get<eng::sys::EventManager>().getMouse().moved())
-		{
-			camera_point = computeBallPosition();
-			m_ball_image->setPosition(camera_point);
-		}
-
-		if (m_context.get<eng::sys::EventManager>().getMouse().isJustPressed(eng::sys::Mouse::LEFT))
-		{
-			if ((camera_point.x == -1) && (camera_point.y == -1))
-				camera_point = computeBallPosition();
-			auto ball = addChild<Ball>("ball", m_next_ball_level);
-			ball->setPosition(camera_point);
-
-			computeNextBallLevel();
-		}
 	}
 
 	virtual bool isGameOver() = 0;
@@ -61,6 +66,9 @@ protected:
 	BallsCollection m_collection;
 	unsigned int m_next_ball_level;
 	Ball* m_ball_image;
+	eng::core::SubscriptionId m_ball_signal_id;
+	eng::core::SubscriptionId m_mouse_signal_id;
+	eng::core::SubscriptionId m_mouse_moved_signal_id;
 
 	void mergeBalls(Ball& first, Ball& second)
 	{
@@ -78,7 +86,7 @@ protected:
 		m_ball_image->setLevel(m_next_ball_level);
 	}
 
-	virtual eng::mth::Vec2 computeBallPosition() = 0;
+	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) = 0;
 };
 
 #endif BALLS_CONTROLLER_CLASS_HEADER

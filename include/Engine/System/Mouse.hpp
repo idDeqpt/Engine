@@ -5,6 +5,12 @@
 #include <Engine/System/AxisDevice.hpp>
 #include <Engine/Math/Vec2.hpp>
 
+
+namespace eng::core
+{
+	class SignalBus;
+}
+
 namespace eng::sys
 {
 	class Mouse : public ButtonDevice<8>, public AxisDevice<3>
@@ -40,7 +46,7 @@ namespace eng::sys
 			HIDDEN   = 0x00034002
 		};
 
-		static Mouse& getInstance();
+		Mouse(core::SignalBus& sbus);
 
 		bool isPressed(Mouse::Button button);
 		bool isJustPressed(Mouse::Button button);
@@ -62,9 +68,7 @@ namespace eng::sys
 
 	protected:
 		bool m_moved;
-
-	private:
-		Mouse();
+		core::SignalBus& m_sbus;
 	};
 }
 

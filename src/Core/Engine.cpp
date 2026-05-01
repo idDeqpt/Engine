@@ -46,7 +46,7 @@ core::Engine::Engine(Node& root):
 	m_context.create<core::TimeManager>();
 	m_context.create<core::SignalBus>();
 	m_context.create<gfx::RenderManager>();
-	m_context.create<sys::EventManager>();
+	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
 	m_context.create<core::ResourceManager>();
 	m_context.create<gfx::LightManager>();
 	m_context.create<gfx::RenderScene>();

@@ -1,5 +1,6 @@
 #include <Engine/System/EventManager.hpp>
 
+#include <Engine/Core/SignalBus.hpp>
 #include <Engine/System/Keyboard.hpp>
 #include <Engine/System/Mouse.hpp>
 #include <Engine/System/Window.hpp>
@@ -10,9 +11,9 @@
 namespace eng
 {
 
-sys::EventManager::EventManager():
-	m_keyboard(   sys::Keyboard::getInstance()),
-	m_mouse(      sys::Mouse::getInstance()),
+sys::EventManager::EventManager(core::SignalBus& sbus):
+	m_keyboard(sbus),
+	m_mouse(sbus),
 	m_cursor_mode(sys::Mouse::CursorMode::NORMAL),
 	m_active_window(nullptr) {};
 

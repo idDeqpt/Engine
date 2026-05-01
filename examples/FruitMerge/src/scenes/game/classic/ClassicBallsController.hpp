@@ -26,9 +26,9 @@ protected:
 	eng::mth::Vec2 m_right_bound;
 	float          m_bottom_bound;
 
-	virtual eng::mth::Vec2 computeBallPosition() override
+	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) override
 	{
-		eng::mth::Vec2 mouse_point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(m_context.get<eng::sys::EventManager>().getMouse().getPosition());
+		eng::mth::Vec2 mouse_point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(mouse_pos);
 		eng::mth::Vec2 lr = m_left_bound - m_right_bound;
 		eng::mth::Vec2 lp = m_left_bound - mouse_point;
 		float t = lp.dot(lr)/lr.dot(lr);

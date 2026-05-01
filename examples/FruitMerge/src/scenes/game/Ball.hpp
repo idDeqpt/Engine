@@ -69,6 +69,7 @@ public:
 		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
 		if (tex)
 		{
+			tex->setSmooth(false);
 			sprite->setTexture(tex);
 			sprite->setScale((rad*2)/tex->getSize().x);
 			sprite->setOrigin(tex->getSize()/2);

@@ -3,6 +3,11 @@
 
 #include <Engine/System/ButtonDevice.hpp>
 
+namespace eng::core
+{
+	class SignalBus;
+}
+
 namespace eng::sys
 {
 	class Keyboard : public ButtonDevice<348>
@@ -149,7 +154,7 @@ namespace eng::sys
 			MENU          = 348,
 		};
 
-		static Keyboard& getInstance();
+		Keyboard(core::SignalBus& sbus);
 
 		bool isPressed(Keyboard::Key key);
 		bool isJustPressed(Keyboard::Key key);
@@ -158,8 +163,8 @@ namespace eng::sys
 		
 		void action_handler(int key, int scancode, int action, int mode);
 
-	private:
-		Keyboard();
+	protected:
+		core::SignalBus& m_sbus;
 	};
 }
 
