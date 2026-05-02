@@ -80,17 +80,14 @@ public:
 			tex->setSmooth(false);
 			sprite->setTexture(tex);
 			sprite->setScale((rad*2)/tex->getSize().x);
-			sprite->setOrigin(tex->getSize()/2);
 		}
 
 		auto area = static_cast<eng::phy::AreaBody2D*>(getChildByName("area"));
 		auto area_collider = static_cast<eng::phy::CircleCollider2D*>(area->getCollider());
 		area_collider->setRadius(rad*1.15);
-		area_collider->setOrigin(rad*1.15);
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());
 		collider->setRadius(rad*0.95);
-		collider->setOrigin(rad*0.95);
 		setMass(rad*3);
 	}
 

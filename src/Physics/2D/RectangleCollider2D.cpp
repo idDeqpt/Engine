@@ -51,17 +51,19 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 {
 	CollisionData result;
 
-	mth::Vec2 rect_top_left = getGlobalPosition();
-	mth::Vec2 rect_origin   = getOrigin();
-	float     rect_angle    = getGlobalRotation();
-	mth::Vec2 rect_center   = rect_top_left + rect_origin;
+	float     rect_angle  = getGlobalRotation();
+	mth::Vec2 rect_origin = getOrigin();
+	mth::Vec2 rect_center = getGlobalPosition() + rect_origin;
 
-	float     circle_radius = other.getRadius();
-	float     circle_angle  = other.getGlobalRotation();
-	float     cos_c  = std::cos(circle_angle);
-	float     sin_c  = std::sin(circle_angle);
-	mth::Vec2 circle_local_center   = circle_radius;
-	mth::Vec2 circle_rotated_center = mth::Vec2(circle_local_center.x*cos_c - circle_local_center.y*sin_c, circle_local_center.x*sin_c + circle_local_center.y*cos_c);
+	float circle_radius = other.getRadius();
+	float circle_angle  = other.getGlobalRotation();
+	float cos_c  = std::cos(circle_angle);
+	float sin_c  = std::sin(circle_angle);
+	mth::Vec2 circle_local_center = other.getOrigin();
+	mth::Vec2 circle_rotated_center = mth::Vec2(
+		circle_local_center.x*cos_c - circle_local_center.y*sin_c,
+		circle_local_center.x*sin_c + circle_local_center.y*cos_c
+	);
 	mth::Vec2 circle_center = other.getGlobalPosition() + circle_rotated_center;
 
 	mth::Vec2 delta = circle_center - rect_center;
@@ -71,9 +73,11 @@ phy::CollisionData phy::RectangleCollider2D::collideWithCircle(CircleCollider2D&
 	local_delta.x = delta.x*cos_a - delta.y*sin_a;
 	local_delta.y = delta.x*sin_a + delta.y*cos_a;
 
-	mth::Vec2 closest_local;
-	closest_local.x = std::max(-rect_origin.x, std::min(m_size.x - rect_origin.x, local_delta.x));
-	closest_local.y = std::max(-rect_origin.y, std::min(m_size.y - rect_origin.y, local_delta.y));
+	mth::Vec2 half_size = m_size*0.5;
+	mth::Vec2 closest_local(
+		std::max(-half_size.x, std::min(half_size.x, local_delta.x)),
+		std::max(-half_size.y, std::min(half_size.y, local_delta.y))
+	);
 
 	cos_a = std::cos(rect_angle);
 	sin_a = std::sin(rect_angle);
@@ -142,10 +146,10 @@ void phy::RectangleCollider2D::updateAABB()
 		if (m_aabb_need_update.load())
 		{
 			mth::Vec2 local_points[4] = {
-				mth::Vec2(0,        0),
-				mth::Vec2(m_size.x, 0),
-				mth::Vec2(m_size.x, m_size.y),
-				mth::Vec2(0,        m_size.y)
+				mth::Vec2(-m_size.x*0.5, -m_size.y*0.5),
+				mth::Vec2( m_size.x*0.5, -m_size.y*0.5),
+				mth::Vec2( m_size.x*0.5,  m_size.y*0.5),
+				mth::Vec2(-m_size.x*0.5,  m_size.y*0.5)
 			};
 			
 			mth::Vec2 global_points[4];
@@ -167,7 +171,7 @@ void phy::RectangleCollider2D::updateAABB()
 				max.y = std::max(max.y, global_points[i].y);
 			}
 			
-			m_cached_aabb =  {min, max};
+			m_cached_aabb = {min, max};
 			m_aabb_need_update = false;
 		}
 	}

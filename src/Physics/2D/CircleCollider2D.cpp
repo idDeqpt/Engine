@@ -55,8 +55,8 @@ phy::CollisionData phy::CircleCollider2D::collideWithCircle(CircleCollider2D& ot
 	float radius1 = getRadius();
 	float radius2 = other.getRadius();
 
-	mth::Vec2 local_center1 = radius1;
-	mth::Vec2 local_center2 = radius2;
+	mth::Vec2 local_center1;
+	mth::Vec2 local_center2;
 
 	float angle1 = getGlobalRotation();
 	float angle2 = other.getGlobalRotation();
@@ -116,11 +116,11 @@ void phy::CircleCollider2D::updateAABB()
 		std::lock_guard<std::mutex> lock(m_aabb_mutex);
 		if (m_aabb_need_update.load())
 		{
-			mth::Vec2 local_center = m_radius;
+			mth::Vec2 local_center = getOrigin();
 			float cos = std::cos(getGlobalRotation());
 			float sin = std::sin(getGlobalRotation());
 			mth::Vec2 rotated_center = mth::Vec2(local_center.x*cos - local_center.y*sin, local_center.x*sin + local_center.y*cos);
-			mth::Vec2 global_center = getGlobalPosition() + rotated_center;
+			mth::Vec2 global_center  = getGlobalPosition() + rotated_center;
 			m_cached_aabb = AABB(global_center - m_radius, global_center + m_radius);
 			m_aabb_need_update = false;
 		}

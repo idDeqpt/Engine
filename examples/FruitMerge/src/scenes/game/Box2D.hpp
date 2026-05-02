@@ -18,11 +18,10 @@ public:
 	void onSetup()
 	{
 		eng::phy::PhysicsWorld& PW = m_context.get<eng::phy::PhysicsWorld>();
-		eng::gfx::RenderScene& RS = m_context.get<eng::gfx::RenderScene>();
+		eng::gfx::RenderScene&  RS = m_context.get<eng::gfx::RenderScene>();
 
 		auto b = addChild<eng::phy::StaticBody2D>("floor");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(0, 0));
 		auto sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(300, 10));
@@ -32,8 +31,8 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(0, 0));
-		b->setOrigin(eng::mth::Vec2(10, 400));
+		b->setPosition(eng::mth::Vec2(-150, -5));
+		b->setOrigin(eng::mth::Vec2(0, 195));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 410));
@@ -43,8 +42,8 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(300, 0));
-		b->setOrigin(eng::mth::Vec2(0, 400));
+		b->setPosition(eng::mth::Vec2(150, -5));
+		b->setOrigin(eng::mth::Vec2(0, 195));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 410));
@@ -55,12 +54,12 @@ public:
 
 	eng::mth::Vec2 getLeftBound()
 	{
-		return eng::mth::Vec2(0, -410);
+		return eng::mth::Vec2(-140, -410);
 	}
 
 	eng::mth::Vec2 getRightBound()
 	{
-		return eng::mth::Vec2(300, -410);
+		return eng::mth::Vec2(140, -410);
 	}
 
 	float getBottomBound()

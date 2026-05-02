@@ -21,7 +21,7 @@ public:
 		SceneLayer::onSetup();
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("UICamera");
-		camera2d->setSize(eng::mth::Vec2(900, 600));
+		camera2d->setRect(0, 900, 0, 600);
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

@@ -14,23 +14,12 @@ gfx::Camera2D::Camera2D() : core::Node2D()
 }
 
 
-void gfx::Camera2D::setSize(mth::Vec2 new_size)
+void gfx::Camera2D::setSize(const mth::Vec2& new_size)
 {
-	constexpr float left = 0;
-	constexpr float top  = 0;
-	float& right  = new_size.x;
-	float& bottom = new_size.y;
-	float& width  = new_size.x;
-	float& height = new_size.y;
-
-	m_projection = mth::Mat3(
-		2.0/width,  0,         -1,
-		0,         -2.0/height, 1,
-		0,          0,          1
-	);
+	setRect(-new_size.x*0.5, new_size.x*0.5, -new_size.y*0.5, new_size.y*0.5);
 }
 
-void gfx::Camera2D::setRect(float left, float right, float bottom, float top)
+void gfx::Camera2D::setRect(const float& left, const float& right, const float& bottom, const float& top)
 {
 	float width  = right - left;
 	float height = top - bottom;

@@ -13,8 +13,8 @@ namespace eng::gfx
 	public:
 		Camera2D();
 
-		void setSize(mth::Vec2 new_size);
-		void setRect(float left, float right, float bottom, float top);
+		void setSize(const mth::Vec2& new_size);
+		void setRect(const float& left, const float& right, const float& bottom, const float& top);
 
 		mth::Mat3 getProjectionMatrix();
 		mth::Mat3 getViewMatrix();

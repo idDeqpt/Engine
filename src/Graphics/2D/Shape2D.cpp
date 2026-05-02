@@ -90,10 +90,10 @@ void gfx::Shape2D::updateShape()
 void gfx::Shape2D::rectangleGenerator(Shape2D* shape)
 {
 	CanvasItem::Vertex vertices[4] = {
-		{{0,               0},               {0, 0}},
-		{{shape->m_size.x, 0},               {1, 0}},
-		{{shape->m_size.x, shape->m_size.y}, {1, 1}},
-		{{0,               shape->m_size.y}, {0, 1}}
+		{{-shape->m_size.x*0.5f, -shape->m_size.y*0.5f}, {0, 0}},
+		{{ shape->m_size.x*0.5f, -shape->m_size.y*0.5f}, {1, 0}},
+		{{ shape->m_size.x*0.5f,  shape->m_size.y*0.5f}, {1, 1}},
+		{{-shape->m_size.x*0.5f,  shape->m_size.y*0.5f}, {0, 1}}
 	};
 	shape->loadData(vertices, 4);
 }
@@ -107,12 +107,12 @@ void gfx::Shape2D::circleGenerator(Shape2D* shape)
 	{
 		float points_ratio = (float(i)/n)*(3.1415926*2);
 		mth::Vec2 point_on_circle = {
-			(std::sin(points_ratio) + 1)*0.5f,
-			(std::cos(points_ratio) + 1)*0.5f,
+			std::sin(points_ratio)*0.5f,
+			std::cos(points_ratio)*0.5f,
 		};
 		vertices[i] = {
 			{point_on_circle.x*shape->m_size.x, point_on_circle.y*shape->m_size.y},
-			point_on_circle
+			point_on_circle + 0.5f
 		};
 	}
 

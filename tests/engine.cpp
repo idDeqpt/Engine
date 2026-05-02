@@ -76,7 +76,8 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(0, 0));
+		b->setPosition(eng::mth::Vec2(-200, 0));
+		//b->setOrigin(eng::mth::Vec2(0, 300));
 		b->setRotation(3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
@@ -87,7 +88,7 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(400, 0));
+		b->setPosition(eng::mth::Vec2(200, 0));
 		b->setOrigin(eng::mth::Vec2(10, 0));
 		b->setRotation(-3.1415*0.75);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
@@ -99,7 +100,7 @@ public:
 
 		b = addChild<eng::phy::StaticBody2D>("horizontal");
 		PW.addBody(*b);
-		b->setPosition(eng::mth::Vec2(150, -100));
+		b->setPosition(eng::mth::Vec2(0, -100));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(100, 10));
@@ -183,13 +184,13 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
-		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(200, 500));
+		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(0, 250));
 
 		for (unsigned int i = 0; i < 20; i++)
-			for (unsigned int j = 0; j < 60; j++)
+			for (unsigned int j = 0; j < 10; j++)
 			{
 				auto ball = addChild<Ball>("ball");
-				ball->setPosition(eng::mth::Vec2(200 + i*20, 400 - j*15));
+				ball->setPosition(eng::mth::Vec2(-200 + i*20, 150 - j*15));
 			}
 	}
 
@@ -219,7 +220,7 @@ public:
 		Scene::onSetup();
 
 		auto camera2d = addChild<eng::gfx::Camera2D>("UICamera");
-		camera2d->setSize(eng::mth::Vec2(900, 600));
+		camera2d->setRect(0, 900, 0, 600);
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
 		auto t_ft = addChild<eng::gfx::Text2D>("text_frametime");

@@ -23,10 +23,11 @@ public:
 		camera2d->setSize(eng::mth::Vec2(900, 600));
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
-		eng::mth::Vec2 box_pos(300, 550);
+		eng::mth::Vec2 box_pos(0, 250);
 		auto box = addChild<Box2D>("box");
 		box->setPosition(box_pos);
 		addChild<ClassicBallsController>("controller", box_pos + box->getLeftBound(), box_pos + box->getRightBound(), box->getBottomBound());
+		//addChild<SandboxBallsController>("controller");
 	}
 
 	void onUpdate(float delta)

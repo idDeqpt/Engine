@@ -15,12 +15,11 @@ void gfx::Sprite2D::setTexture(Texture* new_texture)
 	CanvasItem::setTexture(new_texture);
 
 	CanvasItem::Vertex vertices[4] = {
-		{{0,                      0},                      {0, 0}},
-		{{m_texture->getSize().x, 0},                      {1, 0}},
-		{{m_texture->getSize().x, m_texture->getSize().y}, {1, 1}},
-		{{0,                      m_texture->getSize().y}, {0, 1}}
+		{{-m_texture->getSize().x*0.5f, -m_texture->getSize().y*0.5f}, {0, 0}},
+		{{ m_texture->getSize().x*0.5f, -m_texture->getSize().y*0.5f}, {1, 0}},
+		{{ m_texture->getSize().x*0.5f,  m_texture->getSize().y*0.5f}, {1, 1}},
+		{{-m_texture->getSize().x*0.5f,  m_texture->getSize().y*0.5f}, {0, 1}}
 	};
-
 	loadData(vertices, 4);
 }
 
