@@ -77,8 +77,8 @@ public:
 		b = addChild<eng::phy::StaticBody2D>("left_side");
 		PW.addBody(*b);
 		b->setPosition(eng::mth::Vec2(-200, 0));
-		//b->setOrigin(eng::mth::Vec2(0, 300));
-		b->setRotation(3.1415*0.75);
+		b->setOrigin(eng::mth::Vec2(0, 150));
+		b->setRotation(-3.1415*0.25);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 300));
@@ -89,8 +89,8 @@ public:
 		b = addChild<eng::phy::StaticBody2D>("right_side");
 		PW.addBody(*b);
 		b->setPosition(eng::mth::Vec2(200, 0));
-		b->setOrigin(eng::mth::Vec2(10, 0));
-		b->setRotation(-3.1415*0.75);
+		b->setOrigin(eng::mth::Vec2(0, 150));
+		b->setRotation(3.1415*0.25);
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
 		RS.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 300));
@@ -131,7 +131,7 @@ public:
 
 	void onUpdate(float delta)
 	{
-		applyForce(eng::mth::Vec2(0, 100)*getMass());
+		applyForce(eng::mth::Vec2(0, 200)*getMass());
 	}
 };
 
@@ -155,8 +155,6 @@ public:
 		setSize(eng::mth::Vec2(900, 600));
 		setTexture(&(m_target->getTexture(0)));
 		getTexture()->setFlip(false, true);
-		eng::core::Logger::info(getTexture()->getFlipX());
-		eng::core::Logger::info(getTexture()->getFlipY());
 
 		m_scene->setRenderPipeline2D(m_context.get<eng::gfx::RenderScene>().getRenderPipeline2D());
 		m_context.replace<eng::gfx::RenderScene>(m_scene);
@@ -186,11 +184,11 @@ public:
 
 		addChild<Box2D>("box")->setPosition(eng::mth::Vec2(0, 250));
 
-		for (unsigned int i = 0; i < 20; i++)
-			for (unsigned int j = 0; j < 10; j++)
+		for (int i = 0; i < 20; i++)
+			for (int j = 0; j < 30; j++)
 			{
 				auto ball = addChild<Ball>("ball");
-				ball->setPosition(eng::mth::Vec2(-200 + i*20, 150 - j*15));
+				ball->setPosition(eng::mth::Vec2(-200 + i*20, 0 - j*15));
 			}
 	}
 
