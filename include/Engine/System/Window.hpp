@@ -1,9 +1,10 @@
 #ifndef WINDOW_CLASS_HEADER
 #define WINDOW_CLASS_HEADER
 
-#include <string>
-
 #include <Engine/Graphics/RenderTarget.hpp>
+#include <Engine/Math/Vec2.hpp>
+
+#include <string>
 
 
 struct GLFWwindow;
@@ -21,11 +22,15 @@ namespace eng::sys
 		bool isOpen();
 		void close();
 
+		void resize(const mth::Vec2& new_size);
+		void setViewportCentering(const mth::Vec2& ratio);
+
 		void display();
 		void destroy();
 
 	protected:
 		GLFWwindow* window_ptr;
+		mth::Vec2 m_size;
 	};
 }
 
