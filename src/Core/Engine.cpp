@@ -7,6 +7,7 @@
 #include <Engine/Core/TimeManager.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/ConfigManager.hpp>
 
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
@@ -40,11 +41,12 @@ core::Engine::Engine(Node& root):
 	m_framerate(60)
 {
 	Logger::debug("Start app");
-	m_window = new sys::Window(900, 600, "LearnOpenGL");
+	m_window = new sys::Window(900, 600, "Engine");
 
 	Logger::debug("Start initialization");
 	m_context.create<core::TimeManager>();
 	m_context.create<core::SignalBus>();
+	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
 	m_context.create<gfx::RenderManager>();
 	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
 	m_context.create<core::ResourceManager>();
@@ -52,12 +54,41 @@ core::Engine::Engine(Node& root):
 	m_context.create<gfx::RenderScene>();
 	m_context.create<phy::PhysicsWorld>();
 	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
+
+	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_title",
+		[this](std::string title){
+			m_window->setTitle(title);
+	}));
+
+	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_size",
+		[this](mth::Vec2 size){
+			m_window->resize(size);
+	}));
+
+	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_viewport_centering",
+		[this](mth::Vec2 ratio){
+			m_window->setViewportCentering(ratio);
+			m_window->updateViewport();
+	}));
+
+	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_viewport_scaling",
+		[this](std::string mode){
+			if (mode == "fixed")
+				m_window->setViewportScaling(sys::Window::ViewportScaling::FIXED);
+			else if (mode == "stretch")
+				m_window->setViewportScaling(sys::Window::ViewportScaling::STRETCH);
+			m_window->updateViewport();
+	}));
+
+	m_context.get<core::ConfigManager>().notifyAll();
 	Logger::debug("End initialization");
 }
 
 core::Engine::~Engine()
 {
 	Logger::debug("Start finalization");
+	for (unsigned int i = 0; i < m_subscriptions.size(); i++)
+		m_context.get<core::SignalBus>().unsubscribe(m_subscriptions[i]);
 	m_context.shutdown();
 	Logger::debug("End finalization");
 

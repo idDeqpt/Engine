@@ -3,6 +3,8 @@
 
 #include <Engine/Context.hpp>
 #include <Engine/Core/Node.hpp>
+#include <Engine/Core/SignalBus.hpp>
+#include <vector>
 
 
 namespace eng::sys {class Window;}
@@ -26,6 +28,7 @@ namespace eng::core
 		Node* m_root_node;
 		sys::Window* m_window;
 		Context m_context;
+		std::vector<SubscriptionId> m_subscriptions;
 	};
 }
 

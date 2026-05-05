@@ -8,6 +8,7 @@ project(${PROJECT_NAME}
     LANGUAGES CXX)
 
 set(CORE_SOURCE_FILES
+    src/Core/ConfigManager.cpp
     src/Core/Engine.cpp
     src/Core/Logger.cpp
     src/Core/NameTag.cpp
