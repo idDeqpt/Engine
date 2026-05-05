@@ -55,23 +55,31 @@ core::Engine::Engine(Node& root):
 	m_context.create<phy::PhysicsWorld>();
 	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
 
-	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_title",
+	core::SignalBus& sbus = m_context.get<core::SignalBus>();
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_title",
 		[this](std::string title){
 			m_window->setTitle(title);
 	}));
 
-	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_size",
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_size",
 		[this](mth::Vec2 size){
 			m_window->resize(size);
 	}));
 
-	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_viewport_centering",
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_size",
+		[this](mth::Vec2 size){
+			m_window->setViewportSize(size);
+			m_window->updateViewport();
+	}));
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_centering",
 		[this](mth::Vec2 ratio){
 			m_window->setViewportCentering(ratio);
 			m_window->updateViewport();
 	}));
 
-	m_subscriptions.push_back(m_context.get<core::SignalBus>().subscribe("on_change_config_window_viewport_scaling",
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_scaling",
 		[this](std::string mode){
 			if (mode == "fixed")
 				m_window->setViewportScaling(sys::Window::ViewportScaling::FIXED);
@@ -124,7 +132,7 @@ void core::Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			{900, 600}
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 
@@ -141,7 +149,7 @@ void core::Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			{900, 600}
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		},
 		{
 			&shader2d_deferred_light,
@@ -167,7 +175,7 @@ void core::Engine::setup()
 				}
 			},
 			{0, 0},
-			{900, 600}
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 

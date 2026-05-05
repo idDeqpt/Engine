@@ -20,8 +20,9 @@ public:
 	{
 		eng::gfx::Font* font = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Font>({"resources/GameFont.ttf"}).second;
 
-		auto camera2d = addChild<eng::gfx::Camera2D>("MainCamera");
-		camera2d->setSize(eng::mth::Vec2(900, 600));
+		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+		auto camera2d = addChild<eng::gfx::Camera2D>("main_camera");
+		camera2d->setSize(v_size);
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
 		UIScene* ui = addChild<UIScene>("ui_scene", *font);
@@ -31,7 +32,21 @@ public:
 		GameScene* game = addChild<GameScene>("game_scene");
 		game->setLayer(10);
 		m_context.get<eng::gfx::RenderScene>().addObject(*game);
+
+		m_viewport_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
+			[this](eng::mth::Vec2 size){
+				auto cam = static_cast<eng::gfx::Camera2D*>(getChildByName("camera"));
+				cam->setSize(size);
+		});
 	}
+
+	void onDestroy()
+	{
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_viewport_signal_id);
+	}
+
+protected:
+	eng::core::SubscriptionId m_viewport_signal_id;
 };
 
 #endif //ROOT_CLASS_HEADER
