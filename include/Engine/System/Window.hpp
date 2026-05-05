@@ -14,6 +14,12 @@ namespace eng::sys
 	class Window : public gfx::RenderTarget
 	{
 	public:
+		enum ViewportScaling
+		{
+			FIXED,
+			STRETCH,
+		};
+
 		Window();
 		Window(int width, int height, std::string title);
 		~Window();
@@ -24,6 +30,7 @@ namespace eng::sys
 
 		void resize(const mth::Vec2& new_size);
 		void setViewportCentering(const mth::Vec2& ratio);
+		void setViewportScaling(ViewportScaling mode);
 
 		void display();
 		void destroy();
@@ -31,6 +38,8 @@ namespace eng::sys
 	protected:
 		GLFWwindow* window_ptr;
 		mth::Vec2 m_size;
+		mth::Vec2 m_centering_ratio;
+		ViewportScaling m_scaling_mode;
 	};
 }
 
