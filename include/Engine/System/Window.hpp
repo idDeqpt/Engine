@@ -21,9 +21,10 @@ namespace eng::sys
 		};
 
 		Window();
-		Window(int width, int height, std::string title);
+		Window(int width, int height, const std::string& title);
 		~Window();
 
+		void setTitle(const std::string& new_title);
 		GLFWwindow* getHandler();
 		bool isOpen();
 		void close();
@@ -31,6 +32,7 @@ namespace eng::sys
 		void resize(const mth::Vec2& new_size);
 		void setViewportCentering(const mth::Vec2& ratio);
 		void setViewportScaling(ViewportScaling mode);
+		void updateViewport();
 
 		void display();
 		void destroy();

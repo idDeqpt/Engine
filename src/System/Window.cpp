@@ -13,9 +13,8 @@ namespace eng
 
 sys::Window::Window() : Window(800, 600, "Window"){}
 
-sys::Window::Window(int width, int height, std::string title):
+sys::Window::Window(int width, int height, const std::string& title):
 	m_size(width, height),
-	m_centering_ratio(0.5),
 	gfx::RenderTarget()
 {
 	glfwInit();
@@ -39,12 +38,20 @@ sys::Window::Window(int width, int height, std::string title):
 	glfwSwapInterval(0);
 
 	setViewport(0, 0, width, height);
-	setViewportCentering(m_centering_ratio);
+	setViewportCentering(0.5);
+	setViewportScaling(ViewportScaling::FIXED);
+	updateViewport();
 }
 
 sys::Window::~Window()
 {
 	destroy();
+}
+
+
+void sys::Window::setTitle(const std::string& new_title)
+{
+	glfwSetWindowTitle(window_ptr, new_title.c_str());
 }
 
 
@@ -69,23 +76,22 @@ void sys::Window::resize(const mth::Vec2& new_size)
 {
 	m_size = new_size;
 	glfwSetWindowSize(window_ptr, new_size.x, new_size.y);
-	setViewportCentering(m_centering_ratio);
-	setViewportScaling(m_scaling_mode);
+	updateViewport();
 }
 
 void sys::Window::setViewportCentering(const mth::Vec2& ratio)
 {
 	m_centering_ratio = ratio;
-	mth::Vec2 pocket = m_size - m_viewport_size;
-	m_viewport_pos.x = std::clamp<float>(ratio.x, 0, 1)*pocket.x;
-	m_viewport_pos.y = std::clamp<float>(ratio.y, 0, 1)*pocket.y;
-	setViewport(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
 }
 
 void sys::Window::setViewportScaling(Window::ViewportScaling mode)
 {
 	m_scaling_mode = mode;
-	switch (mode)
+}
+
+void sys::Window::updateViewport()
+{
+	switch (m_scaling_mode)
 	{
 	case ViewportScaling::FIXED:
 		{
@@ -100,6 +106,10 @@ void sys::Window::setViewportScaling(Window::ViewportScaling mode)
 			break;
 		}
 	}
+
+	mth::Vec2 pocket = m_size - m_viewport_size;
+	m_viewport_pos.x = std::clamp<float>(m_centering_ratio.x, 0, 1)*pocket.x;
+	m_viewport_pos.y = std::clamp<float>(m_centering_ratio.y, 0, 1)*pocket.y;
 	setViewport(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
 }
 
