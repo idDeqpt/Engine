@@ -26,13 +26,16 @@ namespace eng::sys
 
 		void setTitle(const std::string& new_title);
 		GLFWwindow* getHandler();
-		bool isOpen();
+		bool isOpen() const;
 		void close();
 
 		void resize(const mth::Vec2& new_size);
+		void setViewportSize(const mth::Vec2& new_size);
 		void setViewportCentering(const mth::Vec2& ratio);
 		void setViewportScaling(ViewportScaling mode);
 		void updateViewport();
+
+		mth::Vec2 getViewportSize() const;
 
 		void display();
 		void destroy();
@@ -40,6 +43,7 @@ namespace eng::sys
 	protected:
 		GLFWwindow* window_ptr;
 		mth::Vec2 m_size;
+		mth::Vec2 m_window_viewport_size;
 		mth::Vec2 m_centering_ratio;
 		ViewportScaling m_scaling_mode;
 	};

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -38,6 +39,7 @@ sys::Window::Window(int width, int height, const std::string& title):
 	glfwSwapInterval(0);
 
 	setViewport(0, 0, width, height);
+	setViewportSize(m_size);
 	setViewportCentering(0.5);
 	setViewportScaling(ViewportScaling::FIXED);
 	updateViewport();
@@ -61,7 +63,7 @@ GLFWwindow* sys::Window::getHandler()
 }
 
 
-bool sys::Window::isOpen()
+bool sys::Window::isOpen() const
 {
 	return !glfwWindowShouldClose(window_ptr);
 }
@@ -84,6 +86,11 @@ void sys::Window::setViewportCentering(const mth::Vec2& ratio)
 	m_centering_ratio = ratio;
 }
 
+void sys::Window::setViewportSize(const mth::Vec2& new_size)
+{
+	m_window_viewport_size = new_size;
+}
+
 void sys::Window::setViewportScaling(Window::ViewportScaling mode)
 {
 	m_scaling_mode = mode;
@@ -95,9 +102,7 @@ void sys::Window::updateViewport()
 	{
 	case ViewportScaling::FIXED:
 		{
-			int framebuffer_width, framebuffer_height;
-			glfwGetFramebufferSize(window_ptr, &framebuffer_width, &framebuffer_height);
-			m_viewport_size = mth::Vec2(framebuffer_width, framebuffer_height);
+			m_viewport_size = m_window_viewport_size;
 			break;
 		}
 	case ViewportScaling::STRETCH:
@@ -111,6 +116,12 @@ void sys::Window::updateViewport()
 	m_viewport_pos.x = std::clamp<float>(m_centering_ratio.x, 0, 1)*pocket.x;
 	m_viewport_pos.y = std::clamp<float>(m_centering_ratio.y, 0, 1)*pocket.y;
 	setViewport(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
+}
+
+
+mth::Vec2 sys::Window::getViewportSize() const
+{
+	return m_viewport_size;
 }
 
 
