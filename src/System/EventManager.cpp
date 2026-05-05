@@ -12,18 +12,21 @@ namespace eng
 {
 
 sys::EventManager::EventManager(core::SignalBus& sbus):
+	m_sbus(sbus),
 	m_keyboard(sbus),
 	m_mouse(sbus),
 	m_cursor_mode(sys::Mouse::CursorMode::NORMAL),
 	m_active_window(nullptr) {};
 
+
 void sys::EventManager::setActiveWindow(sys::Window& window)
 {
 	m_active_window = &window;
 
-    GLFWwindow* handle = window.getHandler();
-    glfwSetWindowUserPointer(handle, this);
+	GLFWwindow* handle = window.getHandler();
+	glfwSetWindowUserPointer(handle, this);
 
+	glfwSetWindowSizeCallback( handle, window_resize_callback);
 	glfwSetKeyCallback(        handle, key_callback);
 	glfwSetMouseButtonCallback(handle, mouse_button_callback);
 	glfwSetCursorPosCallback(  handle, cursor_position_callback);
@@ -62,25 +65,32 @@ sys::Mouse::CursorMode sys::EventManager::getCursorMode()
 
 
 
+void sys::EventManager::window_resize_callback(GLFWwindow* window_ptr, int width, int height)
+{
+	EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+	if (self)
+		self->m_sbus.emit("on_change_config_window_size", mth::Vec2(width, height));
+}
+
 void sys::EventManager::key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode)
 {
-    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
-    if (self)
-        self->m_keyboard.action_handler(key, scancode, action, mode);
+	EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+	if (self)
+		self->m_keyboard.action_handler(key, scancode, action, mode);
 }
 
 void sys::EventManager::mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode)
 {
-    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
-    if (self)
-        self->m_mouse.click_handler(button, action, mode);
+	EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+	if (self)
+		self->m_mouse.click_handler(button, action, mode);
 }
 
 void sys::EventManager::cursor_position_callback(GLFWwindow* window_ptr, double xpos, double ypos)
 {
-    EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
-    if (self)
-        self->m_mouse.move_handler(xpos, ypos);
+	EventManager* self = static_cast<EventManager*>(glfwGetWindowUserPointer(window_ptr));
+	if (self)
+		self->m_mouse.move_handler(xpos, ypos);
 }
 
 } //namespace eng

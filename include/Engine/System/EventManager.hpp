@@ -31,11 +31,13 @@ namespace eng::sys
 		Mouse::CursorMode getCursorMode();
 
 	protected:
-		Window*  m_active_window;
-		Keyboard m_keyboard;
-		Mouse    m_mouse;
+		core::SignalBus& m_sbus;
+		Window*    m_active_window;
+		Keyboard   m_keyboard;
+		Mouse      m_mouse;
 		Mouse::CursorMode m_cursor_mode;
 
+		static void window_resize_callback(GLFWwindow* window_ptr, int width, int height);
 		static void key_callback(GLFWwindow* window_ptr, int key, int scancode, int action, int mode);
 		static void mouse_button_callback(GLFWwindow* window_ptr, int button, int action, int mode);
 		static void cursor_position_callback(GLFWwindow* window_ptr, double xpos, double ypos);
