@@ -32,8 +32,8 @@ public:
 
 		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
-				auto cam = static_cast<eng::gfx::Camera2D*>(getChildByName("camera"));
-				cam->setRect(0, size.x, 0, size.y);
+				auto cam = getChildByName("camera");
+				if (cam) static_cast<eng::gfx::Camera2D*>(cam)->setRect(0, size.x, 0, size.y);
 		});
 	}
 

@@ -3,6 +3,7 @@
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/ConfigManager.hpp>
 
 #include <Engine/System/EventManager.hpp>
 #include <Engine/System/Keyboard.hpp>
@@ -259,7 +260,82 @@ public:
 		GameScene* game = addChild<GameScene>("game_scene");
 		game->setLayer(10);
 		m_context.get<eng::gfx::RenderScene>().addObject(*game);
+
+		m_key_pressed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("keyboard_just_pressed",
+			[this](eng::sys::Keyboard::Key key){
+				if (key == eng::sys::Keyboard::Key::S)
+				{
+					auto scaling = m_context.get<eng::core::ConfigManager>().get<std::string>("window_viewport_scaling");
+					m_context.get<eng::core::ConfigManager>().set<std::string>("window_viewport_scaling", (scaling == "fixed") ? "stretch" : "fixed");
+				}
+
+				if (key == eng::sys::Keyboard::Key::MINUS)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size/1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+				if (key == eng::sys::Keyboard::Key::EQUAL)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size*1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+		});
+
+		m_key_pressed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("keyboard_repeated",
+			[this](eng::sys::Keyboard::Key key){
+				if (key == eng::sys::Keyboard::Key::LEFT)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
+					centering.x -= 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
+				if (key == eng::sys::Keyboard::Key::RIGHT)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
+					centering.x += 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
+				if (key == eng::sys::Keyboard::Key::UP)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
+					centering.y += 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
+				if (key == eng::sys::Keyboard::Key::DOWN)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
+					centering.y -= 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
+
+				if (key == eng::sys::Keyboard::Key::MINUS)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size/1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+				if (key == eng::sys::Keyboard::Key::EQUAL)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size*1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+		});
 	}
+
+	void onDestroy()
+	{
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_viewport_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_key_pressed_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_key_just_pressed_signal_id);
+	}
+
+protected:
+	eng::core::SubscriptionId m_viewport_signal_id;
+	eng::core::SubscriptionId m_key_pressed_signal_id;
+	eng::core::SubscriptionId m_key_just_pressed_signal_id;
 };
 
 

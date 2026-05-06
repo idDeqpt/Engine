@@ -13,6 +13,8 @@
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Math/Vec2.hpp>
 
+#include <string>
+
 class Root : public eng::core::Node
 {
 public:
@@ -35,22 +37,71 @@ public:
 
 		m_viewport_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
-				auto cam = static_cast<eng::gfx::Camera2D*>(getChildByName("camera"));
+				auto cam = static_cast<eng::gfx::Camera2D*>(getChildByName("main_camera"));
 				cam->setSize(size);
+		});
+
+		m_key_pressed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("keyboard_just_pressed",
+			[this](eng::sys::Keyboard::Key key){
+				if (key == eng::sys::Keyboard::Key::S)
+				{
+					auto scaling = m_context.get<eng::core::ConfigManager>().get<std::string>("window_viewport_scaling");
+					m_context.get<eng::core::ConfigManager>().set<std::string>("window_viewport_scaling", (scaling == "fixed") ? "stretch" : "fixed");
+				}
+
+				if (key == eng::sys::Keyboard::Key::MINUS)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size/1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+				if (key == eng::sys::Keyboard::Key::EQUAL)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size*1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
 		});
 
 		m_key_pressed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("keyboard_repeated",
 			[this](eng::sys::Keyboard::Key key){
-				eng::mth::Vec2 centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
 				if (key == eng::sys::Keyboard::Key::LEFT)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
 					centering.x -= 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
 				if (key == eng::sys::Keyboard::Key::RIGHT)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
 					centering.x += 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
 				if (key == eng::sys::Keyboard::Key::UP)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
 					centering.y += 0.01;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
 				if (key == eng::sys::Keyboard::Key::DOWN)
+				{
+					auto centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
 					centering.y -= 0.01;
-				m_context.get<eng::core::ConfigManager>().set("window_viewport_centering", centering);
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_centering", centering);
+				}
+
+				if (key == eng::sys::Keyboard::Key::MINUS)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size/1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
+				if (key == eng::sys::Keyboard::Key::EQUAL)
+				{
+					auto v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
+					v_size = v_size*1.1;
+					m_context.get<eng::core::ConfigManager>().set<eng::mth::Vec2>("window_viewport_size", v_size);
+				}
 		});
 	}
 
