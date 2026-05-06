@@ -20,7 +20,7 @@ namespace eng::gfx
 		void setViewport(int x, int y, int width, int height);
 
 		void bind();
-		void clear(const Color& color);
+		virtual void clear(const Color& color);
 		void draw(Drawable& drawable, RenderStates& states);
 
 		Texture& getTexture(unsigned int index);

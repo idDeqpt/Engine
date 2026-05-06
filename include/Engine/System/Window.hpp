@@ -2,6 +2,7 @@
 #define WINDOW_CLASS_HEADER
 
 #include <Engine/Graphics/RenderTarget.hpp>
+#include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 #include <string>
@@ -36,6 +37,8 @@ namespace eng::sys
 		void updateViewport();
 
 		mth::Vec2 getViewportSize() const;
+
+		void clear(const gfx::Color& color) override;
 
 		void display();
 		void destroy();

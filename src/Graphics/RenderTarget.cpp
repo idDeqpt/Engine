@@ -92,11 +92,6 @@ void gfx::RenderTarget::bind()
 void gfx::RenderTarget::clear(const gfx::Color& color)
 {
 	bind();
-	if (!m_native_handle)
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
-	}
 	glClearColor(color.r/float(COLOR_MAX_VALUE), color.g/float(COLOR_MAX_VALUE), color.b/float(COLOR_MAX_VALUE), color.a/float(COLOR_MAX_VALUE));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -105,11 +100,6 @@ void gfx::RenderTarget::clear(const gfx::Color& color)
 void gfx::RenderTarget::draw(gfx::Drawable& drawable, gfx::RenderStates& states)
 {
 	bind();
-	if (!m_native_handle)
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
-	}
 	glViewport(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
 	drawable.draw(this, states);
 }

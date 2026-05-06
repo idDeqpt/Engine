@@ -4,7 +4,6 @@
 #include <Engine/Core/Logger.hpp>
 
 #include <algorithm>
-#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -122,6 +121,18 @@ void sys::Window::updateViewport()
 mth::Vec2 sys::Window::getViewportSize() const
 {
 	return m_viewport_size;
+}
+
+
+void sys::Window::clear(const gfx::Color& color)
+{
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(0, 0, m_size.x, m_size.y);
+	RenderTarget::clear(gfx::Color(0));
+
+	glScissor(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
+	RenderTarget::clear(color);
+	glDisable(GL_SCISSOR_TEST);
 }
 
 
