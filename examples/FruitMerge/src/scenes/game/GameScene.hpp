@@ -32,7 +32,7 @@ public:
 		addChild<ClassicBallsController>("controller", box_pos + box->getLeftBound(), box_pos + box->getRightBound(), box->getBottomBound());
 		//addChild<SandboxBallsController>("controller");
 
-		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_size",
+		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
 				auto cam = static_cast<Camera*>(getChildByName("camera"));
 				cam->setSize(eng::mth::Vec2(1000*(size.x/size.y), 1000));

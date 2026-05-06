@@ -12,6 +12,7 @@ namespace eng::sys
 		enum Action
 		{
 			PRESSED = 1,
+			REPEATED = 2,
 			RELEASED = 0
 		};
 

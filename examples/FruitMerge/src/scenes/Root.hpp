@@ -38,15 +38,33 @@ public:
 				auto cam = static_cast<eng::gfx::Camera2D*>(getChildByName("camera"));
 				cam->setSize(size);
 		});
+
+		m_key_pressed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("keyboard_repeated",
+			[this](eng::sys::Keyboard::Key key){
+				eng::mth::Vec2 centering = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_centering");
+				if (key == eng::sys::Keyboard::Key::LEFT)
+					centering.x -= 0.01;
+				if (key == eng::sys::Keyboard::Key::RIGHT)
+					centering.x += 0.01;
+				if (key == eng::sys::Keyboard::Key::UP)
+					centering.y += 0.01;
+				if (key == eng::sys::Keyboard::Key::DOWN)
+					centering.y -= 0.01;
+				m_context.get<eng::core::ConfigManager>().set("window_viewport_centering", centering);
+		});
 	}
 
 	void onDestroy()
 	{
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_viewport_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_key_pressed_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_key_just_pressed_signal_id);
 	}
 
 protected:
 	eng::core::SubscriptionId m_viewport_signal_id;
+	eng::core::SubscriptionId m_key_pressed_signal_id;
+	eng::core::SubscriptionId m_key_just_pressed_signal_id;
 };
 
 #endif //ROOT_CLASS_HEADER

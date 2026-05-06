@@ -11,6 +11,7 @@ class Camera : public eng::gfx::Camera2D
 public:
 	void onUpdate(float delta)
 	{
+		return;
 		eng::sys::EventManager& EM = m_context.get<eng::sys::EventManager>();
 		eng::mth::Vec2 vel;
 		constexpr float speed = 500;
