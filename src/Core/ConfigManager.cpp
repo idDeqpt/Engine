@@ -25,7 +25,7 @@ void core::ConfigManager::setDefault(bool clear)
 
 	m_configs["window_title"] = std::string("Engine");
 	m_configs["window_size"] = mth::Vec2(1600, 900);
-	m_configs["window_viewport_size"] = mth::Vec2(800, 450);
+	m_configs["window_viewport_size"] = mth::Vec2(1600, 900);
 	m_configs["window_viewport_centering"] = mth::Vec2(0.5);
 	m_configs["window_viewport_scaling"] = std::string("fixed");
 }
