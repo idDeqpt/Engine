@@ -1,10 +1,8 @@
 #ifndef CONFIG_MANAGER_CLASS_HEADER
 #define CONFIG_MANAGER_CLASS_HEADER
 
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Core/ConfigsContainer.hpp>
 
-#include <unordered_map>
-#include <variant>
 #include <string>
 
 
@@ -15,8 +13,6 @@ namespace eng::core
 	class ConfigManager
 	{
 	public:
-		using ValueContainer = std::variant<bool, int, float, double, std::string, mth::Vec2>;
-
 		ConfigManager(SignalBus& sbus);
 
 		void setDefault(bool clear = true);
@@ -32,7 +28,7 @@ namespace eng::core
 
 	protected:
 		SignalBus& m_sbus;
-		std::unordered_map<std::string, ValueContainer> m_configs;
+		ConfigsContainer m_configs;
 	};
 
 	template <class T>
