@@ -208,6 +208,8 @@ void core::Engine::mainLoop()
 
 		Physics_World.update(full_frame_delta);
 
+		m_root_node->cleanupDestroyed();
+
 		Render_Scene.render(*m_window);
 		m_window->display();
 

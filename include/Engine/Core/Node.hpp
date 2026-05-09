@@ -25,9 +25,11 @@ namespace core
 		Node();
 		virtual ~Node();
 
+		bool isDestroyed();
 		void setup(Context& context);
 		void update(float delta);
 		void destroy();
+		void cleanupDestroyed();
 
 		virtual void onSetup();
 		virtual void onUpdate(float delta);
@@ -50,8 +52,10 @@ namespace core
 		template <class T, typename... Args>
 		T* addChild(std::string name, Args&&... args);
 
+
 	protected:
 		bool m_setuped;
+		bool m_destroyed;
 		NodeNameTag m_tag;
 		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;

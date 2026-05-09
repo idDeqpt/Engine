@@ -18,6 +18,7 @@ namespace eng
 
 core::Node::Node():
 	m_setuped(false),
+	m_destroyed(false),
 	m_parent(nullptr)
 {
 	m_children.clear();
@@ -26,6 +27,11 @@ core::Node::Node():
 core::Node::~Node()
 {}
 
+
+bool core::Node::isDestroyed()
+{
+	return m_destroyed;
+}
 
 void core::Node::setup(Context& context)
 {
@@ -49,14 +55,28 @@ void core::Node::update(float delta)
 
 void core::Node::destroy()
 {
+	if (m_destroyed) return;
+	
 	Logger::debug("START destroy of node \"" + m_tag.getPath() + "\" START");
 
+	m_destroyed = true;
 	onDestroy();
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->destroy();
-	m_children.clear();
 	
 	Logger::debug("END   destroy of node \"" + m_tag.getPath() + "\" END");
+}
+
+void core::Node::cleanupDestroyed()
+{
+	for (auto it = m_children.begin(); it != m_children.end(); )
+		if ((*it)->m_destroyed)
+			it = m_children.erase(it);
+		else
+		{
+			(*it)->cleanupDestroyed();
+			it++;
+		}
 }
 
 
@@ -121,7 +141,6 @@ void core::Node::removeChild(Node* node)
 		if (node == m_children[i].get())
 		{
 			node->destroy();
-			m_children.erase(m_children.begin() + i);
 			return;
 		}
 }
