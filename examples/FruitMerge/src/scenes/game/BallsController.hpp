@@ -35,9 +35,16 @@ public:
 				}
 		});
 
-		m_mouse_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_moved",
+		m_mouse_moved_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_moved",
 			[this](const eng::mth::Vec2& pos, const eng::mth::Vec2& delta) {
 				m_ball_image->setPosition(computeBallPosition(pos));
+		});
+
+		m_game_over_signal_id = m_context.get<eng::core::SignalBus>().subscribe("game_over",
+			[this](){
+				m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_signal_id);
+				m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_moved_signal_id);
+				removeChild(getChildByName("ball_image"));
 		});
 	}
 
@@ -46,6 +53,7 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_moved_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_game_over_signal_id);
 	}
 
 	void onUpdate(float delta)
@@ -66,6 +74,7 @@ protected:
 	eng::core::SubscriptionId m_ball_signal_id;
 	eng::core::SubscriptionId m_mouse_signal_id;
 	eng::core::SubscriptionId m_mouse_moved_signal_id;
+	eng::core::SubscriptionId m_game_over_signal_id;
 
 	void mergeBalls(Ball& first, Ball& second)
 	{
