@@ -8,7 +8,6 @@
 #include <Engine/Physics/PhysicsWorld.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
-#include <Engine/Core/Logger.hpp>
 
 #include <Engine/Graphics/2D/Sprite2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
@@ -26,7 +25,7 @@ class Ball;
 class BallArea : public eng::phy::AreaBody2D
 {
 public:
-	void onCollision(eng::phy::PhysicsBody2D& other);
+	void onCollisionStay(eng::phy::PhysicsBody2D& other);
 };
 
 class Ball : public eng::phy::RigidBody2D
@@ -100,7 +99,7 @@ protected:
 	unsigned int m_level;
 };
 
-void BallArea::onCollision(eng::phy::PhysicsBody2D& other)
+void BallArea::onCollisionStay(eng::phy::PhysicsBody2D& other)
 {
 	BallArea* other_area = dynamic_cast<BallArea*>(&other);
 	if (other_area)

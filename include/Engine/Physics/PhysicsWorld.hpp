@@ -3,6 +3,7 @@
 
 #include <Engine/Physics/2D/CollisionDetector2D.hpp>
 
+#include <utility>
 #include <vector>
 #include <memory>
 
@@ -14,6 +15,7 @@ namespace eng::phy
 	class PhysicsWorld
 	{
 	public:
+		using Pair2D = std::pair<PhysicsBody2D*, PhysicsBody2D*>;
 		PhysicsWorld();
 
 		template <class T, typename... Args>
@@ -33,6 +35,11 @@ namespace eng::phy
 		unsigned int m_max_steps_per_frame;
 		std::vector<PhysicsBody2D*> m_bodies2d;
 		std::unique_ptr<CollisionDetector2D> m_collision_detector;
+		std::vector<Pair2D> m_previous_frame_bodies2d;
+
+		bool m_in_step;
+		std::vector<PhysicsBody2D*> m_pending_add;
+		std::vector<PhysicsBody2D*> m_pending_remove;
 
 		void step(float delta);
 	};

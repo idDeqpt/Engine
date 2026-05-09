@@ -6,7 +6,6 @@
 
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/SignalBus.hpp>
-#include <Engine/Core/Logger.hpp>
 
 #include <Engine/System/EventManager.hpp>
 
@@ -17,6 +16,7 @@ class BallsController : public eng::core::Node
 public:
 	void onSetup()
 	{
+		m_next_ball_level = 1;
 		srand(0);
 		m_ball_signal_id = m_context.get<eng::core::SignalBus>().subscribe("balls_collided",
 			[this](Ball* left, Ball* right) {
@@ -24,7 +24,6 @@ public:
 		});
 
 		m_ball_image = addChild<Ball>("ball_image", 0);
-		//computeNextBallLevel();
 
 		m_mouse_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_just_clicked",
 			[this](eng::sys::Mouse::Button button) {

@@ -32,7 +32,10 @@ namespace eng::phy
 
 		virtual void integrateVel(float delta) {};
 		virtual void integratePos(float delta) {};
-		virtual void onCollision(PhysicsBody2D& other) {};
+
+		virtual void onCollisionEnter(PhysicsBody2D& other) {};
+		virtual void onCollisionStay(PhysicsBody2D& other) {};
+		virtual void onCollisionExit(PhysicsBody2D& other) {};
 
 		virtual void resolveCollisionVelWith(const CollisionData& data, PhysicsBody2D& other) {};
 		virtual void resolveCollisionVelWithRigid(const CollisionData& data, RigidBody2D& other) {};

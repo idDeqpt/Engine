@@ -10,7 +10,6 @@
 
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Core/ConfigManager.hpp>
-#include <Engine/Core/Logger.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Math/Vec2.hpp>
 
@@ -26,10 +25,10 @@ public:
 		camera2d->setSize(eng::mth::Vec2(1000*(v_size.x/v_size.y), 1000));
 		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
 
-		eng::mth::Vec2 box_pos(0, 250);
+		eng::mth::Vec2 box_pos(0, 50);
 		auto box = addChild<Box2D>("box");
 		box->setPosition(box_pos);
-		addChild<ClassicBallsController>("controller", box_pos + box->getLeftBound(), box_pos + box->getRightBound(), box->getBottomBound());
+		addChild<ClassicBallsController>("controller", box_pos + box->getLeftBound(), box_pos + box->getRightBound());
 		//addChild<SandboxBallsController>("controller");
 
 		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
@@ -49,9 +48,7 @@ public:
 	{
 		auto* controller = static_cast<BallsController*>(getChildByName("controller"));
 		if (controller && controller->isGameOver())
-		{
-			eng::core::Logger::info("Game over");
-		}
+			m_context.get<eng::core::SignalBus>().emit("game_over");
 
 		SceneLayer::onUpdate(delta);
 	}

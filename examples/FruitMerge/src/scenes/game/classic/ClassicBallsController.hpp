@@ -10,21 +10,38 @@
 class ClassicBallsController : public BallsController
 {
 public:
-	ClassicBallsController(eng::mth::Vec2 left_bound, eng::mth::Vec2 right_bound, float bottom_bound):
+	ClassicBallsController(eng::mth::Vec2 left_bound, eng::mth::Vec2 right_bound):
 		m_left_bound(left_bound),
 		m_right_bound(right_bound),
-		m_bottom_bound(bottom_bound) {}
+		m_game_over(false) {}
+
+	void onSetup()
+	{
+		BallsController::onSetup();
+
+		m_ball_exit_signal_id = m_context.get<eng::core::SignalBus>().subscribe("ball_exit",
+			[this]() {
+				m_game_over = true;
+		});
+	}
+
+	void onDestroy()
+	{
+		BallsController::onDestroy();
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_exit_signal_id);
+	}
 
 
 	bool isGameOver() override
 	{
-		return m_context.get<eng::sys::EventManager>().getMouse().isJustPressed(eng::sys::Mouse::RIGHT);
+		return m_game_over;
 	}
 
 protected:
 	eng::mth::Vec2 m_left_bound;
 	eng::mth::Vec2 m_right_bound;
-	float          m_bottom_bound;
+	bool m_game_over;
+	eng::core::SubscriptionId m_ball_exit_signal_id;
 
 	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) override
 	{

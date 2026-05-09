@@ -5,6 +5,8 @@
 #include <Engine/Physics/2D/CollisionData.hpp>
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
 
+#include <unordered_set>
+#include <utility>
 #include <vector>
 #include <memory>
 
@@ -12,33 +14,26 @@
 namespace eng
 {
 
-struct BodiesCollection
+struct PairHash
 {
-	struct Pair
+	unsigned int operator()(const phy::PhysicsWorld::Pair2D& p) const
 	{
-		phy::PhysicsBody2D* first;
-		phy::PhysicsBody2D* second;
+		auto h1 = std::hash<phy::PhysicsBody2D*>{}(p.first);
+		auto h2 = std::hash<phy::PhysicsBody2D*>{}(p.second);
 
-		Pair(phy::PhysicsBody2D* f, phy::PhysicsBody2D* s): first(f), second(s) {}
-	};
-
-	std::vector<Pair> bodies;
-
-	void add(std::vector<phy::CollisionData>& collisions)
-	{
-		for (unsigned int i = 0; i < collisions.size(); i++)
-			bodies.push_back(Pair(collisions[i].bodies[0], collisions[i].bodies[1]));
+		if (p.first < p.second)
+			return h1 ^ (h2 << 1);
+		else
+			return h2 ^ (h1 << 1);
 	}
+};
 
-	void removeCopies()
+struct PairEqual
+{
+	bool operator()(const phy::PhysicsWorld::Pair2D& lhs, const phy::PhysicsWorld::Pair2D& rhs) const
 	{
-		if (bodies.size() < 2) return;
-
-		for (unsigned int i = 0; i < bodies.size() - 1; i++)
-			for (unsigned int j = i + 1; j < bodies.size(); j++)
-				if (((bodies[j].first  == bodies[i].first)  && (bodies[j].second == bodies[i].second)) ||
-					((bodies[j].first  == bodies[i].second) && (bodies[j].second == bodies[i].first)))
-						bodies.erase(bodies.begin() + j--);
+		return (((lhs.first == rhs.first) && (lhs.second == rhs.second)) ||
+				((lhs.first == rhs.second) && (lhs.second == rhs.first)));
 	}
 };
 
@@ -46,7 +41,8 @@ struct BodiesCollection
 phy::PhysicsWorld::PhysicsWorld():
 	m_accumulator(0),
 	m_fixed_delta(1/50.0),
-	m_max_steps_per_frame(1)
+	m_max_steps_per_frame(1),
+	m_in_step(false)
 {
 	m_bodies2d.clear();
 	setCollisionDetector<BVHCollisionDetector2D>();
@@ -67,16 +63,29 @@ void phy::PhysicsWorld::setMaxStepsPerFrame(unsigned int steps)
 
 void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 {
-	auto it = std::find(m_bodies2d.begin(), m_bodies2d.end(), &body);
-	if (it == m_bodies2d.end())
-		m_bodies2d.push_back(&body);
+	if (m_in_step)
+		m_pending_add.push_back(&body);
+	else
+		if (std::find(m_bodies2d.begin(), m_bodies2d.end(), &body) == m_bodies2d.end())
+			m_bodies2d.push_back(&body);
 }
 
 void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
 {
-	auto it = std::find(m_bodies2d.begin(), m_bodies2d.end(), &body);
-	if (it != m_bodies2d.end())
-		m_bodies2d.erase(it);
+	if (m_in_step)
+		m_pending_remove.push_back(&body);
+	else
+	{
+		auto it = std::find(m_bodies2d.begin(), m_bodies2d.end(), &body);
+		if (it != m_bodies2d.end())
+			m_bodies2d.erase(it);
+
+		for (auto it = m_previous_frame_bodies2d.begin(); it != m_previous_frame_bodies2d.end(); )
+			if ((it->first == &body) || (it->second == &body))
+				it = m_previous_frame_bodies2d.erase(it);
+			else
+				it++;
+	}
 }
 
 
@@ -95,13 +104,16 @@ void phy::PhysicsWorld::update(float delta)
 
 void phy::PhysicsWorld::step(float delta)
 {
-	BodiesCollection bodies_collection;
+	m_in_step = true;
+	std::unordered_set<Pair2D, PairHash, PairEqual> current_frame_bodies_set;
 
+	//physics
 	m_collision_detector->rebuildTree(m_bodies2d);
 	m_collision_detector->updateCollisions();
 
 	std::vector<CollisionData> first_collisions = m_collision_detector->getCollisions();
-	bodies_collection.add(first_collisions);
+	for (unsigned int i = 0; i < first_collisions.size(); i++)
+		current_frame_bodies_set.insert({first_collisions[i].bodies[0], first_collisions[i].bodies[1]});
 
 	unsigned int VELOCITY_ITERATIONS = 8;
 	for (unsigned int v = 0; v < VELOCITY_ITERATIONS; v++)
@@ -121,7 +133,8 @@ void phy::PhysicsWorld::step(float delta)
 		m_collision_detector->updateCollisions();
 		
 		std::vector<CollisionData>& collisions = m_collision_detector->getCollisions();
-		bodies_collection.add(collisions);
+		for (unsigned int i = 0; i < collisions.size(); i++)
+			current_frame_bodies_set.insert({collisions[i].bodies[0], collisions[i].bodies[1]});
 		
 		if (collisions.empty()) break;
 		
@@ -130,12 +143,49 @@ void phy::PhysicsWorld::step(float delta)
 			collisions[i].bodies[0]->resolveCollisionPosWith(collisions[i], iter_ratio, *collisions[i].bodies[1]);
 	}
 
-	bodies_collection.removeCopies();
-	for (unsigned int i = 0; i < bodies_collection.bodies.size(); i++)
+	//triggers
+	std::unordered_set<Pair2D, PairHash, PairEqual> prev_set;
+	for (const auto& p : m_previous_frame_bodies2d)
+		prev_set.insert(p);
+
+	for (const auto& p : prev_set)
 	{
-		bodies_collection.bodies[i].first->onCollision(*bodies_collection.bodies[i].second);
-		bodies_collection.bodies[i].second->onCollision(*bodies_collection.bodies[i].first);
+		if (p.first->isDestroyed() || p.second->isDestroyed()) continue;
+		if (current_frame_bodies_set.find(p) == current_frame_bodies_set.end())
+		{
+			p.first->onCollisionExit(*p.second);
+			p.second->onCollisionExit(*p.first);
+		}
 	}
+
+	for (const auto& p : current_frame_bodies_set)
+	{
+		if (p.first->isDestroyed() || p.second->isDestroyed()) continue;
+		if (prev_set.find(p) != prev_set.end())
+		{
+			p.first->onCollisionStay(*p.second);
+			p.second->onCollisionStay(*p.first);
+		}
+		else 
+		{
+			p.first->onCollisionEnter(*p.second);
+			p.second->onCollisionEnter(*p.first);
+		}
+	}
+
+	m_in_step = false;
+	for (auto b : m_pending_add) addBody(*b);
+	for (auto b : m_pending_remove)
+	{
+		for (auto it = current_frame_bodies_set.begin(); it != current_frame_bodies_set.end(); )
+			if ((b->isDestroyed()) || (it->first == b) || (it->second == b))
+				current_frame_bodies_set.erase(it);
+			else
+				it++;
+		removeBody(*b);
+	}
+
+	m_previous_frame_bodies2d.assign(current_frame_bodies_set.begin(), current_frame_bodies_set.end());
 }
 
 } //namespace eng
