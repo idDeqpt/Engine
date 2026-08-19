@@ -23,6 +23,8 @@ set(CORE_SOURCE_FILES
     src/Core/TimeManager.cpp)
 
 set(GRAPHICS_SOURCE_FILES
+    src/Graphics/GL/Api.cpp
+    src/Graphics/GL/OpenGL33/Api.cpp
     src/Graphics/2D/Camera2D.cpp
     src/Graphics/2D/CanvasItem.cpp
     src/Graphics/2D/Shape2D.cpp
@@ -35,7 +37,6 @@ set(GRAPHICS_SOURCE_FILES
     src/Graphics/Font.cpp
     src/Graphics/LightManager.cpp
     src/Graphics/Material.cpp
-    src/Graphics/RenderManager.cpp
     src/Graphics/RenderScene.cpp
     src/Graphics/RenderStates.cpp
     src/Graphics/RenderTarget.cpp
@@ -85,6 +86,7 @@ find_package(freetype REQUIRED)
 
 add_library(${PROJECT_NAME})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_compile_definitions(${PROJECT_NAME} PRIVATE USE_OPENGL_3_3)
 target_sources(${PROJECT_NAME} PRIVATE
     ${CORE_SOURCE_FILES}
     ${GRAPHICS_SOURCE_FILES}

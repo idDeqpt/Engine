@@ -12,11 +12,11 @@
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
 
+#include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/LightManager.hpp>
-#include <Engine/Graphics/RenderManager.hpp>
 
 #include <Engine/Physics/PhysicsWorld.hpp>
 
@@ -45,9 +45,9 @@ core::Engine::Engine(Node& root):
 
 	Logger::debug("Start initialization");
 	m_context.create<core::TimeManager>();
+	gfx::gl::Api::createInstance();
 	m_context.create<core::SignalBus>();
 	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
-	m_context.create<gfx::RenderManager>();
 	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
 	m_context.create<core::ResourceManager>();
 	m_context.create<gfx::LightManager>();
