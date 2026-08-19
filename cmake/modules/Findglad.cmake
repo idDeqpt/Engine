@@ -4,7 +4,7 @@ find_path(GLAD_INCLUDE_DIR
         /usr/include
         /usr/local/include
         ${CMAKE_INCLUDE_PATH}
-        ${PROJECT_SOURCE_DIR}/deps/glad/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../deps/glad/include
     REQUIRED
 )
 
@@ -14,7 +14,7 @@ find_library(GLAD_LIBRARY
         /usr/lib
         /usr/local/lib
         ${CMAKE_LIBRARY_PATH}
-        ${PROJECT_SOURCE_DIR}/deps/glad/lib
+        ${CMAKE_CURRENT_LIST_DIR}/../../deps/glad/lib
     REQUIRED
 )
 

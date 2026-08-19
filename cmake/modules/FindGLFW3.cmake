@@ -5,8 +5,6 @@ find_path(GLFW3_INCLUDE_DIR
     PATHS
         /usr/include
         /usr/local/include
-        ${CMAKE_INCLUDE_PATH}
-        ${PROJECT_SOURCE_DIR}/third_party/glfw/include
 )
 
 find_library(GLFW3_LIBRARY
@@ -14,9 +12,6 @@ find_library(GLFW3_LIBRARY
     PATHS
         /usr/lib
         /usr/local/lib
-        ${CMAKE_LIBRARY_PATH}
-        ${PROJECT_SOURCE_DIR}/third_party/glfw/lib
-        ${PROJECT_SOURCE_DIR}/third_party/glfw/build/src
 )
 
 if(NOT GLFW3_INCLUDE_DIR OR NOT GLFW3_LIBRARY)

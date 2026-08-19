@@ -7,9 +7,6 @@ find_path(FREETYPE_INCLUDE_DIR
         /usr/local/include
         /usr/include/freetype2
         /usr/local/include/freetype2
-        ${CMAKE_INCLUDE_PATH}
-        ${PROJECT_SOURCE_DIR}/third_party/freetype/include
-        ${PROJECT_SOURCE_DIR}/third_party/freetype/include/freetype2
 )
 
 if(FREETYPE_INCLUDE_DIR)
@@ -23,7 +20,6 @@ if(FREETYPE_INCLUDE_DIR)
             PATHS
                 /usr/include/freetype2
                 /usr/local/include/freetype2
-                ${PROJECT_SOURCE_DIR}/third_party/freetype/include/freetype2
         )
         if(FREETYPE_INCLUDE_DIR_freetype2)
             set(FREETYPE_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIR_freetype2})
@@ -36,9 +32,6 @@ find_library(FREETYPE_LIBRARY
     PATHS
         /usr/lib
         /usr/local/lib
-        ${CMAKE_LIBRARY_PATH}
-        ${PROJECT_SOURCE_DIR}/third_party/freetype/lib
-        ${PROJECT_SOURCE_DIR}/third_party/freetype/build
 )
 
 if(NOT FREETYPE_INCLUDE_DIR OR NOT FREETYPE_LIBRARY)
