@@ -14,7 +14,7 @@ namespace eng::gfx
 		void setVisible(bool flag) {m_visible = flag;}
 		bool isVisible() {return m_visible;}
 
-		virtual void draw(RenderTarget* target, RenderStates& states) = 0;
+		virtual void draw(RenderTarget* target, const RenderStates& states) = 0;
 
 	protected:
 		bool m_visible;

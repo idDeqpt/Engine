@@ -101,7 +101,7 @@ target_include_directories(${PROJECT_NAME}
 
 set(ENGINE_DEPENDENCIES
     glad::glad
-    FreeType::FreeType
+    Freetype::Freetype
     GLFW3::GLFW3)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_DEPENDENCIES})

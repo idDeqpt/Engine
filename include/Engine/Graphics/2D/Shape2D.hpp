@@ -30,7 +30,7 @@ namespace eng::gfx
 
 		mth::Vec2 getSize();
 
-		void draw(RenderTarget* target, RenderStates& states) override;
+		void draw(RenderTarget* target, const RenderStates& states) override;
 
 	protected:
 		Type         m_type;

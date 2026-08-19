@@ -54,7 +54,7 @@ namespace eng::gfx
 		void loadInstances(mth::Mat4* transforms, unsigned int transforms_count);
 		void setMaterial(const Material& new_material);
 
-		void draw(RenderTarget* target, RenderStates& states);
+		void draw(RenderTarget* target, const RenderStates& states);
 
 	protected:
 		unsigned int m_VAO;

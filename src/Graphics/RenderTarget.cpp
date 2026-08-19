@@ -97,7 +97,7 @@ void gfx::RenderTarget::clear(const gfx::Color& color)
 }
 
 
-void gfx::RenderTarget::draw(gfx::Drawable& drawable, gfx::RenderStates& states)
+void gfx::RenderTarget::draw(gfx::Drawable& drawable, const gfx::RenderStates& states)
 {
 	bind();
 	glViewport(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);

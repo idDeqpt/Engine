@@ -1,5 +1,6 @@
 #include <Engine/Core/String.hpp>
 
+#include <cstdint>
 #include <string>
 
 
@@ -67,7 +68,7 @@ core::String& core::String::operator<<(double v)
 
 core::String& core::String::operator<<(const void* v)
 {
-	m_str += "0x" + std::to_string(int(v));
+	m_str += "0x" + std::to_string(reinterpret_cast<uintptr_t>(v));
 	return *this;
 }
 

@@ -39,7 +39,7 @@ namespace eng::gfx
 		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
 		void unloadData();
 
-		virtual void draw(RenderTarget* target, RenderStates& states) override;
+		virtual void draw(RenderTarget* target, const RenderStates& states) override;
 
 	protected:
 		unsigned int m_vertices_count;

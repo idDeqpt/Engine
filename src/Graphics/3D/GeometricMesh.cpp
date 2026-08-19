@@ -56,7 +56,7 @@ void gfx::GeometricMesh::setGenerator(void (*generator)(GeometricMesh*))
 }
 
 
-void gfx::GeometricMesh::draw(RenderTarget* target, RenderStates& states)
+void gfx::GeometricMesh::draw(RenderTarget* target, const RenderStates& states)
 {
 	update();
 	Mesh::draw(target, states);

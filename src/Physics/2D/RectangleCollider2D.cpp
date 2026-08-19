@@ -4,6 +4,7 @@
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
 
+#include <cmath>
 #include <vector>
 #include <algorithm>
 

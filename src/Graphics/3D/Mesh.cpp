@@ -183,7 +183,7 @@ void gfx::Mesh::setMaterial(const Material& new_material)
 }
 
 
-void gfx::Mesh::draw(RenderTarget* target, RenderStates& states)
+void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 {
 	if (!m_inited) return;
 

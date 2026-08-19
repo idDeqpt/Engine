@@ -6,6 +6,7 @@
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
 
 #include <unordered_set>
+#include <algorithm>
 #include <utility>
 #include <vector>
 #include <memory>

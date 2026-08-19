@@ -20,4 +20,4 @@ namespace eng::gfx
 	};
 }
 
-#endif MATERIAL_CLASS_HEADER
+#endif //MATERIAL_CLASS_HEADER

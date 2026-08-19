@@ -5,6 +5,7 @@
 #include <Engine/Math/Vec2.hpp>
 
 #include <unordered_map>
+#include <stdexcept>
 #include <variant>
 #include <string>
 

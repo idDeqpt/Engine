@@ -21,7 +21,7 @@ namespace eng::gfx
 
 		void bind();
 		virtual void clear(const Color& color);
-		void draw(Drawable& drawable, RenderStates& states);
+		void draw(Drawable& drawable, const RenderStates& states);
 
 		Texture& getTexture(unsigned int index);
 

@@ -3,6 +3,7 @@
 
 #include <Engine/Core/ConfigsContainer.hpp>
 
+#include <stdexcept>
 #include <string>
 
 

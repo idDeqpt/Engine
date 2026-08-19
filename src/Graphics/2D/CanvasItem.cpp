@@ -91,7 +91,7 @@ void gfx::CanvasItem::unloadData()
 }
 
 
-void gfx::CanvasItem::draw(gfx::RenderTarget* target, gfx::RenderStates& states)
+void gfx::CanvasItem::draw(gfx::RenderTarget* target, const gfx::RenderStates& states)
 {
 	if (!m_visible || !m_vertices_count) return;
 

@@ -53,7 +53,7 @@ unsigned int gfx::Text2D::getCharacterSize()
 }
 
 
-void gfx::Text2D::draw(RenderTarget* target, RenderStates& states)
+void gfx::Text2D::draw(RenderTarget* target, const RenderStates& states)
 {
 	this->updateString();
 	CanvasItem::draw(target, states);

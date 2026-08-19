@@ -19,7 +19,7 @@ namespace eng::gfx
 		std::string getString();
 		unsigned int getCharacterSize();
 
-		void draw(RenderTarget* target, RenderStates& states);
+		void draw(RenderTarget* target, const RenderStates& states);
 
 	protected:
 		Font* m_font;

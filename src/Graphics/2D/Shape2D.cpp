@@ -69,7 +69,7 @@ mth::Vec2 gfx::Shape2D::getSize()
 }
 
 
-void gfx::Shape2D::draw(RenderTarget* target, RenderStates& states)
+void gfx::Shape2D::draw(RenderTarget* target, const RenderStates& states)
 {
 	updateShape();
 	CanvasItem::draw(target, states);

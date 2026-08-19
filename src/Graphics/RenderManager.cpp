@@ -1,6 +1,7 @@
 #include <Engine/Graphics/RenderManager.hpp>
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 
 namespace eng
@@ -8,7 +9,7 @@ namespace eng
 
 gfx::RenderManager::RenderManager()
 {
-	gladLoadGL();
+	gladLoadGL(glfwGetProcAddress);
 }
 
 } // namespace eng
