@@ -21,13 +21,16 @@
 | [FreeType](https://freetype.org/)            | Загрузка шрифтов |
 | [GLAD](https://glad.dav1d.de/)               | Линковка функций OpenGL |
 | [stb_image](https://github.com/nothings/stb) | Загрузка изображений из файла |
-____
-# Сборка
-## Требования
+___
+# Требования
+## Для сборки
 - CMake 3.27+
 - C++17-совместимый компилятор
+## Для использования
 - Поддержка OpenGL 3.3
-### Windows
+___
+# Сборка
+## Windows
 ```bash
 # Вариант 1: Использовать готовый скрипт
 GenerateRelease.bat
@@ -35,6 +38,12 @@ GenerateRelease.bat
 mkdir build && cd build
 cmake ..
 cmake --build . --config Release
+```
+## Linux
+```bash
+mkdir build
+cmake . -B build
+cmake --build build
 ```
 ____
 # Подключение
