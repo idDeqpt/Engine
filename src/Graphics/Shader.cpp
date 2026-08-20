@@ -1,9 +1,8 @@
 #include <Engine/Graphics/Shader.hpp>
 
-#include <Engine/Math/Vec3.hpp>
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Math/Vec3.hpp>
 
-#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -63,55 +62,29 @@ bool gfx::Shader::loadFromFile(std::string vertex_path, std::string fragment_pat
 
 bool gfx::Shader::loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer)
 {
-	GLuint vertex_shader;
-	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-
-	glShaderSource(vertex_shader, 1, &vertex_buffer, NULL);
-	glCompileShader(vertex_shader);
-
-	GLint success;
-	GLchar infoLog[512];
-	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
+	constexpr unsigned int LOG_BUFFER_SIZE = 512;
+	char log_buffer[LOG_BUFFER_SIZE];
+	unsigned int vertex_shader = gfx::gl::Api::getInstance()->compileVertexShader(vertex_buffer, log_buffer, LOG_BUFFER_SIZE);
+	if (vertex_shader == 0)
 	{
-		glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
 		m_last_error = Shader::Error::VERTEX_COMPILE_FAILED;
-		m_last_error_log = infoLog;
+		m_last_error_log = log_buffer;
 		return false;
 	}
 
-	GLuint fragment_shader;
-	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &fragment_buffer, NULL);
-	glCompileShader(fragment_shader);
-
-	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
+	unsigned int fragment_shader = gfx::gl::Api::getInstance()->compileFrahmentShader(fragment_buffer, log_buffer, LOG_BUFFER_SIZE);
+	if (fragment_shader == 0)
 	{
-		glDeleteShader(vertex_shader);
-		glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
 		m_last_error = Shader::Error::FRAGMENT_COMPILE_FAILED;
-		m_last_error_log = infoLog;
+		m_last_error_log = log_buffer;
 		return false;
 	}
 
-	m_shader_program_id = glCreateProgram();
-
-	glAttachShader(m_shader_program_id, vertex_shader);
-	glAttachShader(m_shader_program_id, fragment_shader);
-	glLinkProgram(m_shader_program_id);
-
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
-
-	glGetProgramiv(m_shader_program_id, GL_LINK_STATUS, &success);
-	if (!success)
+	m_shader_program_id = gfx::gl::Api::getInstance()->linkShader(vertex_shader, fragment_shader, log_buffer, LOG_BUFFER_SIZE);
+	if (m_shader_program_id == 0)
 	{
-		glGetProgramInfoLog(m_shader_program_id, 512, NULL, infoLog);
 		m_last_error = Shader::Error::PROGRAM_LINKING_FAILED;
-		m_last_error_log = infoLog;
+		m_last_error_log = log_buffer;
 		return false;
 	}
 
@@ -177,7 +150,7 @@ bool gfx::Shader::use()
 	if (m_last_error != Shader::Error::NO_ERROR)
 		return false;
 
-	glUseProgram(m_shader_program_id);
+	gfx::gl::Api::getInstance()->useShader(m_shader_program_id);
 	return true;
 }
 

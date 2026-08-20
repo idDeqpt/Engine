@@ -13,6 +13,10 @@ namespace eng::gfx::gl::OpenGL33
 
 		void init() override;
 
+		void useShader(unsigned int shader_id) override;
+		unsigned int compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) override;
+		unsigned int compileFrahmentShader(const char* fragment_buffer, char* log_buffer, unsigned int log_buffer_size) override;
+		unsigned int linkShader(unsigned int vertex_id, unsigned int fragment_id, char* log_buffer, unsigned int log_buffer_size) override;
 		bool setUniform1i(unsigned int shader_id, const char* name, int value) override;
 		bool setUniform1ui(unsigned int shader_id, const char* name, unsigned int value) override;
 		bool setUniform1f(unsigned int shader_id, const char* name, float value) override;
