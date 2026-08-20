@@ -5,6 +5,17 @@
 
 namespace eng::gfx::gl
 {
+	enum Capability
+	{
+		DEPTH_TEST,
+		BLEND,
+		SCISSOR_TEST,
+		CULL_FACE,
+		POLYGON_OFFSET_FILL,
+		STENCIL_TEST,
+		DITHER,
+		MULTISAMPLE
+	};
 
 	class Api
 	{
@@ -21,6 +32,11 @@ namespace eng::gfx::gl
 		virtual ~Api() = default;
 
 		virtual void init() = 0;
+
+		virtual void enable(Capability capability) = 0;
+		virtual void disable(Capability capability) = 0;
+
+		virtual void setActiveTexture(unsigned int texrure_i) = 0;
 
 		virtual void useShader(unsigned int shader_id) = 0;
 		virtual unsigned int compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) = 0;

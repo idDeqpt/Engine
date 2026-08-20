@@ -19,12 +19,58 @@ bool Api::isAvailable()
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+namespace
+{
+
+GLenum capabilityToGlCapability(eng::gfx::gl::Capability capability)
+{
+	switch (capability)
+	{
+		case eng::gfx::gl::Capability::DEPTH_TEST:
+			return GL_DEPTH_TEST;
+		case eng::gfx::gl::Capability::BLEND:
+			return GL_BLEND;
+		case eng::gfx::gl::Capability::SCISSOR_TEST:
+			return GL_SCISSOR_TEST;
+		case eng::gfx::gl::Capability::CULL_FACE:
+			return GL_CULL_FACE;
+		case eng::gfx::gl::Capability::POLYGON_OFFSET_FILL:
+			return GL_POLYGON_OFFSET_FILL;
+		case eng::gfx::gl::Capability::STENCIL_TEST:
+			return GL_STENCIL_TEST;
+		case eng::gfx::gl::Capability::DITHER:
+			return GL_DITHER;
+		case eng::gfx::gl::Capability::MULTISAMPLE:
+			return GL_MULTISAMPLE;
+	}
+	return GL_INVALID_ENUM;
+}
+
+} //namespace
+
 namespace eng::gfx::gl::OpenGL33
 {
 
 void Api::init()
 {
 	gladLoadGL(glfwGetProcAddress);
+}
+
+
+void Api::enable(Capability capability)
+{
+	glEnable(capabilityToGlCapability(capability));
+}
+
+void Api::disable(Capability capability)
+{
+	glDisable(capabilityToGlCapability(capability));
+}
+
+
+void Api::setActiveTexture(unsigned int texrure_i)
+{
+	glActiveTexture(GL_TEXTURE0 + texrure_i);
 }
 
 

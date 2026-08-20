@@ -1,5 +1,6 @@
 #include <Engine/Graphics/RenderScene.hpp>
 
+#include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
@@ -21,8 +22,8 @@ gfx::RenderScene::RenderScene():
 	m_active_camera_2d(&m_default_camera_2d),
 	m_active_camera_3d(&m_default_camera_3d)
 {
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	gl::Api::getInstance()->enable(gl::Capability::DEPTH_TEST);
+	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	m_quad_view.setRect(0, 1, 0, 1);
@@ -151,20 +152,20 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 
 	//draw transparent
 	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
+	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	for (CanvasItem* obj : opaque)
 		m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	//draw opaque
 	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
+	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for (CanvasItem* obj : transparent)
 		m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	// deferred render
-	glDisable(GL_BLEND);
+	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	glDepthMask(GL_FALSE);
 	for (unsigned int i = 1; i < m_pipeline2d.size(); i++)
 	{
@@ -177,7 +178,7 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 		// bind last textures
 		for (unsigned int j = 0; j < pass.input_buffers_names.size(); j++)
 		{
-			glActiveTexture(GL_TEXTURE0 + j);
+			gfx::gl::Api::getInstance()->setActiveTexture(j);
 			m_framebuffers2d[i - 1]->getTexture(j).bind();
 			pass.shader->setUniform1i(pass.input_buffers_names[j], j);
 		}
@@ -230,7 +231,7 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 		// bind past data
 		for (unsigned int j = 0; j < pass.input_buffers_names.size(); j++)
 		{
-			glActiveTexture(GL_TEXTURE0 + j);
+			gfx::gl::Api::getInstance()->setActiveTexture(j);
 			m_framebuffers3d[i - 1]->getTexture(j).bind();
 			pass.shader->setUniform1i(pass.input_buffers_names[j], j);
 		}
@@ -256,7 +257,7 @@ void gfx::RenderScene::render(RenderTarget& target)
 	draw3d(target);
 
 	glDepthFunc(GL_ALWAYS);
-	glEnable(GL_BLEND);
+	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	draw2d(target);
 }

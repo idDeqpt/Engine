@@ -13,6 +13,11 @@ namespace eng::gfx::gl::OpenGL33
 
 		void init() override;
 
+		void enable(Capability capability);
+		void disable(Capability capability);
+
+		void setActiveTexture(unsigned int texrure_i) override;
+
 		void useShader(unsigned int shader_id) override;
 		unsigned int compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) override;
 		unsigned int compileFrahmentShader(const char* fragment_buffer, char* log_buffer, unsigned int log_buffer_size) override;
