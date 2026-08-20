@@ -7,9 +7,6 @@
 #include <string>
 
 
-typedef unsigned int GLuint;
-typedef char GLchar;
-
 namespace eng::gfx
 {
 	class Shader : public core::Resource
@@ -27,11 +24,11 @@ namespace eng::gfx
 		};
 
 		Shader();
-		Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
+		Shader(const char* vertex_buffer, const char* fragment_buffer);
 
 		bool loadFromFile(std::initializer_list<std::string> paths);
 		bool loadFromFile(std::string vertex_path, std::string fragment_path);
-		bool loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer);
+		bool loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer);
 
 		int getLastError();
 		std::string getLastErrorLog();
@@ -40,10 +37,10 @@ namespace eng::gfx
 		bool setUniform1ui(std::string name, unsigned int value);
 		bool setUniform1f(std::string name, float value);
 		bool setUniformVec3(std::string name, const mth::Vec3& vec);
-		bool setUniform3fv(std::string name, int count, float* values_ptr);
-		bool setUniform4fv(std::string name, int count, float* values_ptr);
-		bool setUniformMatrix3fv(std::string name, float* mat_ptr);
-		bool setUniformMatrix4fv(std::string name, float* mat_ptr);
+		bool setUniform3fv(std::string name, const float* values_ptr);
+		bool setUniform4fv(std::string name, const float* values_ptr);
+		bool setUniformMatrix3fv(std::string name, const float* mat_ptr);
+		bool setUniformMatrix4fv(std::string name, const float* mat_ptr);
 
 		bool use();
 
@@ -51,7 +48,7 @@ namespace eng::gfx
 		static Shader* getActive();
 
 	protected:
-		GLuint m_shader_program_id;
+		unsigned int m_shader_program_id;
 		std::string m_last_error_log;
 		static Shader* s_active;
 	};

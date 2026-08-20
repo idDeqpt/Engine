@@ -22,6 +22,14 @@ namespace eng::gfx::gl
 
 		virtual void init() = 0;
 
+		virtual bool setUniform1i(unsigned int shader_id, const char* name, int value) = 0;
+		virtual bool setUniform1ui(unsigned int shader_id, const char* name, unsigned int value) = 0;
+		virtual bool setUniform1f(unsigned int shader_id, const char* name, float value) = 0;
+		virtual bool setUniform3fv(unsigned int shader_id, const char* name, const float* values_ptr) = 0;
+		virtual bool setUniform4fv(unsigned int shader_id, const char* name, const float* values_ptr) = 0;
+		virtual bool setUniformMatrix3fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
+		virtual bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
+
 	protected:
 		static std::unique_ptr<Api> s_instance;
 

@@ -27,6 +27,78 @@ void Api::init()
 	gladLoadGL(glfwGetProcAddress);
 }
 
+
+bool Api::setUniform1i(unsigned int shader_id, const char* name, int value)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniform1i(location, value);
+	return true;
+}
+
+bool Api::setUniform1ui(unsigned int shader_id, const char* name, unsigned int value)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniform1ui(location, value);
+	return true;
+}
+
+bool Api::setUniform1f(unsigned int shader_id, const char* name, float value)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniform1f(location, value);
+	return true;
+}
+
+bool Api::setUniform3fv(unsigned int shader_id, const char* name, const float* values_ptr)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniform3fv(location, 1, values_ptr);
+	return true;
+}
+
+bool Api::setUniform4fv(unsigned int shader_id, const char* name, const float* values_ptr)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniform4fv(location, 1, values_ptr);
+	return true;
+}
+
+bool Api::setUniformMatrix3fv(unsigned int shader_id, const char* name, const float* matrix_ptr)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniformMatrix3fv(location, 1, GL_TRUE, matrix_ptr);
+	return true;
+}
+
+bool Api::setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr)
+{
+	int location = glGetUniformLocation(shader_id, name);
+	if (location == -1)
+		return false;
+
+	glUniformMatrix4fv(location, 1, GL_TRUE, matrix_ptr);
+	return true;
+}
+
+
 } //namespace eng::gfx::gl::OpenGL33
 
 #endif

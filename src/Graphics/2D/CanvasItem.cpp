@@ -115,7 +115,7 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, const gfx::RenderStates& s
 	float color[4];
 	for (unsigned int i = 0; i < 4; i++)
 		color[i] = float(m_color[i])/COLOR_MAX_VALUE;
-	active_shader->setUniform4fv("uColor", 1, color);
+	active_shader->setUniform4fv("uColor", color);
 
 	bool use_texture = m_texture != nullptr;
 	active_shader->setUniform1i("uUseTexture", use_texture);

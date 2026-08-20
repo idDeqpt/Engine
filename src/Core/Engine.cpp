@@ -163,15 +163,15 @@ void core::Engine::setup()
 				gfx::Camera3D& active_view = m_context.get<gfx::RenderScene>().getActiveCamera3D();
 				mth::Vec3 view_loc_pos = active_view.getPosition();
 				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
-				sh->setUniform3fv("uViewPos", 1, &view_glob_pos.x);
+				sh->setUniform3fv("uViewPos", &view_glob_pos.x);
 
 				gfx::LightManager::DirectionalLight light = m_context.get<gfx::LightManager>().getDirectionalLight();
 				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
 				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
 				if (use_directional_light)
 				{
-					sh->setUniform3fv("uDirectionalLight.direction", 1, &light.direction.x);
-					sh->setUniform3fv("uDirectionalLight.color", 1, &light.color.x);
+					sh->setUniform3fv("uDirectionalLight.direction", &light.direction.x);
+					sh->setUniform3fv("uDirectionalLight.color", &light.color.x);
 				}
 			},
 			{0, 0},

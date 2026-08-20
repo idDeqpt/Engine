@@ -1,6 +1,7 @@
 #include <Engine/Graphics/Shader.hpp>
 
 #include <Engine/Math/Vec3.hpp>
+#include <Engine/Graphics/GL/Api.hpp>
 
 #include <glad/glad.h>
 #include <fstream>
@@ -20,7 +21,7 @@ gfx::Shader::Shader()
 	m_last_error_log = "Shaders sources have not been loaded";
 }
 
-gfx::Shader::Shader(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
+gfx::Shader::Shader(const char* vertex_buffer, const char* fragment_buffer)
 {
 	loadFromBuffer(vertex_buffer, fragment_buffer);
 }
@@ -60,7 +61,7 @@ bool gfx::Shader::loadFromFile(std::string vertex_path, std::string fragment_pat
 	return loadFromBuffer(vertex_buffer.str().c_str(), fragment_buffer.str().c_str());
 }
 
-bool gfx::Shader::loadFromBuffer(const GLchar* vertex_buffer, const GLchar* fragment_buffer)
+bool gfx::Shader::loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer)
 {
 	GLuint vertex_shader;
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -132,82 +133,42 @@ std::string gfx::Shader::getLastErrorLog()
 
 bool gfx::Shader::setUniform1i(std::string name, int value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform1i(location, value);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform1i(m_shader_program_id, name.c_str(), value);
 }
 
 bool gfx::Shader::setUniform1ui(std::string name, unsigned int value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform1ui(location, value);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform1ui(m_shader_program_id, name.c_str(), value);
 }
 
 bool gfx::Shader::setUniform1f(std::string name, float value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform1f(glGetUniformLocation(m_shader_program_id, name.c_str()), value);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform1f(m_shader_program_id, name.c_str(), value);
 }
 
 bool gfx::Shader::setUniformVec3(std::string name, const mth::Vec3& vec)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform3f(location, vec.x, vec.y, vec.z);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform3fv(m_shader_program_id, name.c_str(), &vec.x);
 }
 
-bool gfx::Shader::setUniform3fv(std::string name, int count, float* values_ptr)
+bool gfx::Shader::setUniform3fv(std::string name, const float* values_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform3fv(location, count, values_ptr);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform3fv(m_shader_program_id, name.c_str(), values_ptr);
 }
 
-bool gfx::Shader::setUniform4fv(std::string name, int count, float* values_ptr)
+bool gfx::Shader::setUniform4fv(std::string name, const float* values_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniform4fv(location, count, values_ptr);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniform4fv(m_shader_program_id, name.c_str(), values_ptr);
 }
 
-bool gfx::Shader::setUniformMatrix3fv(std::string name, float* mat_ptr)
+bool gfx::Shader::setUniformMatrix3fv(std::string name, const float* mat_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniformMatrix3fv(location, 1, GL_TRUE, mat_ptr);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniformMatrix3fv(m_shader_program_id, name.c_str(), mat_ptr);
 }
 
-bool gfx::Shader::setUniformMatrix4fv(std::string name, float* mat_ptr)
+bool gfx::Shader::setUniformMatrix4fv(std::string name, const float* mat_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
-	if (location == -1)
-		return false;
-
-	glUniformMatrix4fv(location, 1, GL_TRUE, mat_ptr);
-	return true;
+	return gfx::gl::Api::getInstance()->setUniformMatrix4fv(m_shader_program_id, name.c_str(), mat_ptr);
 }
 
 
