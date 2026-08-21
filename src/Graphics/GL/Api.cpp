@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "Null/Api.hpp"
 #include "OpenGL33/Api.hpp"
 
 
@@ -45,7 +46,7 @@ std::unique_ptr<Api> Api::createImpl(Type type)
 			return std::make_unique<OpenGL33::Api>();
 		#endif
 		
-		return nullptr;
+		return std::make_unique<Null::Api>();
 	}
 	
 	switch (type)
@@ -56,7 +57,7 @@ std::unique_ptr<Api> Api::createImpl(Type type)
 		#endif
 		
 		default:
-			return nullptr;
+			return std::make_unique<Null::Api>();
 	}
 }
 

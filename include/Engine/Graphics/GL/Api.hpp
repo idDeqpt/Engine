@@ -54,6 +54,7 @@ namespace eng::gfx::gl
 	public:
 		enum class Type
 		{
+			NULL_API,
 			OPENGL_3_3,
 			AUTO
 		};
