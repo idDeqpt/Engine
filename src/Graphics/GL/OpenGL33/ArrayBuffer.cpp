@@ -62,6 +62,12 @@ ArrayBuffer::~ArrayBuffer()
 }
 
 
+unsigned int ArrayBuffer::getHandleVAO()
+{
+	return m_VAO;
+}
+
+
 void ArrayBuffer::loadData(const void* data, unsigned int size, gl::ArrayBuffer::Usage usage)
 {
 	glBindVertexArray(m_VAO);

@@ -2,6 +2,7 @@
 #define MESH_CLASS_HEADER
 
 #include <Engine/Core/Node3D.hpp>
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Drawable.hpp>
@@ -9,6 +10,8 @@
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Mat4.hpp>
+
+#include <memory>
 
 
 namespace eng::gfx
@@ -57,8 +60,7 @@ namespace eng::gfx
 		void draw(RenderTarget* target, const RenderStates& states);
 
 	protected:
-		unsigned int m_VAO;
-		unsigned int m_VBO;
+		std::unique_ptr<gl::ArrayBuffer> m_array_buffer;
 		unsigned int m_EBO;
 		unsigned int m_indexes_count;
 		unsigned int m_instance_VBO;

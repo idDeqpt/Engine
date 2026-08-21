@@ -2,6 +2,7 @@
 
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Texture.hpp>
@@ -11,6 +12,7 @@
 #include <Engine/Graphics/RenderStates.hpp>
 
 #include <vector>
+#include <memory>
 
 
 namespace eng

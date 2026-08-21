@@ -12,6 +12,8 @@ namespace eng::gfx::gl::OpenGL33
         ArrayBuffer();
 		~ArrayBuffer() override;
 
+		unsigned int getHandleVAO();
+
 		void loadData(const void* data, unsigned int size, gl::ArrayBuffer::Usage usage) override;
 		void configureAttrib(unsigned int index, unsigned int components, bool normalized, unsigned int stride, unsigned int offset) override;
         void draw(PrimitiveType p_type, unsigned int first, unsigned int count) override;

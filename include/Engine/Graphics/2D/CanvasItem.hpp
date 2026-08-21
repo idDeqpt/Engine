@@ -2,7 +2,7 @@
 #define CANVAS_ITEM_CLASS_HEADER
 
 #include <Engine/Core/Node2D.hpp>
-#include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>

@@ -1,6 +1,8 @@
 #include <Engine/Graphics/3D/Mesh.hpp>
 
 #include <Engine/Core/Node3D.hpp>
+#include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
@@ -12,8 +14,11 @@
 #include <Engine/Math/Mat4.hpp>
 
 #include <glad/glad.h>
+#include <memory>
 #include <string>
 #include <unordered_map>
+
+#include "../GL/OpenGL33/ArrayBuffer.hpp"
 
 
 struct VertexKey {
@@ -40,10 +45,9 @@ struct std::hash<VertexKey> {
 namespace eng
 {
 
-gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), core::Node3D()
+gfx::Mesh::Mesh() : m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), core::Node3D()
 {
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &m_VBO);
+	m_array_buffer = gl::Api::getInstance()->createArrayBuffer();
 	glGenBuffers(1, &m_EBO);
 	glGenBuffers(1, &m_instance_VBO);
 
@@ -52,10 +56,6 @@ gfx::Mesh::Mesh() : m_VAO(0), m_VBO(0), m_EBO(0), m_instance_VBO(0), m_inited(fa
 
 gfx::Mesh::~Mesh()
 {
-	if (m_VAO)
-		glDeleteVertexArrays(1, &m_VAO);
-	if (m_VBO)
-		glDeleteBuffers(1, &m_VBO);
 	if (m_EBO)
 		glDeleteBuffers(1, &m_EBO);
 	if (m_instance_VBO)
@@ -105,48 +105,39 @@ bool gfx::Mesh::loadData(MeshData data)
 		final_indexes[i] = vertex_index;
 	}
 
-	glBindVertexArray(m_VAO);
+	m_array_buffer->loadData(final_vertices, sizeof(Mesh::Vertex)*last_vertex, gl::ArrayBuffer::Usage::STATIC_DRAW);
+	m_array_buffer->configureAttrib(0, 3, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, position));
+	m_array_buffer->configureAttrib(1, 2, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, tex_coord));
+	m_array_buffer->configureAttrib(2, 3, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, normal));
+	m_array_buffer->configureAttrib(3, 3, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, tangent));
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh::Vertex)*last_vertex, final_vertices, GL_STATIC_DRAW);
+	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
 	{
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, position));
-		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
+		{
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribDivisor(4, 1);
 
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tex_coord));
-		glEnableVertexAttribArray(1);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
+			glEnableVertexAttribArray(5);
+			glVertexAttribDivisor(5, 1);
 
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, normal));
-		glEnableVertexAttribArray(2);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
+			glEnableVertexAttribArray(6);
+			glVertexAttribDivisor(6, 1);
 
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (GLvoid*)offsetof(Mesh::Vertex, tangent));
-		glEnableVertexAttribArray(3);
+			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
+			glEnableVertexAttribArray(7);
+			glVertexAttribDivisor(7, 1);
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
+		m_indexes_count = final_vertices_count;
+		
+		glBindVertexArray(0);
 	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
-	{
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
-		glEnableVertexAttribArray(4);
-		glVertexAttribDivisor(4, 1);
-
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
-		glEnableVertexAttribArray(5);
-		glVertexAttribDivisor(5, 1);
-
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
-		glEnableVertexAttribArray(6);
-		glVertexAttribDivisor(6, 1);
-
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
-		glEnableVertexAttribArray(7);
-		glVertexAttribDivisor(7, 1);
-	}
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
-	m_indexes_count = final_vertices_count;
-	
-	glBindVertexArray(0);
 
 	delete[] final_vertices;
 	delete[] final_indexes;
@@ -157,23 +148,26 @@ bool gfx::Mesh::loadData(MeshData data)
 
 void gfx::Mesh::loadInstances(mth::Mat4* transforms, unsigned int transforms_count)
 {
-	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
-
-	if (!transforms || !transforms_count)
+	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
 	{
-		mth::Mat4 identity = mth::Mat4::getIdentity();
-		glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4), &identity, GL_STATIC_DRAW);
-		m_instances_count = 1;
-	}
-	else
-	{
-		glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4)*transforms_count, transforms, GL_STATIC_DRAW);
-		m_instances_count = transforms_count;
-	}
+		glBindVertexArray(static_cast<gl::OpenGL33::ArrayBuffer*>(m_array_buffer.get())->getHandleVAO());
+		glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+		if (!transforms || !transforms_count)
+		{
+			mth::Mat4 identity = mth::Mat4::getIdentity();
+			glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4), &identity, GL_STATIC_DRAW);
+			m_instances_count = 1;
+		}
+		else
+		{
+			glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4)*transforms_count, transforms, GL_STATIC_DRAW);
+			m_instances_count = transforms_count;
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
 }
 
 
@@ -192,11 +186,11 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	active_shader->use();
 	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform3D().value().getMatrix().getValuesPtr());
 
-	glActiveTexture(GL_TEXTURE0);
+	gl::Api::getInstance()->setActiveTexture(0);
 		m_material.albedo->bind();
 		active_shader->setUniform1i("uMaterial.albedo", 0);
 
-	glActiveTexture(GL_TEXTURE1);
+	gl::Api::getInstance()->setActiveTexture(1);
 	bool use_normal_map = m_material.normal;
 	if (use_normal_map)
 	{
@@ -205,7 +199,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.normal", 1);
 	}
 
-	glActiveTexture(GL_TEXTURE2);
+	gl::Api::getInstance()->setActiveTexture(2);
 	bool use_metallic_map = m_material.metallic;
 	if (use_metallic_map)
 	{
@@ -214,7 +208,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.metallic", 2);
 	}
 
-	glActiveTexture(GL_TEXTURE3);
+	gl::Api::getInstance()->setActiveTexture(3);
 	bool use_roughness_map = m_material.roughness;
 	if (use_roughness_map)
 	{
@@ -223,7 +217,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.roughness", 3);
 	}
 
-	glActiveTexture(GL_TEXTURE4);
+	gl::Api::getInstance()->setActiveTexture(4);
 	bool use_height_map = m_material.height;
 	if (use_height_map)
 	{
@@ -232,7 +226,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.height", 4);
 	}
 
-	glActiveTexture(GL_TEXTURE5);
+	gl::Api::getInstance()->setActiveTexture(5);
 	bool use_ao_map = m_material.ao;
 	if (use_ao_map)
 	{
@@ -241,7 +235,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.ao", 5);
 	}
 
-	glActiveTexture(GL_TEXTURE6);
+	gl::Api::getInstance()->setActiveTexture(6);
 	bool use_emission_map = m_material.emission;
 	if (use_emission_map)
 	{
@@ -250,9 +244,12 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.emission", 6);
 	}
 
-	glBindVertexArray(m_VAO);
-	glDrawElementsInstanced(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0, m_instances_count);
-	glBindVertexArray(0);
+	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
+	{
+		glBindVertexArray(static_cast<gl::OpenGL33::ArrayBuffer*>(m_array_buffer.get())->getHandleVAO());
+		glDrawElementsInstanced(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0, m_instances_count);
+		glBindVertexArray(0);
+	}
 }
 
 } //namespace eng
