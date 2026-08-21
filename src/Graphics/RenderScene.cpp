@@ -10,7 +10,6 @@
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/Color.hpp>
 
-#include <glad/glad.h>
 #include <algorithm>
 
 
@@ -24,7 +23,7 @@ gfx::RenderScene::RenderScene():
 {
 	gl::Api::getInstance()->enable(gl::Capability::DEPTH_TEST);
 	gl::Api::getInstance()->enable(gl::Capability::BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	m_quad_view.setRect(0, 1, 0, 1);
 
@@ -151,22 +150,22 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 	});
 
 	//draw transparent
-	glDepthMask(GL_TRUE);
+	gl::Api::getInstance()->useDepthMask(true);
 	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	for (CanvasItem* obj : opaque)
 		m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	//draw opaque
-	glDepthMask(GL_FALSE);
+	gl::Api::getInstance()->useDepthMask(false);
 	gl::Api::getInstance()->enable(gl::Capability::BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	for (CanvasItem* obj : transparent)
 		m_framebuffers2d.front()->draw(*obj, RenderStates());
 
 	// deferred render
+	gl::Api::getInstance()->useDepthMask(false);
 	gl::Api::getInstance()->disable(gl::Capability::BLEND);
-	glDepthMask(GL_FALSE);
 	for (unsigned int i = 1; i < m_pipeline2d.size(); i++)
 	{
 		m_framebuffers2d[i]->clear(m_clear_color);
@@ -253,12 +252,12 @@ void gfx::RenderScene::render(RenderTarget& target)
 {
 	target.clear(m_clear_color);
 	
-	glDepthFunc(GL_LESS);
+	gl::Api::getInstance()->setDepthFunction(gl::DepthFunction::LESS);
 	draw3d(target);
 
-	glDepthFunc(GL_ALWAYS);
+	gl::Api::getInstance()->setDepthFunction(gl::DepthFunction::ALWAYS);
 	gl::Api::getInstance()->enable(gl::Capability::BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 	draw2d(target);
 }
 

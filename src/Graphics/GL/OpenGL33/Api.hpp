@@ -13,8 +13,12 @@ namespace eng::gfx::gl::OpenGL33
 
 		void init() override;
 
-		void enable(Capability capability);
-		void disable(Capability capability);
+		void enable(const Capability& capability);
+		void disable(const Capability& capability);
+
+		void useDepthMask(bool flag) override;
+		void setDepthFunction(const DepthFunction& function) override;
+		void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) override;
 
 		void setActiveTexture(unsigned int texrure_i) override;
 

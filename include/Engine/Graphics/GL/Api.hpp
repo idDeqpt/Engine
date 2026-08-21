@@ -5,7 +5,7 @@
 
 namespace eng::gfx::gl
 {
-	enum Capability
+	enum class Capability
 	{
 		DEPTH_TEST,
 		BLEND,
@@ -15,6 +15,37 @@ namespace eng::gfx::gl
 		STENCIL_TEST,
 		DITHER,
 		MULTISAMPLE
+	};
+
+	enum class DepthFunction
+	{
+		NEVER,
+		LESS,
+		EQUAL,
+		LEQUAL,
+		GREATER,
+		NOTEQUAL,
+		GEQUAL,
+		ALWAYS
+	};
+
+	enum class BlendFactor
+	{
+		ZERO,
+		ONE,
+		SRC_COLOR,
+		ONE_MINUS_SRC_COLOR,
+		DST_COLOR,
+		ONE_MINUS_DST_COLOR,
+		SRC_ALPHA,
+		ONE_MINUS_SRC_ALPHA,
+		DST_ALPHA,
+		ONE_MINUS_DST_ALPHA,
+		CONSTANT_COLOR,
+		ONE_MINUS_CONSTANT_COLOR,
+		CONSTANT_ALPHA,
+		ONE_MINUS_CONSTANT_ALPHA,
+		SRC_ALPHA_SATURATE
 	};
 
 	class Api
@@ -33,8 +64,12 @@ namespace eng::gfx::gl
 
 		virtual void init() = 0;
 
-		virtual void enable(Capability capability) = 0;
-		virtual void disable(Capability capability) = 0;
+		virtual void enable(const Capability& capability) = 0;
+		virtual void disable(const Capability& capability) = 0;
+
+		virtual void useDepthMask(bool flag) = 0;
+		virtual void setDepthFunction(const DepthFunction& function) = 0;
+		virtual void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) = 0;
 
 		virtual void setActiveTexture(unsigned int texrure_i) = 0;
 

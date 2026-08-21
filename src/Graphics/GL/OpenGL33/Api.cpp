@@ -22,7 +22,7 @@ bool Api::isAvailable()
 namespace
 {
 
-GLenum capabilityToGlCapability(eng::gfx::gl::Capability capability)
+GLenum capabilityToGlCapability(const eng::gfx::gl::Capability& capability)
 {
 	switch (capability)
 	{
@@ -46,6 +46,68 @@ GLenum capabilityToGlCapability(eng::gfx::gl::Capability capability)
 	return GL_INVALID_ENUM;
 }
 
+GLenum depthFunctionToGlDepthFunction(const eng::gfx::gl::DepthFunction& func)
+{
+	switch (func)
+	{
+		case eng::gfx::gl::DepthFunction::NEVER:
+			return GL_NEVER;
+		case eng::gfx::gl::DepthFunction::LESS:
+			return GL_LESS;
+		case eng::gfx::gl::DepthFunction::EQUAL:
+			return GL_EQUAL;
+		case eng::gfx::gl::DepthFunction::LEQUAL:
+			return GL_LEQUAL;
+		case eng::gfx::gl::DepthFunction::GREATER:
+			return GL_GREATER;
+		case eng::gfx::gl::DepthFunction::NOTEQUAL:
+			return GL_NOTEQUAL;
+		case eng::gfx::gl::DepthFunction::GEQUAL:
+			return GL_GEQUAL;
+		case eng::gfx::gl::DepthFunction::ALWAYS:
+			return GL_ALWAYS;
+	}
+	return GL_INVALID_ENUM;
+}
+
+GLenum blendFactorToGlBlendFactor(const eng::gfx::gl::BlendFactor& factor)
+{
+	switch (factor)
+	{
+		case eng::gfx::gl::BlendFactor::ZERO:
+			return GL_ZERO;
+		case eng::gfx::gl::BlendFactor::ONE:
+			return GL_ONE;
+		case eng::gfx::gl::BlendFactor::SRC_COLOR:
+			return GL_SRC_COLOR;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_SRC_COLOR:
+			return GL_ONE_MINUS_SRC_COLOR;
+		case eng::gfx::gl::BlendFactor::DST_COLOR:
+			return GL_DST_COLOR;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_DST_COLOR:
+			return GL_ONE_MINUS_DST_COLOR;
+		case eng::gfx::gl::BlendFactor::SRC_ALPHA:
+			return GL_SRC_ALPHA;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_SRC_ALPHA:
+			return GL_ONE_MINUS_SRC_ALPHA;
+		case eng::gfx::gl::BlendFactor::DST_ALPHA:
+			return GL_DST_ALPHA;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_DST_ALPHA:
+			return GL_ONE_MINUS_DST_ALPHA;
+		case eng::gfx::gl::BlendFactor::CONSTANT_COLOR:
+			return GL_CONSTANT_COLOR;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_CONSTANT_COLOR:
+			return GL_ONE_MINUS_CONSTANT_COLOR;
+		case eng::gfx::gl::BlendFactor::CONSTANT_ALPHA:
+			return GL_CONSTANT_ALPHA;
+		case eng::gfx::gl::BlendFactor::ONE_MINUS_CONSTANT_ALPHA:
+			return GL_ONE_MINUS_CONSTANT_ALPHA;
+		case eng::gfx::gl::BlendFactor::SRC_ALPHA_SATURATE:
+			return GL_SRC_ALPHA_SATURATE;
+	}
+	return GL_INVALID_ENUM;
+}
+
 } //namespace
 
 namespace eng::gfx::gl::OpenGL33
@@ -57,14 +119,30 @@ void Api::init()
 }
 
 
-void Api::enable(Capability capability)
+void Api::enable(const Capability& capability)
 {
 	glEnable(capabilityToGlCapability(capability));
 }
 
-void Api::disable(Capability capability)
+void Api::disable(const Capability& capability)
 {
 	glDisable(capabilityToGlCapability(capability));
+}
+
+
+void Api::useDepthMask(bool flag)
+{
+	glDepthMask(flag);
+}
+
+void Api::setDepthFunction(const DepthFunction& function)
+{
+	glDepthFunc(depthFunctionToGlDepthFunction(function));
+}
+
+void Api::setBlendFunction(const BlendFactor& source, const BlendFactor& destination)
+{
+	glBlendFunc(blendFactorToGlBlendFactor(source), blendFactorToGlBlendFactor(destination));
 }
 
 
