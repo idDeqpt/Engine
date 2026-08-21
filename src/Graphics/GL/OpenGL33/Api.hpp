@@ -12,6 +12,7 @@ namespace eng::gfx::gl::OpenGL33
 
 		#ifdef USE_OPENGL_3_3
 
+		Type getType() override;
 		void init() override;
 
 		void enable(const Capability& capability);

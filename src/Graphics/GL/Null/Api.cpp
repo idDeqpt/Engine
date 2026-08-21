@@ -10,6 +10,8 @@ namespace eng::gfx::gl::Null
 
 bool Api::isAvailable() {return false;}
 
+gl::Api::Type Api::getType() {return Api::Type::NULL_API;}
+
 void Api::init() {}
 
 void Api::enable(const Capability& capability) {}
