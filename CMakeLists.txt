@@ -25,6 +25,7 @@ set(CORE_SOURCE_FILES
 set(GRAPHICS_SOURCE_FILES
     src/Graphics/GL/Api.cpp
     src/Graphics/GL/OpenGL33/Api.cpp
+    src/Graphics/GL/OpenGL33/ArrayBuffer.cpp
     src/Graphics/2D/Camera2D.cpp
     src/Graphics/2D/CanvasItem.cpp
     src/Graphics/2D/Shape2D.cpp

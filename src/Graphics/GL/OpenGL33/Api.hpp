@@ -2,6 +2,7 @@
 #define GRAPHICS_OPEN_GL_3_3_API_CLASS_HEADER
 
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 
 namespace eng::gfx::gl::OpenGL33
 {
@@ -33,6 +34,8 @@ namespace eng::gfx::gl::OpenGL33
 		bool setUniform4fv(unsigned int shader_id, const char* name, const float* values_ptr) override;
 		bool setUniformMatrix3fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
 		bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
+
+		std::unique_ptr<ArrayBuffer> createArrayBuffer() override;
 
 		#endif
 	};

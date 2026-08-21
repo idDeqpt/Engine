@@ -1,5 +1,6 @@
 #include "Api.hpp"
 
+
 namespace eng::gfx::gl::OpenGL33
 {
 
@@ -16,8 +17,12 @@ bool Api::isAvailable()
 
 #ifdef USE_OPENGL_3_3
 
+#include <memory>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "ArrayBuffer.hpp"
 
 namespace
 {
@@ -285,6 +290,12 @@ bool Api::setUniformMatrix4fv(unsigned int shader_id, const char* name, const fl
 }
 
 
+std::unique_ptr<gl::ArrayBuffer> Api::createArrayBuffer()
+{
+	return std::make_unique<OpenGL33::ArrayBuffer>();
+}
+
+
 } //namespace eng::gfx::gl::OpenGL33
 
-#endif
+#endif //USE_OPENGL_3_3

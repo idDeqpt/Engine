@@ -1,6 +1,7 @@
 #ifndef GRAPHICS_API_CLASS_HEADER
 #define GRAPHICS_API_CLASS_HEADER
 
+#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <memory>
 
 namespace eng::gfx::gl
@@ -84,6 +85,8 @@ namespace eng::gfx::gl
 		virtual bool setUniform4fv(unsigned int shader_id, const char* name, const float* values_ptr) = 0;
 		virtual bool setUniformMatrix3fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
 		virtual bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
+
+		virtual std::unique_ptr<ArrayBuffer> createArrayBuffer() = 0;
 
 	protected:
 		static std::unique_ptr<Api> s_instance;

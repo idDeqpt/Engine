@@ -2,12 +2,15 @@
 #define CANVAS_ITEM_CLASS_HEADER
 
 #include <Engine/Core/Node2D.hpp>
+#include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
+
 #include <vector>
+#include <memory>
 
 
 namespace eng::gfx
@@ -26,7 +29,7 @@ namespace eng::gfx
 		};
 
 		CanvasItem();
-		~CanvasItem();
+		~CanvasItem() = default;
 
 		void setLayer(unsigned int new_layer);
 		void setColor(const Color& new_color);
@@ -42,9 +45,8 @@ namespace eng::gfx
 		virtual void draw(RenderTarget* target, const RenderStates& states) override;
 
 	protected:
+		std::unique_ptr<gl::ArrayBuffer> m_array_buffer;
 		unsigned int m_vertices_count;
-		unsigned int m_VAO;
-		unsigned int m_VBO;
 		unsigned int m_layer;
 		PrimitiveType m_primitive_type;
 		Color m_color;
