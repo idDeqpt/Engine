@@ -74,6 +74,8 @@ namespace eng::gfx::gl
 		virtual void setDepthFunction(const DepthFunction& function) = 0;
 		virtual void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) = 0;
 
+		virtual void setScissor(int x, int y, unsigned int width, unsigned int height) = 0;
+		
 		virtual void setActiveTexture(unsigned int texrure_i) = 0;
 
 		virtual void useShader(unsigned int shader_id) = 0;

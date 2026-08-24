@@ -156,6 +156,12 @@ void Api::setBlendFunction(const BlendFactor& source, const BlendFactor& destina
 }
 
 
+void Api::setScissor(int x, int y, unsigned int width, unsigned int height)
+{
+	glScissor(x, y, width, height);
+}
+
+
 void Api::setActiveTexture(unsigned int texrure_i)
 {
 	glActiveTexture(GL_TEXTURE0 + texrure_i);

@@ -21,6 +21,8 @@ void Api::useDepthMask(bool flag) {}
 void Api::setDepthFunction(const DepthFunction& function) {}
 void Api::setBlendFunction(const BlendFactor& source, const BlendFactor& destination) {}
 
+void Api::setScissor(int x, int y, unsigned int width, unsigned int height) {}
+
 void Api::setActiveTexture(unsigned int texrure_i) {}
 
 void Api::useShader(unsigned int shader_id) {}

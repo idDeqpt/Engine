@@ -20,6 +20,8 @@ namespace eng::gfx::gl::Null
 		void setDepthFunction(const DepthFunction& function) override;
 		void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) override;
 
+		void setScissor(int x, int y, unsigned int width, unsigned int height) override;
+
 		void setActiveTexture(unsigned int texrure_i) override;
 
 		void useShader(unsigned int shader_id) override;
