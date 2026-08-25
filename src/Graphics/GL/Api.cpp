@@ -1,5 +1,7 @@
 #include <Engine/Graphics/GL/Api.hpp>
 
+#include <Engine/Graphics/GL/TexturePool.hpp>
+
 #include <memory>
 
 #include "Null/Api.hpp"
@@ -9,7 +11,8 @@
 namespace eng::gfx::gl
 {
 
-std::unique_ptr<Api> Api::s_instance = nullptr;
+std::unique_ptr<Api>         Api::s_instance     = nullptr;
+std::unique_ptr<TexturePool> Api::s_texture_pool = nullptr;
 
 
 Api* Api::getInstance()
@@ -23,6 +26,14 @@ void Api::createInstance(Type type)
 {
 	s_instance = createImpl(type);
 	if (s_instance) s_instance->init();
+}
+
+
+TexturePool* Api::getTexturePool()
+{
+	if (!s_texture_pool)
+		s_texture_pool = std::make_unique<TexturePool>();
+	return s_texture_pool.get();
 }
 
 

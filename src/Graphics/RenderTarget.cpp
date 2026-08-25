@@ -1,6 +1,7 @@
 #include <Engine/Graphics/RenderTarget.hpp>
 
 #include <Engine/Math/Vec2.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Drawable.hpp>
@@ -31,7 +32,7 @@ gfx::RenderTarget::RenderTarget():
 	m_viewport_pos(0, 0),
 	m_viewport_size(100, 100) {}
 
-gfx::RenderTarget::RenderTarget(unsigned int buffers_count, Texture::PixelFormat* formats):
+gfx::RenderTarget::RenderTarget(unsigned int buffers_count, gl::PixelFormat* formats):
 	m_color_buffers_count(buffers_count),
 	m_buffer_textures(nullptr),
 	m_viewport_pos(0, 0),

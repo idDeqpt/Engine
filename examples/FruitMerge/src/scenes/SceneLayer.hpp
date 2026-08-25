@@ -6,6 +6,7 @@
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Graphics/Color.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Texture.hpp>
@@ -20,7 +21,7 @@ public:
 	{
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
 
-		eng::gfx::Texture::PixelFormat pf = eng::gfx::Texture::PixelFormat::RGBA;
+		eng::gfx::gl::PixelFormat pf = eng::gfx::gl::PixelFormat::RGBA;
 		m_target = std::make_unique<eng::gfx::RenderTarget>(1, &pf);
 		m_target->setViewport(0, 0, v_size.x, v_size.y);
 

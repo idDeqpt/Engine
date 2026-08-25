@@ -1,9 +1,15 @@
 #include <Engine/Graphics/Texture.hpp>
 
+#include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/TexturePool.hpp>
+#include <Engine/Graphics/GL/TextureImpl.hpp>
+#include <Engine/Graphics/GL/TextureHandle.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
+#include "GL/OpenGL33/TextureImpl.hpp"
+
 #include <Engine/Core/Resource.hpp>
 #include <Engine/Math/Vec2.hpp>
 
-#include <glad/glad.h>
 #include <string>
 #include <iostream>
 
@@ -11,147 +17,73 @@
 #include <stb/stb_image.h>
 
 
-namespace eng
+namespace eng::gfx
 {
 
-static constexpr GLenum OPENGL_TEXTURE_FORMATS[][3] = { //{internal_format, format, type}
-	{GL_RED,   GL_RED,   GL_UNSIGNED_BYTE},
-	{GL_BLUE,  GL_BLUE,  GL_UNSIGNED_BYTE},
-	{GL_GREEN, GL_GREEN, GL_UNSIGNED_BYTE},
-	{GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
 
-	{GL_RGB,    GL_RGB, GL_UNSIGNED_BYTE},
-	{GL_SRGB,   GL_RGB, GL_UNSIGNED_BYTE},
-	{GL_RGB32F, GL_RGB, GL_FLOAT},
-
-	{GL_RGBA,       GL_RGBA, GL_UNSIGNED_BYTE},
-	{GL_SRGB_ALPHA, GL_RGBA, GL_UNSIGNED_BYTE},
-	{GL_RGBA32F,    GL_RGBA, GL_FLOAT},
-};
-static constexpr unsigned int OPENGL_TEXTURE_TYPE_SIZES[] = {
-	sizeof(unsigned char),
-	sizeof(unsigned char),
-	sizeof(unsigned char),
-	sizeof(unsigned char),
-	
-	sizeof(unsigned char),
-	sizeof(unsigned char),
-	sizeof(float),
-	
-	sizeof(unsigned char),
-	sizeof(unsigned char),
-	sizeof(float)
-};
-
-
-unsigned int ChannelEnumToChannelCount(gfx::Texture::PixelFormat channel)
+Texture::Texture():
+	m_texture_pool(*gl::Api::getInstance()->getTexturePool())
 {
-	switch(channel)
-	{
-	case gfx::Texture::PixelFormat::RED:
-	case gfx::Texture::PixelFormat::BLUE:
-	case gfx::Texture::PixelFormat::GREEN:
-	case gfx::Texture::PixelFormat::ALPHA:
-		return 1; break;
-
-	case gfx::Texture::PixelFormat::RGB:
-	case gfx::Texture::PixelFormat::RGB32F:
-		return 3; break;
-
-	case gfx::Texture::PixelFormat::RGBA:
-	case gfx::Texture::PixelFormat::RGBA32F:
-		return 4; break;
-
-	default: return 0; break;
-	}
-}
-
-
-gfx::Texture::Texture():
-	m_native_handle(0),
-	m_flip_x(false),
-	m_flip_y(false),
-	m_width(0),
-	m_height(0),
-	m_format(PixelFormat::RED),
-	m_pixels(nullptr)
-{
+	m_texture_handle = m_texture_pool.generateTexture();
 	m_last_error = Texture::Error::NO_ERROR;
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
-gfx::Texture::~Texture()
+Texture::~Texture()
 {
-	remove();
+	m_texture_pool.releaseTexture(m_texture_handle);
 }
 
 
-void gfx::Texture::create(PixelFormat pixel_format)
+void Texture::create(gl::PixelFormat pixel_format)
 {
-	remove();
-
-	glGenTextures(1, &m_native_handle);
-	m_width  = 0;
-	m_height = 0;
-	m_format = pixel_format;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) tex->create(pixel_format);
 }
 
-void gfx::Texture::remove()
+void Texture::remove()
 {
-	if (m_native_handle)      glDeleteTextures(1, &m_native_handle);
-	if (m_pixels != nullptr) {delete[] m_pixels; m_pixels = nullptr;}
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) tex->remove();
 }
 
 
-bool gfx::Texture::setSmooth(bool flag)
+bool Texture::setSmooth(bool flag)
 {
-	if (!m_native_handle) return false;
-
-	glBindTexture(GL_TEXTURE_2D, m_native_handle);
-	if (flag)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return true;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->setSmooth(flag);
+	return false;
 }
 
-void gfx::Texture::setFlip(bool flip_x, bool flip_y)
+void Texture::setFlip(bool flip_x, bool flip_y)
 {
-	m_flip_x = flip_x;
-	m_flip_y = flip_y;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) tex->setFlip(flip_x, flip_y);
 }
 
 
-bool gfx::Texture::loadFromFile(std::initializer_list<std::string> paths)
+bool Texture::loadFromFile(std::initializer_list<std::string> paths)
 {
 	return loadFromFile(*paths.begin());
 }
 
-bool gfx::Texture::loadFromFile(const std::string& path)
+bool Texture::loadFromFile(const std::string& path)
 {
 	int width, height, channels;
 	unsigned char* image_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 	if (!image_data)
 	{
-		m_last_error = gfx::Texture::Error::FILE_NOT_FOUND;
+		m_last_error = Texture::Error::FILE_NOT_FOUND;
 		return false;
 	}
 
-	static PixelFormat formats[] = {
-		PixelFormat::RED,
-		PixelFormat::RED,
-		PixelFormat::RED,
-		PixelFormat::RGB,
-		PixelFormat::RGBA
+	static constexpr gl::PixelFormat formats[] = {
+		gl::PixelFormat::RED,
+		gl::PixelFormat::RED,
+		gl::PixelFormat::RED,
+		gl::PixelFormat::RGB,
+		gl::PixelFormat::RGBA
 	};
-	PixelFormat format = formats[channels];
+	gl::PixelFormat format = formats[channels];
 
 	create(format);
 	bool result = loadFromBuffer(image_data, width, height);
@@ -160,132 +92,81 @@ bool gfx::Texture::loadFromFile(const std::string& path)
 	return result;
 }
 
-bool gfx::Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned int height)
+bool Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned int height)
 {
-	if ((image_data == nullptr) || !m_native_handle)
-		return false;
-
-	const int format_index = int(m_format);
-	const GLenum pixel_format[3] = {
-		OPENGL_TEXTURE_FORMATS[format_index][0],
-		OPENGL_TEXTURE_FORMATS[format_index][1],
-		OPENGL_TEXTURE_FORMATS[format_index][2]
-	};
-	const unsigned int type_size = OPENGL_TEXTURE_TYPE_SIZES[format_index];
-
-	glBindTexture(GL_TEXTURE_2D, m_native_handle);
-	glTexImage2D(GL_TEXTURE_2D, 0, pixel_format[0], width, height, 0, pixel_format[1], pixel_format[2], image_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	unsigned int data_size     = width*height*ChannelEnumToChannelCount(m_format)*type_size;
-	unsigned int old_data_size = m_width*m_height*ChannelEnumToChannelCount(m_format)*OPENGL_TEXTURE_TYPE_SIZES[int(m_format)];
-
-	if (data_size > old_data_size)
-	{
-		if (m_pixels != nullptr) delete[] m_pixels;
-		m_pixels = new unsigned char[data_size];
-	}
-	memcpy(m_pixels, image_data, data_size);
-
-	m_width  = width;
-	m_height = height;
-	return true;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->loadFromBuffer(image_data, width, height);
+	return false;
 }
 
-bool gfx::Texture::loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height)
+bool Texture::loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height)
 {
-	if (!m_native_handle ||
-		(subimage_data == nullptr) ||
-		(position.x < 0) ||
-		(position.y < 0) ||
-		((position.x + width) > m_width) ||
-		((position.y + height) > m_height)) return false;
-
-	const unsigned int type_size    = OPENGL_TEXTURE_TYPE_SIZES[int(m_format)];
-	unsigned int pixel_size         = ChannelEnumToChannelCount(m_format)*type_size;
-	unsigned int pixel_row_size     = width*pixel_size;
-	unsigned int old_pixel_row_size = m_width*pixel_size;
-
-	unsigned char* subimage_bytes = static_cast<unsigned char*>(subimage_data);
-	for (unsigned int y = 0; y < height; y++)
-		memcpy(m_pixels + int((y + position.y)*old_pixel_row_size) + int(position.x*pixel_size), subimage_bytes + int(y*pixel_row_size), pixel_row_size);
-
-	return loadFromBuffer(m_pixels, m_width, m_height);
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->loadSubTexture(subimage_data, position.x, position.y, width, height);
+	return false;
 }
 
 
-bool gfx::Texture::resize(const mth::Vec2& new_size)
+bool Texture::resize(const mth::Vec2& new_size)
 {
-	if ((new_size.x <= 0) || (new_size.y <= 0)) return false;
-
-	const unsigned int type_size     = OPENGL_TEXTURE_TYPE_SIZES[int(m_format)];
-	unsigned int pixel_bytes         = ChannelEnumToChannelCount(m_format)*type_size;
-	unsigned int pixel_row_bytes     = new_size.x*pixel_bytes;
-	unsigned int old_pixel_row_bytes = m_width*pixel_bytes;
-	unsigned int pixels_bytes        = pixel_row_bytes*new_size.y;
-
-	unsigned char* new_pixels = new unsigned char[pixels_bytes];
-	if ((new_size.x > m_width) || (new_size.y > m_height))
-		memset(new_pixels, 0, pixels_bytes);
-
-	unsigned int min_row_bytes  = (pixel_row_bytes < old_pixel_row_bytes) ? pixel_row_bytes : old_pixel_row_bytes;
-	unsigned int min_rows_count = (new_size.y      < m_height)            ? new_size.y      : m_height;
-
-	for (unsigned int y = 0; y < min_rows_count; y++)
-		memcpy(new_pixels + int(y*pixel_row_bytes), m_pixels + int(y*old_pixel_row_bytes), min_row_bytes);
-
-	bool result = loadFromBuffer(new_pixels, new_size.x, new_size.y);
-	
-	delete[] new_pixels;
-	return result;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->resize(new_size.x, new_size.y);
+	return false;
 }
 
 
-bool eng::gfx::Texture::isTransparent()
+bool Texture::isTransparent() const
 {
-	return ChannelEnumToChannelCount(m_format) > 3;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->isTransparent();
+	return false;
 }
 
-bool gfx::Texture::getFlipX()
+bool Texture::getFlipX() const
 {
-	return m_flip_x;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->getFlipX();
+	return false;
 }
 
-bool gfx::Texture::getFlipY()
+bool Texture::getFlipY() const
 {
-	return m_flip_y;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->getFlipY();
+	return false;
 }
 
-mth::Vec2 gfx::Texture::getSize()
+mth::Vec2 Texture::getSize() const
 {
-	return mth::Vec2(m_width, m_height);
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return mth::Vec2(tex->getWidth(), tex->getHeight());
+	return mth::Vec2();
 }
 
-gfx::Texture::PixelFormat gfx::Texture::getPixelFormat()
+gl::PixelFormat Texture::getPixelFormat() const
 {
-	return m_format;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) return tex->getPixelFormat();
+	return gl::PixelFormat::RED;
 }
 
-GLuint gfx::Texture::getNativeHandle()
+unsigned int gfx::Texture::getNativeHandle() const
 {
-	return m_native_handle;
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex && gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3) return static_cast<gl::OpenGL33::TextureImpl*>(tex.get())->getNativeHandle();
+	return 0;
 }
 
-int gfx::Texture::getLastError()
+int Texture::getLastError()
 {
 	return m_last_error;
 }
 
 
-void gfx::Texture::bind() const
+void Texture::bind() const
 {
-	glBindTexture(GL_TEXTURE_2D, m_native_handle);
+	auto tex = m_texture_pool.getTexture(m_texture_handle);
+	if (tex) tex->bind();
 }
 
-void gfx::Texture::unbind() const
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-} //namespace eng
+} //namespace eng::gfx

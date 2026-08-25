@@ -13,6 +13,7 @@
 #include <Engine/System/EventManager.hpp>
 
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/Shader.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
@@ -128,7 +129,7 @@ void core::Engine::setup()
 	std::vector<eng::gfx::RenderScene::RenderPass> pipeline2d = {
 		{
 			&shader2d,
-			{eng::gfx::Texture::PixelFormat::RGBA},
+			{eng::gfx::gl::PixelFormat::RGBA},
 			{},
 			nullptr,
 			{0, 0},
@@ -140,11 +141,11 @@ void core::Engine::setup()
 		{
 			&shader3d_deferred,
 			{
-				eng::gfx::Texture::PixelFormat::RGBA32F, //position
-				eng::gfx::Texture::PixelFormat::RGBA32F, //normal
-				eng::gfx::Texture::PixelFormat::RGBA,    //albedo
-				eng::gfx::Texture::PixelFormat::RGBA,    //met rog hei ao
-				eng::gfx::Texture::PixelFormat::RGBA     //emission
+				eng::gfx::gl::PixelFormat::RGBA32F, //position
+				eng::gfx::gl::PixelFormat::RGBA32F, //normal
+				eng::gfx::gl::PixelFormat::RGBA,    //albedo
+				eng::gfx::gl::PixelFormat::RGBA,    //met rog hei ao
+				eng::gfx::gl::PixelFormat::RGBA     //emission
 			},
 			{},
 			nullptr,

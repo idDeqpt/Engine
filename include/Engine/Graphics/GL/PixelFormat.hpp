@@ -1,0 +1,21 @@
+#ifndef GRAPHICS_GL_PIXEL_FORMAT_CLASS_HEADER
+#define GRAPHICS_GL_PIXEL_FORMAT_CLASS_HEADER
+
+namespace eng::gfx::gl
+{
+	enum class PixelFormat
+	{
+		RED = 0,
+		BLUE,
+		GREEN,
+		ALPHA,
+		RGB,
+		SRGB,
+		RGB32F,
+		RGBA,
+		SRGBA,
+		RGBA32F,
+	};
+}
+
+#endif //GRAPHICS_GL_PIXEL_FORMAT_CLASS_HEADER

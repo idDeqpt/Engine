@@ -1,11 +1,14 @@
 #ifndef GRAPHICS_API_CLASS_HEADER
 #define GRAPHICS_API_CLASS_HEADER
 
-#include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <memory>
 
 namespace eng::gfx::gl
 {
+	class TexturePool;
+	class ArrayBuffer;
+	class TextureImpl;
+
 	enum class Capability
 	{
 		DEPTH_TEST,
@@ -62,6 +65,8 @@ namespace eng::gfx::gl
 		static Api* getInstance();
 		static void createInstance(Type type = Type::AUTO);
 
+		static TexturePool* getTexturePool();
+
 		virtual ~Api() = default;
 
 		virtual Type getType() = 0;
@@ -91,9 +96,11 @@ namespace eng::gfx::gl
 		virtual bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
 
 		virtual std::unique_ptr<ArrayBuffer> createArrayBuffer() = 0;
+		virtual std::unique_ptr<TextureImpl> createTextureImpl() = 0;
 
 	protected:
 		static std::unique_ptr<Api> s_instance;
+		static std::unique_ptr<TexturePool> s_texture_pool;
 
 	private:
 		static std::unique_ptr<Api> createImpl(Type type);

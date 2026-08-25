@@ -28,6 +28,7 @@ gl::Api::Type Api::getType()
 #include <GLFW/glfw3.h>
 
 #include "ArrayBuffer.hpp"
+#include "TextureImpl.hpp"
 
 namespace
 {
@@ -304,6 +305,11 @@ bool Api::setUniformMatrix4fv(unsigned int shader_id, const char* name, const fl
 std::unique_ptr<gl::ArrayBuffer> Api::createArrayBuffer()
 {
 	return std::make_unique<OpenGL33::ArrayBuffer>();
+}
+
+std::unique_ptr<gl::TextureImpl> Api::createTextureImpl()
+{
+	return std::make_unique<OpenGL33::TextureImpl>();
 }
 
 

@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "ArrayBuffer.hpp"
+#include "TextureImpl.hpp"
 
 
 namespace eng::gfx::gl::Null
@@ -41,6 +42,11 @@ bool Api::setUniformMatrix4fv(unsigned int shader_id, const char* name, const fl
 std::unique_ptr<gl::ArrayBuffer> Api::createArrayBuffer()
 {
 	return std::make_unique<Null::ArrayBuffer>();
+}
+
+std::unique_ptr<gl::TextureImpl> Api::createTextureImpl()
+{
+	return std::make_unique<Null::TextureImpl>();
 }
 
 } //namespace eng::gfx::gl::Null

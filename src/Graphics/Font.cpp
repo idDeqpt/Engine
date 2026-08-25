@@ -1,5 +1,6 @@
 #include <Engine/Graphics/Font.hpp>
 
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Math/Vec2.hpp>
 
@@ -108,7 +109,7 @@ void gfx::Font::createFrame(unsigned int size)
 	if (it != m_frames.end())
 		return;
 
-	m_frames[size].texture.create(Texture::PixelFormat::RGBA);
+	m_frames[size].texture.create(gl::PixelFormat::RGBA);
 	m_frames[size].texture.setSmooth(false);
 }
 

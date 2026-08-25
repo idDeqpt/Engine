@@ -3,6 +3,7 @@
 
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Color.hpp>
 
@@ -22,9 +23,9 @@ namespace eng::gfx
 		struct RenderPass
 		{
 			Shader* shader;
-			std::vector<Texture::PixelFormat> color_attachments;
-			std::vector<std::string>          input_buffers_names;
-			std::function<void(Shader*)>      uniforms_handler;
+			std::vector<gl::PixelFormat> color_attachments;
+			std::vector<std::string>     input_buffers_names;
+			std::function<void(Shader*)> uniforms_handler;
 			mth::Vec2 viewport_position;
 			mth::Vec2 viewport_size;
 		};

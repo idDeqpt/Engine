@@ -2,6 +2,7 @@
 #define RENDER_TARGET_CLASS_HEADER
 
 #include <Engine/Math/Vec2.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
@@ -14,7 +15,7 @@ namespace eng::gfx
 	{
 	public:
 		RenderTarget();
-		RenderTarget(unsigned int buffers_count, Texture::PixelFormat* formats);
+		RenderTarget(unsigned int buffers_count, gl::PixelFormat* formats);
 		~RenderTarget();
 
 		void setViewport(int x, int y, int width, int height);

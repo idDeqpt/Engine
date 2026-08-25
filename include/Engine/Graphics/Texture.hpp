@@ -1,6 +1,8 @@
 #ifndef TEXTURE_CLASS_HEADER
 #define TEXTURE_CLASS_HEADER
 
+#include <Engine/Graphics/GL/TextureHandle.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Core/Resource.hpp>
 #include <Engine/Math/Vec2.hpp>
 
@@ -9,37 +11,23 @@
 #include <vector>
 
 
-typedef unsigned int GLuint;
-
 namespace eng::gfx
 {
+	class TexturePool;
+
 	class Texture : public core::Resource
 	{
 	public:
-		enum PixelFormat
-		{
-			RED = 0,
-			BLUE,
-			GREEN,
-			ALPHA,
-			RGB,
-			SRGB,
-			RGB32F,
-			RGBA,
-			SRGBA,
-			RGBA32F,
-		};
-
 		enum Error
 		{
-			NO_ERROR,
+			NO_ERROR = 0,
 			FILE_NOT_FOUND,
 		};
 
 		Texture();
 		~Texture();
 
-		void create(PixelFormat pixel_format);
+		void create(gl::PixelFormat pixel_format);
 		void remove();
 
 		bool setSmooth(bool flag);
@@ -47,29 +35,26 @@ namespace eng::gfx
 
 		bool loadFromFile(std::initializer_list<std::string> paths);
 		bool loadFromFile(const std::string& path);
+
 		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height);
 		bool loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height);
 
 		bool resize(const mth::Vec2& new_size);
 
-		bool isTransparent();
-		bool getFlipX();
-		bool getFlipY();
-		mth::Vec2 getSize();
-		PixelFormat getPixelFormat();
-		GLuint getNativeHandle();
+		bool isTransparent() const;
+		bool getFlipX() const;
+		bool getFlipY() const;
+		mth::Vec2 getSize() const;
+		gl::PixelFormat getPixelFormat() const;
+		unsigned int getNativeHandle() const;
+
+		void bind() const;
+
 		int getLastError();
 
-		void bind()   const;
-		void unbind() const;
-
 	protected:
-		GLuint m_native_handle;
-		bool m_flip_x, m_flip_y;
-		unsigned int m_width;
-		unsigned int m_height;
-		PixelFormat m_format;
-		unsigned char* m_pixels;
+		gl::TextureHandle m_texture_handle;
+		gl::TexturePool& m_texture_pool;
 	};
 }
 

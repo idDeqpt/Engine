@@ -3,6 +3,7 @@
 
 #include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
+#include <Engine/Graphics/GL/TextureImpl.hpp>
 
 namespace eng::gfx::gl::Null
 {
@@ -37,6 +38,7 @@ namespace eng::gfx::gl::Null
 		bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
 
 		std::unique_ptr<ArrayBuffer> createArrayBuffer() override;
+		std::unique_ptr<TextureImpl> createTextureImpl() override;
 	};
 }
 
