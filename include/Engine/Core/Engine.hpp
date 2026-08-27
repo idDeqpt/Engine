@@ -4,7 +4,9 @@
 #include <Engine/Context.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/SignalBus.hpp>
+
 #include <vector>
+#include <memory>
 
 
 namespace eng::sys {class Window;}
@@ -14,7 +16,7 @@ namespace eng::core
 	class Engine
 	{
 	public:
-		Engine(Node& root);
+		Engine(std::unique_ptr<Node> root);
 		~Engine();
 
 		void setup();
@@ -25,7 +27,7 @@ namespace eng::core
 
 	public:
 		float m_framerate;
-		Node* m_root_node;
+		std::unique_ptr<Node> m_root_node;
 		sys::Window* m_window;
 		Context m_context;
 		std::vector<SubscriptionId> m_subscriptions;

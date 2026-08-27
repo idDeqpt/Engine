@@ -11,14 +11,22 @@
 namespace eng
 {
 
+void sys::Window::initialize()
+{
+	glfwInit();
+}
+
+void sys::Window::finalize()
+{
+	glfwTerminate();
+}
+
 sys::Window::Window() : Window(800, 600, "Window"){}
 
 sys::Window::Window(int width, int height, const std::string& title):
 	m_size(width, height),
 	gfx::RenderTarget()
 {
-	glfwInit();
-
 	glfwWindowHint(GLFW_POSITION_X, 0);
 	glfwWindowHint(GLFW_POSITION_Y, 30);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,7 +39,6 @@ sys::Window::Window(int width, int height, const std::string& title):
 	if (window_ptr == nullptr)
 	{
 		core::Logger::error("Failed to create window");
-		destroy();
 		return;
 	}
 	glfwMakeContextCurrent(window_ptr);
@@ -42,11 +49,6 @@ sys::Window::Window(int width, int height, const std::string& title):
 	setViewportCentering(0.5);
 	setViewportScaling(ViewportScaling::FIXED);
 	updateViewport();
-}
-
-sys::Window::~Window()
-{
-	destroy();
 }
 
 
@@ -139,11 +141,6 @@ void sys::Window::clear(const gfx::Color& color)
 void sys::Window::display()
 {
 	glfwSwapBuffers(window_ptr);
-}
-
-void sys::Window::destroy()
-{
-	glfwTerminate();
 }
 
 } //namespace eng

@@ -71,7 +71,8 @@ namespace eng::gfx::gl
 		virtual ~Api() = default;
 
 		virtual Type getType() = 0;
-		virtual void init() = 0;
+		virtual void initialize() = 0;
+		virtual void finalize();
 
 		virtual void enable(const Capability& capability) = 0;
 		virtual void disable(const Capability& capability) = 0;

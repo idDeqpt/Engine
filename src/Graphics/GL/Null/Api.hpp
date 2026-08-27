@@ -13,7 +13,7 @@ namespace eng::gfx::gl::Null
 		static bool isAvailable();
 
 		Type getType() override;
-		void init() override;
+		void initialize() override;
 
 		void enable(const Capability& capability);
 		void disable(const Capability& capability);

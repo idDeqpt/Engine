@@ -15,7 +15,7 @@ namespace eng::gfx::gl::OpenGL33
 
 		#ifdef USE_OPENGL_3_3
 
-		void init() override;
+		void initialize() override;
 
 		void enable(const Capability& capability);
 		void disable(const Capability& capability);

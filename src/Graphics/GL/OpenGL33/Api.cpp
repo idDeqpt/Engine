@@ -125,7 +125,7 @@ GLenum blendFactorToGlBlendFactor(const eng::gfx::gl::BlendFactor& factor)
 namespace eng::gfx::gl::OpenGL33
 {
 
-void Api::init()
+void Api::initialize()
 {
 	gladLoadGL(glfwGetProcAddress);
 }

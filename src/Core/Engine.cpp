@@ -37,11 +37,12 @@
 namespace eng
 {
 
-core::Engine::Engine(Node& root):
-	m_root_node(&root),
+core::Engine::Engine(std::unique_ptr<Node> root):
+	m_root_node(std::move(root)),
 	m_framerate(60)
 {
 	Logger::debug("Start app");
+	sys::Window::initialize();
 	m_window = new sys::Window(900, 600, "Engine");
 
 	Logger::debug("Start initialization");
@@ -96,12 +97,17 @@ core::Engine::Engine(Node& root):
 core::Engine::~Engine()
 {
 	Logger::debug("Start finalization");
+	m_root_node->destroy();
+	m_root_node.reset();
+
 	for (unsigned int i = 0; i < m_subscriptions.size(); i++)
 		m_context.get<core::SignalBus>().unsubscribe(m_subscriptions[i]);
 	m_context.shutdown();
+	gfx::gl::Api::getInstance()->finalize();
 	Logger::debug("End finalization");
 
-	m_window->destroy();
+	delete m_window;
+	sys::Window::finalize();
 	Logger::debug("End app");
 }
 

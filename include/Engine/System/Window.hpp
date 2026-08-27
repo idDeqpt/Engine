@@ -21,9 +21,11 @@ namespace eng::sys
 			STRETCH,
 		};
 
+		static void initialize();
+		static void finalize();
+
 		Window();
 		Window(int width, int height, const std::string& title);
-		~Window();
 
 		void setTitle(const std::string& new_title);
 		GLFWwindow* getHandler();
@@ -41,7 +43,6 @@ namespace eng::sys
 		void clear(const gfx::Color& color) override;
 
 		void display();
-		void destroy();
 
 	protected:
 		GLFWwindow* window_ptr;

@@ -1,10 +1,10 @@
 #include <Engine/Core/Engine.hpp>
 #include <scenes/Root.hpp>
+#include <memory>
 
 int main()
 {
-	Root r;
-	eng::core::Engine engine(r);
+	eng::core::Engine engine(std::make_unique<Root>());
 	engine.setup();
 	engine.mainLoop();
 

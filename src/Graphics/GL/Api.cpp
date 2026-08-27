@@ -25,7 +25,13 @@ Api* Api::getInstance()
 void Api::createInstance(Type type)
 {
 	s_instance = createImpl(type);
-	if (s_instance) s_instance->init();
+	if (s_instance) s_instance->initialize();
+}
+
+
+void Api::finalize()
+{
+	s_texture_pool.reset();
 }
 
 
