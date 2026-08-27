@@ -3,6 +3,7 @@
 
 #include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
+#include <Engine/Graphics/GL/FrameBuffer.hpp>
 #include <Engine/Graphics/GL/TextureImpl.hpp>
 
 namespace eng::gfx::gl::OpenGL33
@@ -24,6 +25,7 @@ namespace eng::gfx::gl::OpenGL33
 		void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) override;
 
 		void setScissor(int x, int y, unsigned int width, unsigned int height) override;
+		void setViewport(int x, int y, unsigned int width, unsigned int height) override;
 
 		void setActiveTexture(unsigned int texrure_i) override;
 
@@ -40,6 +42,8 @@ namespace eng::gfx::gl::OpenGL33
 		bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
 
 		std::unique_ptr<ArrayBuffer> createArrayBuffer() override;
+		std::unique_ptr<FrameBuffer> createFrameBuffer() override;
+		
 		std::unique_ptr<TextureImpl> createTextureImpl() override;
 
 		#endif

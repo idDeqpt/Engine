@@ -28,6 +28,7 @@ gl::Api::Type Api::getType()
 #include <GLFW/glfw3.h>
 
 #include "ArrayBuffer.hpp"
+#include "FrameBuffer.hpp"
 #include "TextureImpl.hpp"
 
 namespace
@@ -160,6 +161,11 @@ void Api::setBlendFunction(const BlendFactor& source, const BlendFactor& destina
 void Api::setScissor(int x, int y, unsigned int width, unsigned int height)
 {
 	glScissor(x, y, width, height);
+}
+
+void Api::setViewport(int x, int y, unsigned int width, unsigned int height)
+{
+	glViewport(x, y, width, height);
 }
 
 
@@ -306,6 +312,12 @@ std::unique_ptr<gl::ArrayBuffer> Api::createArrayBuffer()
 {
 	return std::make_unique<OpenGL33::ArrayBuffer>();
 }
+
+std::unique_ptr<gl::FrameBuffer> Api::createFrameBuffer()
+{
+	return std::make_unique<OpenGL33::FrameBuffer>();
+}
+
 
 std::unique_ptr<gl::TextureImpl> Api::createTextureImpl()
 {

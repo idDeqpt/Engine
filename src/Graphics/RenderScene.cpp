@@ -178,7 +178,7 @@ void gfx::RenderScene::draw2d(RenderTarget& target)
 		for (unsigned int j = 0; j < pass.input_buffers_names.size(); j++)
 		{
 			gfx::gl::Api::getInstance()->setActiveTexture(j);
-			m_framebuffers2d[i - 1]->getTexture(j).bind();
+			m_framebuffers2d[i - 1]->getTexture(j)->bind();
 			pass.shader->setUniform1i(pass.input_buffers_names[j], j);
 		}
 
@@ -231,7 +231,7 @@ void gfx::RenderScene::draw3d(RenderTarget& target)
 		for (unsigned int j = 0; j < pass.input_buffers_names.size(); j++)
 		{
 			gfx::gl::Api::getInstance()->setActiveTexture(j);
-			m_framebuffers3d[i - 1]->getTexture(j).bind();
+			m_framebuffers3d[i - 1]->getTexture(j)->bind();
 			pass.shader->setUniform1i(pass.input_buffers_names[j], j);
 		}
 

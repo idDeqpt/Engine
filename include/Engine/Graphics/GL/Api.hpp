@@ -7,6 +7,7 @@ namespace eng::gfx::gl
 {
 	class TexturePool;
 	class ArrayBuffer;
+	class FrameBuffer;
 	class TextureImpl;
 
 	enum class Capability
@@ -80,6 +81,7 @@ namespace eng::gfx::gl
 		virtual void setBlendFunction(const BlendFactor& source, const BlendFactor& destination) = 0;
 
 		virtual void setScissor(int x, int y, unsigned int width, unsigned int height) = 0;
+		virtual void setViewport(int x, int y, unsigned int width, unsigned int height) = 0;
 		
 		virtual void setActiveTexture(unsigned int texrure_i) = 0;
 
@@ -96,6 +98,8 @@ namespace eng::gfx::gl
 		virtual bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) = 0;
 
 		virtual std::unique_ptr<ArrayBuffer> createArrayBuffer() = 0;
+		virtual std::unique_ptr<FrameBuffer> createFrameBuffer() = 0;
+		
 		virtual std::unique_ptr<TextureImpl> createTextureImpl() = 0;
 
 	protected:

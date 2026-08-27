@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "ArrayBuffer.hpp"
+#include "FrameBuffer.hpp"
 #include "TextureImpl.hpp"
 
 
@@ -23,6 +24,7 @@ void Api::setDepthFunction(const DepthFunction& function) {}
 void Api::setBlendFunction(const BlendFactor& source, const BlendFactor& destination) {}
 
 void Api::setScissor(int x, int y, unsigned int width, unsigned int height) {}
+void Api::setViewport(int x, int y, unsigned int width, unsigned int height) {}
 
 void Api::setActiveTexture(unsigned int texrure_i) {}
 
@@ -43,6 +45,12 @@ std::unique_ptr<gl::ArrayBuffer> Api::createArrayBuffer()
 {
 	return std::make_unique<Null::ArrayBuffer>();
 }
+
+std::unique_ptr<gl::FrameBuffer> Api::createFrameBuffer()
+{
+	return std::make_unique<Null::FrameBuffer>();
+}
+
 
 std::unique_ptr<gl::TextureImpl> Api::createTextureImpl()
 {
