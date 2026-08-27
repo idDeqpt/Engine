@@ -1,1 +1,0 @@
-start "%~nx0" "%~dp0build\Debug\app.exe"
