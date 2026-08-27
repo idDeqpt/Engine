@@ -7,7 +7,7 @@
 namespace eng::gfx::gl::Null
 {
 
-void TextureImpl::create(gl::PixelFormat pixel_format) {}
+void TextureImpl::create(gl::PixelFormat pixel_format) {m_pixel_format = pixel_format;}
 void TextureImpl::remove() {}
 
 bool TextureImpl::setSmooth(bool flag) {return true;}
@@ -23,8 +23,8 @@ bool TextureImpl::getFlipX() {return true;}
 bool TextureImpl::getFlipY() {return true;}
 unsigned int TextureImpl::getWidth() {return 0;}
 unsigned int TextureImpl::getHeight() {return 0;}
-gl::PixelFormat TextureImpl::getPixelFormat() {return gl::PixelFormat::RED;}
+gl::PixelFormat TextureImpl::getPixelFormat() {return m_pixel_format;}
 
 void TextureImpl::bind() {}
 
-} //namespace eng::gfx::gl::OpenGL33
+} //namespace eng::gfx::gl::Null

@@ -31,6 +31,9 @@ namespace eng::gfx::gl::Null
 		PixelFormat getPixelFormat() override;
 
 		void bind() override;
+	
+	protected:
+		PixelFormat m_pixel_format;
 	};
 }
 

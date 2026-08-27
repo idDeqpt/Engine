@@ -14,7 +14,7 @@ bool Api::isAvailable()
 
 gl::Api::Type Api::getType()
 {
-	return Api::Type::OPENGL_3_3;
+	return gl::Api::Type::OPENGL_3_3;
 }
 
 } //namespace eng::gfx::gl::OpenGL33

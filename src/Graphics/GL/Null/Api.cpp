@@ -29,8 +29,8 @@ void Api::setViewport(int x, int y, unsigned int width, unsigned int height) {}
 void Api::setActiveTexture(unsigned int texrure_i) {}
 
 void Api::useShader(unsigned int shader_id) {}
-unsigned int Api::compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) {return 0;}
-unsigned int Api::compileFrahmentShader(const char* fragment_buffer, char* log_buffer, unsigned int log_buffer_size) {return 0;}
+unsigned int Api::compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) {return 1;}
+unsigned int Api::compileFrahmentShader(const char* fragment_buffer, char* log_buffer, unsigned int log_buffer_size) {return 1;}
 unsigned int Api::linkShader(unsigned int vertex_id, unsigned int fragment_id, char* log_buffer, unsigned int log_buffer_size) {return true;}
 
 bool Api::setUniform1i(unsigned int shader_id, const char* name, int value) {return true;}

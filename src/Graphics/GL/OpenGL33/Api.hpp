@@ -11,10 +11,10 @@ namespace eng::gfx::gl::OpenGL33
 	class Api : public gl::Api
 	{
 		static bool isAvailable();
+		Type getType() override;
 
 		#ifdef USE_OPENGL_3_3
 
-		Type getType() override;
 		void init() override;
 
 		void enable(const Capability& capability);

@@ -10,14 +10,14 @@
 namespace eng::gfx::gl::Null
 {
 
-void FrameBuffer::create(unsigned int buffers_count, gl::PixelFormat* formats) {}
+void FrameBuffer::create(unsigned int buffers_count, gl::PixelFormat* formats) {m_texture.create(PixelFormat::RED);}
 void FrameBuffer::remove() {}
 
 void FrameBuffer::setViewportSize(unsigned int width, unsigned int height) {}
 
 void FrameBuffer::clear(const Color& color) {}
 
-Texture* FrameBuffer::getTexture(unsigned int index) {return nullptr;}
+Texture* FrameBuffer::getTexture(unsigned int index) {return &m_texture;}
 
 void FrameBuffer::bind() {}
 

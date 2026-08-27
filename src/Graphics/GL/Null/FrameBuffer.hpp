@@ -3,11 +3,11 @@
 
 #include <Engine/Graphics/GL/FrameBuffer.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
+#include <Engine/Graphics/Texture.hpp>
 
 namespace eng::gfx
 {
     class Color;
-    class Texture;
 
 namespace gl::Null
 {
@@ -27,6 +27,9 @@ namespace gl::Null
 		Texture* getTexture(unsigned int index) override;
 
 		void bind() override;
+
+	protected:
+		Texture m_texture;
 	};
 }
 }
