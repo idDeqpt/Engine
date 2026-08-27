@@ -21,6 +21,8 @@ phy::BVH::~BVH()
 void phy::BVH::rebuild(std::vector<PhysicsBody2D*>& bodies)
 {
 	clear();
+	if (bodies.empty()) return;
+	
 	m_nodes_pool.reserve(bodies.size()*3);
 	m_last_collisions.reserve(bodies.size()*5);
 
