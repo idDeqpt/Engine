@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 4.0.3)
+cmake_minimum_required(VERSION 3.27)
 
-set(PROJECT_NAME app)
+set(PROJECT_NAME FruitMerge)
 
 project(${PROJECT_NAME} CXX)
 

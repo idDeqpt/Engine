@@ -16,7 +16,7 @@ public:
 protected:
 	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) override
 	{
-		return m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(mouse_pos);
+		return m_context.get<eng::gfx::RenderCanvas>().getActiveCamera().convertWindowPoint(mouse_pos);
 	}
 };
 

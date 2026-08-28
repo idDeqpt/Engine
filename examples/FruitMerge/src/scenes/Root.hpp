@@ -10,7 +10,7 @@
 
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/Font.hpp>
-#include <Engine/Graphics/RenderScene.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 #include <string>
@@ -25,15 +25,15 @@ public:
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
 		auto camera2d = addChild<eng::gfx::Camera2D>("main_camera");
 		camera2d->setSize(v_size);
-		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
+		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		UIScene* ui = addChild<UIScene>("ui_scene", *font);
 		ui->setLayer(100);
-		m_context.get<eng::gfx::RenderScene>().addObject(*ui);
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*ui);
 
 		GameScene* game = addChild<GameScene>("game_scene");
 		game->setLayer(10);
-		m_context.get<eng::gfx::RenderScene>().addObject(*game);
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*game);
 
 		m_viewport_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){

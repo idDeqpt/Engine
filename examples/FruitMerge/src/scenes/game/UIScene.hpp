@@ -7,7 +7,7 @@
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Font.hpp>
-#include <Engine/Graphics/RenderScene.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class UIScene : public SceneLayer
@@ -23,10 +23,10 @@ public:
 		auto camera2d = addChild<eng::gfx::Camera2D>("camera");
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
 		camera2d->setRect(0, v_size.x, 0, v_size.y);
-		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
+		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		auto text = addChild<eng::gfx::Text2D>("text_game_over");
-		m_context.get<eng::gfx::RenderScene>().addObject(*text);
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
 		text->setFont(*m_font);
 		text->setCharacterSize(24);
 		text->setString("Game over");
@@ -36,7 +36,7 @@ public:
 		text->setColor(eng::gfx::Color(255, 0, 0));
 
 		text = addChild<eng::gfx::Text2D>("text_frametime");
-		m_context.get<eng::gfx::RenderScene>().addObject(*text);
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
 		text->setFont(*m_font);
 		text->setCharacterSize(24);
 

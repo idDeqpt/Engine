@@ -45,7 +45,7 @@ protected:
 
 	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) override
 	{
-		eng::mth::Vec2 mouse_point = m_context.get<eng::gfx::RenderScene>().getActiveCamera2D().convertWindowPoint(mouse_pos);
+		eng::mth::Vec2 mouse_point = m_context.get<eng::gfx::RenderCanvas>().getActiveCamera().convertWindowPoint(mouse_pos);
 		eng::mth::Vec2 lr = m_left_bound - m_right_bound;
 		eng::mth::Vec2 lp = m_left_bound - mouse_point;
 		float t = lp.dot(lr)/lr.dot(lr);

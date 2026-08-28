@@ -8,7 +8,7 @@
 #include <scenes/game/sandbox/SandboxBallsController.hpp>
 #include <scenes/game/classic/ClassicBallsController.hpp>
 
-#include <Engine/Graphics/RenderScene.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -23,7 +23,7 @@ public:
 		auto camera2d = addChild<Camera>("camera");
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
 		camera2d->setSize(eng::mth::Vec2(1000*(v_size.x/v_size.y), 1000));
-		m_context.get<eng::gfx::RenderScene>().setActiveCamera(*camera2d);
+		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		eng::mth::Vec2 box_pos(0, 50);
 		auto box = addChild<Box2D>("box");

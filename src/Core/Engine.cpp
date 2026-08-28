@@ -16,6 +16,8 @@
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/Shader.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
+#include <Engine/Graphics/3D/RenderWorld.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/LightManager.hpp>
 
@@ -53,7 +55,8 @@ core::Engine::Engine(std::unique_ptr<Node> root):
 	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
 	m_context.create<core::ResourceManager>();
 	m_context.create<gfx::LightManager>();
-	m_context.create<gfx::RenderScene>();
+	m_context.create<gfx::RenderWorld>();
+	m_context.create<gfx::RenderCanvas>();
 	m_context.create<phy::PhysicsWorld>();
 	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
 
@@ -167,7 +170,7 @@ void core::Engine::setup()
 				"uAlbedo"
 			},
 			[&](gfx::Shader* sh){
-				gfx::Camera3D& active_view = m_context.get<gfx::RenderScene>().getActiveCamera3D();
+				gfx::Camera3D& active_view = m_context.get<gfx::RenderWorld>().getActiveCamera();
 				mth::Vec3 view_loc_pos = active_view.getPosition();
 				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", &view_glob_pos.x);
@@ -186,9 +189,8 @@ void core::Engine::setup()
 		}
 	};
 
-	m_context.get<gfx::RenderScene>().setClearColor(gfx::Color(120));
-	m_context.get<gfx::RenderScene>().setRenderPipeline2D(pipeline2d);
-	m_context.get<gfx::RenderScene>().setRenderPipeline3D(pipeline3d);
+	m_context.get<gfx::RenderWorld>().setRenderPipeline(pipeline3d);
+	m_context.get<gfx::RenderCanvas>().setRenderPipeline(pipeline2d);
 
 	m_root_node->setName("root");
 	m_root_node->setup(m_context);
@@ -197,10 +199,11 @@ void core::Engine::setup()
 
 void core::Engine::mainLoop()
 {
-	sys::EventManager&   Event_Manager   = m_context.get<sys::EventManager>();
-	gfx::RenderScene&    Render_Scene    = m_context.get<gfx::RenderScene>();
-	phy::PhysicsWorld&   Physics_World   = m_context.get<phy::PhysicsWorld>();
-	TimeManager&         Time_Manager    = m_context.get<TimeManager>();
+	sys::EventManager& Event_Manager = m_context.get<sys::EventManager>();
+	gfx::RenderWorld&  Render_World  = m_context.get<gfx::RenderWorld>();
+	gfx::RenderCanvas& Render_Canvas = m_context.get<gfx::RenderCanvas>();
+	phy::PhysicsWorld& Physics_World = m_context.get<phy::PhysicsWorld>();
+	TimeManager&       Time_Manager  = m_context.get<TimeManager>();
 
 	float real_frame_delta = 0;
 	float full_frame_delta = 0;
@@ -217,7 +220,9 @@ void core::Engine::mainLoop()
 
 		m_root_node->cleanupDestroyed();
 
-		Render_Scene.render(*m_window);
+		m_window->clear(gfx::Color(120));
+		Render_World.render(*m_window);
+		Render_Canvas.render(*m_window);
 		m_window->display();
 
 		real_frame_delta = timer.getElapsedSeconds();

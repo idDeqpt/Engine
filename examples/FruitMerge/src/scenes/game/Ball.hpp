@@ -11,8 +11,8 @@
 
 #include <Engine/Graphics/2D/Sprite2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Font.hpp>
 #include <Engine/Math/Vec2.hpp>
@@ -39,7 +39,7 @@ public:
 		a->setCollider<eng::phy::CircleCollider2D>();
 
 		auto s = addChild<eng::gfx::Sprite2D>("sprite");
-		m_context.get<eng::gfx::RenderScene>().addObject(*s);
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*s);
 
 		auto col = setCollider<eng::phy::CircleCollider2D>();
 		if (m_level)
@@ -54,7 +54,7 @@ public:
 
 	void onDestroy()
 	{
-		m_context.get<eng::gfx::RenderScene>().removeObject(*(dynamic_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"))));
+		m_context.get<eng::gfx::RenderCanvas>().removeObject(*(dynamic_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"))));
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*(dynamic_cast<eng::phy::AreaBody2D*>(getChildByName("area"))));
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}

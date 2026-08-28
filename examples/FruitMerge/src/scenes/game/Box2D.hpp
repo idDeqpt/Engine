@@ -11,8 +11,8 @@
 #include <Engine/Physics/PhysicsWorld.hpp>
 
 #include <Engine/Graphics/2D/Shape2D.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class Box2D : public eng::phy::AreaBody2D
@@ -21,13 +21,13 @@ public:
 	void onSetup()
 	{
 		eng::phy::PhysicsWorld& PW = m_context.get<eng::phy::PhysicsWorld>();
-		eng::gfx::RenderScene&  RS = m_context.get<eng::gfx::RenderScene>();
+		eng::gfx::RenderCanvas& RC = m_context.get<eng::gfx::RenderCanvas>();
 
 		PW.addBody(*this);
 		auto col = setCollider<eng::phy::RectangleCollider2D>();
 		col->setSize(eng::mth::Vec2(400, 500));
 		auto sh = addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
-		RS.addObject(*sh);
+		RC.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(400, 500));
 		sh->setColor(eng::gfx::Color(255, 255, 255, 64));
 
@@ -35,7 +35,7 @@ public:
 		PW.addBody(*b);
 		b->setPosition(eng::mth::Vec2(0, 200));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
-		RS.addObject(*sh);
+		RC.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(300, 10));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
@@ -45,7 +45,7 @@ public:
 		PW.addBody(*b);
 		b->setPosition(eng::mth::Vec2(-150, 0));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
-		RS.addObject(*sh);
+		RC.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 410));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
@@ -55,7 +55,7 @@ public:
 		PW.addBody(*b);
 		b->setPosition(eng::mth::Vec2(150, 0));
 		sh = b->addChild<eng::gfx::Shape2D>("shape", eng::gfx::Shape2D::Type::RECTANGLE);
-		RS.addObject(*sh);
+		RC.addObject(*sh);
 		sh->setSize(eng::mth::Vec2(10, 410));
 		sh->setColor(eng::gfx::Color(0, 0, 255));
 		col = b->setCollider<eng::phy::RectangleCollider2D>();
