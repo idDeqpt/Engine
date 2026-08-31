@@ -113,6 +113,7 @@ void RenderCanvas::draw(RenderTarget& target)
 
 		// draw computed quad
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
+		light_shape.setPosition(light_shape.getSize()/2);
 
 		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
 		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());

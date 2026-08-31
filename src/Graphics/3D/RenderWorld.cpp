@@ -52,7 +52,7 @@ void RenderWorld::draw(RenderTarget& target)
 	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
 	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
-	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(0, 0, 0, 0));
+	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(255, 0, 0, 0));
 
 	for (Drawable* obj : m_objects)
 		if (obj && obj->isVisible())
@@ -61,7 +61,7 @@ void RenderWorld::draw(RenderTarget& target)
 	// deferred render
 	for (unsigned int i = 1; i < m_pipeline.size(); i++)
 	{
-		m_framebuffers[i]->clear(Color(0, 0, 0, 0));
+		m_framebuffers[i]->clear(Color(0, 0, 255, 0));
 		auto& pass = m_pipeline[i];
 		Shader::setActive(pass.shader);
 
@@ -80,6 +80,7 @@ void RenderWorld::draw(RenderTarget& target)
 
 		// draw computed quad
 		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
+		light_shape.setPosition(light_shape.getSize()/2);
 
 		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
 		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
