@@ -1,1 +1,2 @@
 add_subdirectory(FruitMerge)
+add_subdirectory(Simple3D)
