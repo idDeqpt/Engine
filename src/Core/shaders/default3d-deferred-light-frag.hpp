@@ -30,7 +30,10 @@ void main()
 {
     vec2 tex_coord = fTexCoord;
 
-    vec3 position = texture(uPosition, tex_coord).rgb;
+    vec4 pos_tex = texture(uPosition, tex_coord);
+    if (pos_tex.a < 0.5) discard;
+
+    vec3 position = pos_tex.rgb;
     vec3 normal = texture(uNormal, tex_coord).rgb;
     vec3 albedo = texture(uAlbedo, tex_coord).rgb;
 

@@ -52,7 +52,7 @@ void RenderWorld::draw(RenderTarget& target)
 	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
 	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().getValuesPtr());
 
-	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(255, 0, 0, 0));
+	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(0, 0, 0, 0));
 
 	for (Drawable* obj : m_objects)
 		if (obj && obj->isVisible())
@@ -61,7 +61,7 @@ void RenderWorld::draw(RenderTarget& target)
 	// deferred render
 	for (unsigned int i = 1; i < m_pipeline.size(); i++)
 	{
-		m_framebuffers[i]->clear(Color(0, 0, 255, 0));
+		if (m_framebuffers[i] != &target) m_framebuffers[i]->clear(Color(0, 0, 0, 0));
 		auto& pass = m_pipeline[i];
 		Shader::setActive(pass.shader);
 

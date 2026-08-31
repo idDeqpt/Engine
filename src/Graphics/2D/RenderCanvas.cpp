@@ -94,7 +94,7 @@ void RenderCanvas::draw(RenderTarget& target)
 	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	for (unsigned int i = 1; i < m_pipeline.size(); i++)
 	{
-		m_framebuffers[i]->clear(Color(0, 0, 0, 0));
+		if (m_framebuffers[i] != &target) m_framebuffers[i]->clear(Color(0, 0, 0, 0));
 		auto& pass = m_pipeline[i];
 		Shader::setActive(pass.shader);
 
