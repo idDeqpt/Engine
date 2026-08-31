@@ -13,12 +13,13 @@ namespace eng::gfx::gl::Null
 		~ArrayBuffer() = default;
 
 		void loadData(const void* data, unsigned int size, gl::ArrayBuffer::Usage usage) override;
-		void configureAttrib(unsigned int index, unsigned int components, bool normalized, unsigned int stride, unsigned int offset) override;
-        void draw(PrimitiveType p_type, unsigned int first, unsigned int count) override;
+		void loadIndexes(const void* data, unsigned int count, Usage usage) override;
+		void loadInstances(mth::Mat4* transforms, unsigned int count) override;
 
-	protected:
-        unsigned int m_VAO;
-        unsigned int m_VBO;
+		void configureAttrib(unsigned int index, unsigned int components, bool normalized, unsigned int stride, unsigned int offset) override;
+		void configureInstanceAttrib(unsigned int index, unsigned int divisor, unsigned int components, bool normalized, unsigned int stride, unsigned int offset) override;
+
+        void draw(PrimitiveType p_type, unsigned int first, unsigned int count) override;
 	};
 }
 

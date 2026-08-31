@@ -8,17 +8,14 @@
 #include <Engine/Graphics/RenderStates.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Color.hpp>
+#include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Vec3.hpp>
-#include <Engine/Math/Vec4.hpp>
 #include <Engine/Math/Mat4.hpp>
 
-#include <glad/glad.h>
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-#include "../GL/OpenGL33/ArrayBuffer.hpp"
 
 
 struct VertexKey {
@@ -45,22 +42,12 @@ struct std::hash<VertexKey> {
 namespace eng
 {
 
-gfx::Mesh::Mesh() : m_EBO(0), m_instance_VBO(0), m_inited(false), m_has_tex_coords(false), core::Node3D()
-{
-	m_array_buffer = gl::Api::getInstance()->createArrayBuffer();
-	glGenBuffers(1, &m_EBO);
-	glGenBuffers(1, &m_instance_VBO);
-
-	loadInstances(nullptr, 0);
-}
-
-gfx::Mesh::~Mesh()
-{
-	if (m_EBO)
-		glDeleteBuffers(1, &m_EBO);
-	if (m_instance_VBO)
-		glDeleteBuffers(1, &m_instance_VBO);
-}
+gfx::Mesh::Mesh():
+	core::Node3D(),
+	m_inited(false),
+	m_has_tex_coords(false),
+	m_array_buffer(gl::Api::getInstance()->createArrayBuffer())
+{}
 
 
 bool gfx::Mesh::loadData(MeshData data)
@@ -111,33 +98,12 @@ bool gfx::Mesh::loadData(MeshData data)
 	m_array_buffer->configureAttrib(2, 3, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, normal));
 	m_array_buffer->configureAttrib(3, 3, false, sizeof(Mesh::Vertex), offsetof(Mesh::Vertex, tangent));
 
-	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
-		{
-			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)0);
-			glEnableVertexAttribArray(4);
-			glVertexAttribDivisor(4, 1);
+	m_array_buffer->configureInstanceAttrib(4, 1, 4, false, sizeof(mth::Mat4), 0);
+	m_array_buffer->configureInstanceAttrib(5, 1, 4, false, sizeof(mth::Mat4), sizeof(mth::Mat4)/4);
+	m_array_buffer->configureInstanceAttrib(6, 1, 4, false, sizeof(mth::Mat4), sizeof(mth::Mat4)/2);
+	m_array_buffer->configureInstanceAttrib(7, 1, 4, false, sizeof(mth::Mat4), (sizeof(mth::Mat4)/4)*3);
 
-			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/4));
-			glEnableVertexAttribArray(5);
-			glVertexAttribDivisor(5, 1);
-
-			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)(sizeof(mth::Mat4)/2));
-			glEnableVertexAttribArray(6);
-			glVertexAttribDivisor(6, 1);
-
-			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mth::Mat4), (GLvoid*)((sizeof(mth::Mat4)/4)*3));
-			glEnableVertexAttribArray(7);
-			glVertexAttribDivisor(7, 1);
-		}
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*final_vertices_count, final_indexes, GL_STATIC_DRAW);
-		m_indexes_count = final_vertices_count;
-		
-		glBindVertexArray(0);
-	}
+	m_array_buffer->loadIndexes(final_indexes, final_vertices_count, gl::ArrayBuffer::Usage::STATIC_DRAW);
 
 	delete[] final_vertices;
 	delete[] final_indexes;
@@ -148,26 +114,7 @@ bool gfx::Mesh::loadData(MeshData data)
 
 void gfx::Mesh::loadInstances(mth::Mat4* transforms, unsigned int transforms_count)
 {
-	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
-	{
-		glBindVertexArray(static_cast<gl::OpenGL33::ArrayBuffer*>(m_array_buffer.get())->getHandleVAO());
-		glBindBuffer(GL_ARRAY_BUFFER, m_instance_VBO);
-
-		if (!transforms || !transforms_count)
-		{
-			mth::Mat4 identity = mth::Mat4::getIdentity();
-			glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4), &identity, GL_STATIC_DRAW);
-			m_instances_count = 1;
-		}
-		else
-		{
-			glBufferData(GL_ARRAY_BUFFER, sizeof(mth::Mat4)*transforms_count, transforms, GL_STATIC_DRAW);
-			m_instances_count = transforms_count;
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-	}
+	m_array_buffer->loadInstances(transforms, transforms_count);
 }
 
 
@@ -244,12 +191,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 		active_shader->setUniform1i("uMaterial.emission", 6);
 	}
 
-	if (gl::Api::getInstance()->getType() == gl::Api::Type::OPENGL_3_3)
-	{
-		glBindVertexArray(static_cast<gl::OpenGL33::ArrayBuffer*>(m_array_buffer.get())->getHandleVAO());
-		glDrawElementsInstanced(GL_TRIANGLES, m_indexes_count, GL_UNSIGNED_INT, 0, m_instances_count);
-		glBindVertexArray(0);
-	}
+	m_array_buffer->draw(PrimitiveType::TRIANGLES, 0, 0);
 }
 
 } //namespace eng

@@ -51,7 +51,7 @@ namespace eng::gfx
 		};
 
 		Mesh();
-		~Mesh();
+		~Mesh() = default;
 
 		bool loadData(MeshData data);
 		void loadInstances(mth::Mat4* transforms, unsigned int transforms_count);
@@ -61,10 +61,6 @@ namespace eng::gfx
 
 	protected:
 		std::unique_ptr<gl::ArrayBuffer> m_array_buffer;
-		unsigned int m_EBO;
-		unsigned int m_indexes_count;
-		unsigned int m_instance_VBO;
-		unsigned int m_instances_count;
 		bool m_inited;
 		bool m_has_tex_coords;
 		Material m_material;
