@@ -16,8 +16,7 @@ gl::Api::Type Api::getType() {return Api::Type::NULL_API;}
 
 void Api::initialize() {}
 
-void Api::enable(const Capability& capability) {}
-void Api::disable(const Capability& capability) {}
+void Api::setCapability(const Capability& capability) {}
 
 void Api::useDepthMask(bool flag) {}
 void Api::setDepthFunction(const DepthFunction& function) {}

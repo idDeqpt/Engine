@@ -1,6 +1,7 @@
 #include <Engine/Graphics/3D/RenderWorld.hpp>
 
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/Capability.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
@@ -37,6 +38,9 @@ void RenderWorld::draw(RenderTarget& target)
 	if (m_objects.empty() || m_pipeline.empty())
 		return;
 	
+	gl::Capability cap;
+	cap.depth_test = gl::Capability::Mode::ENABLED;
+	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->setDepthFunction(gl::DepthFunction::LESS);
 
 	m_framebuffers.back() = &target;

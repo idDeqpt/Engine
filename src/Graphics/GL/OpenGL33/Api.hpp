@@ -5,11 +5,13 @@
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/GL/FrameBuffer.hpp>
 #include <Engine/Graphics/GL/TextureImpl.hpp>
+#include <Engine/Graphics/GL/Capability.hpp>
 
 namespace eng::gfx::gl::OpenGL33
 {
 	class Api : public gl::Api
 	{
+	public:
 		static bool isAvailable();
 		Type getType() override;
 
@@ -17,8 +19,7 @@ namespace eng::gfx::gl::OpenGL33
 
 		void initialize() override;
 
-		void enable(const Capability& capability);
-		void disable(const Capability& capability);
+		void setCapability(const Capability& capability) override;
 
 		void useDepthMask(bool flag) override;
 		void setDepthFunction(const DepthFunction& function) override;
@@ -45,6 +46,14 @@ namespace eng::gfx::gl::OpenGL33
 		std::unique_ptr<FrameBuffer> createFrameBuffer() override;
 		
 		std::unique_ptr<TextureImpl> createTextureImpl() override;
+
+	protected:
+		static struct Cache
+		{
+			Capability capability = Capability(true);
+			
+			Cache() = default;
+		} s_cache;
 
 		#endif
 	};

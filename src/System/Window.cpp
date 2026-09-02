@@ -1,6 +1,7 @@
 #include <Engine/System/Window.hpp>
 
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/Capability.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Core/Logger.hpp>
 
@@ -128,13 +129,14 @@ mth::Vec2 sys::Window::getViewportSize() const
 
 void sys::Window::clear(const gfx::Color& color)
 {
-	gfx::gl::Api::getInstance()->enable(gfx::gl::Capability::SCISSOR_TEST);
+	gfx::gl::Capability cap;
+	cap.scissor_test = gfx::gl::Capability::Mode::ENABLED;
+	gfx::gl::Api::getInstance()->setCapability(cap);
 	gfx::gl::Api::getInstance()->setScissor(0, 0, m_size.x, m_size.y);
 	RenderTarget::clear(gfx::Color(0));
 
 	gfx::gl::Api::getInstance()->setScissor(m_viewport_pos.x, m_viewport_pos.y, m_viewport_size.x, m_viewport_size.y);
 	RenderTarget::clear(color);
-	gfx::gl::Api::getInstance()->disable(gfx::gl::Capability::SCISSOR_TEST);
 }
 
 

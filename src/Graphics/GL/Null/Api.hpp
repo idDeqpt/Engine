@@ -15,8 +15,7 @@ namespace eng::gfx::gl::Null
 		Type getType() override;
 		void initialize() override;
 
-		void enable(const Capability& capability);
-		void disable(const Capability& capability);
+		void setCapability(const Capability& capability) override;
 
 		void useDepthMask(bool flag) override;
 		void setDepthFunction(const DepthFunction& function) override;

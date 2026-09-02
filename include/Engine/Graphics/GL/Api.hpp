@@ -9,18 +9,7 @@ namespace eng::gfx::gl
 	class ArrayBuffer;
 	class FrameBuffer;
 	class TextureImpl;
-
-	enum class Capability
-	{
-		DEPTH_TEST,
-		BLEND,
-		SCISSOR_TEST,
-		CULL_FACE,
-		POLYGON_OFFSET_FILL,
-		STENCIL_TEST,
-		DITHER,
-		MULTISAMPLE
-	};
+	class Capability;
 
 	enum class DepthFunction
 	{
@@ -74,8 +63,7 @@ namespace eng::gfx::gl
 		virtual void initialize() = 0;
 		virtual void finalize();
 
-		virtual void enable(const Capability& capability) = 0;
-		virtual void disable(const Capability& capability) = 0;
+		virtual void setCapability(const Capability& capability) = 0;
 
 		virtual void useDepthMask(bool flag) = 0;
 		virtual void setDepthFunction(const DepthFunction& function) = 0;

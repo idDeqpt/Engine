@@ -1,6 +1,7 @@
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
 
 #include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/Capability.hpp>
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
@@ -37,8 +38,10 @@ void RenderCanvas::draw(RenderTarget& target)
 	if (m_objects.empty() || m_pipeline.empty())
 		return;
 
+	gl::Capability cap;
+	cap.blend = gl::Capability::Mode::ENABLED;
+	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->setDepthFunction(gl::DepthFunction::ALWAYS);
-	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	m_framebuffers.back() = &target;
@@ -76,22 +79,25 @@ void RenderCanvas::draw(RenderTarget& target)
 	});
 
 	//draw transparent
+	cap.blend = gl::Capability::Mode::DISABLED;
+	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->useDepthMask(true);
-	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	for (CanvasItem* obj : opaque)
 		m_framebuffers.front()->draw(*obj, RenderStates());
 
 	//draw opaque
+	cap.blend = gl::Capability::Mode::ENABLED;
+	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->useDepthMask(false);
-	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	for (CanvasItem* obj : transparent)
 		m_framebuffers.front()->draw(*obj, RenderStates());
 
 	// deferred render
+	cap.blend = gl::Capability::Mode::DISABLED;
+	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->useDepthMask(false);
-	gl::Api::getInstance()->disable(gl::Capability::BLEND);
 	for (unsigned int i = 1; i < m_pipeline.size(); i++)
 	{
 		if (m_framebuffers[i] != &target) m_framebuffers[i]->clear(Color(0, 0, 0, 0));

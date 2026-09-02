@@ -18,8 +18,6 @@ namespace eng::gfx
 
 RenderScene::RenderScene()
 {
-	gl::Api::getInstance()->enable(gl::Capability::DEPTH_TEST);
-	gl::Api::getInstance()->enable(gl::Capability::BLEND);
 	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	m_quad_view.setRect(0, 1, 0, 1);

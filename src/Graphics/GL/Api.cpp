@@ -25,7 +25,6 @@ Api* Api::getInstance()
 void Api::createInstance(Type type)
 {
 	s_instance = createImpl(type);
-	if (s_instance) s_instance->initialize();
 }
 
 

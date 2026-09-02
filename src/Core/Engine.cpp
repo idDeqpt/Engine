@@ -44,12 +44,14 @@ core::Engine::Engine(std::unique_ptr<Node> root):
 	m_framerate(60)
 {
 	Logger::debug("Start app");
-	sys::Window::initialize();
-	m_window = new sys::Window(900, 600, "Engine");
-
 	Logger::debug("Start initialization");
 	m_context.create<core::TimeManager>();
+
 	gfx::gl::Api::createInstance();
+	sys::Window::initialize();
+	m_window = new sys::Window(900, 600, "Engine");
+	gfx::gl::Api::getInstance()->initialize();
+
 	m_context.create<core::SignalBus>();
 	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
 	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());

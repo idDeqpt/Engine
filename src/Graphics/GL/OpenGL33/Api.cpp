@@ -1,3 +1,5 @@
+#include <chrono>
+#include <iostream>
 #include "Api.hpp"
 
 
@@ -33,30 +35,6 @@ gl::Api::Type Api::getType()
 
 namespace
 {
-
-GLenum capabilityToGlCapability(const eng::gfx::gl::Capability& capability)
-{
-	switch (capability)
-	{
-		case eng::gfx::gl::Capability::DEPTH_TEST:
-			return GL_DEPTH_TEST;
-		case eng::gfx::gl::Capability::BLEND:
-			return GL_BLEND;
-		case eng::gfx::gl::Capability::SCISSOR_TEST:
-			return GL_SCISSOR_TEST;
-		case eng::gfx::gl::Capability::CULL_FACE:
-			return GL_CULL_FACE;
-		case eng::gfx::gl::Capability::POLYGON_OFFSET_FILL:
-			return GL_POLYGON_OFFSET_FILL;
-		case eng::gfx::gl::Capability::STENCIL_TEST:
-			return GL_STENCIL_TEST;
-		case eng::gfx::gl::Capability::DITHER:
-			return GL_DITHER;
-		case eng::gfx::gl::Capability::MULTISAMPLE:
-			return GL_MULTISAMPLE;
-	}
-	return GL_INVALID_ENUM;
-}
 
 GLenum depthFunctionToGlDepthFunction(const eng::gfx::gl::DepthFunction& func)
 {
@@ -125,20 +103,40 @@ GLenum blendFactorToGlBlendFactor(const eng::gfx::gl::BlendFactor& factor)
 namespace eng::gfx::gl::OpenGL33
 {
 
+Api::Cache Api::s_cache;
+
 void Api::initialize()
 {
 	gladLoadGL(glfwGetProcAddress);
+
+	Capability init_cap(false);
+	setCapability(init_cap);
 }
 
 
-void Api::enable(const Capability& capability)
+void Api::setCapability(const Capability& capability)
 {
-	glEnable(capabilityToGlCapability(capability));
-}
+	#define APPLY_IF_CHANGED(c, v, m)\
+	if (v != Capability::Mode::ANY)\
+		if (c != v)\
+		{\
+			if (v == Capability::Mode::ENABLED)\
+				glEnable(m);\
+			else if (v == Capability::Mode::DISABLED)\
+				glDisable(m);\
+			c = v;\
+		}
+	
+	APPLY_IF_CHANGED(s_cache.capability.depth_test,   capability.depth_test,                 GL_DEPTH_TEST);
+	APPLY_IF_CHANGED(s_cache.capability.blend,        capability.blend,                      GL_BLEND);
+	APPLY_IF_CHANGED(s_cache.capability.scissor_test, capability.scissor_test,               GL_SCISSOR_TEST);
+	APPLY_IF_CHANGED(s_cache.capability.cull_face,    capability.cull_face,                  GL_CULL_FACE);
+	APPLY_IF_CHANGED(s_cache.capability.polygon_offset_fill, capability.polygon_offset_fill, GL_POLYGON_OFFSET_FILL);
+	APPLY_IF_CHANGED(s_cache.capability.stencil_test, capability.stencil_test,               GL_STENCIL_TEST);
+	APPLY_IF_CHANGED(s_cache.capability.dither,       capability.dither,                     GL_DITHER);
+	APPLY_IF_CHANGED(s_cache.capability.multisample,  capability.multisample,                GL_MULTISAMPLE);
 
-void Api::disable(const Capability& capability)
-{
-	glDisable(capabilityToGlCapability(capability));
+	#undef APPLY_IF_CHANGED
 }
 
 
