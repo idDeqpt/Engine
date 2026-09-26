@@ -1,7 +1,4 @@
-mkdir build
-cd build
-
-cmake ..
-cmake --build . --config Release
+cmake -S . -B build -DBUILD_EXAMPLES=ON
+cmake --build build --config Release
 
 pause

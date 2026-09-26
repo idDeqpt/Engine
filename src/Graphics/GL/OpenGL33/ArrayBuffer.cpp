@@ -6,7 +6,7 @@
 #include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Math/Mat4.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 namespace
 {

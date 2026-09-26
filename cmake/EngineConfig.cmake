@@ -5,7 +5,6 @@ if(NOT TARGET Engine::Engine)
 
     set(ENGINE_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 
-    find_package(glad REQUIRED)
     find_package(GLFW3 REQUIRED)
     find_package(freetype REQUIRED)
 
@@ -17,7 +16,7 @@ if(NOT TARGET Engine::Engine)
     
     set_target_properties(Engine::Engine PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/../include"
-        INTERFACE_LINK_LIBRARIES "${FREETYPE_LIBRARY};${GLFW3_LIBRARY};${GLAD_LIBRARY}")
+        INTERFACE_LINK_LIBRARIES "${FREETYPE_LIBRARY};${GLFW3_LIBRARY}")
 	
 	if(NOT CMAKE_CONFIGURATION_TYPES)
         set_target_properties(Engine::Engine PROPERTIES

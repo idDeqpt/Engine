@@ -5,7 +5,16 @@ set(BUILD_SHARED_LIBS FALSE)
 
 project(${PROJECT_NAME}
 	VERSION 1.0.0
-	LANGUAGES CXX)
+	LANGUAGES CXX C)
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+		Debug Release RelWithDebInfo MinSizeRel)
+endif()
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>)
 
 option(BUILD_WITH_OPENGL_3_3 "Build library with support of OpenGL 3.3" ON)
 option(BUILD_EXAMPLES        "Build examples for library"               OFF)
@@ -89,10 +98,6 @@ set(SYSTEM_SOURCE_FILES
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
-set(GLAD_ROOT     "${CMAKE_CURRENT_SOURCE_DIR}/deps/glad"     CACHE PATH "Path to glad")
-set(GLFW3_ROOT    "${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw-3.4" CACHE PATH "Path to GLFW3")
-set(FREETYPE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype" CACHE PATH "Path to FreeType")
-
 find_package(stb REQUIRED)
 find_package(glad REQUIRED)
 find_package(GLFW3 REQUIRED)
@@ -120,39 +125,16 @@ target_include_directories(${PROJECT_NAME}
 		${STB_INCLUDE_DIR})
 
 set(ENGINE_DEPENDENCIES
-	glad::glad
 	Freetype::Freetype
 	GLFW3::GLFW3)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_DEPENDENCIES})
+target_sources(${PROJECT_NAME} PRIVATE $<TARGET_OBJECTS:glad_objects>)
+target_include_directories(${PROJECT_NAME} PRIVATE "${GLAD_INCLUDE_DIR}")
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${ENGINE_DEPENDENCIES})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
-if(BUILD_EXAMPLES)
-	add_subdirectory(examples)
-
-	file(GLOB RESOURCE_DIRS 
-        "${CMAKE_CURRENT_SOURCE_DIR}/examples/*/resources"
-    )
-    
-    add_custom_target(CopyAllResources ALL
-        COMMENT "Copying resources for all examples"
-    )
-    
-    foreach(RESOURCE_DIR ${RESOURCE_DIRS})
-        get_filename_component(EXAMPLE_DIR ${RESOURCE_DIR} DIRECTORY)
-        get_filename_component(EXAMPLE_NAME ${EXAMPLE_DIR} NAME)
-        
-        set(DEST_DIR "${CMAKE_BINARY_DIR}/examples/${EXAMPLE_NAME}/resources")
-        
-        add_custom_command(TARGET CopyAllResources POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${RESOURCE_DIR}
-                ${DEST_DIR}
-            COMMENT "Copying resources for ${EXAMPLE_NAME} to ${DEST_DIR}"
-        )
-    endforeach()
-endif()
 
 
 include(GNUInstallDirs)
@@ -185,3 +167,8 @@ configure_file(
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
 	DESTINATION lib/cmake/${PROJECT_NAME})
+
+if(BUILD_EXAMPLES)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/examples)
+	add_subdirectory(examples)
+endif()

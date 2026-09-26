@@ -3,7 +3,7 @@
 #include <Engine/Graphics/GL/TextureImpl.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <cstring>
 
 

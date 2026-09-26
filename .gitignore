@@ -2,3 +2,4 @@
 /examples/*/build/
 /tests/bin/
 /tests/build/
+*.log

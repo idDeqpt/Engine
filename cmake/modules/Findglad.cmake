@@ -1,36 +1,31 @@
+set(_glad_root "${CMAKE_CURRENT_LIST_DIR}/../../deps/glad")
+
 find_path(GLAD_INCLUDE_DIR 
-    NAMES glad/glad.h
-    PATHS
-        /usr/include
-        /usr/local/include
-        ${CMAKE_INCLUDE_PATH}
-        ${CMAKE_CURRENT_LIST_DIR}/../../deps/glad/include
-    REQUIRED
+	NAMES glad/gl.h
+	PATHS "${_glad_root}/include"
+	NO_DEFAULT_PATH
 )
 
-find_library(GLAD_LIBRARY
-    NAMES glad libglad
-    PATHS
-        /usr/lib
-        /usr/local/lib
-        ${CMAKE_LIBRARY_PATH}
-        ${CMAKE_CURRENT_LIST_DIR}/../../deps/glad/lib
-    REQUIRED
+find_file(GLAD_SOURCE
+	NAMES gl.c
+	PATHS "${_glad_root}/src"
+	NO_DEFAULT_PATH
 )
 
-if(GLAD_INCLUDE_DIR AND GLAD_LIBRARY)
-    set(GLAD_FOUND TRUE)
-
-    if(NOT TARGET glad::glad)
-        add_library(glad::glad UNKNOWN IMPORTED)
-        set_target_properties(glad::glad PROPERTIES
-            IMPORTED_LOCATION "${GLAD_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${GLAD_INCLUDE_DIR}"
-        )
-    endif()
-else()
-    set(GLAD_FOUND FALSE)
-    message(FATAL_ERROR "glad not found!")
+if(NOT GLAD_INCLUDE_DIR OR NOT GLAD_SOURCE)
+	set(GLAD_FOUND FALSE)
+	message(FATAL_ERROR
+		"glad not found under ${_glad_root}. "
+		"Ожидались ${_glad_root}/include/glad/gl.h и ${_glad_root}/src/gl.c")
 endif()
 
-mark_as_advanced(GLAD_INCLUDE_DIR GLAD_LIBRARY)
+set(GLAD_FOUND TRUE)
+
+if(NOT TARGET glad::glad)
+	add_library(glad_objects OBJECT "${GLAD_SOURCE}")
+	target_include_directories(glad_objects PUBLIC "${GLAD_INCLUDE_DIR}")
+	target_compile_features(glad_objects PUBLIC c_std_99)
+	add_library(glad::glad ALIAS glad_objects)
+endif()
+
+mark_as_advanced(GLAD_INCLUDE_DIR GLAD_SOURCE)

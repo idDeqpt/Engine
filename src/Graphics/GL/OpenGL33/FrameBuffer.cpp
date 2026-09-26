@@ -8,7 +8,7 @@
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Math/Vec2.hpp>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 
 namespace
