@@ -35,14 +35,12 @@ ___
 # Вариант 1: Использовать готовый скрипт
 GenerateRelease.bat
 # Вариант 2: Вручную
-mkdir build && cd build
-cmake ..
-cmake --build . --config Release
+cmake . -B build
+cmake --build build --config Release
 ```
 ## Linux
 ```bash
-mkdir build
-cmake . -B build
+cmake . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 ____
@@ -59,15 +57,19 @@ target_link_libraries(... PRIVATE Engine::Engine)
 ```
 ___
 # Примеры
-Примеры использования библиотеки можно найти в папке examples.
+Примеры проектов, использующих библиотеку, можно найти в папке examples.
 
-Для автоматической сборки всех примеров необходимо перевести опцию BUILD_EXAMPLES в ON при сборке библиотеки. Для запуска примера необходимо запустить исполняемый файл приложения, находясь в ./build/examples/ExampleName.
+Для сборки демонстрационных проектов необходимо перевести опцию BUILD_EXAMPLES в ON при сборке библиотеки.
+```bash
+cmake . -B build -DBUILD_EXAMPLES=ON
+```
+Для запуска приложения необходимо перейти в директорию `Engine/examples/{ExampleName}` и из неё запустить исполняемый файл `Engine/build/Release/examples/{ExampleName}`.
 
 Ниже представлена таблица с описанием каждого демонстрационного проекта
 | Название   | Описание                             |
 |:-----------|:-------------------------------------|
-| FruitMerge | Двухмерная игра по объединению шаров |
-| Simple3D   | Демонсатрация рендеринга инстанцированных трёхмерных объектов |
+| FruitMerge | Двумерная игра по объединению шаров |
+| Simple3D   | Демонстрация рендеринга инстанцированных трёхмерных объектов |
 ___
 # Лицензия
 Проект распространяется под лицензией MIT. [LICENSE](LICENSE)
