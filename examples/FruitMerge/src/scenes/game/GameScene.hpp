@@ -26,10 +26,10 @@ public:
 		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		eng::mth::Vec2 box_pos(0, 50);
-		auto box = addChild<Box2D>("box");
-		box->setPosition(box_pos);
-		addChild<ClassicBallsController>("controller", box_pos + box->getLeftBound(), box_pos + box->getRightBound());
-		//addChild<SandboxBallsController>("controller");
+		m_box = addChild<Box2D>("box");
+		m_box->setPosition(box_pos);
+		addChild<ClassicBallsController>("controller", box_pos + m_box->getLeftBound(), box_pos + m_box->getRightBound());
+		m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("classic"));
 
 		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
@@ -46,15 +46,36 @@ public:
 
 	void onUpdate(float delta)
 	{
+		auto event_manager = m_context.get<eng::sys::EventManager>();
 		auto* controller = static_cast<BallsController*>(getChildByName("controller"));
+
 		if (controller && controller->isGameOver())
 			m_context.get<eng::core::SignalBus>().emit("game_over");
+
+		if (event_manager.getKeyboard().isPressed(eng::sys::Keyboard::Key::R))
+		{
+			if (event_manager.getKeyboard().isJustPressed(eng::sys::Keyboard::Key::F))
+			{
+				removeChild(controller);
+				addChild<SandboxBallsController>("controller");
+				m_context.get<eng::core::SignalBus>().emit("game_restart");
+				m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("free"));
+			}
+			else if (event_manager.getKeyboard().isJustPressed(eng::sys::Keyboard::Key::C))
+			{
+				removeChild(controller);
+				addChild<ClassicBallsController>("controller", m_box->getPosition().x + m_box->getLeftBound(), m_box->getPosition().x + m_box->getRightBound());
+				m_context.get<eng::core::SignalBus>().emit("game_restart");
+				m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("classic"));
+			}
+		}
 
 		SceneLayer::onUpdate(delta);
 	}
 
 protected:
 	eng::core::SubscriptionId m_camera_signal_id;
+	Box2D* m_box;
 };
 
 #endif //GAME_SCENE_CLASS_HEADER

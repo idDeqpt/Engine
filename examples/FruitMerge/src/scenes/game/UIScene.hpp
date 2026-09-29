@@ -4,6 +4,7 @@
 #include <scenes/SceneLayer.hpp>
 
 #include <Engine/Core/ConfigManager.hpp>
+#include <Engine/Core/Logger.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Font.hpp>
@@ -39,6 +40,27 @@ public:
 		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
 		text->setFont(*m_font);
 		text->setCharacterSize(24);
+		text->setPosition(eng::mth::Vec2(10, 0));
+
+		text = addChild<eng::gfx::Text2D>("text_game_mode");
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
+		text->setFont(*m_font);
+		text->setCharacterSize(16);
+		text->setPosition(eng::mth::Vec2(10, 30));
+
+		text = addChild<eng::gfx::Text2D>("tip_free_mode");
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
+		text->setFont(*m_font);
+		text->setCharacterSize(12);
+		text->setPosition(eng::mth::Vec2(10, 50));
+		text->setString("Press (R + F) for restart in free mode");
+
+		text = addChild<eng::gfx::Text2D>("tip_classic_mode");
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*text);
+		text->setFont(*m_font);
+		text->setCharacterSize(12);
+		text->setPosition(eng::mth::Vec2(10, 70));
+		text->setString("Press (R + C) for restart in classic mode");
 
 		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
@@ -51,6 +73,19 @@ public:
 				auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text_game_over"));
 				text->setVisible(true);
 		});
+
+		m_game_restart_signal_id = m_context.get<eng::core::SignalBus>().subscribe("game_restart",
+			[this](){
+				auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text_game_over"));
+				text->setVisible(false);
+		});
+
+		m_game_mode_changed_signal_id = m_context.get<eng::core::SignalBus>().subscribe("game_mode_changed",
+			[this](std::string mode){
+				auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text_game_mode"));
+				text->setString("Game mode: " + mode);
+				eng::core::Logger::debug(mode);
+		});
 	}
 
 	void onDestroy()
@@ -58,6 +93,8 @@ public:
 		SceneLayer::onDestroy();
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_camera_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_game_over_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_game_restart_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_game_mode_changed_signal_id);
 	}
 
 	void onUpdate(float delta)
@@ -72,6 +109,8 @@ protected:
 	eng::gfx::Font* m_font;
 	eng::core::SubscriptionId m_camera_signal_id;
 	eng::core::SubscriptionId m_game_over_signal_id;
+	eng::core::SubscriptionId m_game_restart_signal_id;
+	eng::core::SubscriptionId m_game_mode_changed_signal_id;
 };
 
 #endif //UI_SCENE_CLASS_HEADER

@@ -95,4 +95,4 @@ protected:
 	virtual eng::mth::Vec2 computeBallPosition(const eng::mth::Vec2& mouse_pos) = 0;
 };
 
-#endif BALLS_CONTROLLER_CLASS_HEADER
+#endif //BALLS_CONTROLLER_CLASS_HEADER
