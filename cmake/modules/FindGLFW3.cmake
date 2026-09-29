@@ -21,7 +21,7 @@ if(NOT GLFW3_INCLUDE_DIR OR NOT GLFW3_LIBRARY)
     
     FetchContent_Declare(
         glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_REPOSITORY git@github.com:glfw/glfw.git
         GIT_TAG 3.4
     )
 
