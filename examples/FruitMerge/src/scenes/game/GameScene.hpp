@@ -45,7 +45,7 @@ public:
 		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		eng::mth::Vec2 box_pos(0, 50);
-		m_box = addChild<Box2D>("box");
+		m_box = addChild<Box2D>("box", 400, -150, 150);
 		m_box->setPosition(box_pos);
 		addChild<ClassicBallsController>("controller", box_pos + m_box->getLeftBound(), box_pos + m_box->getRightBound());
 		m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("classic"));
@@ -87,7 +87,7 @@ public:
 			else if (event_manager.getKeyboard().isJustPressed(eng::sys::Keyboard::Key::C))
 			{
 				removeChild(controller);
-				addChild<ClassicBallsController>("controller", m_box->getPosition().x + m_box->getLeftBound(), m_box->getPosition().x + m_box->getRightBound());
+				addChild<ClassicBallsController>("controller", m_box->getPosition() + m_box->getLeftBound(), m_box->getPosition() + m_box->getRightBound());
 				m_context.get<eng::core::SignalBus>().emit("game_restart");
 				m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("classic"));
 			}

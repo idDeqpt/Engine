@@ -38,7 +38,7 @@ void phy::Collider2D::AABB::set(const mth::Vec2& new_min, const mth::Vec2& new_m
 {
 	m_min = new_min;
 	m_max = new_max;
-	m_center = (m_max - m_min)/2;
+	m_center = (m_max + m_min)/2;
 }
 
 

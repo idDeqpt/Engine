@@ -4,7 +4,6 @@
 #include <scenes/SceneLayer.hpp>
 
 #include <Engine/Core/ConfigManager.hpp>
-#include <Engine/Core/Logger.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Font.hpp>
@@ -84,7 +83,6 @@ public:
 			[this](std::string mode){
 				auto text = static_cast<eng::gfx::Text2D*>(getChildByName("text_game_mode"));
 				text->setString("Game mode: " + mode);
-				eng::core::Logger::debug(mode);
 		});
 	}
 
