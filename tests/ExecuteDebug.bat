@@ -1,1 +1,0 @@
-start "Engine Test" ".\build\Debug\engine_tests.exe"
