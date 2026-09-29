@@ -55,4 +55,15 @@ Texture* RenderTarget::getTexture(unsigned int index)
 	return m_frame_buffer->getTexture(index);
 }
 
+
+mth::Vec2 RenderTarget::getViewportPosition() const
+{
+	return m_viewport_pos;
+}
+
+mth::Vec2 RenderTarget::getViewportSize() const
+{
+	return m_viewport_size;
+}
+
 } //namespace eng::gfx

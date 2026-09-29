@@ -49,9 +49,10 @@ core::Engine::Engine(std::unique_ptr<Node> root):
 
 	gfx::gl::Api::createInstance();
 	sys::Window::initialize();
-	m_window = new sys::Window(900, 600, "Engine");
+	m_window = std::make_shared<sys::Window>(900, 600, "Engine");
 	gfx::gl::Api::getInstance()->initialize();
-
+	
+	m_context.replace<sys::Window>(m_window);
 	m_context.create<core::SignalBus>();
 	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
 	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
@@ -111,7 +112,7 @@ core::Engine::~Engine()
 	gfx::gl::Api::getInstance()->finalize();
 	Logger::debug("End finalization");
 
-	delete m_window;
+	m_window.reset();
 	sys::Window::finalize();
 	Logger::debug("End app");
 }

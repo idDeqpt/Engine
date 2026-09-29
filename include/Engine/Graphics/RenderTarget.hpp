@@ -27,6 +27,9 @@ namespace eng::gfx
 
 		Texture* getTexture(unsigned int index);
 
+		mth::Vec2 getViewportPosition() const;
+		mth::Vec2 getViewportSize() const;
+
 	protected:
 		std::unique_ptr<gl::FrameBuffer> m_frame_buffer;
 		mth::Vec2 m_viewport_pos;

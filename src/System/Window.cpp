@@ -121,12 +121,6 @@ void sys::Window::updateViewport()
 }
 
 
-mth::Vec2 sys::Window::getViewportSize() const
-{
-	return m_viewport_size;
-}
-
-
 void sys::Window::clear(const gfx::Color& color)
 {
 	gfx::gl::Capability cap;

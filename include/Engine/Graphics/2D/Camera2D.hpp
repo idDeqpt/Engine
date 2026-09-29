@@ -4,6 +4,7 @@
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Math/Vec2.hpp>
 #include <Engine/Math/Mat3.hpp>
+#include <Engine/System/Window.hpp>
 
 
 namespace eng::gfx
@@ -20,7 +21,7 @@ namespace eng::gfx
 		mth::Mat3 getViewMatrix();
 		mth::Mat3 getProjViewMatrix();
 
-		mth::Vec2 convertWindowPoint(const mth::Vec2& point);
+		mth::Vec2 convertWindowPoint(const mth::Vec2& point, const RenderTarget& rt);
 
 	protected:
 		mth::Mat3 m_projection;

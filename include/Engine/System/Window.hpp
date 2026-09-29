@@ -38,8 +38,6 @@ namespace eng::sys
 		void setViewportScaling(ViewportScaling mode);
 		void updateViewport();
 
-		mth::Vec2 getViewportSize() const;
-
 		void clear(const gfx::Color& color) override;
 
 		void display();

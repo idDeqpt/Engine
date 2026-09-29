@@ -28,7 +28,7 @@ namespace eng::core
 	public:
 		float m_framerate;
 		std::unique_ptr<Node> m_root_node;
-		sys::Window* m_window;
+		std::shared_ptr<sys::Window> m_window;
 		Context m_context;
 		std::vector<SubscriptionId> m_subscriptions;
 	};
