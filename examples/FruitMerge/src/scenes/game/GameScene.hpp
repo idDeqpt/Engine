@@ -4,14 +4,32 @@
 #include <scenes/SceneLayer.hpp>
 #include <scenes/game/Camera.hpp>
 #include <scenes/game/Box2D.hpp>
+#include <scenes/game/Ball.hpp>
 #include <scenes/game/BallsController.hpp>
 #include <scenes/game/sandbox/SandboxBallsController.hpp>
 #include <scenes/game/classic/ClassicBallsController.hpp>
 
+#include <Engine/Physics/2D/RectangleCollider2D.hpp>
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Math/Vec2.hpp>
+
+class GameArea : public eng::phy::AreaBody2D
+{
+public:
+	void onSetup() override
+	{
+		m_context.get<eng::phy::PhysicsWorld>().addBody(*this);
+	}
+
+	void onDestroy() override
+	{
+		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
+	}
+
+	void onCollisionExit(eng::phy::PhysicsBody2D& other) override;
+};
 
 class GameScene : public SceneLayer
 {
@@ -22,7 +40,8 @@ public:
 
 		auto camera2d = addChild<Camera>("camera");
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
-		camera2d->setSize(eng::mth::Vec2(1000*(v_size.x/v_size.y), 1000));
+		eng::mth::Vec2 c_size(1000*(v_size.x/v_size.y), 1000);
+		camera2d->setSize(c_size);
 		m_context.get<eng::gfx::RenderCanvas>().setActiveCamera(*camera2d);
 
 		eng::mth::Vec2 box_pos(0, 50);
@@ -30,6 +49,10 @@ public:
 		m_box->setPosition(box_pos);
 		addChild<ClassicBallsController>("controller", box_pos + m_box->getLeftBound(), box_pos + m_box->getRightBound());
 		m_context.get<eng::core::SignalBus>().emit("game_mode_changed", std::string("classic"));
+
+		auto game_area = addChild<GameArea>("game_area");
+		auto collider = game_area->setCollider<eng::phy::RectangleCollider2D>();
+		collider->setSize(c_size);
 
 		m_camera_signal_id = m_context.get<eng::core::SignalBus>().subscribe("on_change_config_window_viewport_size",
 			[this](eng::mth::Vec2 size){
@@ -77,5 +100,12 @@ protected:
 	eng::core::SubscriptionId m_camera_signal_id;
 	Box2D* m_box;
 };
+
+void GameArea::onCollisionExit(eng::phy::PhysicsBody2D& other)
+{
+	Ball* ball = dynamic_cast<Ball*>(&other);
+	if (ball)
+		m_context.get<eng::core::SignalBus>().emit("ball_fall", ball);
+}
 
 #endif //GAME_SCENE_CLASS_HEADER

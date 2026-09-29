@@ -185,6 +185,8 @@ void phy::PhysicsWorld::step(float delta)
 				it++;
 		removeBody(*b);
 	}
+	m_pending_add.clear();
+	m_pending_remove.clear();
 
 	m_previous_frame_bodies2d.assign(current_frame_bodies_set.begin(), current_frame_bodies_set.end());
 }

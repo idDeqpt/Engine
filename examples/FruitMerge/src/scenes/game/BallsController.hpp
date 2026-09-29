@@ -9,6 +9,7 @@
 
 #include <Engine/System/EventManager.hpp>
 
+#include <algorithm>
 #include <random>
 
 class BallsController : public eng::core::Node
@@ -46,6 +47,11 @@ public:
 				m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_moved_signal_id);
 				removeChild(getChildByName("ball_image"));
 		});
+
+		m_ball_fall_signal_id = m_context.get<eng::core::SignalBus>().subscribe("ball_fall",
+			[this](Ball* ball){
+				m_balls_for_removing.push_back(ball);
+		});
 	}
 
 	void onDestroy()
@@ -54,15 +60,33 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_moved_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_game_over_signal_id);
+		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_fall_signal_id);
 	}
 
 	void onUpdate(float delta)
 	{
-		if (!m_collection.balls.empty())
+		for (auto& ball : m_balls_for_removing)
 		{
-			mergeBalls(*m_collection.balls.front().first, *m_collection.balls.front().second);
-			m_collection.balls.clear();
+			m_collection.balls.erase(
+				std::remove_if(m_collection.balls.begin(), m_collection.balls.end(),
+					[ball](const BallsCollection::Pair& p){
+						return p.first == ball || p.second == ball;
+					}),
+				m_collection.balls.end()
+			);
+			removeChild(ball);
 		}
+		m_balls_for_removing.clear();
+
+		if (m_collection.balls.empty()) return;
+
+		Ball* a = m_collection.balls.front().first;
+		Ball* b = m_collection.balls.front().second;
+		m_collection.balls.clear();
+
+		if (!a || !b) return;
+		if (a->isDestroyed() || b->isDestroyed()) return;
+		mergeBalls(*a, *b);
 	}
 
 	virtual bool isGameOver() = 0;
@@ -75,6 +99,8 @@ protected:
 	eng::core::SubscriptionId m_mouse_signal_id;
 	eng::core::SubscriptionId m_mouse_moved_signal_id;
 	eng::core::SubscriptionId m_game_over_signal_id;
+	eng::core::SubscriptionId m_ball_fall_signal_id;
+	std::vector<Ball*> m_balls_for_removing;
 
 	void mergeBalls(Ball& first, Ball& second)
 	{
