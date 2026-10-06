@@ -17,7 +17,7 @@
 class SceneLayer : public eng::gfx::Shape2D
 {
 public:
-	void onSetup()
+	void onSetup() override
 	{
 		eng::mth::Vec2 v_size = m_context.get<eng::core::ConfigManager>().get<eng::mth::Vec2>("window_viewport_size");
 
@@ -41,12 +41,12 @@ public:
 		});
 	}
 
-	void onDestroy()
+	void onDestroy() override
 	{
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_viewport_signal_id);
 	}
 
-	void onUpdate(float delta)
+	void onUpdate(float delta) override
 	{
 		m_target->clear(eng::gfx::Color(0, 0, 0, 0));
 		m_scene->render(*m_target);

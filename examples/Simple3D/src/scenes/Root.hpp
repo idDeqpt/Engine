@@ -14,15 +14,23 @@
 
 class Root : public eng::core::Node
 {
+protected:
+	Camera* m_camera = nullptr;
+	Box* m_box = nullptr;
+
 public:
+	void onBuild() override
+	{
+		m_camera = addChild<Camera>("camera");
+		m_box = addChild<Box>("box", eng::gfx::GeometricMesh::Type::PARALLELEPIPED);
+	}
+
 	void onSetup() override
 	{
-		auto camera = addChild<Camera>("camera");
-		m_context.get<eng::gfx::RenderWorld>().setActiveCamera(*camera);
+		m_context.get<eng::gfx::RenderWorld>().setActiveCamera(*m_camera);
 
-		auto box = addChild<Box>("box", eng::gfx::GeometricMesh::Type::PARALLELEPIPED);
-		box->setSize(0.5);
-		m_context.get<eng::gfx::RenderWorld>().addObject(*box);
+		m_box->setSize(0.5);
+		m_context.get<eng::gfx::RenderWorld>().addObject(*m_box);
 		std::vector<eng::mth::Mat4> translations;
 		for (int i = 0; i < 5; i++)
 					translations.push_back(eng::mth::Mat4(1, 0, 0, i,
@@ -39,7 +47,7 @@ public:
 					                                      0, 1, 0, 0,
 					                                      0, 0, 1, k,
 					                                      0, 0, 0, 1));
-		box->loadInstances(translations.data(), translations.size());
+		m_box->loadInstances(translations.data(), translations.size());
 	}
 };
 

@@ -14,17 +14,24 @@
 
 class BallsController : public eng::core::Node
 {
+protected:
+	Ball* m_ball_image = nullptr;
+
 public:
-	void onSetup()
+	void onBuild() override
+	{
+		m_ball_image = addChild<Ball>("ball_image", 0);
+	}
+
+	void onSetup() override
 	{
 		m_next_ball_level = 1;
 		srand(0);
+
 		m_ball_signal_id = m_context.get<eng::core::SignalBus>().subscribe("balls_collided",
 			[this](Ball* left, Ball* right) {
 				m_collection.balls.push_back(BallsCollection::Pair(left, right));
 		});
-
-		m_ball_image = addChild<Ball>("ball_image", 0);
 
 		m_mouse_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_just_clicked",
 			[this](eng::sys::Mouse::Button button) {
@@ -54,7 +61,12 @@ public:
 		});
 	}
 
-	void onDestroy()
+	void onReady() override
+	{
+		computeNextBallLevel();
+	}
+
+	void onDestroy() override
 	{
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_signal_id);
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_mouse_signal_id);
@@ -63,7 +75,7 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_fall_signal_id);
 	}
 
-	void onUpdate(float delta)
+	void onUpdate(float delta) override
 	{
 		for (auto& ball : m_balls_for_removing)
 		{
@@ -94,7 +106,6 @@ public:
 protected:
 	BallsCollection m_collection;
 	unsigned int m_next_ball_level;
-	Ball* m_ball_image;
 	eng::core::SubscriptionId m_ball_signal_id;
 	eng::core::SubscriptionId m_mouse_signal_id;
 	eng::core::SubscriptionId m_mouse_moved_signal_id;

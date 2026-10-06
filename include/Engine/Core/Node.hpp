@@ -22,16 +22,21 @@ namespace core
 	class Node
 	{
 	public:
-		Node();
-		virtual ~Node();
+		Node() = default;
+		virtual ~Node() = default;
 
 		bool isDestroyed();
+
+		void build();
 		void setup(Context& context);
 		void update(float delta);
 		void destroy();
+
 		void cleanupDestroyed();
 
-		virtual void onSetup();
+		virtual void onBuild(); //stage before children setups, for addChild and static initializations
+		virtual void onSetup(); //stage before children setups, with acces to Context
+		virtual void onReady(); //stage after children setups, children are fully initialized
 		virtual void onUpdate(float delta);
 		virtual void onDestroy();
 
@@ -54,10 +59,11 @@ namespace core
 
 
 	protected:
-		bool m_setuped;
-		bool m_destroyed;
+		Node* m_parent   = nullptr;
+		bool m_built     = false;
+		bool m_setuped   = false;
+		bool m_destroyed = false;
 		NodeNameTag m_tag;
-		Node* m_parent;
 		std::vector <std::unique_ptr<Node>> m_children;
 		Context m_context;
 	};

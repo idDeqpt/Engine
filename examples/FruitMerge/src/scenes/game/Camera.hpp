@@ -9,7 +9,7 @@
 class Camera : public eng::gfx::Camera2D
 {
 public:
-	void onUpdate(float delta)
+	void onUpdate(float delta) override
 	{
 		return;
 		eng::sys::EventManager& EM = m_context.get<eng::sys::EventManager>();

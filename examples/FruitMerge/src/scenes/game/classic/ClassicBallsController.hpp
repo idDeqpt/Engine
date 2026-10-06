@@ -15,7 +15,7 @@ public:
 		m_right_bound(right_bound),
 		m_game_over(false) {}
 
-	void onSetup()
+	void onSetup() override
 	{
 		BallsController::onSetup();
 
@@ -25,7 +25,7 @@ public:
 		});
 	}
 
-	void onDestroy()
+	void onDestroy() override
 	{
 		BallsController::onDestroy();
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_exit_signal_id);

@@ -25,26 +25,34 @@ class Ball;
 class BallArea : public eng::phy::AreaBody2D
 {
 public:
-	void onCollisionStay(eng::phy::PhysicsBody2D& other);
+	void onCollisionStay(eng::phy::PhysicsBody2D& other) override;
 };
 
 class Ball : public eng::phy::RigidBody2D
 {
+protected:
+	BallArea* m_area = nullptr;
+	eng::gfx::Sprite2D* m_sprite = nullptr;
+
 public:
 	Ball(unsigned int start_level): m_level(start_level) {}
 
-	void onSetup()
+	void onBuild() override
 	{
-		auto a = addChild<BallArea>("area");
-		a->setCollider<eng::phy::CircleCollider2D>();
+		m_area = addChild<BallArea>("area");
+		m_sprite = addChild<eng::gfx::Sprite2D>("sprite");
 
-		auto s = addChild<eng::gfx::Sprite2D>("sprite");
-		m_context.get<eng::gfx::RenderCanvas>().addObject(*s);
+		setCollider<eng::phy::CircleCollider2D>();
+		m_area->setCollider<eng::phy::CircleCollider2D>();
+	}
 
-		auto col = setCollider<eng::phy::CircleCollider2D>();
+	void onSetup() override
+	{
+		m_context.get<eng::gfx::RenderCanvas>().addObject(*m_sprite);
+
 		if (m_level)
 		{
-			m_context.get<eng::phy::PhysicsWorld>().addBody(*a);
+			m_context.get<eng::phy::PhysicsWorld>().addBody(*m_area);
 			m_context.get<eng::phy::PhysicsWorld>().addBody(*this);
 			setRestitution(0.8);
 		}
@@ -52,14 +60,14 @@ public:
 		setLevel(m_level);
 	}
 
-	void onDestroy()
+	void onDestroy() override
 	{
-		m_context.get<eng::gfx::RenderCanvas>().removeObject(*(dynamic_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"))));
-		m_context.get<eng::phy::PhysicsWorld>().removeBody(*(dynamic_cast<eng::phy::AreaBody2D*>(getChildByName("area"))));
+		m_context.get<eng::gfx::RenderCanvas>().removeObject(*m_sprite);
+		m_context.get<eng::phy::PhysicsWorld>().removeBody(*m_area);
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}
 
-	void onUpdate(float delta)
+	void onUpdate(float delta) override
 	{
 		applyForce(eng::mth::Vec2(0, 200)*getMass());
 	}
@@ -69,20 +77,17 @@ public:
 		if (!level) return;
 
 		m_level = level;
-
 		unsigned int rad = level*10 + 10;
-		auto sprite = static_cast<eng::gfx::Sprite2D*>(getChildByName("sprite"));
 
 		auto* tex = m_context.get<eng::core::ResourceManager>().load<eng::gfx::Texture>({"resources/fruit" + std::to_string(level - 1) + ".png"}).second;
 		if (tex)
 		{
-			tex->setSmooth(false);
-			sprite->setTexture(tex);
-			sprite->setScale((rad*2)/tex->getSize().x);
+			tex->setSmooth(true);
+			m_sprite->setTexture(tex);
+			m_sprite->setScale((rad*2)/tex->getSize().x);
 		}
 
-		auto area = static_cast<eng::phy::AreaBody2D*>(getChildByName("area"));
-		auto area_collider = static_cast<eng::phy::CircleCollider2D*>(area->getCollider());
+		auto area_collider = static_cast<eng::phy::CircleCollider2D*>(m_area->getCollider());
 		area_collider->setRadius(rad*1.15);
 
 		auto collider = static_cast<eng::phy::CircleCollider2D*>(getCollider());

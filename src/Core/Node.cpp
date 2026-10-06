@@ -16,25 +16,28 @@
 namespace eng
 {
 
-core::Node::Node():
-	m_setuped(false),
-	m_destroyed(false),
-	m_parent(nullptr)
-{
-	m_children.clear();
-}
-
-core::Node::~Node()
-{}
-
-
 bool core::Node::isDestroyed()
 {
 	return m_destroyed;
 }
 
+
+void core::Node::build()
+{
+	if (m_built) return;
+	Logger::debug("START build of node \"" + m_tag.getPath() + "\" START");
+
+	onBuild();
+	m_built = true;
+	for (auto& child : m_children)
+		child->build();
+
+	Logger::debug("END   build of node \"" + m_tag.getPath() + "\" END");
+}
+
 void core::Node::setup(Context& context)
 {
+	if (!m_built) build();
 	Logger::debug("START setup of node \"" + m_tag.getPath() + "\" START");
 
 	m_context = context;
@@ -42,6 +45,7 @@ void core::Node::setup(Context& context)
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->setup(m_context);
 	m_setuped = true;
+	onReady();
 
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
@@ -67,6 +71,7 @@ void core::Node::destroy()
 	Logger::debug("END   destroy of node \"" + m_tag.getPath() + "\" END");
 }
 
+
 void core::Node::cleanupDestroyed()
 {
 	for (auto it = m_children.begin(); it != m_children.end(); )
@@ -80,7 +85,9 @@ void core::Node::cleanupDestroyed()
 }
 
 
+void core::Node::onBuild() {}
 void core::Node::onSetup() {}
+void core::Node::onReady() {}
 void core::Node::onUpdate(float delta) {}
 void core::Node::onDestroy() {}
 
