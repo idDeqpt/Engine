@@ -8,6 +8,7 @@
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Core/ConfigManager.hpp>
+#include <Engine/Core/Delta.hpp>
 
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
@@ -208,6 +209,8 @@ void core::Engine::mainLoop()
 	phy::PhysicsWorld& Physics_World = m_context.get<phy::PhysicsWorld>();
 	TimeManager&       Time_Manager  = m_context.get<TimeManager>();
 
+	Delta delta;
+	delta.max = 0.1;
 	float real_frame_delta = 0;
 	float full_frame_delta = 0;
 	Timer timer;
@@ -217,9 +220,9 @@ void core::Engine::mainLoop()
 
 		Event_Manager.pull();
 
-		m_root_node->update(full_frame_delta);
+		m_root_node->update(delta);
 
-		Physics_World.update(full_frame_delta);
+		Physics_World.update(delta.frame);
 
 		m_root_node->cleanupDestroyed();
 
@@ -228,12 +231,12 @@ void core::Engine::mainLoop()
 		Render_Canvas.render(*m_window);
 		m_window->display();
 
-		real_frame_delta = timer.getElapsedSeconds();
-		float target_frame_delta = 1.0/m_framerate;
-		if (real_frame_delta < target_frame_delta)
-			Time_Manager.sleepSeconds(target_frame_delta - real_frame_delta);
-		full_frame_delta = timer.getElapsedSeconds();
-		if (full_frame_delta > 0.1) full_frame_delta = 0.1;
+		delta.cpu = timer.getElapsedSeconds();
+		const float target_frame_delta = 1.0/m_framerate;
+		if (delta.cpu < target_frame_delta)
+			Time_Manager.sleepSeconds(target_frame_delta - delta.cpu);
+		delta.frame = timer.getElapsedSeconds();
+		if (delta.frame > delta.max) delta.frame = delta.max;
 	}
 }
 

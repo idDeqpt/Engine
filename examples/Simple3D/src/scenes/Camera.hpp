@@ -6,6 +6,7 @@
 #include <Engine/Math/Quaternion.hpp>
 #include <Engine/Math/Vec3.hpp>
 #include <Engine/Context.hpp>
+#include <Engine/Core/Delta.hpp>
 
 class Camera : public eng::gfx::Camera3D
 {
@@ -15,7 +16,7 @@ public:
 		setPerspective(3.14*0.25, float(900)/600, 1, 100);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		auto event_manager = m_context.get<eng::sys::EventManager>();
 		eng::mth::Vec3 vel;
@@ -39,14 +40,14 @@ public:
 			event_manager.setCursorMode(eng::sys::Mouse::CursorMode::NORMAL);
 
 		if (event_manager.getMouse().moved())
-			m_rot_angles = m_rot_angles + event_manager.getMouse().getDelta()*delta;
+			m_rot_angles = m_rot_angles + event_manager.getMouse().getDelta()*delta.frame;
 
 		this->setRotation(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), 0));
 		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(0, 1, 0), -m_rot_angles.x));
 		this->rotate(eng::mth::Quaternion(eng::mth::Vec3(1, 0, 0), -m_rot_angles.y));
 
 		if (vel.x || vel.y || vel.z)
-			this->relativeMove(vel*delta);
+			this->relativeMove(vel*delta.frame);
 	}
 
 protected:

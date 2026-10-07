@@ -3,13 +3,14 @@
 
 #include <Engine/Graphics/2D/Camera2D.hpp>
 
+#include <Engine/Core/Delta.hpp>
 #include <Engine/System/EventManager.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class Camera : public eng::gfx::Camera2D
 {
 public:
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		return;
 		eng::sys::EventManager& EM = m_context.get<eng::sys::EventManager>();
@@ -29,7 +30,7 @@ public:
 			scale(0.9);
 
 		if (vel.x || vel.y)
-			move(vel.norm(speed)*getScale().x*delta);
+			move(vel.norm(speed)*getScale().x*delta.frame);
 	}
 };
 

@@ -50,7 +50,7 @@ void core::Node::setup(Context& context)
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
 
-void core::Node::update(float delta)
+void core::Node::update(const Delta& delta)
 {
 	onUpdate(delta);
 	for (unsigned int i = 0; i < m_children.size(); i++)
@@ -88,7 +88,7 @@ void core::Node::cleanupDestroyed()
 void core::Node::onBuild() {}
 void core::Node::onSetup() {}
 void core::Node::onReady() {}
-void core::Node::onUpdate(float delta) {}
+void core::Node::onUpdate(const Delta& delta) {}
 void core::Node::onDestroy() {}
 
 

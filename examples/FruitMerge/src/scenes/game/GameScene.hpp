@@ -13,6 +13,7 @@
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/Delta.hpp>
 #include <Engine/Math/Vec2.hpp>
 
 class GameArea : public eng::phy::AreaBody2D
@@ -79,7 +80,7 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_camera_signal_id);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		auto event_manager = m_context.get<eng::sys::EventManager>();
 

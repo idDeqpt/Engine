@@ -6,6 +6,7 @@
 
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/Delta.hpp>
 
 #include <Engine/System/EventManager.hpp>
 
@@ -75,7 +76,7 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_ball_fall_signal_id);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		for (auto& ball : m_balls_for_removing)
 		{

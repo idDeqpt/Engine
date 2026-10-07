@@ -4,6 +4,7 @@
 #include <scenes/SceneLayer.hpp>
 
 #include <Engine/Core/ConfigManager.hpp>
+#include <Engine/Core/Delta.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
 #include <Engine/Graphics/Font.hpp>
@@ -105,10 +106,10 @@ public:
 		m_context.get<eng::gfx::RenderCanvas>().removeObject(*m_tip_classic_mode_text);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		auto t_ft = static_cast<eng::gfx::Text2D*>(getChildByName("text_frametime"));
-		if (t_ft) t_ft->setString(std::to_string(delta));
+		if (t_ft) t_ft->setString(std::to_string(delta.frame));
 
 		SceneLayer::onUpdate(delta);
 	}

@@ -8,6 +8,7 @@
 #include <Engine/Physics/PhysicsWorld.hpp>
 #include <Engine/Core/ResourceManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/Delta.hpp>
 
 #include <Engine/Graphics/2D/Sprite2D.hpp>
 #include <Engine/Graphics/2D/Text2D.hpp>
@@ -67,7 +68,7 @@ public:
 		m_context.get<eng::phy::PhysicsWorld>().removeBody(*this);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		applyForce(eng::mth::Vec2(0, 200)*getMass());
 	}

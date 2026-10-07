@@ -3,6 +3,7 @@
 
 #include <Engine/Context.hpp>
 #include <Engine/Core/NodeNameTag.hpp>
+#include <Engine/Core/Delta.hpp>
 
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
@@ -29,7 +30,7 @@ namespace core
 
 		void build();
 		void setup(Context& context);
-		void update(float delta);
+		void update(const Delta& delta);
 		void destroy();
 
 		void cleanupDestroyed();
@@ -37,7 +38,7 @@ namespace core
 		virtual void onBuild(); //stage before children setups, for addChild and static initializations
 		virtual void onSetup(); //stage before children setups, with acces to Context
 		virtual void onReady(); //stage after children setups, children are fully initialized
-		virtual void onUpdate(float delta);
+		virtual void onUpdate(const Delta& delta);
 		virtual void onDestroy();
 
 		void setParent(Node* new_parent);

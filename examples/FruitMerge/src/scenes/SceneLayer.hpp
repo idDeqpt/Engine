@@ -5,6 +5,7 @@
 
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/Delta.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
@@ -46,7 +47,7 @@ public:
 		m_context.get<eng::core::SignalBus>().unsubscribe(m_viewport_signal_id);
 	}
 
-	void onUpdate(float delta) override
+	void onUpdate(const eng::core::Delta& delta) override
 	{
 		m_target->clear(eng::gfx::Color(0, 0, 0, 0));
 		m_scene->render(*m_target);
