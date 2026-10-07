@@ -10,6 +10,7 @@ namespace eng::gfx
 	{
 	public:
 		Drawable() {m_visible = true;}
+		virtual ~Drawable() = default;
 
 		void setVisible(bool flag) {m_visible = flag;}
 		bool isVisible() {return m_visible;}

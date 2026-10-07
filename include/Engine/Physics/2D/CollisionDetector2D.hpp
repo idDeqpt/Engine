@@ -11,6 +11,7 @@ namespace eng::phy
 	class CollisionDetector2D
 	{
 	public:
+		virtual ~CollisionDetector2D() = default;
 		virtual void rebuildTree(std::vector<PhysicsBody2D*>& bodies) = 0;
 		virtual void updateTree() = 0;
 

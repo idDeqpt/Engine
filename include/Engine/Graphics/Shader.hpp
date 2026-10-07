@@ -26,11 +26,11 @@ namespace eng::gfx
 		Shader();
 		Shader(const char* vertex_buffer, const char* fragment_buffer);
 
-		bool loadFromFile(std::initializer_list<std::string> paths);
+		bool loadFromFile(std::initializer_list<std::string> paths) override;
 		bool loadFromFile(std::string vertex_path, std::string fragment_path);
 		bool loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer);
 
-		int getLastError();
+		int getLastError() override;
 		std::string getLastErrorLog();
 
 		bool setUniform1i(std::string name, int value);

@@ -38,7 +38,8 @@ namespace eng::phy
 		};
 
 		Collider2D() : core::Node2D() {}
-
+		virtual ~Collider2D() = default;
+		
 		std::mutex& getMutex() {return m_aabb_mutex;}
 
 		virtual AABB getAABB() = 0;

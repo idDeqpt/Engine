@@ -49,6 +49,7 @@ std::pair<std::string, T*> eng::core::ResourceManager::load(std::initializer_lis
 		{
 			for (std::string path : paths)
 				Logger::error(String("Failure loading from path \"" + path + "\""));
+			delete res;
 			return std::make_pair(key, nullptr);
 		}
 		for (std::string path : paths)

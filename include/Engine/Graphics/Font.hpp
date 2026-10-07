@@ -44,7 +44,7 @@ namespace eng::gfx
 
 		void remove();
 
-		bool loadFromFile(std::initializer_list<std::string> paths);
+		bool loadFromFile(std::initializer_list<std::string> paths) override;
 		bool loadFromFile(const std::string& path);
 
 		Texture* getTexture(unsigned int size);

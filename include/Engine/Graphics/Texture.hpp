@@ -33,7 +33,7 @@ namespace eng::gfx
 		bool setSmooth(bool flag);
 		void setFlip(bool flip_x, bool flip_y);
 
-		bool loadFromFile(std::initializer_list<std::string> paths);
+		bool loadFromFile(std::initializer_list<std::string> paths) override;
 		bool loadFromFile(const std::string& path);
 
 		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height);
@@ -50,7 +50,7 @@ namespace eng::gfx
 
 		void bind() const;
 
-		int getLastError();
+		int getLastError() override;
 
 	protected:
 		gl::TextureHandle m_texture_handle;
