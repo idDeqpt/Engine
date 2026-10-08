@@ -2,105 +2,87 @@
 
 #include <thread>
 #include <chrono>
+#include <mutex>
 
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+	#include <intrin.h>
+#elif defined(__i386__) || defined(__x86_64__)
+	#include <immintrin.h>
+#endif
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	#define NOMINMAX
 	#include <windows.h>
 	#include <mmsystem.h>
 	#pragma comment(lib, "winmm.lib")
-#elif defined(__linux__) || defined(__unix__)
-	#include <unistd.h>
-	#include <time.h>
-	#include <errno.h>
-#elif defined(__APPLE__)
-	#include <mach/mach_time.h>
-	#include <mach/mach.h>
 #endif
 
-
-void busyWait(std::chrono::microseconds ms)
+namespace
 {
-	auto start = std::chrono::steady_clock::now();
-	auto target = start + std::chrono::microseconds(ms);
-	
-	while (std::chrono::steady_clock::now() < target)
-	{
-		#ifdef _WIN32
-			YieldProcessor();  // _mm_pause()
-		#elif defined(__linux__) || defined(__APPLE__)
-			__asm__ volatile ("pause" ::: "memory");
-		#endif
-	}
+
+constexpr auto kBusyWaitThreshold = std::chrono::microseconds(2000);
+constexpr auto kSleepOvershoot    = std::chrono::microseconds(1500);
+
+inline void cpuRelax() noexcept
+{
+	#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+		YieldProcessor();
+	#elif defined(__i386__) || defined(__x86_64__)
+		_mm_pause();
+	#else
+		std::this_thread::yield();
+	#endif
 }
 
+void busyWaitUntil(std::chrono::steady_clock::time_point deadline) noexcept
+{
+	while (std::chrono::steady_clock::now() < deadline)
+		cpuRelax();
+}
 
-namespace eng
+#if defined(_WIN32)
+	void ensureHighResTimer()
+	{
+		static std::once_flag flag;
+		std::call_once(flag, [] { timeBeginPeriod(1); });
+	}
+#endif
+
+} // namespace
+
+namespace eng::core
 {
 
-core::TimeManager::TimeManager()
+TimeManager::TimeManager()
 {
 	m_app_start_time = std::chrono::steady_clock::now();
 }
 
-
-void core::TimeManager::sleepSeconds(float seconds)
+void TimeManager::sleepSeconds(float seconds)
 {
 	if (seconds <= 0.0f)
 		return;
-	
-	auto microseconds = static_cast<long long>(seconds * 1'000'000.0);
-	auto sleep_start = std::chrono::steady_clock::now();
-	
-	//short sleep
-	if (microseconds < 2000)
+
+	auto total = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(seconds));
+	auto deadline = std::chrono::steady_clock::now() + total;
+
+	if (total < kBusyWaitThreshold)
 	{
-		auto target = sleep_start + std::chrono::microseconds(microseconds);
-		
-		while (std::chrono::steady_clock::now() < target)
-		{
-			#ifdef _WIN32
-				YieldProcessor();  // _mm_pause()
-			#elif defined(__linux__) || defined(__APPLE__)
-				__asm__ volatile ("pause" ::: "memory");
-			#endif
-		}
+		busyWaitUntil(deadline);
 		return;
 	}
-	
-	//long sleep
-	#ifdef _WIN32
-		static bool high_res_initialized = false;
-		if (!high_res_initialized)
-		{
-			timeBeginPeriod(1);
-			high_res_initialized = true;
-		}
+
+	#if defined(_WIN32)
+		ensureHighResTimer();
 	#endif
-	
-	auto sleep_microseconds = microseconds - 1500;
-	if (sleep_microseconds > 0)
-	{
-		std::this_thread::sleep_for(
-			std::chrono::microseconds(sleep_microseconds)
-		);
-	}
-	
-	auto target = sleep_start + std::chrono::microseconds(microseconds);
-	
-	while (std::chrono::steady_clock::now() < target)
-	{
-		#ifdef _WIN32
-			YieldProcessor();
-		#elif defined(__linux__) || defined(__APPLE__)
-			__asm__ volatile ("pause" ::: "memory");
-		#endif
-	}
+
+	std::this_thread::sleep_for(total - kSleepOvershoot);
+	busyWaitUntil(deadline);
 }
 
-float core::TimeManager::getAppSeconds()
+float TimeManager::getAppSeconds()
 {
 	return std::chrono::duration<float>(std::chrono::steady_clock::now() - m_app_start_time).count();
 }
 
-} //namespace eng
+} // namespace eng::core
