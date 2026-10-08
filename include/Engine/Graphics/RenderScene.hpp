@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <vector>
+#include <memory>
 
 namespace eng::gfx
 {
@@ -43,6 +44,7 @@ namespace eng::gfx
 	protected:
 		std::vector<Drawable*>     m_objects;
 		std::vector<RenderPass>    m_pipeline;
+		std::vector<std::unique_ptr<RenderTarget>> m_framebuffers_container;
 		std::vector<RenderTarget*> m_framebuffers;
 		Camera2D m_quad_view;
 	};

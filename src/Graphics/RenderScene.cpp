@@ -49,19 +49,22 @@ bool RenderScene::setRenderPipeline(const std::vector<RenderPass>& new_pipeline)
 	for (const auto& pass : m_pipeline)
 		if (!pass.shader) return false;
 
-	for (unsigned int i = 0; i < m_framebuffers.size(); i++)
-		if (m_framebuffers[i]) delete m_framebuffers[i];
-
-	m_framebuffers.reserve(m_pipeline.size());
-	for (unsigned int i = 0; i < (m_pipeline.size() - 1); i++)
+	m_framebuffers_container.clear();
+	m_framebuffers_container.reserve(m_pipeline.size());
+	for (int i = 0; i < (m_pipeline.size() - 1); i++)
 	{
-		m_framebuffers.push_back(new RenderTarget(
+		m_framebuffers_container.push_back(std::make_unique<RenderTarget>(
 			m_pipeline[i].color_attachments.size(),
 			m_pipeline[i].color_attachments.data()
 		));
-		m_framebuffers.back()->setViewport(m_pipeline[i].viewport_position.x, m_pipeline[i].viewport_position.y,
-		                                   m_pipeline[i].viewport_size.x,     m_pipeline[i].viewport_size.y);
+		m_framebuffers_container.back()->setViewport(m_pipeline[i].viewport_position.x, m_pipeline[i].viewport_position.y,
+		                                             m_pipeline[i].viewport_size.x,     m_pipeline[i].viewport_size.y);
 	}
+
+	m_framebuffers.clear();
+	m_framebuffers.reserve(m_framebuffers_container.size() + 1);
+	for (const auto& framebuffer : m_framebuffers_container)
+		m_framebuffers.push_back(framebuffer.get());
 	m_framebuffers.push_back(nullptr); //for final target in .render(RenderTarget)
 	
 	return true;
