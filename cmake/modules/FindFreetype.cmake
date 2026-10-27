@@ -80,7 +80,6 @@ endif()
 
 find_package_handle_standard_args(Freetype
 	REQUIRED_VARS FREETYPE_INCLUDE_DIR FREETYPE_LIBRARY
-	FOUND_VAR FREETYPE_FOUND
 )
 
 mark_as_advanced(FREETYPE_INCLUDE_DIR FREETYPE_LIBRARY)

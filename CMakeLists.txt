@@ -103,7 +103,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE
 find_package(stb REQUIRED)
 find_package(glad REQUIRED)
 find_package(GLFW3 REQUIRED)
-find_package(freetype REQUIRED)
+find_package(Freetype REQUIRED)
 
 if(BUILD_SHARED)
 	add_library(${PROJECT_NAME} SHARED)
@@ -143,37 +143,39 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${ENGINE_DEPENDENCIES})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
-
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-#Установка целевого продукта
 install(TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}Targets
-	LIBRARY DESTINATION bin/lib              #Библиотеки будут устанавливаться сюда
-	ARCHIVE DESTINATION bin/lib              #То же самое для архивированных версий (.lib)
-	RUNTIME DESTINATION bin                  #Исполняемые файлы (*.exe)
-	PUBLIC_HEADER DESTINATION include)       #Заголовочные файлы
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-#Экспорт целевой спецификации
+install(DIRECTORY include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY cmake/modules/
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/modules)
+
 install(EXPORT ${PROJECT_NAME}Targets
-	NAMESPACE Engine::          #Пространство имён для целей экспорта
-	FILE ${PROJECT_NAME}Config.cmake
-	DESTINATION lib/cmake/${PROJECT_NAME})
-
-export(EXPORT ${PROJECT_NAME}Targets
 	NAMESPACE Engine::
-	FILE ${PROJECT_NAME}Config.cmake)
+	FILE ${PROJECT_NAME}Targets.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
-#Генерация файла конфигурации с версией
-configure_file(
-	"cmake/${PROJECT_NAME}ConfigVersion.cmake"
+configure_package_config_file(
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+write_basic_package_version_file(
 	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-	@ONLY)
+	VERSION ${PROJECT_VERSION}
+	COMPATIBILITY SameMajorVersion)
 
-#Установка файла конфигурации
 install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-	DESTINATION lib/cmake/${PROJECT_NAME})
+	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 if(BUILD_EXAMPLES)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/examples)
