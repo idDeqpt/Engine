@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
 set(PROJECT_NAME Engine)
-set(BUILD_SHARED_LIBS FALSE)
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 project(${PROJECT_NAME}
 	VERSION 1.0.0
@@ -18,6 +19,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>)
 
 option(BUILD_WITH_OPENGL_3_3 "Build library with support of OpenGL 3.3" ON)
 option(BUILD_EXAMPLES        "Build examples for library"               OFF)
+option(BUILD_SHARED          "Build shared library"                     ON)
 
 set(CORE_SOURCE_FILES
 	src/Core/ConfigManager.cpp
@@ -103,7 +105,12 @@ find_package(glad REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(freetype REQUIRED)
 
-add_library(${PROJECT_NAME})
+if(BUILD_SHARED)
+	add_library(${PROJECT_NAME} SHARED)
+else()
+	add_library(${PROJECT_NAME} STATIC)
+endif()
+
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 if(BUILD_WITH_OPENGL_3_3)
