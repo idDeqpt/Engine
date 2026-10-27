@@ -46,6 +46,7 @@ core::Engine::Engine(std::unique_ptr<Node> root):
 {
 	Logger::debug("Start app");
 	Logger::debug("Start initialization");
+	
 	m_context.create<core::TimeManager>();
 
 	gfx::gl::Api::createInstance();
@@ -110,11 +111,12 @@ core::Engine::~Engine()
 	for (unsigned int i = 0; i < m_subscriptions.size(); i++)
 		m_context.get<core::SignalBus>().unsubscribe(m_subscriptions[i]);
 	m_context.shutdown();
-	gfx::gl::Api::getInstance()->finalize();
-	Logger::debug("End finalization");
 
 	m_window.reset();
+	gfx::gl::Api::getInstance()->finalize();
 	sys::Window::finalize();
+
+	Logger::debug("End finalization");
 	Logger::debug("End app");
 }
 
