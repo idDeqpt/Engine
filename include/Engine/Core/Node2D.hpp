@@ -31,7 +31,7 @@ namespace eng::core
 
 		mth::Transform2 getLocalTransform();
 		mth::Transform2 getInvertLocalTransform();
-		std::optional<mth::Transform2> getGlobalTransform2D() override;
+		mth::Transform2 getGlobalTransform();
 
 	protected:
 		mth::Vec2 m_origin;

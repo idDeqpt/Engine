@@ -157,7 +157,7 @@ void phy::RectangleCollider2D::updateAABB()
 			for (int i = 0; i < 4; ++i)
 			{
 				mth::Vec3 point(local_points[i].x, local_points[i].y, 1.0f);
-				mth::Vec3 transformed = getGlobalTransform2D()->getMatrix()*point;
+				mth::Vec3 transformed = getGlobalTransform().getMatrix()*point;
 				global_points[i] = mth::Vec2(transformed.x, transformed.y);
 			}
 			

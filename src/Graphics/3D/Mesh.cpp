@@ -131,7 +131,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	Shader* active_shader = gfx::Shader::getActive();
 
 	active_shader->use();
-	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform3D().value().getMatrix().getValuesPtr());
+	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 
 	gl::Api::getInstance()->setActiveTexture(0);
 		m_material.albedo->bind();

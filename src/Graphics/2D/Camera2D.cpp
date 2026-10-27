@@ -40,7 +40,7 @@ mth::Mat3 gfx::Camera2D::getProjectionMatrix()
 mth::Mat3 gfx::Camera2D::getViewMatrix()
 {
 	mth::Mat3 view_mat;
-	getGlobalTransform2D().value().getMatrix().invert(view_mat);
+	getGlobalTransform().getMatrix().invert(view_mat);
 	return view_mat;
 }
 

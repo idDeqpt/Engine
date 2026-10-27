@@ -178,7 +178,7 @@ void core::Engine::setup()
 			[&](gfx::Shader* sh){
 				gfx::Camera3D& active_view = m_context.get<gfx::RenderWorld>().getActiveCamera();
 				mth::Vec3 view_loc_pos = active_view.getPosition();
-				mth::Vec4 view_glob_pos = active_view.getGlobalTransform3D().value().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
+				mth::Vec4 view_glob_pos = active_view.getGlobalTransform().getMatrix()*mth::Vec4(view_loc_pos.x, view_loc_pos.y, view_loc_pos.z, 1);
 				sh->setUniform3fv("uViewPos", &view_glob_pos.x);
 
 				gfx::LightManager::DirectionalLight light = m_context.get<gfx::LightManager>().getDirectionalLight();

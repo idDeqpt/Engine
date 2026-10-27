@@ -28,7 +28,7 @@ namespace eng::core
 
 		mth::Transform3 getLocalTransform();
 		mth::Transform3 getInvertLocalTransform();
-		std::optional<mth::Transform3> getGlobalTransform3D();
+		mth::Transform3 getGlobalTransform();
 
 	protected:
 		mth::Vec3 m_origin;

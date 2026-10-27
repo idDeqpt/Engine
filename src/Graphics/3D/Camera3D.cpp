@@ -51,7 +51,7 @@ mth::Mat4 gfx::Camera3D::getProjectionMatrix()
 mth::Mat4 gfx::Camera3D::getViewMatrix()
 {
 	mth::Mat4 view_mat;
-	getGlobalTransform3D().value().getMatrix().invert(view_mat);
+	getGlobalTransform().getMatrix().invert(view_mat);
 	return view_mat;
 }
 

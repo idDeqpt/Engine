@@ -8,21 +8,20 @@
 #include <Engine/Math/Transform2.hpp>
 #include <Engine/Math/Transform3.hpp>
 
-#include <optional>
 #include <string>
 #include <vector>
 
 
-namespace eng
+namespace eng::core
 {
 
-bool core::Node::isDestroyed()
+bool Node::isDestroyed()
 {
 	return m_destroyed;
 }
 
 
-void core::Node::build()
+void Node::build()
 {
 	if (m_built) return;
 	Logger::debug("START build of node \"" + m_tag.getPath() + "\" START");
@@ -35,7 +34,7 @@ void core::Node::build()
 	Logger::debug("END   build of node \"" + m_tag.getPath() + "\" END");
 }
 
-void core::Node::setup(Context& context)
+void Node::setup(Context& context)
 {
 	if (!m_built) build();
 	Logger::debug("START setup of node \"" + m_tag.getPath() + "\" START");
@@ -50,14 +49,14 @@ void core::Node::setup(Context& context)
 	Logger::debug("END   setup of node \"" + m_tag.getPath() + "\" END");
 }
 
-void core::Node::update(const Delta& delta)
+void Node::update(const Delta& delta)
 {
 	onUpdate(delta);
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		m_children[i]->update(delta);
 }
 
-void core::Node::destroy()
+void Node::destroy()
 {
 	if (m_destroyed) return;
 	
@@ -72,7 +71,7 @@ void core::Node::destroy()
 }
 
 
-void core::Node::cleanupDestroyed()
+void Node::cleanupDestroyed()
 {
 	for (auto it = m_children.begin(); it != m_children.end(); )
 		if ((*it)->m_destroyed)
@@ -85,30 +84,30 @@ void core::Node::cleanupDestroyed()
 }
 
 
-void core::Node::onBuild() {}
-void core::Node::onSetup() {}
-void core::Node::onReady() {}
-void core::Node::onUpdate(const Delta& delta) {}
-void core::Node::onDestroy() {}
+void Node::onBuild() {}
+void Node::onSetup() {}
+void Node::onReady() {}
+void Node::onUpdate(const Delta& delta) {}
+void Node::onDestroy() {}
 
 
-void core::Node::setParent(Node* new_parent)
+void Node::setParent(Node* new_parent)
 {
 	m_parent = new_parent;
 }
 
-void core::Node::setName(const std::string& new_name)
+void Node::setName(const std::string& new_name)
 {
 	m_tag = NodeNameTag(new_name, m_tag.getIndex(), m_parent ? m_parent->getTag().getPath() : "");
 }
 
 
-core::Node* core::Node::getParent()
+Node* Node::getParent()
 {
 	return m_parent;
 }
 
-core::Node* core::Node::getChildByName(const std::string& name)
+Node* Node::getChildByName(const std::string& name)
 {
 	NameTag tag(name);
 	for (unsigned int i = 0; i < m_children.size(); i++)
@@ -117,24 +116,13 @@ core::Node* core::Node::getChildByName(const std::string& name)
 	return nullptr;
 }
 
-const core::NodeNameTag& core::Node::getTag()
+const NodeNameTag& Node::getTag()
 {
 	return m_tag;
 }
 
 
-std::optional<mth::Transform2> core::Node::getGlobalTransform2D()
-{
-	return m_parent ? m_parent->getGlobalTransform2D() : std::nullopt;
-}
-
-std::optional<mth::Transform3> core::Node::getGlobalTransform3D()
-{
-	return m_parent ? m_parent->getGlobalTransform3D() : std::nullopt;
-}
-
-
-bool core::Node::isChild(Node* node)
+bool Node::isChild(Node* node)
 {
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		if (node == m_children[i].get())
@@ -142,7 +130,7 @@ bool core::Node::isChild(Node* node)
 	return false;
 }
 
-void core::Node::removeChild(Node* node)
+void Node::removeChild(Node* node)
 {
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		if (node == m_children[i].get())
@@ -152,4 +140,4 @@ void core::Node::removeChild(Node* node)
 		}
 }
 
-}
+} //namespace eng::core

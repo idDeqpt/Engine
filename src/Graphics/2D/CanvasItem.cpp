@@ -85,7 +85,7 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, const gfx::RenderStates& s
 	Shader* active_shader = gfx::Shader::getActive();
 
 	active_shader->use();
-	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform2D().value().getMatrix().getValuesPtr());
+	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
 	active_shader->setUniform1ui("uLayer", m_layer);
 
 	float color[4];

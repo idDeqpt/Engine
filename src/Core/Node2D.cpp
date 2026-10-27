@@ -5,24 +5,24 @@
 #include <Engine/Math/Vec3.hpp>
 
 
-namespace eng
+namespace eng::core
 {
 
-core::Node2D::Node2D():
+Node2D::Node2D():
 	m_rotation(0),
 	m_scale(mth::Vec2(1)),
 	m_transform_need_update(true),
-	m_invert_transform_need_update(true), core::Node() {}
+	m_invert_transform_need_update(true), Node() {}
 
 
-void core::Node2D::move(const mth::Vec2& offset)
+void Node2D::move(const mth::Vec2& offset)
 {
 	m_position += offset;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node2D::scale(const mth::Vec2& scale_v)
+void Node2D::scale(const mth::Vec2& scale_v)
 {
 	m_scale.x *= scale_v.x;
 	m_scale.y *= scale_v.y;
@@ -30,7 +30,7 @@ void core::Node2D::scale(const mth::Vec2& scale_v)
 	m_invert_transform_need_update = true;
 }
 
-void core::Node2D::rotate(float angle)
+void Node2D::rotate(float angle)
 {
 	m_rotation += angle;
 	m_transform_need_update = true;
@@ -38,28 +38,28 @@ void core::Node2D::rotate(float angle)
 }
 
 
-void core::Node2D::setOrigin(const mth::Vec2& new_origin)
+void Node2D::setOrigin(const mth::Vec2& new_origin)
 {
 	m_origin = new_origin;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node2D::setPosition(const mth::Vec2& new_position)
+void Node2D::setPosition(const mth::Vec2& new_position)
 {
 	m_position = new_position;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node2D::setScale(const mth::Vec2& new_scale)
+void Node2D::setScale(const mth::Vec2& new_scale)
 {
 	m_scale = new_scale;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node2D::setRotation(float new_angle)
+void Node2D::setRotation(float new_angle)
 {
 	m_rotation = new_angle;
 	m_transform_need_update = true;
@@ -67,36 +67,36 @@ void core::Node2D::setRotation(float new_angle)
 }
 
 
-mth::Vec2 core::Node2D::getOrigin()
+mth::Vec2 Node2D::getOrigin()
 {
 	return m_origin;
 }
 
-mth::Vec2 core::Node2D::getPosition()
+mth::Vec2 Node2D::getPosition()
 {
 	return m_position;
 }
 
-mth::Vec2 core::Node2D::getScale()
+mth::Vec2 Node2D::getScale()
 {
 	return m_scale;
 }
 
-float core::Node2D::getRotation()
+float Node2D::getRotation()
 {
 	return m_rotation;
 }
 
 
-mth::Vec2 core::Node2D::getGlobalPosition()
+mth::Vec2 Node2D::getGlobalPosition()
 {
 	if (!m_parent) return m_position;
 
-	mth::Vec3 pos = getGlobalTransform2D().value().getMatrix()*mth::Vec3(m_position.x, m_position.y, 1);
+	mth::Vec3 pos = getGlobalTransform().getMatrix()*mth::Vec3(m_position.x, m_position.y, 1);
 	return mth::Vec2(pos.x, pos.y);
 }
 
-float core::Node2D::getGlobalRotation()
+float Node2D::getGlobalRotation()
 {
 	if (!m_parent) 
 		return m_rotation;
@@ -110,13 +110,13 @@ float core::Node2D::getGlobalRotation()
 }
 
 
-mth::Transform2 core::Node2D::getLocalTransform()
+mth::Transform2 Node2D::getLocalTransform()
 {
 	computeTransform();
 	return m_transform;
 }
 
-mth::Transform2 core::Node2D::getInvertLocalTransform()
+mth::Transform2 Node2D::getInvertLocalTransform()
 {
 	if (m_invert_transform_need_update)
 	{
@@ -126,18 +126,16 @@ mth::Transform2 core::Node2D::getInvertLocalTransform()
 	return m_invert_transform;
 }
 
-std::optional<mth::Transform2> core::Node2D::getGlobalTransform2D()
+mth::Transform2 Node2D::getGlobalTransform()
 {
-	auto parentOpt = m_parent ? m_parent->getGlobalTransform2D() : std::nullopt;
-	if (parentOpt)
-		return parentOpt.value().getMatrix()*getLocalTransform().getMatrix();
-	else
-		return getLocalTransform();
+	if (auto nearest = getNearestParent<Node2D>())
+		return nearest->getGlobalTransform().getMatrix()*getLocalTransform().getMatrix();
+	return getLocalTransform();
 }
 
 
 
-void core::Node2D::computeTransform()
+void Node2D::computeTransform()
 {
 	if (m_transform_need_update)
 	{
@@ -151,4 +149,4 @@ void core::Node2D::computeTransform()
 	}
 }
 
-} //namespace eng
+} //namespace eng::core

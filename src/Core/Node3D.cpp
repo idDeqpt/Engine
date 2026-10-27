@@ -4,28 +4,28 @@
 #include <Engine/Math/Vec3.hpp>
 
 
-namespace eng
+namespace eng::core
 {
 
-core::Node3D::Node3D():
+Node3D::Node3D():
 	m_scale(mth::Vec3(1)),
 	m_transform_need_update(true),
-	m_invert_transform_need_update(true), core::Node() {}
+	m_invert_transform_need_update(true), Node() {}
 
 
-void core::Node3D::move(const mth::Vec3& offset)
+void Node3D::move(const mth::Vec3& offset)
 {
 	m_position += offset;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node3D::relativeMove(const mth::Vec3& offset)
+void Node3D::relativeMove(const mth::Vec3& offset)
 {
 	move(m_rotation.rotateVec(offset));
 }
 
-void core::Node3D::scale(const mth::Vec3& scale_v)
+void Node3D::scale(const mth::Vec3& scale_v)
 {
 	m_scale.x *= scale_v.x;
 	m_scale.y *= scale_v.y;
@@ -34,7 +34,7 @@ void core::Node3D::scale(const mth::Vec3& scale_v)
 	m_invert_transform_need_update = true;
 }
 
-void core::Node3D::rotate(const mth::Quaternion& quat)
+void Node3D::rotate(const mth::Quaternion& quat)
 {
 	m_rotation = m_rotation*quat;
 	m_transform_need_update = true;
@@ -42,28 +42,28 @@ void core::Node3D::rotate(const mth::Quaternion& quat)
 }
 
 
-void core::Node3D::setOrigin(const mth::Vec3& new_origin)
+void Node3D::setOrigin(const mth::Vec3& new_origin)
 {
 	m_origin = new_origin;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node3D::setPosition(const mth::Vec3& new_position)
+void Node3D::setPosition(const mth::Vec3& new_position)
 {
 	m_position = new_position;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node3D::setScale(const mth::Vec3& new_scale)
+void Node3D::setScale(const mth::Vec3& new_scale)
 {
 	m_scale = new_scale;
 	m_transform_need_update = true;
 	m_invert_transform_need_update = true;
 }
 
-void core::Node3D::setRotation(const mth::Quaternion& quat)
+void Node3D::setRotation(const mth::Quaternion& quat)
 {
 	m_rotation = quat;
 	m_transform_need_update = true;
@@ -71,24 +71,24 @@ void core::Node3D::setRotation(const mth::Quaternion& quat)
 }
 
 
-mth::Vec3 core::Node3D::getPosition()
+mth::Vec3 Node3D::getPosition()
 {
 	return m_position;
 }
 
-mth::Quaternion core::Node3D::getRotation()
+mth::Quaternion Node3D::getRotation()
 {
 	return m_rotation;
 }
 
 
-mth::Transform3 core::Node3D::getLocalTransform()
+mth::Transform3 Node3D::getLocalTransform()
 {
 	computeTransform();
 	return m_transform;
 }
 
-mth::Transform3 core::Node3D::getInvertLocalTransform()
+mth::Transform3 Node3D::getInvertLocalTransform()
 {
 	if (m_invert_transform_need_update)
 	{
@@ -100,18 +100,16 @@ mth::Transform3 core::Node3D::getInvertLocalTransform()
 	return m_invert_transform;
 }
 
-std::optional<mth::Transform3> core::Node3D::getGlobalTransform3D()
+mth::Transform3 Node3D::getGlobalTransform()
 {
-	auto parentOpt = m_parent ? m_parent->getGlobalTransform3D() : std::nullopt;
-	if (parentOpt)
-		return parentOpt.value().getMatrix()*getLocalTransform().getMatrix();
-	else
-		return getLocalTransform();
+	if (auto nearest = getNearestParent<Node3D>())
+		return nearest->getGlobalTransform().getMatrix()*getLocalTransform().getMatrix();
+	return getLocalTransform();
 }
 
 
 
-void core::Node3D::computeTransform()
+void Node3D::computeTransform()
 {
 	if (m_transform_need_update)
 	{
@@ -125,4 +123,4 @@ void core::Node3D::computeTransform()
 	}
 }
 
-} //namespace eng
+} //namespace eng::core
