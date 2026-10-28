@@ -1,86 +1,38 @@
 include(FindPackageHandleStandardArgs)
+include(FetchContent)
 
-find_path(FREETYPE_INCLUDE_DIR
-	NAMES ft2build.h
-	PATHS
-		/usr/include
-		/usr/local/include
-		/usr/include/freetype2
-		/usr/local/include/freetype2
+set(FT_DISABLE_BROTLI   ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_BZIP2    ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_PNG      ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_ZLIB     ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_INSTALL  ON CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS   OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+	freetype
+	URL https://download.savannah.gnu.org/releases/freetype/freetype-2.14.3.tar.gz
+	URL_HASH SHA256=e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+	OVERRIDE_FIND_PACKAGE
+	EXCLUDE_FROM_ALL
 )
 
-if(FREETYPE_INCLUDE_DIR)
-	if(EXISTS "${FREETYPE_INCLUDE_DIR}/freetype/freetype.h")
-		set(FREETYPE_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIR})
-	elseif(EXISTS "${FREETYPE_INCLUDE_DIR}/freetype2/freetype/freetype.h")
-		set(FREETYPE_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIR}/freetype2)
-	else()
-		find_path(FREETYPE_INCLUDE_DIR_freetype2
-			NAMES freetype/freetype.h
-			PATHS
-				/usr/include/freetype2
-				/usr/local/include/freetype2
-		)
-		if(FREETYPE_INCLUDE_DIR_freetype2)
-			set(FREETYPE_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIR_freetype2})
-		endif()
-	endif()
-endif()
+FetchContent_MakeAvailable(freetype)
 
-find_library(FREETYPE_LIBRARY
-	NAMES freetype libfreetype
-	PATHS
-		/usr/lib
-		/usr/local/lib
-)
-
-if(NOT FREETYPE_INCLUDE_DIR OR NOT FREETYPE_LIBRARY)
-	message(STATUS "FreeType not found in system, will download and build via FetchContent")
-	
-	include(FetchContent)
-	
-	FetchContent_Declare(
-		freetype
-		URL https://download.savannah.gnu.org/releases/freetype/freetype-2.14.3.tar.gz
-		URL_HASH SHA256=e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1
-	)
-	
-	set(FREETYPE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-	set(FREETYPE_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
-	set(GLFW_BUILD_SHARED OFF CACHE BOOL "" FORCE)
-	
-	FetchContent_MakeAvailable(freetype)
-	
-	if(TARGET freetype)
-		set(FREETYPE_TARGET freetype)
-	else()
-		message(FATAL_ERROR "FreeType target not found after FetchContent")
-	endif()
-	
-	if(NOT TARGET Freetype::Freetype)
-		add_library(Freetype::Freetype INTERFACE IMPORTED)
-		target_link_libraries(Freetype::Freetype INTERFACE ${FREETYPE_TARGET})
-		target_include_directories(Freetype::Freetype INTERFACE 
-			$<TARGET_PROPERTY:${FREETYPE_TARGET},INTERFACE_INCLUDE_DIRECTORIES>
-		)
-	endif()
-	
-	get_target_property(FREETYPE_INCLUDE_DIR ${FREETYPE_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
-	set(FREETYPE_LIBRARY ${FREETYPE_TARGET})
-	set(FREETYPE_FOUND TRUE)
-	
+if(TARGET freetype)
+	set(FREETYPE_TARGET freetype)
 else()
-	if(NOT TARGET Freetype::Freetype)
-		add_library(Freetype::Freetype INTERFACE IMPORTED)
-		target_include_directories(Freetype::Freetype INTERFACE ${FREETYPE_INCLUDE_DIRS})
-		target_link_libraries(Freetype::Freetype INTERFACE ${FREETYPE_LIBRARY})
-	endif()
-	
-	set(FREETYPE_FOUND TRUE)
+	message(FATAL_ERROR "FreeType target not found after FetchContent")
 endif()
 
-find_package_handle_standard_args(Freetype
-	REQUIRED_VARS FREETYPE_INCLUDE_DIR FREETYPE_LIBRARY
-)
+if(NOT TARGET Freetype::Freetype)
+	add_library(Freetype::Freetype INTERFACE IMPORTED)
+	target_link_libraries(Freetype::Freetype INTERFACE ${FREETYPE_TARGET})
+	target_include_directories(Freetype::Freetype INTERFACE
+		$<TARGET_PROPERTY:${FREETYPE_TARGET},INTERFACE_INCLUDE_DIRECTORIES>
+	)
+endif()
 
-mark_as_advanced(FREETYPE_INCLUDE_DIR FREETYPE_LIBRARY)
+set(FREETYPE_FOUND TRUE)
+find_package_handle_standard_args(Freetype REQUIRED_VARS FREETYPE_TARGET)

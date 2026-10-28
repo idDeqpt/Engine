@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 
 set(PROJECT_NAME Engine)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
