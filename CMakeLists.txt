@@ -91,6 +91,7 @@ set(PHYSICS_SOURCE_FILES
 	src/Physics/PhysicsWorld.cpp)
 
 set(SYSTEM_SOURCE_FILES
+	src/System/DynamicLibrary.cpp
 	src/System/EventManager.cpp
 	src/System/Keyboard.cpp
 	src/System/Mouse.cpp
