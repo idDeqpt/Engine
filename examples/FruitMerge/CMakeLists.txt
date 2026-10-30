@@ -4,11 +4,6 @@ set(PROJECT_NAME FruitMerge)
 
 project(${PROJECT_NAME} CXX)
 
-set(PATH_TO_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../..")
-
-list(APPEND CMAKE_PREFIX_PATH ${PATH_TO_LIB})
-find_package(Engine REQUIRED)
-
 add_executable(${PROJECT_NAME} src/main.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
