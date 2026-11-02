@@ -37,4 +37,13 @@ void PluginManager::loadPlugin(const std::string& path_to_plugin_library)
 		Logger::error("Not loaded plugin");
 }
 
+void PluginManager::loadPlugin(const std::string& directory, const std::string& base_name)
+{
+	auto loader = std::make_unique<PluginLoaderLibrary>();
+	if (loader->load(directory, base_name))
+		m_plugin_loaders.push_back(std::move(loader));
+	else
+		Logger::error("Not loaded plugin");
+}
+
 } //namespace eng::core

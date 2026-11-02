@@ -16,7 +16,9 @@ namespace eng::core
 		PluginManager() = default;
 
 		void loadPlugin(std::unique_ptr<Plugin> plugin_in_process);
+
 		void loadPlugin(const std::string& path_to_plugin_library);
+		void loadPlugin(const std::string& directory, const std::string& base_name);
 
 		void setup(const PluginHost& host);
 

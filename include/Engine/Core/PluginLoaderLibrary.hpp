@@ -15,6 +15,7 @@ namespace eng::core
 		~PluginLoaderLibrary();
 
 		bool load(const std::string& lib_path);
+		bool load(const std::string& directory, const std::string& base_name);
 		void unload() override;
 
 		Plugin* get() const override;
@@ -26,6 +27,8 @@ namespace eng::core
 		sys::DynamicLibrary m_library;
 		Plugin* m_plugin = nullptr;
 		DestroyFn m_destroy = nullptr;
+
+		bool tryLoadAfterOpen();
 	};
 }
 
