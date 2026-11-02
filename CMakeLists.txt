@@ -31,6 +31,7 @@ set(CORE_SOURCE_FILES
 	src/Core/Node3D.cpp
 	src/Core/NodeNameTag.cpp
 	src/Core/PluginLoaderInProcess.cpp
+	src/Core/PluginLoaderLibrary.cpp
 	src/Core/PluginManager.cpp
 	src/Core/ResourceManager.cpp
 	src/Core/SignalBus.cpp

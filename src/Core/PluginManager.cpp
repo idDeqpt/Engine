@@ -4,6 +4,8 @@
 #include <Engine/Core/PluginHost.hpp>
 #include <Engine/Core/PluginLoader.hpp>
 #include <Engine/Core/PluginLoaderInProcess.hpp>
+#include <Engine/Core/PluginLoaderLibrary.hpp>
+#include <Engine/Core/Logger.hpp>
 
 #include <vector>
 #include <memory>
@@ -28,7 +30,11 @@ void PluginManager::loadPlugin(std::unique_ptr<Plugin> plugin_in_process)
 
 void PluginManager::loadPlugin(const std::string& path_to_plugin_library)
 {
-	//TODO
+	auto loader = std::make_unique<PluginLoaderLibrary>();
+	if (loader->load(path_to_plugin_library))
+		m_plugin_loaders.push_back(std::move(loader));
+	else
+		Logger::error("Not loaded plugin");
 }
 
 } //namespace eng::core
