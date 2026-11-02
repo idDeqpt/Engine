@@ -20,12 +20,12 @@ namespace eng::core
 	public:
 		Engine();
 		Engine(std::unique_ptr<Node> root);
-		//Engine(std::unique_ptr<Plugin> app);
 		~Engine();
 
 		void setup();
 		void mainLoop();
-		void destroy();
+
+		PluginManager& getPluginManager();
 
 	protected:
 		float m_framerate;

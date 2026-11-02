@@ -197,6 +197,12 @@ void Engine::mainLoop()
 }
 
 
+PluginManager& Engine::getPluginManager()
+{
+	return *m_plugin_manager;
+}
+
+
 void Engine::init()
 {
 	Logger::debug("Start app");
