@@ -2,6 +2,7 @@
 #define PLUGIN_MANAGER_CLASS_HEADER
 
 #include <Engine/Core/Plugin.hpp>
+#include <Engine/Core/PluginLoader.hpp>
 #include <Engine/Core/PluginHost.hpp>
 
 #include <vector>
@@ -14,12 +15,13 @@ namespace eng::core
 	public:
 		PluginManager() = default;
 
+		void loadPlugin(std::unique_ptr<Plugin> plugin_in_process);
+		void loadPlugin(const std::string& path_to_plugin_library);
+
 		void setup(const PluginHost& host);
 
-        void addPlugin(std::unique_ptr<Plugin> plugin);
-
 	protected:
-        std::vector<std::unique_ptr<Plugin>> m_plugins;
+		std::vector<std::unique_ptr<PluginLoader>> m_plugin_loaders;
 	};
 }
 

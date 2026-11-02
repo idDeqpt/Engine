@@ -1,13 +1,13 @@
 #ifndef DEFAULT_APP_PLUGIN_CLASS_HEADER
 #define DEFAULT_APP_PLUGIN_CLASS_HEADER
 
-#include <Engine/Core/PluginInProcess.hpp>
 #include <Engine/Core/PluginHost.hpp>
+#include <Engine/Core/Plugin.hpp>
 #include <Engine/Core/Node.hpp>
 
 namespace eng::core
 {
-	class DefaultAppPlugin : public PluginInProcess
+	class DefaultAppPlugin : public Plugin
 	{
 	public:
 		DefaultAppPlugin(std::unique_ptr<Node> root);

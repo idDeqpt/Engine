@@ -45,7 +45,7 @@ namespace eng::core
 Engine::Engine(std::unique_ptr<Node> root)
 {
 	init();
-	m_plugin_manager->addPlugin(std::make_unique<DefaultAppPlugin>(std::move(root)));
+	m_plugin_manager->loadPlugin(std::make_unique<DefaultAppPlugin>(std::move(root)));
 }
 
 Engine::Engine()

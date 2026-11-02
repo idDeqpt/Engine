@@ -3,16 +3,16 @@
 
 namespace eng
 {
-    class Context;
+	class Context;
 
 namespace core
 {
-    class Node;
+	class Node;
 
-    struct PluginHost
-    {
-        eng::Context& context;
-        core::Node&   root;
+	struct PluginHost
+	{
+		eng::Context& context;
+		core::Node&   root;
 	};
 }
 }
