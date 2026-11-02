@@ -51,10 +51,11 @@ namespace core
 		T* getNearestParent();
 
 		bool isChild(Node* node);
+		void addChild(std::unique_ptr<Node> child, const std::string& name);
 		void removeChild(Node* node);
 
 		template <class T, typename... Args>
-		T* addChild(std::string name, Args&&... args);
+		T* addChild(const std::string& name, Args&&... args);
 
 
 	protected:
@@ -82,23 +83,14 @@ namespace core
 	}
 
 	template <class T, typename... Args>
-	T* Node::addChild(std::string name, Args&&... args)
+	T* Node::addChild(const std::string& name, Args&&... args)
 	{
 		static_assert(std::is_base_of_v<Node, T>, "T must be derived from Node");
 
 		auto child = std::make_unique<T>(std::forward<Args>(args)...);
-		child->setParent(this);
-
-		NodeNameTag tag(name, 0, "");
-		unsigned int count = 0;
-		for (unsigned int i = 0; i < m_children.size(); i++)
-			if (m_children[i]->getTag().getNameHash() == tag.getNameHash()) count++;
-
-		child->m_tag = NodeNameTag(name, count, m_tag.getPath());
-		if (m_setuped) child->setup(m_context);
 		
 		T* ptr = child.get();
-		m_children.push_back(std::move(child));
+		addChild(std::move(child), name);
 		return ptr;
 	}
 } //core

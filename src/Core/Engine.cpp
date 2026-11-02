@@ -3,24 +3,26 @@
 #include <Engine/Context.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/Timer.hpp>
-#include <Engine/Core/Logger.hpp>
-#include <Engine/Core/TimeManager.hpp>
-#include <Engine/Core/ResourceManager.hpp>
-#include <Engine/Core/SignalBus.hpp>
-#include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/Delta.hpp>
+#include <Engine/Core/Logger.hpp>
+#include <Engine/Core/SignalBus.hpp>
+#include <Engine/Core/TimeManager.hpp>
+#include <Engine/Core/ConfigManager.hpp>
+#include <Engine/Core/PluginManager.hpp>
+#include <Engine/Core/ResourceManager.hpp>
+#include <Engine/Core/DefaultAppPlugin.hpp>
 
 #include <Engine/System/Window.hpp>
 #include <Engine/System/EventManager.hpp>
 
-#include <Engine/Graphics/GL/Api.hpp>
-#include <Engine/Graphics/GL/PixelFormat.hpp>
-#include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Graphics/Shader.hpp>
-#include <Engine/Graphics/2D/RenderCanvas.hpp>
-#include <Engine/Graphics/3D/RenderWorld.hpp>
 #include <Engine/Graphics/RenderScene.hpp>
 #include <Engine/Graphics/LightManager.hpp>
+#include <Engine/Graphics/2D/RenderCanvas.hpp>
+#include <Engine/Graphics/3D/Camera3D.hpp>
+#include <Engine/Graphics/3D/RenderWorld.hpp>
+#include <Engine/Graphics/GL/Api.hpp>
+#include <Engine/Graphics/GL/PixelFormat.hpp>
 
 #include <Engine/Physics/PhysicsWorld.hpp>
 
@@ -37,79 +39,28 @@
 #include <string>
 
 
-namespace eng
+namespace eng::core
 {
 
-core::Engine::Engine(std::unique_ptr<Node> root):
-	m_root_node(std::move(root)),
-	m_framerate(60)
+Engine::Engine(std::unique_ptr<Node> root)
 {
-	Logger::debug("Start app");
-	Logger::debug("Start initialization");
-	
-	m_context.create<core::TimeManager>();
-
-	gfx::gl::Api::createInstance();
-	sys::Window::initialize();
-	m_window = std::make_shared<sys::Window>(900, 600, "Engine");
-	gfx::gl::Api::getInstance()->initialize();
-	
-	m_context.replace<sys::Window>(m_window);
-	m_context.create<core::SignalBus>();
-	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
-	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
-	m_context.create<core::ResourceManager>();
-	m_context.create<gfx::LightManager>();
-	m_context.create<gfx::RenderWorld>();
-	m_context.create<gfx::RenderCanvas>();
-	m_context.create<phy::PhysicsWorld>();
-	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
-
-	core::SignalBus& sbus = m_context.get<core::SignalBus>();
-
-	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_title",
-		[this](std::string title){
-			m_window->setTitle(title);
-	}));
-
-	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_size",
-		[this](mth::Vec2 size){
-			m_window->resize(size);
-	}));
-
-	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_size",
-		[this](mth::Vec2 size){
-			m_window->setViewportSize(size);
-			m_window->updateViewport();
-	}));
-
-	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_centering",
-		[this](mth::Vec2 ratio){
-			m_window->setViewportCentering(ratio);
-			m_window->updateViewport();
-	}));
-
-	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_scaling",
-		[this](std::string mode){
-			if (mode == "fixed")
-				m_window->setViewportScaling(sys::Window::ViewportScaling::FIXED);
-			else if (mode == "stretch")
-				m_window->setViewportScaling(sys::Window::ViewportScaling::STRETCH);
-			m_window->updateViewport();
-	}));
-
-	m_context.get<core::ConfigManager>().notifyAll();
-	Logger::debug("End initialization");
+	init();
+	m_plugin_manager->addPlugin(std::make_unique<DefaultAppPlugin>(std::move(root)));
 }
 
-core::Engine::~Engine()
+Engine::Engine()
+{
+	init();
+}
+
+Engine::~Engine()
 {
 	Logger::debug("Start finalization");
 	m_root_node->destroy();
 	m_root_node.reset();
 
 	for (unsigned int i = 0; i < m_subscriptions.size(); i++)
-		m_context.get<core::SignalBus>().unsubscribe(m_subscriptions[i]);
+		m_context.get<SignalBus>().unsubscribe(m_subscriptions[i]);
 	m_context.shutdown();
 
 	m_window.reset();
@@ -121,7 +72,7 @@ core::Engine::~Engine()
 }
 
 
-void core::Engine::setup()
+void Engine::setup()
 {
 	Logger::debug("Start setup");
 
@@ -148,7 +99,7 @@ void core::Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 
@@ -165,7 +116,7 @@ void core::Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		},
 		{
 			&shader2d_deferred_light,
@@ -191,7 +142,7 @@ void core::Engine::setup()
 				}
 			},
 			{0, 0},
-			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 
@@ -200,10 +151,13 @@ void core::Engine::setup()
 
 	m_root_node->setName("root");
 	m_root_node->setup(m_context);
+
+	m_plugin_manager->setup(*m_plugin_host);
+	
 	Logger::debug("End setup");
 }
 
-void core::Engine::mainLoop()
+void Engine::mainLoop()
 {
 	sys::EventManager& Event_Manager = m_context.get<sys::EventManager>();
 	gfx::RenderWorld&  Render_World  = m_context.get<gfx::RenderWorld>();
@@ -242,4 +196,73 @@ void core::Engine::mainLoop()
 	}
 }
 
+
+void Engine::init()
+{
+	Logger::debug("Start app");
+	Logger::debug("Start initialization");
+	
+	m_framerate = 60;
+	m_context.create<TimeManager>();
+
+	gfx::gl::Api::createInstance();
+	sys::Window::initialize();
+	m_window = std::make_shared<sys::Window>(900, 600, "Engine");
+	gfx::gl::Api::getInstance()->initialize();
+	
+	m_context.replace<sys::Window>(m_window);
+	m_context.create<SignalBus>();
+	m_context.create<ConfigManager>(m_context.get<SignalBus>());
+	m_context.create<sys::EventManager>(m_context.get<SignalBus>());
+	m_context.create<ResourceManager>();
+	m_context.create<gfx::LightManager>();
+	m_context.create<gfx::RenderWorld>();
+	m_context.create<gfx::RenderCanvas>();
+	m_context.create<phy::PhysicsWorld>();
+	m_context.create<PluginManager>();
+	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
+
+	SignalBus& sbus = m_context.get<SignalBus>();
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_title",
+		[this](std::string title){
+			m_window->setTitle(title);
+	}));
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_size",
+		[this](mth::Vec2 size){
+			m_window->resize(size);
+	}));
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_size",
+		[this](mth::Vec2 size){
+			m_window->setViewportSize(size);
+			m_window->updateViewport();
+	}));
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_centering",
+		[this](mth::Vec2 ratio){
+			m_window->setViewportCentering(ratio);
+			m_window->updateViewport();
+	}));
+
+	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_viewport_scaling",
+		[this](std::string mode){
+			if (mode == "fixed")
+				m_window->setViewportScaling(sys::Window::ViewportScaling::FIXED);
+			else if (mode == "stretch")
+				m_window->setViewportScaling(sys::Window::ViewportScaling::STRETCH);
+			m_window->updateViewport();
+	}));
+
+	m_context.get<ConfigManager>().notifyAll();
+
+	m_root_node = std::make_unique<Node>();
+
+	m_plugin_host = std::make_unique<PluginHost>(PluginHost{m_context, *m_root_node});
+	m_plugin_manager = std::make_unique<PluginManager>();
+
+	Logger::debug("End initialization");
 }
+
+} //namespace eng::core

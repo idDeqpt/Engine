@@ -22,6 +22,7 @@ option(BUILD_SHARED          "Build shared library"                     ON)
 
 set(CORE_SOURCE_FILES
 	src/Core/ConfigManager.cpp
+	src/Core/DefaultAppPlugin.cpp
 	src/Core/Engine.cpp
 	src/Core/Logger.cpp
 	src/Core/NameTag.cpp
@@ -29,6 +30,7 @@ set(CORE_SOURCE_FILES
 	src/Core/Node2D.cpp
 	src/Core/Node3D.cpp
 	src/Core/NodeNameTag.cpp
+	src/Core/PluginManager.cpp
 	src/Core/ResourceManager.cpp
 	src/Core/SignalBus.cpp
 	src/Core/String.cpp

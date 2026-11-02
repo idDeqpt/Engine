@@ -130,6 +130,22 @@ bool Node::isChild(Node* node)
 	return false;
 }
 
+void Node::addChild(std::unique_ptr<Node> child, const std::string& name)
+{
+	auto ch = child.get();
+	m_children.push_back(std::move(child));
+
+	NodeNameTag tag(name, 0, "");
+	unsigned int count = 0;
+	for (unsigned int i = 0; i < m_children.size(); i++)
+		if (m_children[i]->getTag().getNameHash() == tag.getNameHash()) count++;
+
+	ch->m_tag = NodeNameTag(name, count, m_tag.getPath());
+
+	ch->m_parent = this;
+	if (m_setuped) ch->setup(m_context);
+}
+
 void Node::removeChild(Node* node)
 {
 	for (unsigned int i = 0; i < m_children.size(); i++)
