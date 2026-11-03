@@ -1,6 +1,6 @@
 # Engine
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CMake](https://img.shields.io/badge/CMake-3.27+-064e8b.svg)](https://cmake.org)
+[![CMake](https://img.shields.io/badge/CMake-3.28+-064e8b.svg)](https://cmake.org)
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org)
 [![OpenGL](https://img.shields.io/badge/OpenGL-3.3+-5586a4.svg)](https://opengl.org)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
@@ -24,7 +24,7 @@
 ___
 # Требования
 ## Для сборки
-- CMake 3.27+
+- CMake 3.28+
 - C++17-совместимый компилятор
 ## Для использования
 - Поддержка OpenGL 3.3
