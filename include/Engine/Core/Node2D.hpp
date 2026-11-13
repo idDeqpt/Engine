@@ -10,7 +10,9 @@ namespace eng::core
 	class Node2D : public Node
 	{
 	public:
-		Node2D();
+		Node2D() = default;
+
+		virtual void onTreeChanged() override;
 
 		void move(const mth::Vec2& offset);
 		void scale(const mth::Vec2& scale_v);
@@ -21,29 +23,34 @@ namespace eng::core
 		void setScale(const mth::Vec2& new_scale);
 		void setRotation(float new_angle); //radians
 
-		mth::Vec2 getOrigin();
-		mth::Vec2 getPosition();
-		mth::Vec2 getScale();
-		float getRotation();
+		const mth::Vec2& getOrigin() const;
+		const mth::Vec2& getPosition() const;
+		const mth::Vec2& getScale() const;
+		float getRotation() const;
 
 		mth::Vec2 getGlobalPosition();
 		float getGlobalRotation();
 
-		mth::Transform2 getLocalTransform();
-		mth::Transform2 getInvertLocalTransform();
-		mth::Transform2 getGlobalTransform();
+		const mth::Transform2& getLocalTransform();
+		const mth::Transform2& getGlobalTransform();
 
 	protected:
+		virtual void computeTransform();
+		void invalidateTransform();
+
+	private:
 		mth::Vec2 m_origin;
 		mth::Vec2 m_position;
-		mth::Vec2 m_scale;
-		float m_rotation;
-		mth::Transform2 m_transform;
-		mth::Transform2 m_invert_transform;
-		bool m_transform_need_update;
-		bool m_invert_transform_need_update;
+		mth::Vec2 m_scale = mth::Vec2(1);
+		float m_rotation = 0;
+		mth::Transform2 m_local_transform;
+		bool m_local_transform_need_update = true;
 
-		virtual void computeTransform();
+		bool m_global_valid = false;
+		Node2D* m_nearest_2d = nullptr;
+		unsigned int m_subtree_revision = 1;
+		unsigned int m_cached_against_revision = 0;
+		mth::Transform2 m_global_transform;
 	};
 }
 

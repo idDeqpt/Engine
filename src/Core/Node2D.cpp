@@ -8,81 +8,81 @@
 namespace eng::core
 {
 
-Node2D::Node2D():
-	m_rotation(0),
-	m_scale(mth::Vec2(1)),
-	m_transform_need_update(true),
-	m_invert_transform_need_update(true), Node() {}
+void Node2D::onTreeChanged()
+{
+	m_nearest_2d = getNearestParent<Node2D>();
+	invalidateTransform();
+}
 
 
 void Node2D::move(const mth::Vec2& offset)
 {
 	m_position += offset;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 void Node2D::scale(const mth::Vec2& scale_v)
 {
 	m_scale.x *= scale_v.x;
 	m_scale.y *= scale_v.y;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 void Node2D::rotate(float angle)
 {
 	m_rotation += angle;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 
 void Node2D::setOrigin(const mth::Vec2& new_origin)
 {
 	m_origin = new_origin;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 void Node2D::setPosition(const mth::Vec2& new_position)
 {
 	m_position = new_position;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 void Node2D::setScale(const mth::Vec2& new_scale)
 {
 	m_scale = new_scale;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 void Node2D::setRotation(float new_angle)
 {
 	m_rotation = new_angle;
-	m_transform_need_update = true;
-	m_invert_transform_need_update = true;
+	m_local_transform_need_update = true;
+	invalidateTransform();
 }
 
 
-mth::Vec2 Node2D::getOrigin()
+const mth::Vec2& Node2D::getOrigin() const
 {
 	return m_origin;
 }
 
-mth::Vec2 Node2D::getPosition()
+const mth::Vec2& Node2D::getPosition() const
 {
 	return m_position;
 }
 
-mth::Vec2 Node2D::getScale()
+const mth::Vec2& Node2D::getScale() const
 {
 	return m_scale;
 }
 
-float Node2D::getRotation()
+float Node2D::getRotation() const
 {
 	return m_rotation;
 }
@@ -101,52 +101,55 @@ float Node2D::getGlobalRotation()
 	if (!m_parent) 
 		return m_rotation;
 	
-	Node2D* parent_2d = dynamic_cast<Node2D*>(m_parent);
-	
-	if (parent_2d)
-		return parent_2d->getGlobalRotation() + m_rotation;
-	
+	if (m_nearest_2d)
+		return m_nearest_2d->getGlobalRotation() + m_rotation;
 	return m_rotation;
 }
 
 
-mth::Transform2 Node2D::getLocalTransform()
+const mth::Transform2& Node2D::getLocalTransform()
 {
 	computeTransform();
-	return m_transform;
+	return m_local_transform;
 }
 
-mth::Transform2 Node2D::getInvertLocalTransform()
+const mth::Transform2& Node2D::getGlobalTransform()
 {
-	if (m_invert_transform_need_update)
+	if (!m_nearest_2d)
+		return getLocalTransform();
+
+	(void)m_nearest_2d->getGlobalTransform();
+
+	if (!m_global_valid || (m_cached_against_revision != m_nearest_2d->m_subtree_revision))
 	{
-		computeTransform();
-		m_invert_transform_need_update = false;
+		m_global_transform = m_nearest_2d->getGlobalTransform().getMatrix()*getLocalTransform().getMatrix();
+		m_cached_against_revision = m_nearest_2d->m_subtree_revision;
+		m_subtree_revision++;
+		m_global_valid = true;
 	}
-	return m_invert_transform;
-}
-
-mth::Transform2 Node2D::getGlobalTransform()
-{
-	if (auto nearest = getNearestParent<Node2D>())
-		return nearest->getGlobalTransform().getMatrix()*getLocalTransform().getMatrix();
-	return getLocalTransform();
+	return m_global_transform;
 }
 
 
 
 void Node2D::computeTransform()
 {
-	if (m_transform_need_update)
+	if (m_local_transform_need_update)
 	{
-		m_transform = mth::Mat3::getIdentity();
-		m_transform.translate(m_position);
-		m_transform.rotate(m_rotation);
-		m_transform.scale(m_scale);
-		m_transform.translate(-m_origin);
+		m_local_transform = mth::Mat3::getIdentity();
+		m_local_transform.translate(m_position);
+		m_local_transform.rotate(m_rotation);
+		m_local_transform.scale(m_scale);
+		m_local_transform.translate(-m_origin);
 
-		m_transform_need_update = false;
+		m_local_transform_need_update = false;
 	}
+}
+
+void Node2D::invalidateTransform()
+{
+	m_subtree_revision++;
+	m_global_valid = false;
 }
 
 } //namespace eng::core
