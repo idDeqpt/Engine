@@ -139,7 +139,6 @@ bool TextureImpl::loadFromBuffer(void* image_data, unsigned int width, unsigned 
 
 	glBindTexture(GL_TEXTURE_2D, m_handle);
 	glTexImage2D(GL_TEXTURE_2D, 0, pixel_format[0], width, height, 0, pixel_format[1], pixel_format[2], image_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	unsigned int data_size     = width*height*ChannelEnumToChannelCount(m_format)*type_size;
