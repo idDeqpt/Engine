@@ -85,7 +85,7 @@ void FrameBuffer::setViewportSize(unsigned int width, unsigned int height)
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_depth_buffer_handle);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, width);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 
 	for (unsigned int i = 0; i < m_color_buffers_count; i++)
 		if (m_buffer_textures) m_buffer_textures[i].resize(mth::Vec2(width, height));
