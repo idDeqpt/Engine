@@ -15,7 +15,7 @@ namespace eng
 gfx::Text2D::Text2D():
 	m_font(nullptr),
 	m_text_need_update(false),
-	m_last_font_characters(0),
+	m_last_font_characters_count(0),
 	m_character_size(14),
 	CanvasItem()
 {
@@ -65,8 +65,11 @@ void gfx::Text2D::updateString()
 	if (!m_font) return;
 
 	unsigned int relevant_characters_count = m_font->getLoadedCharactersCount(m_character_size);
-	if (m_last_font_characters != relevant_characters_count)
+	if (m_last_font_characters_count != relevant_characters_count)
+	{
+		m_last_font_characters_count = relevant_characters_count;
 		m_text_need_update = true;
+	}
 
 	if (!m_text_need_update) return;
 

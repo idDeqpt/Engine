@@ -25,7 +25,7 @@ namespace eng::gfx
 		Font* m_font;
 		std::string m_text;
 		bool m_text_need_update;
-		unsigned int m_last_font_characters;
+		unsigned int m_last_font_characters_count;
 		unsigned int m_character_size;
 
 		void updateString();
