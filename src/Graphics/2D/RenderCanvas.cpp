@@ -118,14 +118,10 @@ void RenderCanvas::draw(RenderTarget& target)
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		eng::gfx::Shape2D light_shape(eng::gfx::Shape2D::Type::RECTANGLE);
-		light_shape.setPosition(light_shape.getSize()/2);
-		light_shape.setScale(mth::Vec2(1, -1));
-
 		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
 		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
 
-		m_framebuffers[i]->draw(light_shape, RenderStates());
+		m_framebuffers[i]->draw(m_deferred_quad, RenderStates());
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/2D/Camera2D.hpp>
+#include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/Color.hpp>
 
 #include <functional>
@@ -47,6 +48,7 @@ namespace eng::gfx
 		std::vector<std::unique_ptr<RenderTarget>> m_framebuffers_container;
 		std::vector<RenderTarget*> m_framebuffers;
 		Camera2D m_quad_view;
+		Shape2D m_deferred_quad;
 	};
 }
 

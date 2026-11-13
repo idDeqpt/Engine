@@ -21,6 +21,9 @@ RenderScene::RenderScene()
 	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	m_quad_view.setRect(0, 1, 0, 1);
+	m_deferred_quad.setType(Shape2D::Type::RECTANGLE);
+	m_deferred_quad.setPosition(m_deferred_quad.getSize()/2);
+	m_deferred_quad.setScale(mth::Vec2(1, -1));
 }
 
 
