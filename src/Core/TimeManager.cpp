@@ -20,8 +20,13 @@
 namespace
 {
 
-constexpr auto kBusyWaitThreshold = std::chrono::microseconds(2000);
-constexpr auto kSleepOvershoot    = std::chrono::microseconds(1500);
+#ifdef _WIN32
+    constexpr auto kBusyWaitThreshold = std::chrono::microseconds(500);
+    constexpr auto kSleepOvershoot    = std::chrono::microseconds(1500);
+#else
+    constexpr auto kBusyWaitThreshold = std::chrono::microseconds(200);
+    constexpr auto kSleepOvershoot    = std::chrono::microseconds(500);
+#endif
 
 inline void cpuRelax() noexcept
 {
