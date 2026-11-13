@@ -39,6 +39,7 @@ namespace core
 		virtual void onReady(); //stage after children setups, children are fully initialized
 		virtual void onUpdate(const Delta& delta);
 		virtual void onDestroy();
+		virtual void onTreeChanged();
 
 		void setParent(Node* new_parent);
 		void setName(const std::string& new_name);
@@ -66,6 +67,8 @@ namespace core
 		NodeNameTag m_tag;
 		std::vector <std::unique_ptr<Node>> m_children;
 		Context m_context;
+
+		void notifyTreeChangedRecursive();
 	};
 
 

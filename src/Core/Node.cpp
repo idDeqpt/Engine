@@ -89,11 +89,13 @@ void Node::onSetup() {}
 void Node::onReady() {}
 void Node::onUpdate(const Delta& delta) {}
 void Node::onDestroy() {}
+void Node::onTreeChanged() {}
 
 
 void Node::setParent(Node* new_parent)
 {
 	m_parent = new_parent;
+	notifyTreeChangedRecursive();
 }
 
 void Node::setName(const std::string& new_name)
@@ -143,7 +145,9 @@ void Node::addChild(std::unique_ptr<Node> child, const std::string& name)
 	ch->m_tag = NodeNameTag(name, count, m_tag.getPath());
 
 	ch->m_parent = this;
+	ch->notifyTreeChangedRecursive();
 	if (m_setuped) ch->setup(m_context);
+
 }
 
 void Node::removeChild(Node* node)
@@ -151,9 +155,18 @@ void Node::removeChild(Node* node)
 	for (unsigned int i = 0; i < m_children.size(); i++)
 		if (node == m_children[i].get())
 		{
+			node->notifyTreeChangedRecursive();
 			node->destroy();
 			return;
 		}
+}
+
+
+void Node::notifyTreeChangedRecursive()
+{
+	onTreeChanged();
+	for (auto& child : m_children)
+		child->notifyTreeChangedRecursive();
 }
 
 } //namespace eng::core
