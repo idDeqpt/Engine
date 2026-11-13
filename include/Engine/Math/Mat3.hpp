@@ -18,6 +18,8 @@ namespace eng::mth
 			float* values;
 		};
 
+		float values[9];
+
 		Mat3();
 		Mat3(float v);
 		Mat3(const Mat3& mat);
@@ -34,12 +36,26 @@ namespace eng::mth
 		Row operator[](unsigned int index);
 
 		static Mat3 getIdentity();
-
-	protected:
-		float values[9];
 	};
 
-	Mat3 operator*(const Mat3& left, const Mat3& right);
+	inline Mat3 operator*(const Mat3& a, const Mat3& b)
+	{
+		Mat3 r;
+		for (int i = 0; i < 3; i++)
+		{
+			const float* ar = a.values + i*3;
+			float*       rr = r.values + i*3;
+
+			const float a0 = ar[0];
+			const float a1 = ar[1];
+			const float a2 = ar[2];
+
+			rr[0] = a0*b.values[0] + a1*b.values[3] + a2*b.values[6];
+			rr[1] = a0*b.values[1] + a1*b.values[4] + a2*b.values[7];
+			rr[2] = a0*b.values[2] + a1*b.values[5] + a2*b.values[8];
+		}
+		return r;
+	}
 }
 
 #endif //MATRIX_3X3_CLASS_HEADER

@@ -1,6 +1,7 @@
 #include <Engine/Math/Mat3.hpp>
 
 #include <stdexcept>
+#include <cstring>
 
 namespace eng
 {
@@ -25,9 +26,7 @@ mth::Mat3::Mat3(float v)
 
 mth::Mat3::Mat3(const Mat3& mat)
 {
-	for (unsigned int i = 0; i < 3; i++)
-		for (unsigned int j = 0; j < 3; j++)
-		(*this)[i][j] = mat[i][j];
+	std::memcpy(values, mat.values, sizeof(values));
 }
 
 mth::Mat3::Mat3(float v00, float v01, float v02,
@@ -116,18 +115,6 @@ float& mth::Mat3::Row::operator[](unsigned int index)
 	if (index >= 3)
 		throw std::out_of_range("Mat3 Row index");
 	return values[index];
-}
-
-
-
-mth::Mat3 mth::operator*(const Mat3& left, const Mat3& right)
-{
-	Mat3 result;
-	for (unsigned int i = 0; i < 3; i++)
-		for (unsigned int j = 0; j < 3; j++)
-			for (unsigned int k = 0; k < 3; k++)
-				result[i][j] += left[i][k]*right[k][j];
-	return result;
 }
 
 } //namespace eng
