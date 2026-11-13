@@ -39,7 +39,7 @@ namespace eng::gfx
 		unsigned int getLayer() const;
 		Texture* getTexture();
 
-		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count);
+		bool loadData(CanvasItem::Vertex* vertices, unsigned int vertices_count, gl::ArrayBuffer::Usage usage = gl::ArrayBuffer::Usage::STATIC_DRAW);
 		void unloadData();
 
 		virtual void draw(RenderTarget* target, const RenderStates& states) override;

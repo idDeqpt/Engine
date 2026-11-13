@@ -60,11 +60,11 @@ gfx::Texture* gfx::CanvasItem::getTexture()
 }
 
 
-bool gfx::CanvasItem::loadData(gfx::CanvasItem::Vertex* vertices, unsigned int vertices_count)
+bool gfx::CanvasItem::loadData(gfx::CanvasItem::Vertex* vertices, unsigned int vertices_count, gl::ArrayBuffer::Usage usage)
 {
 	if (!vertices || !vertices_count) return false;
 
-	m_array_buffer->loadData(vertices, sizeof(CanvasItem::Vertex)*vertices_count, gl::ArrayBuffer::Usage::STATIC_DRAW);
+	m_array_buffer->loadData(vertices, sizeof(CanvasItem::Vertex)*vertices_count, usage);
 	m_array_buffer->configureAttrib(0, 2, false, sizeof(CanvasItem::Vertex), offsetof(CanvasItem::Vertex, position));
 	m_array_buffer->configureAttrib(1, 2, false, sizeof(CanvasItem::Vertex), offsetof(CanvasItem::Vertex, tex_coord));
 
