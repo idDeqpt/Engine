@@ -54,8 +54,8 @@ void RenderCanvas::draw(RenderTarget& target)
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 	
 	Camera2D& active_camera = *m_active_camera;
-	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
-	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().getValuesPtr());
+	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().values);
+	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().values);
 
 	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(0, 0, 0, 0));
 
@@ -118,8 +118,8 @@ void RenderCanvas::draw(RenderTarget& target)
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
-		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().values);
+		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().values);
 
 		m_framebuffers[i]->draw(m_deferred_quad, RenderStates());
 	}

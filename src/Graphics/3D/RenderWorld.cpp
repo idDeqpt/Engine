@@ -83,8 +83,8 @@ void RenderWorld::draw(RenderTarget& target)
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().getValuesPtr());
-		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().getValuesPtr());
+		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().values);
+		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().values);
 
 		m_framebuffers[i]->draw(m_deferred_quad, RenderStates());
 	}

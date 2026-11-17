@@ -17,7 +17,7 @@ namespace eng::mth
 		void scale(const Vec2& vec);
 		void rotate(float angle); //radians
 
-		Mat3 getMatrix() const;
+		const Mat3& getMatrix() const;
 
 	protected:
 		Mat3 m_matrix;

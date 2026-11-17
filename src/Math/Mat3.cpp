@@ -1,5 +1,6 @@
 #include <Engine/Math/Mat3.hpp>
 
+#include <algorithm>
 #include <stdexcept>
 #include <cstring>
 
@@ -16,12 +17,12 @@ mth::Mat3 mth::Mat3::getIdentity()
 }
 
 
-mth::Mat3::Mat3() : Mat3(0) {}
+mth::Mat3::Mat3() : Mat3(0)
+{}
 
 mth::Mat3::Mat3(float v)
 {
-	for (unsigned int i = 0; i < 9; i++)
-		values[i] = v;
+	std::fill(std::begin(values), std::end(values), v);
 }
 
 mth::Mat3::Mat3(const Mat3& mat)
@@ -34,7 +35,8 @@ mth::Mat3::Mat3(float v00, float v01, float v02,
 				float v20, float v21, float v22):
 	values{v00, v01, v02,
 		   v10, v11, v12,
-		   v20, v21, v22} {}
+		   v20, v21, v22}
+{}
 
 
 float mth::Mat3::det() const
@@ -78,11 +80,6 @@ bool mth::Mat3::invert(Mat3& out) const
 	return true;
 }
 
-
-float* mth::Mat3::getValuesPtr()
-{
-	return values;
-}
 
 
 const mth::Mat3::Row mth::Mat3::operator[](unsigned int index) const

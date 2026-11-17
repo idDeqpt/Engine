@@ -30,8 +30,6 @@ namespace eng::mth
 		float det() const;
 		bool invert(Mat3& out) const;
 
-		float* getValuesPtr();
-
 		const Row operator[](unsigned int index) const;
 		Row operator[](unsigned int index);
 

@@ -55,7 +55,7 @@ void mth::Transform2::rotate(float angle)
 }
 
 
-mth::Mat3 mth::Transform2::getMatrix() const
+const mth::Mat3& mth::Transform2::getMatrix() const
 {
 	return m_matrix;
 }
