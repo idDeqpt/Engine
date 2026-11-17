@@ -31,8 +31,16 @@ namespace eng::mth
 	Vec3 operator-(const Vec3& left, const Vec3& rigth);
 	Vec3 operator*(const Vec3& vec, float coef);
 	Vec3 operator*(float coef, const Vec3& vec);
-	Vec3 operator*(const Mat3& left, const Vec3& right);
 	Vec3 operator/(const Vec3& vec, float coef);
+
+	inline Vec3 operator*(const Mat3& left, const Vec3& right)
+	{
+		return {
+			left.values[0*3 + 0]*right.x + left.values[0*3 + 1]*right.y + left.values[0*3 + 2]*right.z,
+			left.values[1*3 + 0]*right.x + left.values[1*3 + 1]*right.y + left.values[1*3 + 2]*right.z,
+			left.values[2*3 + 0]*right.x + left.values[2*3 + 1]*right.y + left.values[2*3 + 2]*right.z
+		};
+	}
 }
 
 #endif //VECTOR_3_HEADER
