@@ -1,6 +1,6 @@
 #include <Engine/Graphics/RenderTarget.hpp>
 
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/GL/FrameBuffer.hpp>

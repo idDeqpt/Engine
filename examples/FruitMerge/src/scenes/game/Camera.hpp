@@ -5,7 +5,7 @@
 
 #include <Engine/Core/Delta.hpp>
 #include <Engine/System/EventManager.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 class Camera : public eng::gfx::Camera2D
 {
@@ -30,7 +30,7 @@ public:
 			scale(0.9);
 
 		if (vel.x || vel.y)
-			move(vel.norm(speed)*getScale().x*delta.frame);
+			move(eng::mth::norm(vel, speed)*getScale().x*delta.frame);
 	}
 };
 

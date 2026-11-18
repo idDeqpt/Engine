@@ -3,7 +3,7 @@
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/RenderStates.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <cmath>
 

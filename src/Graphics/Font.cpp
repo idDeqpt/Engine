@@ -2,7 +2,7 @@
 
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

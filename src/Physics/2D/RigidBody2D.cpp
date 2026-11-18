@@ -3,7 +3,7 @@
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
 #include <Engine/Physics/2D/StaticBody2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 
 namespace eng
@@ -94,7 +94,7 @@ void phy::RigidBody2D::resolveCollisionVelWithRigid(const CollisionData& d, Rigi
 	if (inv_mass_sum == 0) return;
 
 	mth::Vec2 relative_velocity = getLinearVelocity() - other.getLinearVelocity();
-	float velocity_along_normal = relative_velocity.dot(data.normal);
+	float velocity_along_normal = dot(relative_velocity, data.normal);
 	
 	if (velocity_along_normal < 0) return;
 
@@ -128,7 +128,7 @@ void phy::RigidBody2D::resolveCollisionVelWithStatic(const CollisionData& d, Sta
 	if (inv_mass_a == 0) return;
 
 	mth::Vec2 relative_velocity = getLinearVelocity();
-	float velocity_along_normal = relative_velocity.dot(data.normal);
+	float velocity_along_normal = dot(relative_velocity, data.normal);
 	
 	if (velocity_along_normal < 0) return;
 

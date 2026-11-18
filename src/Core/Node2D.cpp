@@ -1,8 +1,7 @@
 #include <Engine/Core/Node2D.hpp>
 
 #include <Engine/Math/Transform2.hpp>
-#include <Engine/Math/Vec2.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 
 namespace eng::core

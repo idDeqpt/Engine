@@ -1,7 +1,7 @@
 #ifndef COLLISION_DATA_2D_CLASS_HEADER
 #define COLLISION_DATA_2D_CLASS_HEADER
 
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::phy
 {

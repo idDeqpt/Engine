@@ -6,7 +6,7 @@
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <glad/gl.h>
 

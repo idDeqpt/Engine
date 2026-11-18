@@ -4,7 +4,7 @@
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/3D/Mesh.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::gfx
 {

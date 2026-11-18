@@ -2,7 +2,7 @@
 #define SHADER_CLASS_HEADER
 
 #include <Engine/Core/Resource.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <string>
 

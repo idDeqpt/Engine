@@ -26,8 +26,7 @@
 
 #include <Engine/Physics/PhysicsWorld.hpp>
 
-#include <Engine/Math/Vec3.hpp>
-#include <Engine/Math/Vec4.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include "shaders/default2d-vert.hpp"
 #include "shaders/default2d-frag.hpp"

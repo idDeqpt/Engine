@@ -2,7 +2,6 @@
 #define CAMERA_3D_CLASS_HEADER
 
 #include <Engine/Core/Node3D.hpp>
-#include <Engine/Math/Vec3.hpp>
 #include <Engine/Math/Mat4.hpp>
 
 namespace eng::gfx

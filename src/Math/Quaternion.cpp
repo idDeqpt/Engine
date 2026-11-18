@@ -1,6 +1,6 @@
 #include <Engine/Math/Quaternion.hpp>
 
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <cmath>
 
@@ -21,12 +21,12 @@ mth::Quaternion::Quaternion(const Vec3& axis, float angle)
 {
 	float halfAngle = angle/2;
 	float sinh = sin(halfAngle);
-	Vec3 normAxis = axis.norm();
+	Vec3 normAxis = mth::norm(axis);
 
 	x = normAxis.x * sinh;
 	y = normAxis.y * sinh;
 	z = normAxis.z * sinh;
-	w = cos(halfAngle);
+	w = std::cos(halfAngle);
 	*this = norm();
 }
 

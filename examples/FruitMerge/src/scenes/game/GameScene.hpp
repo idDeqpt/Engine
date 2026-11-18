@@ -14,7 +14,7 @@
 #include <Engine/Core/ConfigManager.hpp>
 #include <Engine/Core/SignalBus.hpp>
 #include <Engine/Core/Delta.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 class GameArea : public eng::phy::AreaBody2D
 {

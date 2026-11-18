@@ -1,6 +1,9 @@
 #ifndef MATRIX_4X4_CLASS_HEADER
 #define MATRIX_4X4_CLASS_HEADER
 
+#include <Engine/Math/Vec.hpp>
+
+
 namespace eng::mth
 {
 	class Mat4
@@ -42,6 +45,7 @@ namespace eng::mth
 	};
 
 	Mat4 operator*(const Mat4& left, const Mat4& right);
+	Vec4 operator*(const Mat4& left, const Vec4& right);
 }
 
 #endif //MATRIX_4X4_CLASS_HEADER

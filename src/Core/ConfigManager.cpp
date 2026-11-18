@@ -2,7 +2,7 @@
 
 #include <Engine/Core/Logger.hpp>
 #include <Engine/Core/SignalBus.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <unordered_map>
 #include <stdexcept>

@@ -5,7 +5,7 @@
 #include <scenes/game/BallsCollection.hpp>
 
 #include <Engine/System/EventManager.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 class ClassicBallsController : public BallsController
 {
@@ -51,7 +51,7 @@ protected:
 		);
 		eng::mth::Vec2 lr = m_left_bound - m_right_bound;
 		eng::mth::Vec2 lp = m_left_bound - mouse_point;
-		float t = lp.dot(lr)/lr.dot(lr);
+		float t = eng::mth::dot(lp, lr)/eng::mth::dot(lr, lr);
 		if (t < 0)      t = 0;
 		else if (t > 1) t = 1;
 		eng::mth::Vec2 res = m_left_bound + (-lr)*t;

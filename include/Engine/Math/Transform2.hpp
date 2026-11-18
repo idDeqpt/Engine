@@ -2,7 +2,7 @@
 #define TRANSFORM_2_CLASS_HEADER
 
 #include <Engine/Math/Mat3.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::mth
 {

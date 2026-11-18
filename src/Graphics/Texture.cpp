@@ -8,7 +8,7 @@
 #include "GL/OpenGL33/TextureImpl.hpp"
 
 #include <Engine/Core/Resource.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <string>
 #include <iostream>

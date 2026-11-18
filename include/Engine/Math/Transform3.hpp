@@ -2,7 +2,7 @@
 #define TRANSFORM_3_CLASS_HEADER
 
 #include <Engine/Math/Mat4.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
 namespace eng::mth

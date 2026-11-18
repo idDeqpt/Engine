@@ -1,7 +1,7 @@
 #include <Engine/Graphics/Shader.hpp>
 
 #include <Engine/Graphics/GL/Api.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <fstream>
 #include <sstream>

@@ -1,6 +1,6 @@
 #include <Engine/Graphics/LightManager.hpp>
 
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <cmath>
 #include <iostream>

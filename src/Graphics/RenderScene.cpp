@@ -1,5 +1,6 @@
 #include <Engine/Graphics/RenderScene.hpp>
 
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/2D/CanvasItem.hpp>
 #include <Engine/Graphics/2D/Shape2D.hpp>

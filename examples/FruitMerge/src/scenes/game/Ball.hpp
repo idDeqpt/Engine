@@ -16,7 +16,7 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/Texture.hpp>
 #include <Engine/Graphics/Font.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <random>
 #include <string>

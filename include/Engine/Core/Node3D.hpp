@@ -4,7 +4,7 @@
 #include <Engine/Core/Node.hpp>
 #include <Engine/Math/Transform3.hpp>
 #include <Engine/Math/Quaternion.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::core
 {

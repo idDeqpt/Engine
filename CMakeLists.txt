@@ -72,9 +72,6 @@ set(GRAPHICS_SOURCE_FILES
 	src/Graphics/Texture.cpp)
 
 set(MATH_SOURCE_FILES
-	src/Math/Vec2.cpp
-	src/Math/Vec3.cpp
-	src/Math/Vec4.cpp
 	src/Math/Mat3.cpp
 	src/Math/Mat4.cpp
 	src/Math/Quaternion.cpp

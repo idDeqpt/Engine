@@ -2,7 +2,7 @@
 
 #include <Engine/Graphics/Material.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <cmath>
 
@@ -181,7 +181,7 @@ void gfx::GeometricMesh::ellipsoidGenerator(GeometricMesh* mesh)
 				mth::Vec3 dPdv = (bottom_point - top_point)/2.0f;
 				
 				// Ориентация тангента должна соответствовать направлению изменения U-текстурных координат
-				tangents[index] = dPdu.norm();
+				tangents[index] = norm(dPdu);
 			}
 			else
 				tangents[index] = mth::Vec3(1.0f, 0.0f, 0.0f);

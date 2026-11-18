@@ -1,7 +1,6 @@
 #include <Engine/Physics/2D/RectangleCollider2D.hpp>
 
-#include <Engine/Math/Vec2.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Physics/2D/CircleCollider2D.hpp>
 
 #include <cmath>

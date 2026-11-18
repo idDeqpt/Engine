@@ -11,7 +11,7 @@
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Texture.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <memory>
 

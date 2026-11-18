@@ -9,8 +9,7 @@
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
-#include <Engine/Math/Vec2.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Mat4.hpp>
 
 #include <memory>

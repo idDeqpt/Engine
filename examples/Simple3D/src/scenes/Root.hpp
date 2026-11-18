@@ -4,8 +4,7 @@
 #include <Engine/Core/Node.hpp>
 #include <Engine/Graphics/3D/GeometricMesh.hpp>
 #include <Engine/Graphics/3D/RenderWorld.hpp>
-#include <Engine/Math/Vec2.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Mat4.hpp>
 #include <Engine/Context.hpp>
 

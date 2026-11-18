@@ -1,7 +1,7 @@
 #include <Engine/Graphics/2D/Camera2D.hpp>
 
 #include <Engine/Core/Node2D.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Mat4.hpp>
 
 

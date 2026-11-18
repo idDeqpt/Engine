@@ -3,7 +3,7 @@
 
 #include <Engine/System/ButtonDevice.hpp>
 #include <Engine/System/AxisDevice.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 
 namespace eng::core

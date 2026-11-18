@@ -1,5 +1,6 @@
 #include <Engine/Math/Mat4.hpp>
 
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Mat3.hpp>
 
 #include <stdexcept>
@@ -154,6 +155,15 @@ mth::Mat4 mth::operator*(const Mat4& left, const Mat4& right)
 		for (unsigned int j = 0; j < 4; j++)
 			for (unsigned int k = 0; k < 4; k++)
 				result[i][j] += left[i][k]*right[k][j];
+	return result;
+}
+
+mth::Vec4 mth::operator*(const Mat4& left, const Vec4& right)
+{
+	Vec4 result;
+	for (unsigned int i = 0; i < 4; i++)
+		for (unsigned int j = 0; j < 4; j++)
+			result[i] += left[i][j]*right[j];
 	return result;
 }
 

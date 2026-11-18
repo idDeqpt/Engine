@@ -3,7 +3,7 @@
 
 #include <Engine/Graphics/RenderTarget.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <string>
 

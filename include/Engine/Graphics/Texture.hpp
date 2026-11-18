@@ -4,7 +4,7 @@
 #include <Engine/Graphics/GL/TextureHandle.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Core/Resource.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 #include <initializer_list>
 #include <string>

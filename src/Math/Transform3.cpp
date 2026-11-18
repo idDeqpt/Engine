@@ -1,7 +1,7 @@
 #include <Engine/Math/Transform3.hpp>
 
 #include <Engine/Math/Mat4.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
 #include <cmath>
@@ -51,7 +51,7 @@ void mth::Transform3::rotate(const Vec3& vec, float angle)
 	float s = sin(a);
 	float c = cos(a);
 
-	Vec3 axis(vec.norm(1));
+	Vec3 axis(norm(vec));
 	Vec3 temp((1 - c)*axis);
 
 	Mat4 rotate_m;

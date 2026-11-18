@@ -1,7 +1,7 @@
 #ifndef RENDER_TARGET_CLASS_HEADER
 #define RENDER_TARGET_CLASS_HEADER
 
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Graphics/GL/PixelFormat.hpp>
 #include <Engine/Graphics/GL/FrameBuffer.hpp>
 #include <Engine/Graphics/Color.hpp>

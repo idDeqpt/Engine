@@ -13,7 +13,7 @@
 #include <Engine/Graphics/2D/Shape2D.hpp>
 #include <Engine/Graphics/2D/RenderCanvas.hpp>
 #include <Engine/Graphics/Color.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Core/Logger.hpp>
 
 class Box2D : public eng::phy::AreaBody2D

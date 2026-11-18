@@ -3,7 +3,7 @@
 
 #include <Engine/Physics/2D/PhysicsBody2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 
 namespace eng::phy

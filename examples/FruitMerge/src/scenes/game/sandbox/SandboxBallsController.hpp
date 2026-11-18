@@ -3,7 +3,7 @@
 
 #include <scenes/game/BallsController.hpp>
 
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 class SandboxBallsController : public BallsController
 {

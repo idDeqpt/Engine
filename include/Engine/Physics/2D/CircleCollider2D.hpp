@@ -4,7 +4,6 @@
 #include <Engine/Physics/2D/Collider2D.hpp>
 #include <Engine/Physics/2D/RectangleCollider2D.hpp>
 #include <Engine/Physics/2D/CollisionData.hpp>
-#include <Engine/Math/Vec2.hpp>
 
 
 namespace eng::phy

@@ -1,7 +1,7 @@
 #ifndef LIGHT_MANAGER_CLASS_HEADER
 #define LIGHT_MANAGER_CLASS_HEADER
 
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::gfx
 {

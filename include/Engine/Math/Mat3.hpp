@@ -1,6 +1,8 @@
 #ifndef MATRIX_3X3_CLASS_HEADER
 #define MATRIX_3X3_CLASS_HEADER
 
+#include <Engine/Math/Vec.hpp>
+
 namespace eng::mth
 {
 	class Mat3
@@ -53,6 +55,15 @@ namespace eng::mth
 			rr[2] = a0*b.values[2] + a1*b.values[5] + a2*b.values[8];
 		}
 		return r;
+	}
+
+	inline Vec3 operator*(const Mat3& left, const Vec3& right)
+	{
+		return {
+			left.values[0*3 + 0]*right.x + left.values[0*3 + 1]*right.y + left.values[0*3 + 2]*right.z,
+			left.values[1*3 + 0]*right.x + left.values[1*3 + 1]*right.y + left.values[1*3 + 2]*right.z,
+			left.values[2*3 + 0]*right.x + left.values[2*3 + 1]*right.y + left.values[2*3 + 2]*right.z
+		};
 	}
 }
 

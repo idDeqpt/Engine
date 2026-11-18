@@ -4,7 +4,7 @@
 #include <Engine/System/EventManager.hpp>
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Math/Quaternion.hpp>
-#include <Engine/Math/Vec3.hpp>
+#include <Engine/Math/Vec.hpp>
 #include <Engine/Context.hpp>
 #include <Engine/Core/Delta.hpp>
 

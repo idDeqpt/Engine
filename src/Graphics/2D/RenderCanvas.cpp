@@ -11,6 +11,7 @@
 #include <Engine/Graphics/Color.hpp>
 
 #include <algorithm>
+#include <vector>
 
 
 namespace eng::gfx

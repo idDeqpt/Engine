@@ -3,7 +3,7 @@
 
 #include <Engine/Core/Node.hpp>
 #include <Engine/Math/Transform2.hpp>
-#include <Engine/Math/Vec2.hpp>
+#include <Engine/Math/Vec.hpp>
 
 namespace eng::core
 {
