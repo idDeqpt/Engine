@@ -8,7 +8,7 @@
 #include <Engine/Graphics/Drawable.hpp>
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Math/Vec.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 
 #include <memory>
 

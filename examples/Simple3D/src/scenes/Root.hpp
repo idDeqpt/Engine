@@ -5,7 +5,7 @@
 #include <Engine/Graphics/3D/GeometricMesh.hpp>
 #include <Engine/Graphics/3D/RenderWorld.hpp>
 #include <Engine/Math/Vec.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 #include <Engine/Context.hpp>
 
 #include "Box.hpp"

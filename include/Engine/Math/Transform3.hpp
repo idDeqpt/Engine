@@ -1,7 +1,7 @@
 #ifndef TRANSFORM_3_CLASS_HEADER
 #define TRANSFORM_3_CLASS_HEADER
 
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 #include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
@@ -20,8 +20,6 @@ namespace eng::mth
 		void rotate(const Quaternion& quat);
 
 		Mat4 getMatrix() const;
-
-		static Mat4 getIdentity();
 
 	protected:
 		Mat4 m_matrix;

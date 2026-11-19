@@ -1,6 +1,6 @@
 #include <Engine/Math/Transform3.hpp>
 
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 #include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Quaternion.hpp>
 
@@ -25,23 +25,23 @@ mth::Transform3::Transform3(const Transform3& transform) : Transform3(transform.
 
 void mth::Transform3::translate(const Vec3& vec)
 {
-	Mat4 translate_m(
+	Mat4 translate_m({
 		1, 0, 0, vec.x,
 		0, 1, 0, vec.y,
 		0, 0, 1, vec.z,
 		0, 0, 0, 1
-	);
+	});
 	m_matrix = m_matrix*translate_m;
 }
 
 void mth::Transform3::scale(const Vec3& vec)
 {
-	Mat4 scale_m(
+	Mat4 scale_m({
 		vec.x, 0, 0, 0,
 		0, vec.y, 0, 0,
 		0, 0, vec.z, 0,
 		0, 0, 0, 1
-	);
+	});
 	m_matrix = m_matrix*scale_m;
 }
 
@@ -98,18 +98,6 @@ void mth::Transform3::rotate(const Quaternion& quat)
 mth::Mat4 mth::Transform3::getMatrix() const
 {
 	return m_matrix;
-}
-
-
-
-mth::Mat4 mth::Transform3::getIdentity()
-{
-	return Mat4(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	);
 }
 
 } //namespace eng

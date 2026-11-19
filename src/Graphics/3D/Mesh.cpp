@@ -10,7 +10,7 @@
 #include <Engine/Graphics/Color.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
 #include <Engine/Math/Vec.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 
 #include <memory>
 #include <string>
@@ -130,7 +130,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	Shader* active_shader = gfx::Shader::getActive();
 
 	active_shader->use();
-	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().getValuesPtr());
+	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().values);
 
 	gl::Api::getInstance()->setActiveTexture(0);
 		m_material.albedo->bind();

@@ -2,7 +2,7 @@
 
 #include <Engine/Core/Node2D.hpp>
 #include <Engine/Math/Vec.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 
 
 namespace eng
@@ -24,11 +24,11 @@ void gfx::Camera2D::setRect(const float& left, const float& right, const float& 
 	float width  = right - left;
 	float height = top - bottom;
 
-	m_projection = mth::Mat3(
-		2.0/width,   0,         -(right + left)/width,
-		0,          -2.0/height, (top + bottom)/height,
-		0,          0,           1
-	);
+	m_projection = mth::Mat3({
+		2.0f/width,   0,          -(right + left)/width,
+		0,           -2.0f/height, (top + bottom)/height,
+		0,            0,           1
+	});
 }
 
 
@@ -40,7 +40,7 @@ mth::Mat3 gfx::Camera2D::getProjectionMatrix()
 mth::Mat3 gfx::Camera2D::getViewMatrix()
 {
 	mth::Mat3 view_mat;
-	getGlobalTransform().getMatrix().invert(view_mat);
+	mth::invert(getGlobalTransform().getMatrix(), view_mat);
 	return view_mat;
 }
 
@@ -62,9 +62,8 @@ mth::Vec2 gfx::Camera2D::convertWindowPoint(const mth::Vec2& point, const Render
 
 	mth::Vec3 ndc_point(ndc_x, ndc_y, 1);
 
-	mth::Mat3 projView = getProjViewMatrix();
 	mth::Mat3 invProjView;
-	if (!projView.invert(invProjView))
+	if (!mth::invert(getProjViewMatrix(), invProjView))
 		return mth::Vec2(0);
 
 	mth::Vec3 world_point = invProjView*ndc_point;

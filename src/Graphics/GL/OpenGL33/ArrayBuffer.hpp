@@ -3,15 +3,9 @@
 
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
+#include <Engine/Math/Mat.hpp>
 
-namespace eng
-{
-namespace mth
-{
-    class Mat4;
-} //namespace mth
-
-namespace gfx::gl::OpenGL33
+namespace eng::gfx::gl::OpenGL33
 {
 	class ArrayBuffer : public gl::ArrayBuffer
 	{
@@ -36,7 +30,6 @@ namespace gfx::gl::OpenGL33
         unsigned int m_indexes_count;
         unsigned int m_instances_count;
 	};
-} //namespace gfx::gl::OpenGL33
-} //namespace eng
+} //namespace eng::gfx::gl::OpenGL33
 
 #endif //GRAPHICS_OPEN_GL_3_3_ARRAY_BUFFER_CLASS_HEADER

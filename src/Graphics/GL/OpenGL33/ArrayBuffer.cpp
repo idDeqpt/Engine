@@ -4,7 +4,7 @@
 
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/PrimitiveType.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 
 #include <glad/gl.h>
 

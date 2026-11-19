@@ -53,8 +53,8 @@ void RenderWorld::draw(RenderTarget& target)
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 
 	Camera3D& active_camera = *m_active_camera;
-	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().getValuesPtr());
-	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().getValuesPtr());
+	first_pass.shader->setUniformMatrix4fv("uProjection", active_camera.getProjectionMatrix().values);
+	first_pass.shader->setUniformMatrix4fv("uView",       active_camera.getViewMatrix().values);
 
 	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(0, 0, 0, 0));
 

@@ -2,15 +2,9 @@
 #define GRAPHICS_GL_ARRAY_BUFFER_CLASS_HEADER
 
 #include <Engine/Graphics/PrimitiveType.hpp>
+#include <Engine/Math/Mat.hpp>
 
-namespace eng
-{
-namespace mth
-{
-    class Mat4;
-} //namespace mth
-
-namespace gfx::gl
+namespace eng::gfx::gl
 {
 	class ArrayBuffer
 	{
@@ -34,7 +28,6 @@ namespace gfx::gl
 
         virtual void draw(PrimitiveType p_type, unsigned int first, unsigned int count) = 0;
 	};
-} //namespace gfx::gl
-} //namespace eng
+} //namespace eng::gfx::gl
 
 #endif //GRAPHICS_GL_ARRAY_BUFFER_CLASS_HEADER

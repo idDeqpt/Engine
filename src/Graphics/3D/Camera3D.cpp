@@ -1,7 +1,7 @@
 #include <Engine/Graphics/3D/Camera3D.hpp>
 
 #include <Engine/Core/Node3D.hpp>
-#include <Engine/Math/Mat4.hpp>
+#include <Engine/Math/Mat.hpp>
 
 #include <cmath>
 
@@ -22,10 +22,10 @@ void gfx::Camera3D::setOrtho(float left, float right, float bottom, float top, f
 	float distance = far - near;
 
 	m_projection = mth::Mat4(
-		2.0/width, 0,          0,            -(right + left)/width,
-		0,         2.0/height, 0,            -(top + bottom)/height,
-		0,         0,         -2.0/distance, -(far + near)/distance,
-		0,         0,          0,              1
+		2.0f/width, 0,           0,             -(right + left)/width,
+		0,          2.0f/height, 0,             -(top + bottom)/height,
+		0,          0,          -2.0f/distance, -(far + near)/distance,
+		0,          0,           0,              1
 	);
 }
 
@@ -51,7 +51,7 @@ mth::Mat4 gfx::Camera3D::getProjectionMatrix()
 mth::Mat4 gfx::Camera3D::getViewMatrix()
 {
 	mth::Mat4 view_mat;
-	getGlobalTransform().getMatrix().invert(view_mat);
+	mth::invert(getGlobalTransform().getMatrix(), view_mat);
 	return view_mat;
 }
 
