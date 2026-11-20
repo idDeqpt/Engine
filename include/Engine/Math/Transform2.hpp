@@ -9,9 +9,8 @@ namespace eng::mth
 	class Transform2
 	{
 	public:
-		Transform2();
+		Transform2() = default;
 		Transform2(const Mat3& mat);
-		Transform2(const Transform2& transform);
 
 		void translate(const Vec2& vec);
 		void scale(const Vec2& vec);
@@ -20,7 +19,7 @@ namespace eng::mth
 		const Mat3& getMatrix() const;
 
 	protected:
-		Mat3 m_matrix;
+		Mat3 m_matrix = Mat3::getIdentity();
 	};
 }
 

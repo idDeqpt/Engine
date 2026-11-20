@@ -9,49 +9,45 @@
 namespace eng
 {
 
-mth::Transform2::Transform2()
-{
-	m_matrix = Mat3::getIdentity();
-}
-
-mth::Transform2::Transform2(const Mat3& mat)
-{
-	m_matrix = mat;
-}
-
-mth::Transform2::Transform2(const Transform2& transform) : Transform2(transform.getMatrix()) {}
+mth::Transform2::Transform2(const Mat3& mat):
+	m_matrix(mat)
+{}
 
 
 void mth::Transform2::translate(const Vec2& vec)
 {
-	Mat3 translate_m({
-		1, 0, vec.x,
-		0, 1, vec.y,
-		0, 0, 1
-	});
-	m_matrix = m_matrix*translate_m;
+	m_matrix[0][2] += m_matrix[0][0]*vec.x + m_matrix[0][1]*vec.y;
+	m_matrix[1][2] += m_matrix[1][0]*vec.x + m_matrix[1][1]*vec.y;
+	m_matrix[2][2] += m_matrix[2][0]*vec.x + m_matrix[2][1]*vec.y;
 }
 
 void mth::Transform2::scale(const Vec2& vec)
 {
-	Mat3 scale_m({
-		vec.x, 0,     0,
-		0,     vec.y, 0,
-		0,     0,     1
-	});
-	m_matrix = m_matrix*scale_m;
+	m_matrix[0][0] *= vec.x;
+	m_matrix[1][0] *= vec.x;
+	m_matrix[2][0] *= vec.x;
+
+	m_matrix[0][1] *= vec.y;
+	m_matrix[1][1] *= vec.y;
+	m_matrix[2][1] *= vec.y;
 }
 
 void mth::Transform2::rotate(float angle)
 {
-	float cos_angle = std::cos(angle);
-	float sin_angle = std::sin(angle);
-	Mat3 rotation_m({
-		cos_angle, -sin_angle, 0,
-		sin_angle,  cos_angle, 0,
-		0,          0,         1
-	});
-	m_matrix = m_matrix*rotation_m;
+	const float c = std::cos(angle);
+	const float s = std::sin(angle);
+
+	const float m00 = m_matrix[0][0];
+	const float m10 = m_matrix[1][0];
+	const float m20 = m_matrix[2][0];
+
+	m_matrix[0][0] = m00*c + m_matrix[0][1]*s;
+	m_matrix[1][0] = m10*c + m_matrix[1][1]*s;
+	m_matrix[2][0] = m20*c + m_matrix[2][1]*s;
+
+	m_matrix[0][1] = m_matrix[0][1]*c - m00*s;
+	m_matrix[1][1] = m_matrix[1][1]*c - m10*s;
+	m_matrix[2][1] = m_matrix[2][1]*c - m20*s;
 }
 
 
