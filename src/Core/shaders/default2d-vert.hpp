@@ -23,8 +23,9 @@ void main()
     vec3 model_pos = uModel*vec3(aPosition, 1.0f);
     vec3 view_pos = uView*model_pos;
     vec3 clip_pos = uProjection*view_pos;
+    float depth = (float(uLayer)/255.0f)*2.0f - 1.0f;
 
-    gl_Position = vec4(clip_pos.xy, (float(uLayer)/255.0)*2.0 - 1.0, 1.0f);
+    gl_Position = vec4(clip_pos.xy, depth*clip_pos.z, clip_pos.z);
 }
 )";
 }

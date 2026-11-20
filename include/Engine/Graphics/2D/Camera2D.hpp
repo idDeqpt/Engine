@@ -16,6 +16,7 @@ namespace eng::gfx
 
 		void setSize(const mth::Vec2& new_size);
 		void setRect(const float& left, const float& right, const float& bottom, const float& top);
+		void setPerspective(const mth::Vec2& perspective);
 
 		mth::Mat3 getProjectionMatrix();
 		mth::Mat3 getViewMatrix();
@@ -24,6 +25,7 @@ namespace eng::gfx
 		mth::Vec2 convertWindowPoint(const mth::Vec2& point, const RenderTarget& rt);
 
 	protected:
+		mth::Vec2 m_perspective;
 		mth::Mat3 m_projection;
 	};
 }
