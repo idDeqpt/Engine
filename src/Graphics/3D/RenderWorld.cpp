@@ -70,7 +70,7 @@ void RenderWorld::draw(RenderTarget& target)
 		pass.shader->use();
 
 		// bind past data
-		for (unsigned int j = 0; j < pass.input_buffers_names.size(); j++)
+		for (int j = 0; j < pass.input_buffers_names.size(); j++)
 		{
 			gfx::gl::Api::getInstance()->setActiveTexture(j);
 			m_framebuffers[i - 1]->getTexture(j)->bind();
