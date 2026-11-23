@@ -5,6 +5,7 @@
 #include <Engine/Math/Vec.hpp>
 #include <Engine/Math/Mat.hpp>
 
+#include <unordered_map>
 #include <string>
 
 namespace eng::gfx::gl::OpenGL33
@@ -31,6 +32,9 @@ namespace eng::gfx::gl::OpenGL33
 
 	protected:
 		unsigned int m_shader_program_id = 0;
+		std::unordered_map<std::string, int> m_locations_dictionary;
+
+		int getUniformLocation(const std::string& name);
 	};
 }
 

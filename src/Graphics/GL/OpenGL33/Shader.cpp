@@ -20,6 +20,7 @@ Shader::Error Shader::loadFromBuffer(const char* vertex_buffer, const char* frag
 		glDeleteProgram(m_shader_program_id);
 		m_shader_program_id = 0;
 	}
+	m_locations_dictionary.clear();
 	
 	constexpr unsigned int LOG_BUFFER_SIZE = 512;
 	std::string log;
@@ -81,7 +82,7 @@ Shader::Error Shader::loadFromBuffer(const char* vertex_buffer, const char* frag
 
 bool Shader::setUniform(const std::string& name, bool value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -91,7 +92,7 @@ bool Shader::setUniform(const std::string& name, bool value)
 
 bool Shader::setUniform(const std::string& name, int value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -101,7 +102,7 @@ bool Shader::setUniform(const std::string& name, int value)
 
 bool Shader::setUniform(const std::string& name, unsigned int value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -111,7 +112,7 @@ bool Shader::setUniform(const std::string& name, unsigned int value)
 
 bool Shader::setUniform(const std::string& name, float value)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -121,7 +122,7 @@ bool Shader::setUniform(const std::string& name, float value)
 
 bool Shader::setUniform(const std::string& name, const mth::Vec3& vec)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -131,7 +132,7 @@ bool Shader::setUniform(const std::string& name, const mth::Vec3& vec)
 
 bool Shader::setUniform(const std::string& name, const mth::Mat3& mat)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -141,7 +142,7 @@ bool Shader::setUniform(const std::string& name, const mth::Mat3& mat)
 
 bool Shader::setUniform(const std::string& name, const mth::Mat4& mat)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -151,7 +152,7 @@ bool Shader::setUniform(const std::string& name, const mth::Mat4& mat)
 
 bool Shader::setUniform3fv(const std::string& name, const float* values_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -161,7 +162,7 @@ bool Shader::setUniform3fv(const std::string& name, const float* values_ptr)
 
 bool Shader::setUniform4fv(const std::string& name, const float* values_ptr)
 {
-	int location = glGetUniformLocation(m_shader_program_id, name.c_str());
+	int location = getUniformLocation(name);
 	if (location == -1)
 		return false;
 
@@ -173,6 +174,16 @@ bool Shader::setUniform4fv(const std::string& name, const float* values_ptr)
 void Shader::use()
 {
 	return glUseProgram(m_shader_program_id);
+}
+
+
+int Shader::getUniformLocation(const std::string& name)
+{
+	auto [it, inserted] = m_locations_dictionary.try_emplace(name, -1);
+	if (inserted)
+		it->second = glGetUniformLocation(m_shader_program_id, name.c_str());
+	return it->second;
+
 }
 
 } //namespace eng::gfx::gl::OpenGL33
