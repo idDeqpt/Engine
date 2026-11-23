@@ -82,26 +82,24 @@ void gfx::CanvasItem::draw(gfx::RenderTarget* target, const gfx::RenderStates& s
 {
 	if (!m_visible || !m_vertices_count) return;
 
-	Shader* active_shader = gfx::Shader::getActive();
-
-	active_shader->use();
-	active_shader->setUniformMatrix3fv("uModel", getGlobalTransform().getMatrix().values);
-	active_shader->setUniform1ui("uLayer", m_layer);
+	states.shader->use();
+	states.shader->setUniform("uModel", getGlobalTransform().getMatrix());
+	states.shader->setUniform("uLayer", m_layer);
 
 	float color[4];
 	for (unsigned int i = 0; i < 4; i++)
 		color[i] = float(m_color[i])/COLOR_MAX_VALUE;
-	active_shader->setUniform4fv("uColor", color);
+	states.shader->setUniform4fv("uColor", color);
 
 	bool use_texture = m_texture != nullptr;
-	active_shader->setUniform1i("uUseTexture", use_texture);
+	states.shader->setUniform("uUseTexture", use_texture);
 	if (use_texture)
 	{
-		active_shader->setUniform1i("uTextureFlipX", m_texture->getFlipX());
-		active_shader->setUniform1i("uTextureFlipY", m_texture->getFlipY());
+		states.shader->setUniform("uTextureFlipX", m_texture->getFlipX());
+		states.shader->setUniform("uTextureFlipY", m_texture->getFlipY());
 		gl::Api::getInstance()->setActiveTexture(0);
 		m_texture->bind();
-		active_shader->setUniform1i("uTexture", 0);
+		states.shader->setUniform("uTexture", 0);
 	}
 
 	m_array_buffer->draw(m_primitive_type, 0, m_vertices_count);

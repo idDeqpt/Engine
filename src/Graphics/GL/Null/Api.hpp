@@ -4,6 +4,7 @@
 #include <Engine/Graphics/GL/Api.hpp>
 #include <Engine/Graphics/GL/ArrayBuffer.hpp>
 #include <Engine/Graphics/GL/FrameBuffer.hpp>
+#include <Engine/Graphics/GL/Shader.hpp>
 #include <Engine/Graphics/GL/TextureImpl.hpp>
 
 namespace eng::gfx::gl::Null
@@ -26,20 +27,9 @@ namespace eng::gfx::gl::Null
 
 		void setActiveTexture(unsigned int texrure_i) override;
 
-		void useShader(unsigned int shader_id) override;
-		unsigned int compileVertexShader(const char* vertex_buffer, char* log_buffer, unsigned int log_buffer_size) override;
-		unsigned int compileFrahmentShader(const char* fragment_buffer, char* log_buffer, unsigned int log_buffer_size) override;
-		unsigned int linkShader(unsigned int vertex_id, unsigned int fragment_id, char* log_buffer, unsigned int log_buffer_size) override;
-		bool setUniform1i(unsigned int shader_id, const char* name, int value) override;
-		bool setUniform1ui(unsigned int shader_id, const char* name, unsigned int value) override;
-		bool setUniform1f(unsigned int shader_id, const char* name, float value) override;
-		bool setUniform3fv(unsigned int shader_id, const char* name, const float* values_ptr) override;
-		bool setUniform4fv(unsigned int shader_id, const char* name, const float* values_ptr) override;
-		bool setUniformMatrix3fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
-		bool setUniformMatrix4fv(unsigned int shader_id, const char* name, const float* matrix_ptr) override;
-
 		std::unique_ptr<ArrayBuffer> createArrayBuffer() override;
 		std::unique_ptr<FrameBuffer> createFrameBuffer() override;
+		std::unique_ptr<Shader>      createShader()      override;
 		
 		std::unique_ptr<TextureImpl> createTextureImpl() override;
 	};

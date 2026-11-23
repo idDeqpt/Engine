@@ -49,14 +49,13 @@ void RenderCanvas::draw(RenderTarget& target)
 
 	//render scene
 	auto& first_pass = m_pipeline.front();
-	Shader::setActive(first_pass.shader);
 
 	first_pass.shader->use();
 	if (first_pass.uniforms_handler) first_pass.uniforms_handler(first_pass.shader);
 	
 	Camera2D& active_camera = *m_active_camera;
-	first_pass.shader->setUniformMatrix3fv("uProjection", active_camera.getProjectionMatrix().values);
-	first_pass.shader->setUniformMatrix3fv("uView",       active_camera.getViewMatrix().values);
+	first_pass.shader->setUniform("uProjection", active_camera.getProjectionMatrix());
+	first_pass.shader->setUniform("uView",       active_camera.getViewMatrix());
 
 	if (m_framebuffers.size() > 1) m_framebuffers[0]->clear(Color(0, 0, 0, 0));
 
@@ -84,7 +83,7 @@ void RenderCanvas::draw(RenderTarget& target)
 	gl::Api::getInstance()->setCapability(cap);
 	gl::Api::getInstance()->useDepthMask(true);
 	for (CanvasItem* obj : opaque)
-		m_framebuffers.front()->draw(*obj, RenderStates());
+		m_framebuffers.front()->draw(*obj, {first_pass.shader});
 
 	//draw opaque
 	cap.blend = gl::Capability::Mode::ENABLED;
@@ -93,7 +92,7 @@ void RenderCanvas::draw(RenderTarget& target)
 	gl::Api::getInstance()->setBlendFunction(gl::BlendFactor::SRC_ALPHA, gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
 
 	for (CanvasItem* obj : transparent)
-		m_framebuffers.front()->draw(*obj, RenderStates());
+		m_framebuffers.front()->draw(*obj, {first_pass.shader});
 
 	// deferred render
 	cap.blend = gl::Capability::Mode::DISABLED;
@@ -103,7 +102,6 @@ void RenderCanvas::draw(RenderTarget& target)
 	{
 		if (m_framebuffers[i] != &target) m_framebuffers[i]->clear(Color(0, 0, 0, 0));
 		auto& pass = m_pipeline[i];
-		Shader::setActive(pass.shader);
 
 		pass.shader->use();
 
@@ -112,17 +110,17 @@ void RenderCanvas::draw(RenderTarget& target)
 		{
 			gfx::gl::Api::getInstance()->setActiveTexture(j);
 			m_framebuffers[i - 1]->getTexture(j)->bind();
-			pass.shader->setUniform1i(pass.input_buffers_names[j], j);
+			pass.shader->setUniform(pass.input_buffers_names[j], j);
 		}
 
 		// bind user uniforms
 		if (pass.uniforms_handler) pass.uniforms_handler(pass.shader);
 
 		// draw computed quad
-		pass.shader->setUniformMatrix3fv("uProjection", m_quad_view.getProjectionMatrix().values);
-		pass.shader->setUniformMatrix3fv("uView",       m_quad_view.getViewMatrix().values);
+		pass.shader->setUniform("uProjection", m_quad_view.getProjectionMatrix());
+		pass.shader->setUniform("uView",       m_quad_view.getViewMatrix());
 
-		m_framebuffers[i]->draw(m_deferred_quad, RenderStates());
+		m_framebuffers[i]->draw(m_deferred_quad, {pass.shader});
 	}
 }
 

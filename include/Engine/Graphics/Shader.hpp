@@ -1,10 +1,12 @@
 #ifndef SHADER_CLASS_HEADER
 #define SHADER_CLASS_HEADER
 
+#include <Engine/Graphics/GL/Shader.hpp>
 #include <Engine/Core/Resource.hpp>
 #include <Engine/Math/Vec.hpp>
 
 #include <string>
+#include <memory>
 
 
 namespace eng::gfx
@@ -14,7 +16,7 @@ namespace eng::gfx
 	public:
 		enum Error
 		{
-			NO_ERROR,
+			NO_ERROR = 0,
 			UNINITED,
 			VERTEX_FILE_NOT_EXIST,
 			FRAGMENT_FILE_NOT_EXIST,
@@ -27,30 +29,41 @@ namespace eng::gfx
 		Shader(const char* vertex_buffer, const char* fragment_buffer);
 
 		bool loadFromFile(std::initializer_list<std::string> paths) override;
-		bool loadFromFile(std::string vertex_path, std::string fragment_path);
-		bool loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer);
+		bool loadFromFile(const std::string& vertex_path, const std::string& fragment_path);
+		bool loadFromBuffer(const char* vertex_buffer, const char* fragment_buffer) {return convertErrorToLog(m_shader->loadFromBuffer(vertex_buffer, fragment_buffer));}
 
 		int getLastError() override;
-		std::string getLastErrorLog();
+		const std::string& getLastErrorLog();
 
-		bool setUniform1i(std::string name, int value);
-		bool setUniform1ui(std::string name, unsigned int value);
-		bool setUniform1f(std::string name, float value);
-		bool setUniformVec3(std::string name, const mth::Vec3& vec);
-		bool setUniform3fv(std::string name, const float* values_ptr);
-		bool setUniform4fv(std::string name, const float* values_ptr);
-		bool setUniformMatrix3fv(std::string name, const float* mat_ptr);
-		bool setUniformMatrix4fv(std::string name, const float* mat_ptr);
+		bool setUniform(const std::string& name, bool value)         {return m_shader->setUniform(name, value);}
+		bool setUniform(const std::string& name, int value)          {return m_shader->setUniform(name, value);}
+		bool setUniform(const std::string& name, unsigned int value) {return m_shader->setUniform(name, value);}
+		bool setUniform(const std::string& name, float value)        {return m_shader->setUniform(name, value);}
+		bool setUniform(const std::string& name, const mth::Vec3& vec) {return m_shader->setUniform(name, vec);}
+		bool setUniform(const std::string& name, const mth::Mat3& mat) {return m_shader->setUniform(name, mat);}
+		bool setUniform(const std::string& name, const mth::Mat4& mat) {return m_shader->setUniform(name, mat);}
+		bool setUniform3fv(const std::string& name, const float* values_ptr) {return m_shader->setUniform3fv(name, values_ptr);}
+		bool setUniform4fv(const std::string& name, const float* values_ptr) {return m_shader->setUniform4fv(name, values_ptr);}
 
 		bool use();
 
-		static void setActive(Shader* target);
-		static Shader* getActive();
-
 	protected:
-		unsigned int m_shader_program_id;
+		std::unique_ptr<gl::Shader> m_shader;
 		std::string m_last_error_log;
-		static Shader* s_active;
+
+		bool convertErrorToLog(const gl::Shader::Error& error)
+		{
+			if (error.code == 0)	
+		{
+			m_last_error = Shader::Error::NO_ERROR;
+			m_last_error_log.clear();
+			return true;
+		}
+
+			m_last_error = error.code + 3;
+			m_last_error_log = std::move(error.log);
+			return false;
+		}
 	};
 }
 

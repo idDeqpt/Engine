@@ -1,7 +1,5 @@
-#ifndef RENDER_STATES_CLASS_HEADER
-#define RENDER_STATES_CLASS_HEADER
-
-#include <Engine/Math/Transform3.hpp>
+#ifndef RENDER_STATES_STRUCT_HEADER
+#define RENDER_STATES_STRUCT_HEADER
 
 namespace eng::gfx
 {
@@ -9,11 +7,10 @@ namespace eng::gfx
 
 	struct RenderStates
 	{
-		RenderStates();
+		RenderStates() = default;
 
-		mth::Transform3 m_transform;
-		Shader* m_shader;
+		Shader* shader = nullptr;
 	};
 }
 
-#endif //RENDER_STATES_CLASS_HEADER
+#endif //RENDER_STATES_STRUCT_HEADER

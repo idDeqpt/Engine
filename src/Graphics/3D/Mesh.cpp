@@ -127,67 +127,65 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 {
 	if (!m_inited) return;
 
-	Shader* active_shader = gfx::Shader::getActive();
-
-	active_shader->use();
-	active_shader->setUniformMatrix4fv("uModel", getGlobalTransform().getMatrix().values);
+	states.shader->use();
+	states.shader->setUniform("uModel", getGlobalTransform().getMatrix());
 
 	gl::Api::getInstance()->setActiveTexture(0);
 		m_material.albedo->bind();
-		active_shader->setUniform1i("uMaterial.albedo", 0);
+		states.shader->setUniform("uMaterial.albedo", 0);
 
 	gl::Api::getInstance()->setActiveTexture(1);
 	bool use_normal_map = m_material.normal;
 	if (use_normal_map)
 	{
-		active_shader->setUniform1i("uMaterial.useNormal", use_normal_map);
+		states.shader->setUniform("uMaterial.useNormal", use_normal_map);
 		m_material.normal->bind();
-		active_shader->setUniform1i("uMaterial.normal", 1);
+		states.shader->setUniform("uMaterial.normal", 1);
 	}
 
 	gl::Api::getInstance()->setActiveTexture(2);
 	bool use_metallic_map = m_material.metallic;
 	if (use_metallic_map)
 	{
-		active_shader->setUniform1i("uMaterial.useMetallicic", use_metallic_map);
+		states.shader->setUniform("uMaterial.useMetallicic", use_metallic_map);
 		m_material.metallic->bind();
-		active_shader->setUniform1i("uMaterial.metallic", 2);
+		states.shader->setUniform("uMaterial.metallic", 2);
 	}
 
 	gl::Api::getInstance()->setActiveTexture(3);
 	bool use_roughness_map = m_material.roughness;
 	if (use_roughness_map)
 	{
-		active_shader->setUniform1i("uMaterial.useRoughnessic", use_roughness_map);
+		states.shader->setUniform("uMaterial.useRoughnessic", use_roughness_map);
 		m_material.roughness->bind();
-		active_shader->setUniform1i("uMaterial.roughness", 3);
+		states.shader->setUniform("uMaterial.roughness", 3);
 	}
 
 	gl::Api::getInstance()->setActiveTexture(4);
 	bool use_height_map = m_material.height;
 	if (use_height_map)
 	{
-		active_shader->setUniform1i("uMaterial.useHeight", use_height_map);
+		states.shader->setUniform("uMaterial.useHeight", use_height_map);
 		m_material.height->bind();
-		active_shader->setUniform1i("uMaterial.height", 4);
+		states.shader->setUniform("uMaterial.height", 4);
 	}
 
 	gl::Api::getInstance()->setActiveTexture(5);
 	bool use_ao_map = m_material.ao;
 	if (use_ao_map)
 	{
-		active_shader->setUniform1i("uMaterial.useAo", use_ao_map);
+		states.shader->setUniform("uMaterial.useAo", use_ao_map);
 		m_material.ao->bind();
-		active_shader->setUniform1i("uMaterial.ao", 5);
+		states.shader->setUniform("uMaterial.ao", 5);
 	}
 
 	gl::Api::getInstance()->setActiveTexture(6);
 	bool use_emission_map = m_material.emission;
 	if (use_emission_map)
 	{
-		active_shader->setUniform1i("uMaterial.useEmission", use_emission_map);
+		states.shader->setUniform("uMaterial.useEmission", use_emission_map);
 		m_material.emission->bind();
-		active_shader->setUniform1i("uMaterial.emission", 6);
+		states.shader->setUniform("uMaterial.emission", 6);
 	}
 
 	m_array_buffer->draw(PrimitiveType::TRIANGLES, 0, 0);

@@ -50,6 +50,7 @@ set(GRAPHICS_SOURCE_FILES
 	src/Graphics/GL/OpenGL33/Api.cpp
 	src/Graphics/GL/OpenGL33/ArrayBuffer.cpp
 	src/Graphics/GL/OpenGL33/FrameBuffer.cpp
+	src/Graphics/GL/OpenGL33/Shader.cpp
 	src/Graphics/GL/OpenGL33/TextureImpl.cpp
 	src/Graphics/2D/Camera2D.cpp
 	src/Graphics/2D/CanvasItem.cpp
@@ -66,7 +67,6 @@ set(GRAPHICS_SOURCE_FILES
 	src/Graphics/LightManager.cpp
 	src/Graphics/Material.cpp
 	src/Graphics/RenderScene.cpp
-	src/Graphics/RenderStates.cpp
 	src/Graphics/RenderTarget.cpp
 	src/Graphics/Shader.cpp
 	src/Graphics/Texture.cpp)

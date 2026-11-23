@@ -133,10 +133,10 @@ void Engine::setup()
 
 				gfx::LightManager::DirectionalLight light = m_context.get<gfx::LightManager>().getDirectionalLight();
 				bool use_directional_light = light.direction.x || light.direction.y || light.direction.z;
-				sh->setUniform1i("uUseDirectionalLight", use_directional_light);
+				sh->setUniform("uUseDirectionalLight", use_directional_light);
 				if (use_directional_light)
 				{
-					sh->setUniform3fv("uDirectionalLight.direction", &light.direction.x);
+					sh->setUniform("uDirectionalLight.direction", light.direction);
 					sh->setUniform3fv("uDirectionalLight.color", &light.color.x);
 				}
 			},
