@@ -16,7 +16,7 @@ phy::RectangleCollider2D::RectangleCollider2D():
 	phy::Collider2D() {}
 
 
-void phy::RectangleCollider2D::setSize(const mth::Vec2& size)
+void phy::RectangleCollider2D::setSize(mth::Vec2 size)
 {
 	m_size = size;
 	m_aabb_need_update = true;

@@ -20,15 +20,15 @@ namespace eng::phy
 		{
 		public:
 			AABB() = default;
-			AABB(const mth::Vec2& min, const mth::Vec2& max);
+			AABB(mth::Vec2 min, mth::Vec2 max);
 			
 			void expand(const AABB& other);
 
-			void set(const mth::Vec2& new_min, const mth::Vec2& new_max);
+			void set(mth::Vec2 new_min, mth::Vec2 new_max);
 
-			const mth::Vec2& getMin() const;
-			const mth::Vec2& getMax() const;
-			const mth::Vec2& getCenter() const;
+			mth::Vec2 getMin() const;
+			mth::Vec2 getMax() const;
+			mth::Vec2 getCenter() const;
 
 			bool checkCollision(const AABB& other) const;
 

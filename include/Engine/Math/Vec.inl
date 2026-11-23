@@ -174,12 +174,12 @@ Vec<N> norm(const Vec<N>& vec, float new_len)
 }
 
 
-inline float cross(const Vec2& left, const Vec2& right)
+inline float cross(Vec2 left, Vec2 right)
 {
 	return left.x*right.y - left.y*right.x;
 }
 
-inline Vec2 rotate(const Vec2& vec, float angle)
+inline Vec2 rotate(Vec2 vec, float angle)
 {
 	float cos = std::cos(angle);
 	float sin = std::sin(angle);

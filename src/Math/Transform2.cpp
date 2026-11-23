@@ -14,14 +14,14 @@ mth::Transform2::Transform2(const Mat3& mat):
 {}
 
 
-void mth::Transform2::translate(const Vec2& vec)
+void mth::Transform2::translate(Vec2 vec)
 {
 	m_matrix[0][2] += m_matrix[0][0]*vec.x + m_matrix[0][1]*vec.y;
 	m_matrix[1][2] += m_matrix[1][0]*vec.x + m_matrix[1][1]*vec.y;
 	m_matrix[2][2] += m_matrix[2][0]*vec.x + m_matrix[2][1]*vec.y;
 }
 
-void mth::Transform2::scale(const Vec2& vec)
+void mth::Transform2::scale(Vec2 vec)
 {
 	m_matrix[0][0] *= vec.x;
 	m_matrix[1][0] *= vec.x;

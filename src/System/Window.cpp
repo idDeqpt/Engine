@@ -76,19 +76,19 @@ void sys::Window::close()
 }
 
 
-void sys::Window::resize(const mth::Vec2& new_size)
+void sys::Window::resize(mth::Vec2 new_size)
 {
 	m_size = new_size;
 	glfwSetWindowSize(window_ptr, new_size.x, new_size.y);
 	updateViewport();
 }
 
-void sys::Window::setViewportCentering(const mth::Vec2& ratio)
+void sys::Window::setViewportCentering(mth::Vec2 ratio)
 {
 	m_centering_ratio = ratio;
 }
 
-void sys::Window::setViewportSize(const mth::Vec2& new_size)
+void sys::Window::setViewportSize(mth::Vec2 new_size)
 {
 	m_window_viewport_size = new_size;
 }

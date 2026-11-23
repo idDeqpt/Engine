@@ -13,7 +13,7 @@ void phy::Collider2D::computeTransform()
 }
 
 
-phy::Collider2D::AABB::AABB(const mth::Vec2& min, const mth::Vec2& max)
+phy::Collider2D::AABB::AABB(mth::Vec2 min, mth::Vec2 max)
 {
 	set(min, max);
 }
@@ -34,7 +34,7 @@ void phy::Collider2D::AABB::expand(const AABB& other)
 }
 
 
-void phy::Collider2D::AABB::set(const mth::Vec2& new_min, const mth::Vec2& new_max)
+void phy::Collider2D::AABB::set(mth::Vec2 new_min, mth::Vec2 new_max)
 {
 	m_min = new_min;
 	m_max = new_max;
@@ -42,17 +42,17 @@ void phy::Collider2D::AABB::set(const mth::Vec2& new_min, const mth::Vec2& new_m
 }
 
 
-const mth::Vec2& phy::Collider2D::AABB::getMin() const
+mth::Vec2 phy::Collider2D::AABB::getMin() const
 {
 	return m_min;
 }
 
-const mth::Vec2& phy::Collider2D::AABB::getMax() const
+mth::Vec2 phy::Collider2D::AABB::getMax() const
 {
 	return m_max;
 }
 
-const mth::Vec2& phy::Collider2D::AABB::getCenter() const
+mth::Vec2 phy::Collider2D::AABB::getCenter() const
 {
 	return m_center;
 }

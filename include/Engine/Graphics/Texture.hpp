@@ -37,9 +37,9 @@ namespace eng::gfx
 		bool loadFromFile(const std::string& path);
 
 		bool loadFromBuffer(void* image_data, unsigned int width, unsigned int height);
-		bool loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height);
+		bool loadSubTexture(void* subimage_data, mth::Vec2 position, unsigned int width, unsigned int height);
 
-		bool resize(const mth::Vec2& new_size);
+		bool resize(mth::Vec2 new_size);
 
 		bool isTransparent() const;
 		bool getFlipX() const;

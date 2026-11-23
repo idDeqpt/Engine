@@ -14,7 +14,7 @@ Camera2D::Camera2D() : core::Node2D()
 }
 
 
-void Camera2D::setSize(const mth::Vec2& new_size)
+void Camera2D::setSize(mth::Vec2 new_size)
 {
 	setRect(-new_size.x*0.5, new_size.x*0.5, -new_size.y*0.5, new_size.y*0.5);
 }
@@ -31,7 +31,7 @@ void Camera2D::setRect(const float& left, const float& right, const float& botto
 	});
 }
 
-void Camera2D::setPerspective(const mth::Vec2& perspective)
+void Camera2D::setPerspective(mth::Vec2 perspective)
 {
 	m_perspective = perspective;
 
@@ -57,7 +57,7 @@ mth::Mat3 Camera2D::getProjViewMatrix()
 	return getProjectionMatrix()*getViewMatrix();
 }
 
-mth::Vec2 Camera2D::convertWindowPoint(const mth::Vec2& point, const RenderTarget& rt)
+mth::Vec2 Camera2D::convertWindowPoint(mth::Vec2 point, const RenderTarget& rt)
 {
 	mth::Vec2 vp_pos  = rt.getViewportPosition();
 	mth::Vec2 vp_size = rt.getViewportSize();

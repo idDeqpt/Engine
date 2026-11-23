@@ -14,18 +14,18 @@ namespace eng::core
 
 		virtual void onTreeChanged() override;
 
-		void move(const mth::Vec2& offset);
-		void scale(const mth::Vec2& scale_v);
+		void move(mth::Vec2 offset);
+		void scale(mth::Vec2 scale_v);
 		void rotate(float angle); //radians
 
-		void setOrigin(const mth::Vec2& new_origin);
-		void setPosition(const mth::Vec2& new_position);
-		void setScale(const mth::Vec2& new_scale);
+		void setOrigin(mth::Vec2 new_origin);
+		void setPosition(mth::Vec2 new_position);
+		void setScale(mth::Vec2 new_scale);
 		void setRotation(float new_angle); //radians
 
-		const mth::Vec2& getOrigin() const;
-		const mth::Vec2& getPosition() const;
-		const mth::Vec2& getScale() const;
+		mth::Vec2 getOrigin() const;
+		mth::Vec2 getPosition() const;
+		mth::Vec2 getScale() const;
 		float getRotation() const;
 
 		mth::Vec2 getGlobalPosition();

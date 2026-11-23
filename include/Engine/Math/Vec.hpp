@@ -68,8 +68,8 @@ namespace eng::mth
 	template<unsigned int N>  float  dot(const Vec<N>& left, const Vec<N>& right);
 	template<unsigned int N>  Vec<N> norm(const Vec<N>& vec, float new_len = 1);
 
-	inline float cross(const Vec2& left, const Vec2& right);
-	inline Vec2 rotate(const Vec2& vec, float angle);
+	inline float cross(Vec2 left, Vec2 right);
+	inline Vec2 rotate(Vec2 vec, float angle);
 	inline Vec3 cross(const Vec3& left, const Vec3& right);
 
 	template<unsigned int N>  Vec<N> operator+(const Vec<N>& left, const Vec<N>& right);

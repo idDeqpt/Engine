@@ -45,7 +45,7 @@ public:
 		});
 
 		m_mouse_moved_signal_id = m_context.get<eng::core::SignalBus>().subscribe("mouse_moved",
-			[this](const eng::mth::Vec2& pos, const eng::mth::Vec2& delta) {
+			[this](eng::mth::Vec2 pos, eng::mth::Vec2 delta) {
 				m_ball_image->setPosition(computeBallPosition(pos));
 		});
 

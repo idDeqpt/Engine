@@ -25,7 +25,7 @@ namespace eng::gfx
 
 		void setType(const Type new_type);
 		void setAccuracy(unsigned int accuracy);
-		void setSize(const mth::Vec2& new_size);
+		void setSize(mth::Vec2 new_size);
 		void setGenerator(void (*generator)(Shape2D*));
 
 		mth::Vec2 getSize();

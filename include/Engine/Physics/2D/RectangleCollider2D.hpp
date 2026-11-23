@@ -17,7 +17,7 @@ namespace eng::phy
 	public:
 		RectangleCollider2D();
 
-		void setSize(const mth::Vec2& size);
+		void setSize(mth::Vec2 size);
 		mth::Vec2 getSize();
 
 		AABB getAABB() override;

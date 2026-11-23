@@ -12,8 +12,8 @@ namespace eng::mth
 		Transform2() = default;
 		Transform2(const Mat3& mat);
 
-		void translate(const Vec2& vec);
-		void scale(const Vec2& vec);
+		void translate(Vec2 vec);
+		void scale(Vec2 vec);
 		void rotate(float angle); //radians
 
 		const Mat3& getMatrix() const;

@@ -99,7 +99,7 @@ bool Texture::loadFromBuffer(void* image_data, unsigned int width, unsigned int 
 	return false;
 }
 
-bool Texture::loadSubTexture(void* subimage_data, const mth::Vec2& position, unsigned int width, unsigned int height)
+bool Texture::loadSubTexture(void* subimage_data, mth::Vec2 position, unsigned int width, unsigned int height)
 {
 	auto tex = m_texture_pool.getTexture(m_texture_handle);
 	if (tex) return tex->loadSubTexture(subimage_data, position.x, position.y, width, height);
@@ -107,7 +107,7 @@ bool Texture::loadSubTexture(void* subimage_data, const mth::Vec2& position, uns
 }
 
 
-bool Texture::resize(const mth::Vec2& new_size)
+bool Texture::resize(mth::Vec2 new_size)
 {
 	auto tex = m_texture_pool.getTexture(m_texture_handle);
 	if (tex) return tex->resize(new_size.x, new_size.y);

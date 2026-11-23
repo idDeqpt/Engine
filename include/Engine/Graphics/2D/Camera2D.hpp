@@ -14,15 +14,15 @@ namespace eng::gfx
 	public:
 		Camera2D();
 
-		void setSize(const mth::Vec2& new_size);
+		void setSize(mth::Vec2 new_size);
 		void setRect(const float& left, const float& right, const float& bottom, const float& top);
-		void setPerspective(const mth::Vec2& perspective);
+		void setPerspective(mth::Vec2 perspective);
 
 		mth::Mat3 getProjectionMatrix();
 		mth::Mat3 getViewMatrix();
 		mth::Mat3 getProjViewMatrix();
 
-		mth::Vec2 convertWindowPoint(const mth::Vec2& point, const RenderTarget& rt);
+		mth::Vec2 convertWindowPoint(mth::Vec2 point, const RenderTarget& rt);
 
 	protected:
 		mth::Vec2 m_perspective;

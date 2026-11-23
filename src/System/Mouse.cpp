@@ -107,7 +107,7 @@ void sys::Mouse::move_handler(int x, int y)
 		m_current_frame
 	};
 
-	m_sbus.emit<const mth::Vec2&, const mth::Vec2&>("mouse_moved", pos, delta);
+	m_sbus.emit<mth::Vec2, mth::Vec2>("mouse_moved", pos, delta);
 }
 
 void sys::Mouse::nextFrame()

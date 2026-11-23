@@ -32,9 +32,9 @@ namespace eng::sys
 		bool isOpen() const;
 		void close();
 
-		void resize(const mth::Vec2& new_size);
-		void setViewportSize(const mth::Vec2& new_size);
-		void setViewportCentering(const mth::Vec2& ratio);
+		void resize(mth::Vec2 new_size);
+		void setViewportSize(mth::Vec2 new_size);
+		void setViewportCentering(mth::Vec2 ratio);
 		void setViewportScaling(ViewportScaling mode);
 		void updateViewport();
 

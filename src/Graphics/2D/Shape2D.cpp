@@ -49,7 +49,7 @@ void gfx::Shape2D::setAccuracy(unsigned int accuracy)
 	m_need_update_points = true;
 }
 
-void gfx::Shape2D::setSize(const mth::Vec2& new_size)
+void gfx::Shape2D::setSize(mth::Vec2 new_size)
 {
 	m_size = new_size;
 	m_need_update_points = true;

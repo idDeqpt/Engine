@@ -14,14 +14,14 @@ void Node2D::onTreeChanged()
 }
 
 
-void Node2D::move(const mth::Vec2& offset)
+void Node2D::move(mth::Vec2 offset)
 {
 	m_position += offset;
 	m_local_transform_need_update = true;
 	invalidateTransform();
 }
 
-void Node2D::scale(const mth::Vec2& scale_v)
+void Node2D::scale(mth::Vec2 scale_v)
 {
 	m_scale.x *= scale_v.x;
 	m_scale.y *= scale_v.y;
@@ -37,21 +37,21 @@ void Node2D::rotate(float angle)
 }
 
 
-void Node2D::setOrigin(const mth::Vec2& new_origin)
+void Node2D::setOrigin(mth::Vec2 new_origin)
 {
 	m_origin = new_origin;
 	m_local_transform_need_update = true;
 	invalidateTransform();
 }
 
-void Node2D::setPosition(const mth::Vec2& new_position)
+void Node2D::setPosition(mth::Vec2 new_position)
 {
 	m_position = new_position;
 	m_local_transform_need_update = true;
 	invalidateTransform();
 }
 
-void Node2D::setScale(const mth::Vec2& new_scale)
+void Node2D::setScale(mth::Vec2 new_scale)
 {
 	m_scale = new_scale;
 	m_local_transform_need_update = true;
@@ -66,17 +66,17 @@ void Node2D::setRotation(float new_angle)
 }
 
 
-const mth::Vec2& Node2D::getOrigin() const
+mth::Vec2 Node2D::getOrigin() const
 {
 	return m_origin;
 }
 
-const mth::Vec2& Node2D::getPosition() const
+mth::Vec2 Node2D::getPosition() const
 {
 	return m_position;
 }
 
-const mth::Vec2& Node2D::getScale() const
+mth::Vec2 Node2D::getScale() const
 {
 	return m_scale;
 }
