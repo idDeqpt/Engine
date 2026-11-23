@@ -1,5 +1,6 @@
 #ifdef USE_OPENGL_3_3
 
+#include "Api.hpp"
 #include "Shader.hpp"
 
 #include <Engine/Math/Vec.hpp>
@@ -173,7 +174,11 @@ bool Shader::setUniform4fv(const std::string& name, const float* values_ptr)
 
 void Shader::use()
 {
-	return glUseProgram(m_shader_program_id);
+	if (Api::s_cache.shader_id != m_shader_program_id)
+	{
+		glUseProgram(m_shader_program_id);
+		Api::s_cache.shader_id = m_shader_program_id;
+	}
 }
 
 

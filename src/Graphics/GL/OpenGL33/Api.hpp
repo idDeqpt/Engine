@@ -10,6 +10,8 @@
 
 namespace eng::gfx::gl::OpenGL33
 {
+	class Shader;
+
 	class Api : public gl::Api
 	{
 	public:
@@ -31,19 +33,22 @@ namespace eng::gfx::gl::OpenGL33
 
 		void setActiveTexture(unsigned int texrure_i) override;
 
-		std::unique_ptr<ArrayBuffer> createArrayBuffer() override;
-		std::unique_ptr<FrameBuffer> createFrameBuffer() override;
-		std::unique_ptr<Shader>      createShader()      override;
+		std::unique_ptr<gl::ArrayBuffer> createArrayBuffer() override;
+		std::unique_ptr<gl::FrameBuffer> createFrameBuffer() override;
+		std::unique_ptr<gl::Shader>      createShader()      override;
 		
-		std::unique_ptr<TextureImpl> createTextureImpl() override;
+		std::unique_ptr<gl::TextureImpl> createTextureImpl() override;
 
 	protected:
 		static struct Cache
 		{
 			Capability capability = Capability(true);
+			unsigned int shader_id = 0;
 			
 			Cache() = default;
 		} s_cache;
+
+		friend OpenGL33::Shader;
 
 		#endif
 	};
