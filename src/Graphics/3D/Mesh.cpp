@@ -140,7 +140,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useNormal", use_normal_map);
 		m_material.normal->bind();
-		states.shader->setUniform("uMaterial.normal", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.normal", static_cast<int>(1));
 	}
 
 	gl::Api::getInstance()->setActiveTexture(2);
@@ -149,7 +149,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useMetallicic", use_metallic_map);
 		m_material.metallic->bind();
-		states.shader->setUniform("uMaterial.metallic", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.metallic", static_cast<int>(2));
 	}
 
 	gl::Api::getInstance()->setActiveTexture(3);
@@ -158,7 +158,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useRoughnessic", use_roughness_map);
 		m_material.roughness->bind();
-		states.shader->setUniform("uMaterial.roughness", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.roughness", static_cast<int>(3));
 	}
 
 	gl::Api::getInstance()->setActiveTexture(4);
@@ -167,7 +167,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useHeight", use_height_map);
 		m_material.height->bind();
-		states.shader->setUniform("uMaterial.height", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.height", static_cast<int>(4));
 	}
 
 	gl::Api::getInstance()->setActiveTexture(5);
@@ -176,7 +176,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useAo", use_ao_map);
 		m_material.ao->bind();
-		states.shader->setUniform("uMaterial.ao", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.ao", static_cast<int>(5));
 	}
 
 	gl::Api::getInstance()->setActiveTexture(6);
@@ -185,7 +185,7 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	{
 		states.shader->setUniform("uMaterial.useEmission", use_emission_map);
 		m_material.emission->bind();
-		states.shader->setUniform("uMaterial.emission", static_cast<int>(0));
+		states.shader->setUniform("uMaterial.emission", static_cast<int>(6));
 	}
 
 	m_array_buffer->draw(PrimitiveType::TRIANGLES, 0, 0);
