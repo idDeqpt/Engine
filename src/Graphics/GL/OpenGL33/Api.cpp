@@ -27,7 +27,6 @@ gl::Api::Type Api::getType()
 #include <memory>
 
 #include <glad/gl.h>
-#include <GLFW/glfw3.h>
 
 #include "ArrayBuffer.hpp"
 #include "FrameBuffer.hpp"
@@ -106,9 +105,9 @@ namespace eng::gfx::gl::OpenGL33
 
 Api::Cache Api::s_cache;
 
-void Api::initialize()
+void Api::initialize(gl::Api::ProcAddressLoader loader)
 {
-	gladLoadGL(glfwGetProcAddress);
+	gladLoadGL(reinterpret_cast<GLADloadfunc>(loader));
 
 	Capability init_cap(false);
 	setCapability(init_cap);
@@ -168,9 +167,9 @@ void Api::setViewport(int x, int y, unsigned int width, unsigned int height)
 }
 
 
-void Api::setActiveTexture(unsigned int texrure_i)
+void Api::setActiveTexture(unsigned int texture_i)
 {
-	glActiveTexture(GL_TEXTURE0 + texrure_i);
+	glActiveTexture(GL_TEXTURE0 + texture_i);
 }
 
 

@@ -14,7 +14,7 @@ namespace eng::gfx::gl::Null
 		static bool isAvailable();
 
 		Type getType() override;
-		void initialize() override;
+		void initialize(gl::Api::ProcAddressLoader loader) override;
 
 		void setCapability(const Capability& capability) override;
 

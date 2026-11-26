@@ -15,7 +15,7 @@ bool Api::isAvailable() {return false;}
 
 gl::Api::Type Api::getType() {return Api::Type::NULL_API;}
 
-void Api::initialize() {}
+void Api::initialize(gl::Api::ProcAddressLoader loader) {}
 
 void Api::setCapability(const Capability& capability) {}
 

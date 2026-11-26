@@ -46,6 +46,8 @@ namespace eng::gfx::gl
 	class Api
 	{
 	public:
+    	using ProcAddressLoader = void* (*)(const char* procname);
+
 		enum class Type
 		{
 			NULL_API,
@@ -61,7 +63,7 @@ namespace eng::gfx::gl
 		virtual ~Api() = default;
 
 		virtual Type getType() = 0;
-		virtual void initialize() = 0;
+		virtual void initialize(ProcAddressLoader loader) = 0;
 		virtual void finalize();
 
 		virtual void setCapability(const Capability& capability) = 0;

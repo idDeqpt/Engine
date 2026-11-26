@@ -213,7 +213,7 @@ void Engine::init()
 	gfx::gl::Api::createInstance();
 	sys::Window::initialize();
 	m_window = std::make_shared<sys::Window>(900, 600, "Engine");
-	gfx::gl::Api::getInstance()->initialize();
+	gfx::gl::Api::getInstance()->initialize(sys::Window::getProcAddressLoader());
 	
 	m_context.replace<sys::Window>(m_window);
 	m_context.create<SignalBus>();

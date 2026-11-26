@@ -20,7 +20,7 @@ namespace eng::gfx::gl::OpenGL33
 
 		#ifdef USE_OPENGL_3_3
 
-		void initialize() override;
+		void initialize(gl::Api::ProcAddressLoader loader) override;
 
 		void setCapability(const Capability& capability) override;
 
@@ -31,7 +31,7 @@ namespace eng::gfx::gl::OpenGL33
 		void setScissor(int x, int y, unsigned int width, unsigned int height) override;
 		void setViewport(int x, int y, unsigned int width, unsigned int height) override;
 
-		void setActiveTexture(unsigned int texrure_i) override;
+		void setActiveTexture(unsigned int texture_i) override;
 
 		std::unique_ptr<gl::ArrayBuffer> createArrayBuffer() override;
 		std::unique_ptr<gl::FrameBuffer> createFrameBuffer() override;

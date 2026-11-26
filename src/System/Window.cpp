@@ -9,22 +9,22 @@
 #include <GLFW/glfw3.h>
 
 
-namespace eng
+namespace eng::sys
 {
 
-void sys::Window::initialize()
+void Window::initialize()
 {
 	glfwInit();
 }
 
-void sys::Window::finalize()
+void Window::finalize()
 {
 	glfwTerminate();
 }
 
-sys::Window::Window() : Window(800, 600, "Window"){}
+Window::Window() : Window(800, 600, "Window"){}
 
-sys::Window::Window(int width, int height, const std::string& title):
+Window::Window(int width, int height, const std::string& title):
 	m_size(width, height),
 	gfx::RenderTarget()
 {
@@ -53,52 +53,52 @@ sys::Window::Window(int width, int height, const std::string& title):
 }
 
 
-void sys::Window::setTitle(const std::string& new_title)
+void Window::setTitle(const std::string& new_title)
 {
 	glfwSetWindowTitle(window_ptr, new_title.c_str());
 }
 
 
-GLFWwindow* sys::Window::getHandler()
+GLFWwindow* Window::getHandler()
 {
 	return window_ptr;
 }
 
 
-bool sys::Window::isOpen() const
+bool Window::isOpen() const
 {
 	return !glfwWindowShouldClose(window_ptr);
 }
 
-void sys::Window::close()
+void Window::close()
 {
 	glfwSetWindowShouldClose(window_ptr, true);
 }
 
 
-void sys::Window::resize(mth::Vec2 new_size)
+void Window::resize(mth::Vec2 new_size)
 {
 	m_size = new_size;
 	glfwSetWindowSize(window_ptr, new_size.x, new_size.y);
 	updateViewport();
 }
 
-void sys::Window::setViewportCentering(mth::Vec2 ratio)
+void Window::setViewportCentering(mth::Vec2 ratio)
 {
 	m_centering_ratio = ratio;
 }
 
-void sys::Window::setViewportSize(mth::Vec2 new_size)
+void Window::setViewportSize(mth::Vec2 new_size)
 {
 	m_window_viewport_size = new_size;
 }
 
-void sys::Window::setViewportScaling(Window::ViewportScaling mode)
+void Window::setViewportScaling(Window::ViewportScaling mode)
 {
 	m_scaling_mode = mode;
 }
 
-void sys::Window::updateViewport()
+void Window::updateViewport()
 {
 	switch (m_scaling_mode)
 	{
@@ -121,7 +121,7 @@ void sys::Window::updateViewport()
 }
 
 
-void sys::Window::clear(const gfx::Color& color)
+void Window::clear(const gfx::Color& color)
 {
 	gfx::gl::Capability cap;
 	cap.scissor_test = gfx::gl::Capability::Mode::ENABLED;
@@ -134,9 +134,17 @@ void sys::Window::clear(const gfx::Color& color)
 }
 
 
-void sys::Window::display()
+void Window::display()
 {
 	glfwSwapBuffers(window_ptr);
 }
 
-} //namespace eng
+
+void* (*Window::getProcAddressLoader())(const char*)
+{
+    return [](const char* name) -> void* {
+        return reinterpret_cast<void*>(glfwGetProcAddress(name));
+    };
+}
+
+} //namespace eng::sys

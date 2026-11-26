@@ -42,6 +42,8 @@ namespace eng::sys
 
 		void display();
 
+		static void* (*getProcAddressLoader())(const char*);
+
 	protected:
 		GLFWwindow* window_ptr;
 		mth::Vec2 m_size;
