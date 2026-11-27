@@ -17,6 +17,9 @@
 #include <unordered_map>
 
 
+namespace
+{
+
 struct VertexKey {
 	unsigned int positionIndex;
 	unsigned int textureCoordIndex;
@@ -38,10 +41,12 @@ struct std::hash<VertexKey> {
 	}
 };
 
-namespace eng
+} //namespace
+
+namespace eng::gfx
 {
 
-gfx::Mesh::Mesh():
+Mesh::Mesh():
 	core::Node3D(),
 	m_inited(false),
 	m_has_tex_coords(false),
@@ -49,7 +54,7 @@ gfx::Mesh::Mesh():
 {}
 
 
-bool gfx::Mesh::loadData(MeshData data)
+bool Mesh::loadData(MeshData data)
 {
 	if (!(data.unique_posisions && data.posisions_indexes && data.unique_posisions_count && data.vertices_indexes_count)) return m_inited = false;
 
@@ -111,19 +116,19 @@ bool gfx::Mesh::loadData(MeshData data)
 	return m_inited  = true;
 }
 
-void gfx::Mesh::loadInstances(mth::Mat4* transforms, unsigned int transforms_count)
+void Mesh::loadInstances(mth::Mat4* transforms, unsigned int transforms_count)
 {
 	m_array_buffer->loadInstances(transforms, transforms_count);
 }
 
 
-void gfx::Mesh::setMaterial(const Material& new_material)
+void Mesh::setMaterial(const Material& new_material)
 {
 	m_material = new_material;
 }
 
 
-void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
+void Mesh::draw(RenderTarget* target, const RenderStates& states)
 {
 	if (!m_inited) return;
 
@@ -191,4 +196,4 @@ void gfx::Mesh::draw(RenderTarget* target, const RenderStates& states)
 	m_array_buffer->draw(PrimitiveType::TRIANGLES, 0, 0);
 }
 
-} //namespace eng
+} //namespace eng::gfx

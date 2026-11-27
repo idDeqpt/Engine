@@ -12,15 +12,15 @@
 #include <memory>
 
 
-namespace eng
+namespace
 {
 
 struct PairHash
 {
-	unsigned int operator()(const phy::PhysicsWorld::Pair2D& p) const
+	unsigned int operator()(const eng::phy::PhysicsWorld::Pair2D& p) const
 	{
-		auto h1 = std::hash<phy::PhysicsBody2D*>{}(p.first);
-		auto h2 = std::hash<phy::PhysicsBody2D*>{}(p.second);
+		auto h1 = std::hash<eng::phy::PhysicsBody2D*>{}(p.first);
+		auto h2 = std::hash<eng::phy::PhysicsBody2D*>{}(p.second);
 
 		if (p.first < p.second)
 			return h1 ^ (h2 << 1);
@@ -31,15 +31,20 @@ struct PairHash
 
 struct PairEqual
 {
-	bool operator()(const phy::PhysicsWorld::Pair2D& lhs, const phy::PhysicsWorld::Pair2D& rhs) const
+	bool operator()(const eng::phy::PhysicsWorld::Pair2D& lhs, const eng::phy::PhysicsWorld::Pair2D& rhs) const
 	{
 		return (((lhs.first == rhs.first) && (lhs.second == rhs.second)) ||
 				((lhs.first == rhs.second) && (lhs.second == rhs.first)));
 	}
 };
 
+} //namespace
 
-phy::PhysicsWorld::PhysicsWorld():
+namespace eng::phy
+{
+
+
+PhysicsWorld::PhysicsWorld():
 	m_accumulator(0),
 	m_fixed_delta(1/50.0),
 	m_max_steps_per_frame(1),
@@ -51,18 +56,18 @@ phy::PhysicsWorld::PhysicsWorld():
 }
 
 
-void phy::PhysicsWorld::setFixedDelta(float delta)
+void PhysicsWorld::setFixedDelta(float delta)
 {
 	m_fixed_delta = delta;
 }
 
-void phy::PhysicsWorld::setMaxStepsPerFrame(unsigned int steps)
+void PhysicsWorld::setMaxStepsPerFrame(unsigned int steps)
 {
 	m_max_steps_per_frame = steps;
 }
 
 
-void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
+void PhysicsWorld::addBody(PhysicsBody2D& body)
 {
 	if (m_in_step)
 		m_pending_add.push_back(&body);
@@ -71,7 +76,7 @@ void phy::PhysicsWorld::addBody(PhysicsBody2D& body)
 			m_bodies2d.push_back(&body);
 }
 
-void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
+void PhysicsWorld::removeBody(PhysicsBody2D& body)
 {
 	if (m_in_step)
 		m_pending_remove.push_back(&body);
@@ -90,7 +95,7 @@ void phy::PhysicsWorld::removeBody(PhysicsBody2D& body)
 }
 
 
-void phy::PhysicsWorld::update(float delta)
+void PhysicsWorld::update(float delta)
 {
 	m_accumulator += delta;
 	unsigned int steps_count = 0;
@@ -103,7 +108,7 @@ void phy::PhysicsWorld::update(float delta)
 }
 
 
-void phy::PhysicsWorld::step(float delta)
+void PhysicsWorld::step(float delta)
 {
 	m_in_step = true;
 	std::unordered_set<Pair2D, PairHash, PairEqual> current_frame_bodies_set;
@@ -191,4 +196,4 @@ void phy::PhysicsWorld::step(float delta)
 	m_previous_frame_bodies2d.assign(current_frame_bodies_set.begin(), current_frame_bodies_set.end());
 }
 
-} //namespace eng
+} //namespace eng::phy
