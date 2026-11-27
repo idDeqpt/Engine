@@ -13,13 +13,19 @@ public:
 
 	void onSetup() override
 	{
-		unsigned char white[] = {255, 255, 255, 255};
+		unsigned char colors[] = {
+			255, 255, 255, 255,
+			255, 0,   0,   255,
+			0,   255, 0,   255,
+			0,   0,   255, 255
+		};
 		m_tex.create(eng::gfx::gl::PixelFormat::RGBA);
-		m_tex.loadFromBuffer(white, 1, 1);
+		m_tex.loadFromBuffer(colors, 2, 2);
 		eng::gfx::Material mat;
 		mat.albedo = &m_tex;
 		setMaterial(mat);
 	}
+
 protected:
 	eng::gfx::Texture m_tex;
 };

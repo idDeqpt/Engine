@@ -86,15 +86,23 @@ void TextureImpl::create(gl::PixelFormat pixel_format)
 	remove();
 
 	glGenTextures(1, &m_handle);
+
+	glBindTexture(GL_TEXTURE_2D, m_handle);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	m_width  = 0;
 	m_height = 0;
 	m_format = pixel_format;
+
+	setSmooth(false);
 }
 
 void TextureImpl::remove()
 {
-	if (m_handle)      glDeleteTextures(1, &m_handle);
-	if (m_pixels != nullptr) {delete[] m_pixels; m_pixels = nullptr;}
+	if (m_handle) {glDeleteTextures(1, &m_handle); m_handle = 0;}
+	if (m_pixels != nullptr) {delete[] m_pixels;   m_pixels = nullptr;}
 }
 
 
