@@ -9,7 +9,7 @@
 #include <vector>
 
 
-namespace eng
+namespace eng::core
 {
 	class Context
 	{
@@ -88,6 +88,6 @@ namespace eng
 		if (!ptr) throw std::runtime_error("Service expired");
 		return *std::static_pointer_cast<T>(ptr);
 	}
-}
+} //namespace eng::core
 
 #endif //CONTEXT_CLASS_HEADER

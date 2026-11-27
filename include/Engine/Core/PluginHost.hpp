@@ -1,20 +1,17 @@
 #ifndef PLUGIN_HOST_CLASS_HEADER
 #define PLUGIN_HOST_CLASS_HEADER
 
-namespace eng
+namespace eng::core
 {
 	class Context;
 
-namespace core
-{
 	class Node;
 
 	struct PluginHost
 	{
-		eng::Context& context;
-		core::Node&   root;
+		Context& context;
+		Node&   root;
 	};
-}
-}
+} //namespace eng::core
 
 #endif //PLUGIN_HOST_CLASS_HEADER

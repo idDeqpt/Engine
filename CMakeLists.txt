@@ -20,10 +20,12 @@ option(BUILD_WITH_OPENGL_3_3 "Build library with support of OpenGL 3.3" ON)
 option(BUILD_EXAMPLES        "Build examples for library"               OFF)
 option(BUILD_SHARED          "Build shared library"                     ON)
 
+set(ROOT_SOURCE_FILES
+	src/Engine.cpp)
+
 set(CORE_SOURCE_FILES
 	src/Core/ConfigManager.cpp
 	src/Core/DefaultAppPlugin.cpp
-	src/Core/Engine.cpp
 	src/Core/Logger.cpp
 	src/Core/NameTag.cpp
 	src/Core/Node.cpp
@@ -117,6 +119,7 @@ if(BUILD_WITH_OPENGL_3_3)
 endif()
 
 target_sources(${PROJECT_NAME} PRIVATE
+	${ROOT_SOURCE_FILES}
 	${CORE_SOURCE_FILES}
 	${GRAPHICS_SOURCE_FILES}
 	${MATH_SOURCE_FILES}

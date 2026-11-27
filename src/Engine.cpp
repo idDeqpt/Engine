@@ -1,6 +1,6 @@
-#include <Engine/Core/Engine.hpp>
+#include <Engine/Engine.hpp>
 
-#include <Engine/Context.hpp>
+#include <Engine/Core/Context.hpp>
 #include <Engine/Core/Node.hpp>
 #include <Engine/Core/Timer.hpp>
 #include <Engine/Core/Delta.hpp>
@@ -28,23 +28,23 @@
 
 #include <Engine/Math/Vec.hpp>
 
-#include "shaders/default2d-vert.hpp"
-#include "shaders/default2d-frag.hpp"
-#include "shaders/default3d-vert.hpp"
-#include "shaders/default3d-deferred-frag.hpp"
-#include "shaders/default3d-deferred-light-frag.hpp"
+#include "./Core/shaders/default2d-vert.hpp"
+#include "./Core/shaders/default2d-frag.hpp"
+#include "./Core/shaders/default3d-vert.hpp"
+#include "./Core/shaders/default3d-deferred-frag.hpp"
+#include "./Core/shaders/default3d-deferred-light-frag.hpp"
 
 #include <iostream>
 #include <string>
 
 
-namespace eng::core
+namespace eng
 {
 
-Engine::Engine(std::unique_ptr<Node> root)
+Engine::Engine(std::unique_ptr<core::Node> root)
 {
 	init();
-	m_plugin_manager->loadPlugin(std::make_unique<DefaultAppPlugin>(std::move(root)));
+	m_plugin_manager->loadPlugin(std::make_unique<core::DefaultAppPlugin>(std::move(root)));
 }
 
 Engine::Engine()
@@ -54,41 +54,41 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	Logger::debug("Start finalization");
+	core::Logger::debug("Start finalization");
 	m_root_node->destroy();
 	m_root_node.reset();
 
 	for (unsigned int i = 0; i < m_subscriptions.size(); i++)
-		m_context.get<SignalBus>().unsubscribe(m_subscriptions[i]);
+		m_context.get<core::SignalBus>().unsubscribe(m_subscriptions[i]);
 	m_context.shutdown();
 
 	m_window.reset();
 	gfx::gl::Api::getInstance()->finalize();
 	sys::Window::finalize();
 
-	Logger::debug("End finalization");
-	Logger::debug("End app");
+	core::Logger::debug("End finalization");
+	core::Logger::debug("End app");
 }
 
 
 void Engine::setup()
 {
-	Logger::debug("Start setup");
+	core::Logger::debug("Start setup");
 
-	static gfx::Shader shader2d = gfx::Shader(shader::default2d_vert, shader::default2d_frag);
-	Logger::debug(String("Default shader 2D loaded with error code: ") << shader2d.getLastError());
+	static gfx::Shader shader2d = gfx::Shader(core::shader::default2d_vert, core::shader::default2d_frag);
+	core::Logger::debug(core::String("Default shader 2D loaded with error code: ") << shader2d.getLastError());
 	if (shader2d.getLastError())
-		Logger::error("Info: \n" + shader2d.getLastErrorLog());
+		core::Logger::error("Info: \n" + shader2d.getLastErrorLog());
 
-	static gfx::Shader shader3d_deferred = gfx::Shader(shader::default3d_vert, shader::default3d_deferred_frag);
-	Logger::debug(String("Default shader 3D deferred loaded with error code: ") << shader3d_deferred.getLastError());
+	static gfx::Shader shader3d_deferred = gfx::Shader(core::shader::default3d_vert, core::shader::default3d_deferred_frag);
+	core::Logger::debug(core::String("Default shader 3D deferred loaded with error code: ") << shader3d_deferred.getLastError());
 	if (shader3d_deferred.getLastError())
-		Logger::error("Info: \n" + shader3d_deferred.getLastErrorLog());
+		core::Logger::error("Info: \n" + shader3d_deferred.getLastErrorLog());
 
-	static gfx::Shader shader2d_deferred_light = gfx::Shader(shader::default2d_vert, shader::default3d_deferred_light_frag);
-	Logger::debug(String("Default shader 2D deferred light loaded with error code: ") << shader2d_deferred_light.getLastError());
+	static gfx::Shader shader2d_deferred_light = gfx::Shader(core::shader::default2d_vert, core::shader::default3d_deferred_light_frag);
+	core::Logger::debug(core::String("Default shader 2D deferred light loaded with error code: ") << shader2d_deferred_light.getLastError());
 	if (shader2d_deferred_light.getLastError())
-		Logger::error("Info: \n" + shader2d_deferred_light.getLastErrorLog());
+		core::Logger::error("Info: \n" + shader2d_deferred_light.getLastErrorLog());
 
 
 	std::vector<eng::gfx::RenderScene::RenderPass> pipeline2d = {
@@ -98,7 +98,7 @@ void Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 
@@ -115,7 +115,7 @@ void Engine::setup()
 			{},
 			nullptr,
 			{0, 0},
-			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		},
 		{
 			&shader2d_deferred_light,
@@ -141,7 +141,7 @@ void Engine::setup()
 				}
 			},
 			{0, 0},
-			m_context.get<ConfigManager>().get<mth::Vec2>("window_viewport_size")
+			m_context.get<core::ConfigManager>().get<mth::Vec2>("window_viewport_size")
 		}
 	};
 
@@ -153,7 +153,7 @@ void Engine::setup()
 
 	m_plugin_manager->setup(*m_plugin_host);
 	
-	Logger::debug("End setup");
+	core::Logger::debug("End setup");
 }
 
 void Engine::mainLoop()
@@ -162,13 +162,13 @@ void Engine::mainLoop()
 	gfx::RenderWorld&  Render_World  = m_context.get<gfx::RenderWorld>();
 	gfx::RenderCanvas& Render_Canvas = m_context.get<gfx::RenderCanvas>();
 	phy::PhysicsWorld& Physics_World = m_context.get<phy::PhysicsWorld>();
-	TimeManager&       Time_Manager  = m_context.get<TimeManager>();
+	core::TimeManager& Time_Manager  = m_context.get<core::TimeManager>();
 
-	Delta delta;
+	core::Delta delta;
 	delta.max = 0.1;
 	float real_frame_delta = 0;
 	float full_frame_delta = 0;
-	Timer timer;
+	core::Timer timer;
 	while(m_window->isOpen())
 	{
 		timer.restart();
@@ -196,7 +196,7 @@ void Engine::mainLoop()
 }
 
 
-PluginManager& Engine::getPluginManager()
+core::PluginManager& Engine::getPluginManager()
 {
 	return *m_plugin_manager;
 }
@@ -204,11 +204,11 @@ PluginManager& Engine::getPluginManager()
 
 void Engine::init()
 {
-	Logger::debug("Start app");
-	Logger::debug("Start initialization");
+	core::Logger::debug("Start app");
+	core::Logger::debug("Start initialization");
 	
 	m_framerate = 60;
-	m_context.create<TimeManager>();
+	m_context.create<core::TimeManager>();
 
 	gfx::gl::Api::createInstance();
 	sys::Window::initialize();
@@ -216,18 +216,18 @@ void Engine::init()
 	gfx::gl::Api::getInstance()->initialize(sys::Window::getProcAddressLoader());
 	
 	m_context.replace<sys::Window>(m_window);
-	m_context.create<SignalBus>();
-	m_context.create<ConfigManager>(m_context.get<SignalBus>());
-	m_context.create<sys::EventManager>(m_context.get<SignalBus>());
-	m_context.create<ResourceManager>();
+	m_context.create<core::SignalBus>();
+	m_context.create<core::ConfigManager>(m_context.get<core::SignalBus>());
+	m_context.create<sys::EventManager>(m_context.get<core::SignalBus>());
+	m_context.create<core::ResourceManager>();
 	m_context.create<gfx::LightManager>();
 	m_context.create<gfx::RenderWorld>();
 	m_context.create<gfx::RenderCanvas>();
 	m_context.create<phy::PhysicsWorld>();
-	m_context.create<PluginManager>();
+	m_context.create<core::PluginManager>();
 	m_context.get<sys::EventManager>().setActiveWindow(*m_window);
 
-	SignalBus& sbus = m_context.get<SignalBus>();
+	core::SignalBus& sbus = m_context.get<core::SignalBus>();
 
 	m_subscriptions.push_back(sbus.subscribe("on_change_config_window_title",
 		[this](std::string title){
@@ -260,14 +260,14 @@ void Engine::init()
 			m_window->updateViewport();
 	}));
 
-	m_context.get<ConfigManager>().notifyAll();
+	m_context.get<core::ConfigManager>().notifyAll();
 
-	m_root_node = std::make_unique<Node>();
+	m_root_node = std::make_unique<core::Node>();
 
-	m_plugin_host = std::make_unique<PluginHost>(PluginHost{m_context, *m_root_node});
-	m_plugin_manager = std::make_unique<PluginManager>();
+	m_plugin_host = std::make_unique<core::PluginHost>(core::PluginHost{m_context, *m_root_node});
+	m_plugin_manager = std::make_unique<core::PluginManager>();
 
-	Logger::debug("End initialization");
+	core::Logger::debug("End initialization");
 }
 
-} //namespace eng::core
+} //namespace eng

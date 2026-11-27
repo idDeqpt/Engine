@@ -1,7 +1,7 @@
 #ifndef BASE_NODE_CLASS_HEADER
 #define BASE_NODE_CLASS_HEADER
 
-#include <Engine/Context.hpp>
+#include <Engine/Core/Context.hpp>
 #include <Engine/Core/NodeNameTag.hpp>
 #include <Engine/Core/Delta.hpp>
 
@@ -13,12 +13,10 @@
 #include <memory>
 
 
-namespace eng
+namespace eng::core
 {
 	class Context;
 
-namespace core
-{
 	class Node
 	{
 	public:
@@ -96,7 +94,6 @@ namespace core
 		addChild(std::move(child), name);
 		return ptr;
 	}
-} //core
-} //eng
+} //eng::core
 
 #endif //BASE_NODE_CLASS_HEADER

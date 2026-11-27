@@ -5,7 +5,7 @@
 #include <Engine/Graphics/3D/Camera3D.hpp>
 #include <Engine/Math/Quaternion.hpp>
 #include <Engine/Math/Vec.hpp>
-#include <Engine/Context.hpp>
+#include <Engine/Core/Context.hpp>
 #include <Engine/Core/Delta.hpp>
 
 class Camera : public eng::gfx::Camera3D
