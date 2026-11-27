@@ -35,12 +35,14 @@ struct VertexKey {
 	}
 };
 
-template <>
-struct std::hash<VertexKey> {
-	size_t operator()(const VertexKey &key) const noexcept {
-		return std::hash<unsigned int>{}(key.positionIndex)           ^
-			  (std::hash<unsigned int>{}(key.textureCoordIndex) << 1) ^
-			  (std::hash<unsigned int>{}(key.normalIndex)       >> 1);
+struct VertexKeyHash
+{
+	size_t operator()(const VertexKey &key) const noexcept
+	{
+		std::size_t h1 = std::hash<unsigned int>{}(key.positionIndex);
+		std::size_t h2 = std::hash<unsigned int>{}(key.textureCoordIndex);
+		std::size_t h3 = std::hash<unsigned int>{}(key.normalIndex);
+		return h1 ^ (h2 << 1) ^ (h3 >> 1);
 	}
 };
 
@@ -63,7 +65,7 @@ bool Mesh::loadData(MeshData data)
 	unsigned int  last_vertex          = 0;
 	Mesh::Vertex* final_vertices       = new Mesh::Vertex[final_vertices_count];
 	unsigned int* final_indexes        = new unsigned int[final_vertices_count];
-	std::unordered_map<VertexKey, unsigned int> unique_vertices;
+	std::unordered_map<VertexKey, unsigned int, VertexKeyHash> unique_vertices;
 
 	bool has_tex_coords = data.unique_tex_coords;
 	bool has_normals    = data.unique_normals;
