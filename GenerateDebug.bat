@@ -1,4 +1,4 @@
-cmake -S . -B build -DBUILD_EXAMPLES=ON
+cmake -S . -B build -DBUILD_EXAMPLES=ON -DBUILD_SHARED=OFF
 cmake --build build --config Debug
 
 pause
