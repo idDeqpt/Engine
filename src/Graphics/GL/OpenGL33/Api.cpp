@@ -33,6 +33,10 @@ gl::Api::Type Api::getType()
 #include "Shader.hpp"
 #include "TextureImpl.hpp"
 
+
+namespace eng::gfx::gl::OpenGL33
+{
+	
 namespace
 {
 
@@ -100,8 +104,6 @@ GLenum blendFactorToGlBlendFactor(const eng::gfx::gl::BlendFactor& factor)
 
 } //namespace
 
-namespace eng::gfx::gl::OpenGL33
-{
 
 Api::Cache Api::s_cache;
 

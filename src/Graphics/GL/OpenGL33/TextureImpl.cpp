@@ -7,6 +7,9 @@
 #include <cstring>
 
 
+namespace eng::gfx::gl::OpenGL33
+{
+	
 namespace
 {
 
@@ -63,9 +66,6 @@ unsigned int ChannelEnumToChannelCount(eng::gfx::gl::PixelFormat channel)
 }
 
 } //namespace
-
-namespace eng::gfx::gl::OpenGL33
-{
 
 
 TextureImpl::TextureImpl():

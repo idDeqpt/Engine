@@ -17,6 +17,10 @@
 	#pragma comment(lib, "winmm.lib")
 #endif
 
+
+namespace eng::core
+{
+
 namespace
 {
 
@@ -55,8 +59,6 @@ void busyWaitUntil(std::chrono::steady_clock::time_point deadline) noexcept
 
 } // namespace
 
-namespace eng::core
-{
 
 TimeManager::TimeManager()
 {

@@ -11,6 +11,9 @@
 #include <glad/gl.h>
 
 
+namespace eng::gfx::gl::OpenGL33
+{
+	
 namespace
 {
 
@@ -27,8 +30,6 @@ unsigned int OPENGL_ATTACHMENTS[] = {
 
 } //namespace
 
-namespace eng::gfx::gl::OpenGL33
-{
 
 FrameBuffer::FrameBuffer():
     gl::FrameBuffer(),

@@ -12,6 +12,9 @@
 #include <memory>
 
 
+namespace eng::phy
+{
+
 namespace
 {
 
@@ -39,9 +42,6 @@ struct PairEqual
 };
 
 } //namespace
-
-namespace eng::phy
-{
 
 
 PhysicsWorld::PhysicsWorld():

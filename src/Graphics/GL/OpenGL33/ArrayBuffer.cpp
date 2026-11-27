@@ -8,6 +8,10 @@
 
 #include <glad/gl.h>
 
+
+namespace eng::gfx::gl::OpenGL33
+{
+
 namespace
 {
 
@@ -47,8 +51,6 @@ GLenum primitiveTypeToGlPrimitiveType(const eng::gfx::PrimitiveType& pt)
 
 } //namespace
 
-namespace eng::gfx::gl::OpenGL33
-{
 
 ArrayBuffer::ArrayBuffer():
 	gl::ArrayBuffer(),

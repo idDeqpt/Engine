@@ -17,6 +17,9 @@
 #include <unordered_map>
 
 
+namespace eng::gfx
+{
+
 namespace
 {
 
@@ -43,8 +46,6 @@ struct std::hash<VertexKey> {
 
 } //namespace
 
-namespace eng::gfx
-{
 
 Mesh::Mesh():
 	core::Node3D(),

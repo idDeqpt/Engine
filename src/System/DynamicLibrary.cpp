@@ -10,6 +10,10 @@
 	#include <dlfcn.h>
 #endif
 
+
+namespace eng::sys
+{
+
 namespace
 {
 
@@ -58,8 +62,6 @@ std::string convertWindowsError(DWORD code)
 
 } //namespace
 
-namespace eng::sys
-{
 
 std::string DynamicLibrary::getDefaultPrefix()    { return DEFAULT_PREFIX; }
 std::string DynamicLibrary::getDefaultExtension() { return DEFAULT_EXTENSION; }
